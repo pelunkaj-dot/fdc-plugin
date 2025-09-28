@@ -1,26 +1,28 @@
-/* fdc-plugin.v1.js — FajnDoučko Chat Bubble (scroll fix, fast)
+/* fdc-plugin.v1.js — FajnDoučko Chat Bubble (history + scroll fix)
+   - Posílá do gateway: { assistant, message, history }
+   - Lokální historie (posledních N zpráv) se drží po dobu otevřené stránky
+     + volitelně v sessionStorage (persistHistory).
    - endpoint: https://fdc-gateway.vercel.app  (bez /api/chat)
-   - assistant: 'nela'
-   - autoscroll + správné overflow i ve flex kontejnerech (min-height:0)
 */
 (function () {
   "use strict";
 
   const DEFAULTS = {
     selector: null,
-    endpoint: "https://fdc-gateway.vercel.app", // základ bez /api/chat
+    endpoint: "https://fdc-gateway.vercel.app",
     assistant: "nela",
-    title: "FajnDoučko · Nela",
-    greeting: "Ahoj, jsem Nela. S čím ti dnes pomůžu?",
-    placeholder: "Napiš dotaz a stiskni Enter…",
+    title: "FajnDoučko · Chat",
+    greeting: "Ahoj! Jak ti můžu pomoct?",
     position: { right: 20, bottom: 20 },
     openOnLoad: false,
     withCredentials: false,
     headers: { "Content-Type": "application/json" },
-    theme: { zIndex: 9999, width: 360, height: 520 }
+    theme: { zIndex: 9999, width: 360, height: 520 },
+    maxHistory: 12,           // kolik zpráv posíláme zpět (user+assistant)
+    persistHistory: true      // ukládej do sessionStorage (per asistent + stránka)
   };
 
-  // ---- CSS (scroll fix: min-height:0; overflow-y:auto; iOS momentum) ----
+  // ---- CSS (scroll fix) ----
   function injectCss() {
     if (document.getElementById("fdc-plugin-css")) return;
     const css = `
@@ -32,7 +34,7 @@
 .fdc-header{padding:12px 16px;background:#0ea5e9;color:#fff;font-weight:600;display:flex;
   align-items:center;justify-content:space-between}
 .fdc-close{cursor:pointer;font-size:18px;opacity:.9}
-.fdc-body{flex:1;display:flex;flex-direction:column;background:#f8fafc;min-height:0} /* <-- DŮLEŽITÉ */
+.fdc-body{flex:1;display:flex;flex-direction:column;background:#f8fafc;min-height:0}
 .fdc-log{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px;min-height:0;
   -webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-gutter:stable}
 .fdc-msg{margin:8px 0;max-width:86%}
@@ -57,20 +59,11 @@
   function el(tag, cls, txt) { const e=document.createElement(tag); if(cls)e.className=cls; if(txt!=null)e.textContent=txt; return e; }
   function setPos(node, pos) { node.style.right=(pos.right||20)+"px"; node.style.bottom=(pos.bottom||20)+"px"; }
   function scrollToBottom(container) { container.scrollTop = container.scrollHeight; }
+  function sliceSafe(s, n){ s = String(s||""); return s.length>n ? s.slice(0,n) : s; }
 
-  function addMsg(container, who, text, isError) {
-    const wrap = el("div", "fdc-msg " + (who === "user" ? "user" : "bot"));
-    const bubble = el("div", "fdc-bubble" + (isError ? " fdc-error" : ""));
-    bubble.textContent = text;
-    wrap.appendChild(bubble);
-    container.appendChild(wrap);
-    // autoscroll (bez animace – jistota i na slabších zařízeních)
-    scrollToBottom(container);
-  }
-
-  async function sendMsg(cfg, text) {
+  async function sendMsg(cfg, text, history) {
     const url = cfg.endpoint.replace(/\/$/, "") + "/api/chat";
-    const payload = { assistant: cfg.assistant, message: text };
+    const payload = { assistant: cfg.assistant, message: text, history };
 
     const r = await fetch(url, {
       method: "POST",
@@ -82,21 +75,50 @@
     const raw = await r.text().catch(() => "");
     if (!r.ok) {
       let msg = r.statusText || "Unknown error";
-      try { const j = JSON.parse(raw || "{}"); msg = j.error || j.message || msg; } catch (_) { if (raw) msg = raw; }
+      try { const j = JSON.parse(raw||"{}"); msg = j.error || j.message || msg; } catch(_) { if (raw) msg = raw; }
       const err = new Error(`Chyba serveru: ${r.status} — ${msg}`);
       err.responseText = raw;
       throw err;
     }
-    try { return JSON.parse(raw); } catch (_) { throw new Error("Neplatná JSON odpověď z gateway."); }
+    try { return JSON.parse(raw); } catch(_) { throw new Error("Neplatná JSON odpověď z gateway."); }
   }
 
-  // ---- UI ----
+  // ---- UI + historie ----
   function mountWidget(userOpts) {
     injectCss();
     const cfg = Object.assign({}, DEFAULTS, userOpts || {});
     const root = cfg.selector ? $(cfg.selector) : document.body;
     if (!root) throw new Error("FDC: Nenalezen cílový element pro widget.");
 
+    // klíč historie pro sessionStorage (per asistent + stránka)
+    const HIST_KEY = `fdc_hist_${location.host}${location.pathname}_${cfg.assistant}`;
+
+    let history = [];
+    if (cfg.persistHistory) {
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(HIST_KEY) || "[]");
+        if (Array.isArray(saved)) history = saved;
+      } catch {}
+    }
+    function saveHistory() {
+      if (!cfg.persistHistory) return;
+      try { sessionStorage.setItem(HIST_KEY, JSON.stringify(history)); } catch {}
+    }
+    function pushHist(role, content) {
+      history.push({ role, content: sliceSafe(content, 4000) });
+      // pouze uživatel/assistant, system neposíláme – gateway ho přidá sama
+      history = history.filter(m => m.role === "user" || m.role === "assistant");
+      // držíme posledních N
+      const extra = Math.max(0, history.length - cfg.maxHistory);
+      if (extra > 0) history = history.slice(extra);
+      saveHistory();
+    }
+    function resetHistory() {
+      history = [];
+      saveHistory();
+    }
+
+    // UI
     const btn = el("div", "fdc-btn", "💬");
     setPos(btn, cfg.position);
     btn.style.zIndex = String(cfg.theme.zIndex);
@@ -115,10 +137,10 @@
     const close = el("div", "fdc-close", "×");
     header.appendChild(close);
 
-    const body = el("div", "fdc-body"); // min-height:0 v CSS = klíč ke scrollu
+    const body = el("div", "fdc-body");
     const log = el("div", "fdc-log");
     const inputWrap = el("div", "fdc-input");
-    const input = el("input"); input.type="text"; input.placeholder = cfg.placeholder;
+    const input = el("input"); input.type="text"; input.placeholder = cfg.greeting || "Napiš dotaz a stiskni Enter…";
     const btnSend = el("button", null, "Odeslat");
 
     inputWrap.appendChild(input);
@@ -139,33 +161,42 @@
       open = true;
       panel.style.display = "flex";
       badge.style.display = "none";
-      if (!panel.dataset.greeted) {
-        addMsg(log, "bot", cfg.greeting);
-        panel.dataset.greeted = "1";
-      }
-      // jistota scrollu při otevření (když už je v logu víc zpráv)
+      // úvodní CTA do chatu nevypisujeme jako zprávu, je v placeholderu
+      // ale pokud chceš, můžeš odkomentovat další řádek:
+      // addMsg(log, "bot", cfg.greeting);
       requestAnimationFrame(() => scrollToBottom(log));
       input.focus();
     }
     function closePanel() { open = false; panel.style.display = "none"; }
 
-    btn.addEventListener("click", () => open ? closePanel() : openPanel());
-    close.addEventListener("click", closePanel);
+    function addMsg(container, who, text, isError) {
+      const wrap = el("div", "fdc-msg " + (who === "user" ? "user" : "bot"));
+      const bubble = el("div", "fdc-bubble" + (isError ? " fdc-error" : ""));
+      bubble.textContent = text;
+      wrap.appendChild(bubble);
+      container.appendChild(wrap);
+      scrollToBottom(container);
+    }
 
     async function handleSend() {
       const text = (input.value || "").trim();
       if (!text) return;
       addMsg(log, "user", text);
+      pushHist("user", text);
       input.value = "";
       try {
-        const data = await sendMsg(cfg, text);
+        const data = await sendMsg(cfg, text, history);
         const reply = data && data.reply ? data.reply : "(prázdná odpověď)";
         addMsg(log, "bot", reply);
+        pushHist("assistant", reply);
       } catch (e) {
         addMsg(log, "bot", String(e.message || e), true);
         console.error("sendMsg", e);
       }
     }
+
+    btn.addEventListener("click", () => open ? closePanel() : openPanel());
+    close.addEventListener("click", closePanel);
     input.addEventListener("keydown", (ev) => { if (ev.key === "Enter") handleSend(); });
     btnSend.addEventListener("click", handleSend);
 
@@ -175,15 +206,16 @@
     return {
       open: openPanel,
       close: closePanel,
-      setAssistant: (slug) => { cfg.assistant = String(slug || "").trim() || "nela"; },
-      setEndpoint: (url) => { cfg.endpoint = url; }
+      setAssistant: (slug) => { cfg.assistant = String(slug || "").trim() || "nela"; resetHistory(); },
+      setEndpoint: (url) => { cfg.endpoint = url; resetHistory(); },
+      resetHistory
     };
   }
 
   const FDC = {
     init(opts) { try { return mountWidget(opts || {}); } catch (e) { console.error("FDC.init error:", e); } },
-    ask({ endpoint = DEFAULTS.endpoint, assistant = DEFAULTS.assistant, message, headers = DEFAULTS.headers, withCredentials = false } = {}) {
-      return sendMsg({ endpoint, assistant, headers, withCredentials }, String(message || ""));
+    ask({ endpoint = DEFAULTS.endpoint, assistant = DEFAULTS.assistant, message, headers = DEFAULTS.headers, withCredentials = false, history = [] } = {}) {
+      return sendMsg({ endpoint, assistant, headers, withCredentials }, String(message || ""), history);
     }
   };
   if (!window.FDC) window.FDC = FDC;
