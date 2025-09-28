@@ -1,7 +1,6 @@
-/* fdc-plugin.v1.js — FajnDoučko Chat Bubble (history + scroll fix)
-   - Posílá do gateway: { assistant, message, history }
-   - Lokální historie (posledních N zpráv) se drží po dobu otevřené stránky
-     + volitelně v sessionStorage (persistHistory).
+/* fdc-plugin.v1.js — FajnDoučko Chat Bubble (v8: greeting jako zpráva, history + scroll fix)
+   - Posílá { assistant, message, history } do gateway
+   - Greeting se vloží jako PRVNÍ ZPRÁVA v chatu při otevření panelu (jen jednou)
    - endpoint: https://fdc-gateway.vercel.app  (bez /api/chat)
 */
 (function () {
@@ -12,14 +11,15 @@
     endpoint: "https://fdc-gateway.vercel.app",
     assistant: "nela",
     title: "FajnDoučko · Chat",
-    greeting: "Ahoj! Jak ti můžu pomoct?",
+    greeting: "Ahoj! Jak ti můžu pomoct?",     // ← tohle se ukáže jako první bublina
+    placeholder: "Napiš dotaz a stiskni Enter…",
     position: { right: 20, bottom: 20 },
     openOnLoad: false,
     withCredentials: false,
     headers: { "Content-Type": "application/json" },
     theme: { zIndex: 9999, width: 360, height: 520 },
-    maxHistory: 12,           // kolik zpráv posíláme zpět (user+assistant)
-    persistHistory: true      // ukládej do sessionStorage (per asistent + stránka)
+    maxHistory: 12,
+    persistHistory: true
   };
 
   // ---- CSS (scroll fix) ----
@@ -90,39 +90,25 @@
     const root = cfg.selector ? $(cfg.selector) : document.body;
     if (!root) throw new Error("FDC: Nenalezen cílový element pro widget.");
 
-    // klíč historie pro sessionStorage (per asistent + stránka)
     const HIST_KEY = `fdc_hist_${location.host}${location.pathname}_${cfg.assistant}`;
-
     let history = [];
     if (cfg.persistHistory) {
-      try {
-        const saved = JSON.parse(sessionStorage.getItem(HIST_KEY) || "[]");
-        if (Array.isArray(saved)) history = saved;
-      } catch {}
+      try { const saved = JSON.parse(sessionStorage.getItem(HIST_KEY) || "[]"); if (Array.isArray(saved)) history = saved; } catch {}
     }
-    function saveHistory() {
-      if (!cfg.persistHistory) return;
-      try { sessionStorage.setItem(HIST_KEY, JSON.stringify(history)); } catch {}
-    }
+    function saveHistory() { if (!cfg.persistHistory) return; try { sessionStorage.setItem(HIST_KEY, JSON.stringify(history)); } catch {} }
     function pushHist(role, content) {
       history.push({ role, content: sliceSafe(content, 4000) });
-      // pouze uživatel/assistant, system neposíláme – gateway ho přidá sama
       history = history.filter(m => m.role === "user" || m.role === "assistant");
-      // držíme posledních N
       const extra = Math.max(0, history.length - cfg.maxHistory);
       if (extra > 0) history = history.slice(extra);
       saveHistory();
     }
-    function resetHistory() {
-      history = [];
-      saveHistory();
-    }
+    function resetHistory() { history = []; saveHistory(); }
 
     // UI
     const btn = el("div", "fdc-btn", "💬");
     setPos(btn, cfg.position);
     btn.style.zIndex = String(cfg.theme.zIndex);
-
     const badge = el("div", "fdc-badge", "1");
     btn.appendChild(badge);
 
@@ -140,20 +126,12 @@
     const body = el("div", "fdc-body");
     const log = el("div", "fdc-log");
     const inputWrap = el("div", "fdc-input");
-    const input = el("input"); input.type="text"; input.placeholder = cfg.greeting || "Napiš dotaz a stiskni Enter…";
+    const input = el("input"); input.type="text"; input.placeholder = cfg.placeholder || "Napiš dotaz a stiskni Enter…";
     const btnSend = el("button", null, "Odeslat");
-
-    inputWrap.appendChild(input);
-    inputWrap.appendChild(btnSend);
-
-    body.appendChild(log);
-    body.appendChild(inputWrap);
-
-    panel.appendChild(header);
-    panel.appendChild(body);
-
-    root.appendChild(btn);
-    root.appendChild(panel);
+    inputWrap.appendChild(input); inputWrap.appendChild(btnSend);
+    body.appendChild(log); body.appendChild(inputWrap);
+    panel.appendChild(header); panel.appendChild(body);
+    root.appendChild(btn); root.appendChild(panel);
 
     // stav
     let open = false;
@@ -161,9 +139,11 @@
       open = true;
       panel.style.display = "flex";
       badge.style.display = "none";
-      // úvodní CTA do chatu nevypisujeme jako zprávu, je v placeholderu
-      // ale pokud chceš, můžeš odkomentovat další řádek:
-      // addMsg(log, "bot", cfg.greeting);
+      // Greeting jako první zpráva – jen když ještě nic nebylo řečeno na téhle stránce
+      if (!panel.dataset.greeted && history.length === 0 && cfg.greeting) {
+        addMsg(log, "bot", cfg.greeting);
+        panel.dataset.greeted = "1";
+      }
       requestAnimationFrame(() => scrollToBottom(log));
       input.focus();
     }
