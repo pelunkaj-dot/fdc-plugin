@@ -140,9 +140,9 @@
       panel.style.display = "flex";
       badge.style.display = "none";
       // Greeting jako první zpráva – jen když ještě nic nebylo řečeno na téhle stránce
-      if (!panel.dataset.greeted && history.length === 0 && cfg.greeting) {
-        addMsg(log, "bot", cfg.greeting);
-        panel.dataset.greeted = "1";
+      if (!panel.dataset.greeted && cfg.greeting) {
+  addMsg(log, "bot", cfg.greeting);
+  panel.dataset.greeted = "1";
       }
       requestAnimationFrame(() => scrollToBottom(log));
       input.focus();
