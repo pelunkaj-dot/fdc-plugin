@@ -1,5 +1,7 @@
 // === FajnDoucko Amy: bundle (plugin + init + voice) ===
 (function(){
+  console.log("Amy bundle loaded – správný soubor se načetl");
+
   var PLUGIN_URL = "https://pelunkaj-dot.github.io/fdc-plugin/fdc-plugin.v1.js?v=8";
   function load(src, cb){
     var s = document.createElement('script');
