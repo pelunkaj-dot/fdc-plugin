@@ -29,7 +29,7 @@
       var greeting = GREETINGS[Math.floor(Math.random()*GREETINGS.length)];
       window.FDC_WIDGET = FDC.init({
         endpoint: "https://fdc-gateway.vercel.app",
-        assistant: "amy",
+        assistant: "prokop",
         title: "Amy · English Tutor",
         greeting: greeting,
         openOnLoad: false
