@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FajnDoučko – diagnostický full‑page chat</title>
+  <style>
+    :root { --radius: 16px; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, 'Helvetica Neue', Arial; background:#0b0f19; color:#e6e9ef; }
+    header { position:sticky; top:0; z-index:10; backdrop-filter: blur(8px); background:rgba(13,17,27,.65); border-bottom:1px solid #202434; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 12px 16px; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    select, button, input { border-radius: var(--radius); border:1px solid #2a3146; background:#121726; color:#e6e9ef; }
+    button { padding:10px 14px; cursor:pointer; }
+    button:disabled { opacity:.6; cursor:not-allowed; }
+    select, input { padding:10px 12px; }
+    main { height: calc(100dvh - 180px); overflow:auto; padding: 16px; }
+    .card { background:#101522; border:1px solid #1e2435; border-radius: var(--radius); padding:14px; }
+    .log { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; white-space: pre-wrap; word-break: break-word; }
+    .msgs { display:flex; flex-direction:column; gap:10px; }
+    .msg { padding:12px 14px; border-radius: 14px; max-width: 78ch; width: fit-content; }
+    .u { background:#1a243a; align-self:flex-end; border:1px solid #2a3657; }
+    .a { background:#121a2b; align-self:flex-start; border:1px solid #202a46; }
+    footer { position:sticky; bottom:0; border-top:1px solid #202434; background:#0b0f19; padding:10px 16px; }
+    .inputRow { display:flex; gap:10px; }
+    .inputRow textarea { flex:1; resize: vertical; min-height: 48px; max-height: 40dvh; border-radius: var(--radius); border:1px solid #2a3146; background:#0f1524; color:#e6e9ef; padding:12px; line-height:1.35; }
+    .pill { display:inline-flex; align-items:center; gap:8px; border:1px solid #2a3146; background:#11182a; padding:8px 10px; border-radius:999px; font-size:.9rem; }
+    .ok { color:#6de38d; }
+    .bad { color:#ff8a8a; }
+    .muted { color:#9aa7bd; font-size:.92rem; }
+    details { background:#0f1524; border:1px solid #1f2740; border-radius: 10px; padding:10px 12px; }
+    summary { cursor:pointer; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap row">
+      <strong>FajnDoučko – full‑page chat (diagnostika)</strong>
+      <span id="ping" class="pill muted">Neotestováno</span>
+      <div class="row" style="margin-left:auto; gap:8px;">
+        <label class="muted">Asistent</label>
+        <select id="assistant"></select>
+        <button id="refresh">Znovu načíst</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap" style="display:grid; gap:14px;">
+      <div class="card">
+        <div class="muted" style="margin-bottom:8px;">Diagnostika</div>
+        <div class="row" style="gap:8px; flex-wrap:wrap;">
+          <button id="btn-selftest">Ping /api/self-test</button>
+          <button id="btn-assistants">Načíst /api/assistants</button>
+          <button id="btn-clear">Vyčistit konverzaci</button>
+        </div>
+        <details style="margin-top:10px;">
+          <summary>Protokol</summary>
+          <pre class="log" id="log"></pre>
+        </details>
+      </div>
+
+      <div class="card msgs" id="msgs" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="inputRow">
+        <textarea id="input" placeholder="Napiš zprávu… (Shift+Enter = nový řádek)" ></textarea>
+        <button id="send">Odeslat</button>
+      </div>
+      <div class="muted" style="margin-top:6px;">Gateway: <code id="gwText"></code></div>
+    </div>
+  </footer>
+
+  <script>
+    // ⚙️ Nastav si případně vlastní doménu gatewaye (když ji přesuneš z Vercelu)
+    const GATEWAY = 'https://fdc-gateway.vercel.app';
+    const PATHS = {
+      selfTest: '/api/self-test',
+      assistants: '/api/assistants',
+      chat: '/api/chat'
+    };
+
+    // 💡 Pomocné UI
+    const $ = (s) => document.querySelector(s);
+    const log = (x) => { const t = new Date().toLocaleTimeString(); $('#log').textContent += `\n[${t}] ${x}`; };
+    const setPing = (ok, txt) => {
+      const el = $('#ping');
+      el.className = 'pill ' + (ok ? 'ok' : 'bad');
+      el.textContent = txt;
+    };
+    const addMsg = (role, text) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'msg ' + (role === 'user' ? 'u' : 'a');
+      wrap.textContent = text;
+      $('#msgs').appendChild(wrap);
+      // Autoscroll na konec
+      const main = document.querySelector('main');
+      main.scrollTop = main.scrollHeight + 9999;
+    };
+
+    $('#gwText').textContent = GATEWAY;
+
+    // 🧪 Self‑test
+    async function doSelfTest(){
+      try {
+        const r = await fetch(GATEWAY + PATHS.selfTest);
+        const txt = await r.text();
+        const ok = r.ok;
+        setPing(ok, ok ? 'Gateway OK' : 'Gateway chyba');
+        log(`/api/self-test → ${r.status} ${ok ? 'OK' : 'ERR'}\n` + txt);
+      } catch (e) {
+        setPing(false, 'Gateway nedostupná');
+        log('Self-test ERR: ' + e.message);
+      }
+    }
+
+    // 👥 Načtení asistentů
+    async function loadAssistants(){
+      const sel = $('#assistant');
+      sel.innerHTML = '';
+      try {
+        const r = await fetch(GATEWAY + PATHS.assistants);
+        const data = await r.json();
+        log(`/api/assistants → ${r.status}`);
+        const list = Array.isArray(data) ? data : (Array.isArray(data.assistants) ? data.assistants : []);
+        if (!list.length) log('Varování: prázdný seznam asistentů');
+        for (const a of list){
+          const opt = document.createElement('option');
+          // podporujeme klíče "slug" | "id" | string
+          const val = typeof a === 'string' ? a : (a.slug || a.id || a.name || 'assistant');
+          opt.value = val;
+          opt.textContent = typeof a === 'string' ? a : (a.label || a.name || a.slug || val);
+          sel.appendChild(opt);
+        }
+        if (!sel.value) {
+          const opt = document.createElement('option');
+          opt.value = 'amy'; opt.textContent = 'amy (fallback)'; sel.appendChild(opt);
+        }
+      } catch (e) {
+        log('Chyba načítání /assistants: ' + e.message + ' (doplněn fallback amy)');
+        const opt = document.createElement('option');
+        opt.value = 'amy'; opt.textContent = 'amy (fallback)'; sel.appendChild(opt);
+      }
+    }
+
+    // 💬 Odeslání zprávy
+    async function sendMessage(){
+      const ta = $('#input');
+      const text = ta.value.trim();
+      if (!text) return;
+      addMsg('user', text);
+      ta.value = '';
+      $('#send').disabled = true;
+
+      // 📦 Konzervativní payload kompatibilní s většinou jednoduchých gatewayí.
+      // Pokud tvůj /api/chat očekává jiný formát, uvidíš to v logu (400 + text odpovědi) – stačí pak upravit body.
+      const body = {
+        assistant: $('#assistant').value || 'amy',
+        messages: [{ role: 'user', content: text }]
+      };
+
+      try {
+        const r = await fetch(GATEWAY + PATHS.chat, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const ct = r.headers.get('content-type') || '';
+        let dataText = '';
+        if (ct.includes('application/json')) {
+          const data = await r.json();
+          // pokusíme se najít text odpovědi v obvyklých polích
+          const reply = (data.reply || data.output || data.message || data.content || data.text || '');
+          addMsg('assistant', String(reply || '[Žádná odpověď v JSON]'));
+          dataText = JSON.stringify(data, null, 2);
+        } else {
+          const txt = await r.text();
+          addMsg('assistant', (r.ok ? txt : `[${r.status}] ${txt}`));
+          dataText = txt;
+        }
+        log(`/api/chat → ${r.status}\n` + dataText);
+      } catch (e) {
+        addMsg('assistant', '⚠️ Chyba sítě: ' + e.message);
+        log('sendMessage ERR: ' + e.message);
+      } finally {
+        $('#send').disabled = false;
+      }
+    }
+
+    // 🧽 Čištění obrazovky
+    function clearChat(){
+      $('#msgs').innerHTML='';
+      $('#log').textContent='';
+    }
+
+    // ⌨️ Klávesové zkratky
+    $('#input').addEventListener('keydown', (ev)=>{
+      if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); sendMessage(); }
+    });
+
+    // 🔘 Tlačítka
+    $('#btn-selftest').onclick = doSelfTest;
+    $('#btn-assistants').onclick = loadAssistants;
+    $('#btn-clear').onclick = clearChat;
+    $('#refresh').onclick = async ()=>{ await doSelfTest(); await loadAssistants(); };
+    $('#send').onclick = sendMessage;
+
+    // 🚀 Start: hned pípnu gateway a načtu asistenty
+    (async ()=>{ await doSelfTest(); await loadAssistants(); })();
+  </script>
+</body>
+</html>
