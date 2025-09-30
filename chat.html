@@ -31,12 +31,24 @@
     .muted { color:#9aa7bd; font-size:.92rem; }
     details { background:#0f1524; border:1px solid #1f2740; border-radius: 10px; padding:10px 12px; }
     summary { cursor:pointer; }
+    /* High‑contrast / světlý režim */
+    body.hc { background:#ffffff; color:#111827; }
+    body.hc header { background:#ffffffcc; border-bottom:1px solid #cdd3df; }
+    body.hc .card { background:#ffffff; border:1px solid #cdd3df; }
+    body.hc .muted { color:#475569; }
+    body.hc .pill { background:#ffffff; border:1px solid #9aa7bd; }
+    body.hc .ok { color:#15803d; }
+    body.hc .bad { color:#b91c1c; }
+    body.hc select, body.hc button, body.hc input, body.hc textarea { background:#ffffff; color:#111827; border:1px solid #9aa7bd; }
+    body.hc .msg.u { background:#e9f0ff; border:1px solid #b6c6ff; color:#0f172a; }
+    body.hc .msg.a { background:#f5f7fb; border:1px solid #cdd3df; color:#0f172a; }
   </style>
 </head>
 <body>
   <header>
     <div class="wrap row">
       <strong>FajnDoučko – full‑page chat (diagnostika)</strong>
+      <button id="btn-contrast" class="pill" title="Přepnout kontrast">☀️ Kontrast</button>
       <span id="ping" class="pill muted">Neotestováno</span>
       <div class="row" style="margin-left:auto; gap:8px;">
         <label class="muted">Asistent</label>
@@ -209,6 +221,8 @@
     $('#btn-clear').onclick = clearChat;
     $('#refresh').onclick = async ()=>{ await doSelfTest(); await loadAssistants(); };
     $('#send').onclick = sendMessage;
+    const contrastBtn = document.querySelector('#btn-contrast');
+    if (contrastBtn) contrastBtn.onclick = ()=> document.body.classList.toggle('hc');
 
     // 🚀 Start: hned pípnu gateway a načtu asistenty
     (async ()=>{ await doSelfTest(); await loadAssistants(); })();
