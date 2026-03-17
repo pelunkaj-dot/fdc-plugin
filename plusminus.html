@@ -1,1001 +1,217 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="cs">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<meta name="theme-color" content="#FFF9F0"/>
-<meta name="mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<title>MatikaHra 🎲</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --add:    #FF6B6B;
-  --sub:    #4ECDC4;
-  --mul:    #FFE66D;
-  --div:    #A29BFE;
-  --bg:     #FFF9F0;
-  --card:   #FFFFFF;
-  --dark:   #2D3436;
-  --muted:  #636E72;
-  --shadow: 0 8px 32px rgba(0,0,0,.12);
-  --radius: 24px;
-  --accent: #FF6B6B;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Matematika pro děti zdarma | FajnDoučko</title>
 
-body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image: radial-gradient(circle, #e8d5c4 1.5px, transparent 1.5px);
-  background-size: 32px 32px;
-  opacity: .5;
-  pointer-events: none;
-  z-index: 0;
-}
+  <style>
+    :root{
+      --bg:#f7f8fc;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#e8eaf3;
+      --accent:#ff6b6b;
+      --accent2:#4ecdc4;
+      --shadow:0 10px 30px rgba(0,0,0,.06);
+      --r:18px;
+    }
 
-.app {
-  position: relative; z-index: 1;
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 16px 16px 32px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
 
-.header { text-align: center; padding: 8px 0 0; }
-.logo {
-  font-family: 'Fredoka One', cursive;
-  font-size: 36px;
-  color: var(--dark);
-  letter-spacing: -1px;
-  line-height: 1;
-}
-.logo span { color: var(--add); }
+    .wrap{
+      max-width:920px;
+      margin:0 auto;
+      padding:16px;
+    }
 
-.scorebar {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.badge {
-  background: white;
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-weight: 900;
-  font-size: 16px;
-  box-shadow: 0 4px 14px rgba(0,0,0,.09);
-  display: flex; align-items: center; gap: 6px;
-  transition: transform .15s;
-}
-.badge.pop { animation: badgePop .3s ease; }
-@keyframes badgePop {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.25); }
-  100% { transform: scale(1); }
-}
+    .hero,
+    .cta{
+      background:var(--card);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:16px 18px;
+    }
 
-.ops {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-.op-btn {
-  border: none; cursor: pointer;
-  border-radius: 18px;
-  padding: 14px 6px;
-  font-family: 'Fredoka One', cursive;
-  font-size: 22px;
-  color: var(--dark);
-  transition: transform .12s, box-shadow .12s;
-  box-shadow: 0 6px 0 rgba(0,0,0,.15);
-  position: relative; top: 0;
-  touch-action: manipulation;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.op-btn:hover  { transform: translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,.15); }
-.op-btn:active { transform: translateY(4px);  box-shadow: 0 2px 0 rgba(0,0,0,.15); }
-.op-btn.active { transform: translateY(4px);  box-shadow: 0 2px 0 rgba(0,0,0,.15); outline: 4px solid var(--dark); outline-offset: 2px; }
-.op-btn[data-op="+"] { background: var(--add); }
-.op-btn[data-op="-"] { background: var(--sub); }
-.op-btn[data-op="×"] { background: var(--mul); }
-.op-btn[data-op="÷"] { background: var(--div); }
+    .hero{
+      margin-bottom:14px;
+      border:1px solid var(--line);
+    }
 
-.diff-row { display: flex; gap: 8px; justify-content: center; }
-.diff-btn {
-  border: 3px solid transparent;
-  background: white;
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-weight: 900; font-size: 14px;
-  cursor: pointer;
-  transition: all .12s;
-  box-shadow: 0 3px 10px rgba(0,0,0,.07);
-}
-.diff-btn:hover  { border-color: var(--accent); }
-.diff-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .topnote{
+      display:inline-block;
+      font-size:12px;
+      font-weight:700;
+      color:var(--muted);
+      background:#fff4f4;
+      border:1px solid #ffd6d6;
+      border-radius:999px;
+      padding:5px 10px;
+      margin-bottom:10px;
+    }
 
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 24px 20px;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
+    h1{
+      margin:0 0 8px;
+      font-size:28px;
+      line-height:1.15;
+    }
 
-/* ── Mascot flip stage ── */
-.mascot-stage {
-  perspective: 400px;
-  width: 110px; height: 110px;
-}
-.mascot-flipper {
-  width: 100%; height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform .55s cubic-bezier(.4,0,.2,1);
-}
-.mascot-flipper.flipping {
-  animation: flipSpin .55s cubic-bezier(.4,0,.2,1) forwards;
-}
-@keyframes flipSpin {
-  0%   { transform: rotateY(0deg); }
-  50%  { transform: rotateY(90deg); }
-  100% { transform: rotateY(0deg); }
-}
-.mascot-face {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  backface-visibility: hidden;
-}
-.mascot-face svg { width: 100px; height: 100px; }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.45;
+    }
 
-/* Bounce on correct */
-.mascot-flipper.bounce { animation: mascotBounce .4s ease 3; }
-@keyframes mascotBounce {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(-16px); }
-}
-/* Shake on wrong */
-.mascot-flipper.shake { animation: mascotShake .4s ease; }
-@keyframes mascotShake {
-  0%,100% { transform: translateX(0); }
-  25%     { transform: translateX(-10px); }
-  75%     { transform: translateX(10px); }
-}
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
 
-/* Mascot name badge */
-.mascot-name {
-  font-family: 'Fredoka One', cursive;
-  font-size: 14px;
-  color: var(--muted);
-  text-align: center;
-  margin-top: -10px;
-  letter-spacing: .5px;
-}
+    .badge{
+      font-size:13px;
+      font-weight:700;
+      padding:7px 11px;
+      border-radius:999px;
+      background:#f3f7ff;
+      border:1px solid #dfe7ff;
+      color:#334155;
+    }
 
-.task {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.num {
-  font-family: 'Fredoka One', cursive;
-  font-size: 56px;
-  color: var(--dark);
-  line-height: 1;
-}
-.operator-display {
-  font-family: 'Fredoka One', cursive;
-  font-size: 48px;
-  line-height: 1;
-}
-.answer-display {
-  font-family: 'Fredoka One', cursive;
-  font-size: 56px;
-  min-width: 90px;
-  height: 72px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 16px;
-  border: 4px solid #e0e0e0;
-  background: #fafafa;
-  color: var(--dark);
-  transition: border-color .2s, background .2s;
-}
-.answer-display.correct {
-  border-color: #00b894; background: #d4f5ec;
-  animation: correctPop .35s ease;
-}
-.answer-display.wrong {
-  border-color: #d63031; background: #ffeaea;
-  animation: wrongShake .35s ease;
-}
-@keyframes correctPop  { 0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)} }
-@keyframes wrongShake  { 0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)} }
-.equals { font-family: 'Fredoka One', cursive; font-size: 48px; color: var(--muted); }
+    .module-box{
+      margin:14px 0;
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:0 12px 34px rgba(0,0,0,.08);
+      border:1px solid #ececec;
+      background:#fff;
+    }
 
-.feedback {
-  font-family: 'Fredoka One', cursive;
-  font-size: 22px;
-  min-height: 32px;
-  text-align: center;
-  transition: opacity .2s;
-}
-.feedback.ok  { color: #00b894; }
-.feedback.err { color: #d63031; }
+    iframe{
+      display:block;
+      width:100%;
+      height:980px;
+      border:none;
+      background:#fff;
+    }
 
-.numpad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  width: 100%;
-  max-width: 280px;
-}
-.np-btn {
-  border: none; cursor: pointer;
-  border-radius: 16px;
-  padding: 18px;
-  font-family: 'Fredoka One', cursive;
-  font-size: 28px;
-  color: var(--dark);
-  background: #F0F0F0;
-  box-shadow: 0 5px 0 #C8C8C8;
-  transition: transform .08s, box-shadow .08s;
-  position: relative; top: 0;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  user-select: none;
-}
-.np-btn:active, .np-btn.pressed {
-  transform: translateY(4px);
-  box-shadow: 0 1px 0 #C8C8C8;
-}
-.np-btn.del-btn { background: #FFB3B3; box-shadow: 0 5px 0 #E88080; font-size: 22px; }
-.np-btn.ok-btn  { background: #55EFC4; box-shadow: 0 5px 0 #00B894; grid-column: span 2; font-size: 22px; }
+    .cta{
+      margin-top:14px;
+      text-align:center;
+      border:1px solid var(--line);
+    }
 
-.progress-wrap {
-  width: 100%;
-  background: #ece9e0;
-  border-radius: 999px;
-  height: 14px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #FF6B6B, #FFE66D);
-  transition: width .4s cubic-bezier(.34,1.56,.64,1);
-}
+    .cta h2{
+      margin:0 0 8px;
+      font-size:22px;
+      line-height:1.2;
+    }
 
-.confetti-piece {
-  position: fixed;
-  width: 10px; height: 14px;
-  border-radius: 3px;
-  pointer-events: none;
-  animation: confettiFall linear forwards;
-  z-index: 999;
-}
-@keyframes confettiFall {
-  0%   { transform: translateY(-20px) rotateZ(0deg); opacity: 1; }
-  100% { transform: translateY(100vh)  rotateZ(720deg); opacity: 0; }
-}
+    .cta p{
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.5;
+    }
 
-.celebration {
-  position: fixed; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,.45);
-  z-index: 100;
-  opacity: 0; pointer-events: none;
-  transition: opacity .3s;
-}
-.celebration.show { opacity: 1; pointer-events: all; }
-.cel-box {
-  background: white;
-  border-radius: 32px;
-  padding: 40px 32px;
-  text-align: center;
-  box-shadow: 0 32px 80px rgba(0,0,0,.25);
-  transform: scale(.8);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-  max-width: 320px; width: 90%;
-}
-.celebration.show .cel-box { transform: scale(1); }
-.cel-emoji  { font-size: 72px; line-height: 1; }
-.cel-title  { font-family: 'Fredoka One', cursive; font-size: 32px; color: var(--dark); margin: 12px 0 6px; }
-.cel-sub    { font-size: 16px; color: var(--muted); font-weight: 700; }
-.cel-btn    {
-  margin-top: 20px;
-  background: var(--add); color: white; border: none;
-  border-radius: 999px; padding: 14px 36px;
-  font-family: 'Fredoka One', cursive; font-size: 22px;
-  cursor: pointer;
-  box-shadow: 0 6px 0 #c0392b;
-  transition: transform .1s;
-}
-.cel-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #c0392b; }
+    .btns{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
 
-.streak-fire { display: inline-block; transition: transform .2s; }
-.streak-fire.big { animation: firePulse .4s ease; }
-@keyframes firePulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.5)} }
+    .btn{
+      display:inline-block;
+      text-decoration:none;
+      padding:11px 16px;
+      border-radius:12px;
+      font-weight:700;
+      font-size:14px;
+    }
 
-@media (max-width: 380px) {
-  .num, .answer-display { font-size: 44px; }
-  .operator-display, .equals { font-size: 38px; }
-  .np-btn { padding: 14px; font-size: 24px; }
-}
-/* Malé výšky obrazovky (landscape mobil) */
-@media (max-height: 600px) {
-  .mascot-stage { width: 70px; height: 70px; }
-  .mascot-face svg { width: 70px; height: 70px; }
-  .mascot-name { display: none; }
-  .card { gap: 12px; padding: 16px 14px; }
-  .np-btn { padding: 12px; font-size: 22px; }
-  .num, .answer-display { font-size: 40px; }
-}
-/* Tablet — větší klávesy */
-@media (min-width: 600px) {
-  .numpad { max-width: 340px; }
-  .np-btn { padding: 22px; font-size: 32px; }
-  .num { font-size: 64px; }
-  .answer-display { font-size: 64px; min-width: 100px; height: 80px; }
-}
-</style>
+    .btn.primary{
+      background:var(--accent);
+      color:#fff;
+    }
+
+    .btn.secondary{
+      background:#f4f7fb;
+      color:#334155;
+      border:1px solid #dbe3ef;
+    }
+
+    .tiny{
+      margin-top:10px;
+      font-size:12px;
+      color:#8a94a6;
+    }
+
+    @media (max-width: 640px){
+      .wrap{padding:10px}
+      .hero,.cta{padding:14px}
+      h1{font-size:23px}
+      .cta h2{font-size:19px}
+      iframe{height:900px}
+    }
+  </style>
 </head>
 <body>
 
-<div class="app">
-  <div class="header">
-    <div class="logo">Matika<span>Hra</span> 🎲</div>
-  </div>
+  <div class="wrap">
 
-  <div class="scorebar">
-    <div class="badge" id="badgeScore">⭐ <span id="scoreVal">0</span></div>
-    <div class="badge" id="badgeStreak"><span class="streak-fire" id="streakFire">🔥</span> <span id="streakVal">0</span></div>
-    <div class="badge" id="badgeLevel">🏅 Level <span id="levelVal">1</span></div>
-  </div>
+    <div class="hero">
+      <div class="topnote">🎁 Modul zdarma (beta)</div>
 
-  <div class="ops">
-    <button class="op-btn active" data-op="+" onclick="setOp('+')">+</button>
-    <button class="op-btn" data-op="-" onclick="setOp('-')">−</button>
-    <button class="op-btn" data-op="×" onclick="setOp('×')">×</button>
-    <button class="op-btn" data-op="÷" onclick="setOp('÷')">÷</button>
-  </div>
+      <h1>Matematika pro děti hravě a bez stresu</h1>
 
-  <div class="diff-row">
-    <button class="diff-btn active" data-diff="easy"   onclick="setDiff('easy')">😊 Lehké</button>
-    <button class="diff-btn"        data-diff="medium" onclick="setDiff('medium')">😎 Střední</button>
-    <button class="diff-btn"        data-diff="hard"   onclick="setDiff('hard')">🔥 Těžké</button>
-  </div>
+      <p class="sub">
+        Vyzkoušejte první interaktivní modul zdarma. Dítě počítá, sbírá body,
+        drží sérii správných odpovědí a učí se formou hry.
+      </p>
 
-  <div class="card">
-    <div class="mascot-stage">
-      <div class="mascot-flipper" id="mascotFlipper">
-        <div class="mascot-face" id="mascotFace"></div>
+      <div class="badges">
+        <span class="badge">Bez registrace</span>
+        <span class="badge">Hned začínáte</span>
+        <span class="badge">Počítání hrou</span>
+        <span class="badge">Pro menší děti</span>
       </div>
     </div>
-    <div class="mascot-name" id="mascotName">Sovička</div>
 
-    <div class="task" id="taskRow">
-      <div class="num" id="num1">—</div>
-      <div class="operator-display" id="opDisplay" style="color:var(--add)">+</div>
-      <div class="num" id="num2">—</div>
-      <div class="equals">=</div>
-      <div class="answer-display" id="ansDisplay">?</div>
+    <div class="module-box">
+      <iframe src="matikahra.html"></iframe>
     </div>
 
-    <div class="feedback" id="feedback"></div>
+    <div class="cta">
+      <h2>Líbilo se vašemu dítěti počítání hrou?</h2>
 
-    <div class="progress-wrap">
-      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      <p>
+        Toto je první ochutnávka z projektu FajnDoučko. Připravené máme i další
+        moduly matematiky – rovnice, převody jednotek, geometrické výpočty,
+        soustavy rovnic a další.
+      </p>
+
+      <div class="btns">
+        <a href="mailto:podpora@fajndoucko.cz" class="btn primary">Napište nám</a>
+        <a href="mailto:podpora@fajndoucko.cz" class="btn secondary">Nahlásit chybu</a>
+      </div>
+
+      <div class="tiny">
+        Máte nápad nebo jste našli chybu? Budeme rádi za zpětnou vazbu.
+      </div>
     </div>
 
-    <div class="numpad">
-      <button class="np-btn" onclick="npPress('7')">7</button>
-      <button class="np-btn" onclick="npPress('8')">8</button>
-      <button class="np-btn" onclick="npPress('9')">9</button>
-      <button class="np-btn" onclick="npPress('4')">4</button>
-      <button class="np-btn" onclick="npPress('5')">5</button>
-      <button class="np-btn" onclick="npPress('6')">6</button>
-      <button class="np-btn" onclick="npPress('1')">1</button>
-      <button class="np-btn" onclick="npPress('2')">2</button>
-      <button class="np-btn" onclick="npPress('3')">3</button>
-      <button class="np-btn del-btn" onclick="npDel()">⌫</button>
-      <button class="np-btn" onclick="npPress('0')">0</button>
-      <button class="np-btn ok-btn" onclick="npOk()">✓ Hotovo</button>
-    </div>
   </div>
-</div>
 
-<div class="celebration" id="celebration">
-  <div class="cel-box">
-    <div class="cel-emoji" id="celEmoji">🎉</div>
-    <div class="cel-title" id="celTitle">Super!</div>
-    <div class="cel-sub"   id="celSub">10 příkladů splněno!</div>
-    <button class="cel-btn" onclick="hideCelebration()">Hrát dál! 🚀</button>
-  </div>
-</div>
-
-<script>
-// ─── MASCOTS ────────────────────────────────────────────────────────────────
-const MASCOTS = [
-  {
-    name: "Sovička",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="62" rx="30" ry="32" fill="#FFB347"/>
-      <circle cx="50" cy="35" r="26" fill="#FFB347"/>
-      <polygon points="28,16 22,4 36,12" fill="#FF8C00"/>
-      <polygon points="72,16 78,4 64,12" fill="#FF8C00"/>
-      <ellipse cx="50" cy="38" rx="18" ry="16" fill="#FFF3E0"/>
-      <circle cx="41" cy="34" r="8" fill="white"/>
-      <circle cx="59" cy="34" r="8" fill="white"/>
-      <circle class="pupilL" cx="42" cy="35" r="5" fill="#2D3436"/>
-      <circle class="pupilR" cx="60" cy="35" r="5" fill="#2D3436"/>
-      <circle cx="44" cy="33" r="2" fill="white"/>
-      <circle cx="62" cy="33" r="2" fill="white"/>
-      <polygon points="50,40 45,46 55,46" fill="#FF8C00"/>
-      <ellipse cx="23" cy="65" rx="10" ry="16" fill="#FF8C00" transform="rotate(-15,23,65)"/>
-      <ellipse cx="77" cy="65" rx="10" ry="16" fill="#FF8C00" transform="rotate(15,77,65)"/>
-      <ellipse cx="50" cy="68" rx="14" ry="18" fill="#FFE0B2"/>
-      <ellipse cx="40" cy="93" rx="8" ry="5" fill="#FF8C00"/>
-      <ellipse cx="60" cy="93" rx="8" ry="5" fill="#FF8C00"/>
-      <circle cx="34" cy="42" r="5" fill="#FF8C00" opacity=".35"/>
-      <circle cx="66" cy="42" r="5" fill="#FF8C00" opacity=".35"/>
-    </svg>`
-  },
-  {
-    name: "Zajíček",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="68" rx="28" ry="26" fill="#F8C8DC"/>
-      <circle cx="50" cy="42" r="24" fill="#F8C8DC"/>
-      <ellipse cx="36" cy="14" rx="7" ry="18" fill="#F8C8DC"/>
-      <ellipse cx="64" cy="14" rx="7" ry="18" fill="#F8C8DC"/>
-      <ellipse cx="36" cy="14" rx="4" ry="14" fill="#FFB6C1" opacity=".8"/>
-      <ellipse cx="64" cy="14" rx="4" ry="14" fill="#FFB6C1" opacity=".8"/>
-      <ellipse cx="50" cy="44" rx="15" ry="13" fill="white" opacity=".6"/>
-      <circle cx="42" cy="38" r="6" fill="white"/>
-      <circle cx="58" cy="38" r="6" fill="white"/>
-      <circle cx="43" cy="39" r="4" fill="#2D3436"/>
-      <circle cx="59" cy="39" r="4" fill="#2D3436"/>
-      <circle cx="44" cy="38" r="1.5" fill="white"/>
-      <circle cx="60" cy="38" r="1.5" fill="white"/>
-      <ellipse cx="50" cy="48" rx="5" ry="3" fill="#FFB6C1"/>
-      <path d="M46,51 Q50,54 54,51" fill="none" stroke="#2D3436" stroke-width="1.5" stroke-linecap="round"/>
-      <circle cx="34" cy="46" r="5" fill="#FFB6C1" opacity=".5"/>
-      <circle cx="66" cy="46" r="5" fill="#FFB6C1" opacity=".5"/>
-      <ellipse cx="50" cy="90" rx="10" ry="7" fill="#F0A0B8"/>
-      <circle cx="38" cy="82" r="6" fill="#F8C8DC"/>
-      <circle cx="62" cy="82" r="6" fill="#F8C8DC"/>
-    </svg>`
-  },
-  {
-    name: "Veverka",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <path d="M72,85 Q90,70 88,50 Q86,30 72,28 Q80,20 76,10 Q64,18 62,28" fill="#C0692B"/>
-      <ellipse cx="46" cy="65" rx="26" ry="28" fill="#C0692B"/>
-      <circle cx="46" cy="40" r="22" fill="#C0692B"/>
-      <ellipse cx="34" cy="22" rx="7" ry="10" fill="#C0692B"/>
-      <ellipse cx="56" cy="22" rx="7" ry="10" fill="#C0692B"/>
-      <ellipse cx="46" cy="43" rx="14" ry="12" fill="#F4D0A0"/>
-      <circle cx="40" cy="37" r="6" fill="white"/>
-      <circle cx="52" cy="37" r="6" fill="white"/>
-      <circle cx="41" cy="38" r="4" fill="#2D3436"/>
-      <circle cx="53" cy="38" r="4" fill="#2D3436"/>
-      <circle cx="42" cy="37" r="1.5" fill="white"/>
-      <circle cx="54" cy="37" r="1.5" fill="white"/>
-      <ellipse cx="46" cy="47" rx="4" ry="2.5" fill="#D4956A"/>
-      <path d="M42,50 Q46,53 50,50" fill="none" stroke="#2D3436" stroke-width="1.5" stroke-linecap="round"/>
-      <ellipse cx="46" cy="72" rx="12" ry="16" fill="#F4D0A0"/>
-    </svg>`
-  },
-  {
-    name: "Tučňáček",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="65" rx="28" ry="30" fill="#2D3436"/>
-      <circle cx="50" cy="38" r="24" fill="#2D3436"/>
-      <ellipse cx="50" cy="65" rx="18" ry="22" fill="white"/>
-      <ellipse cx="50" cy="40" rx="15" ry="17" fill="white"/>
-      <circle cx="42" cy="34" r="7" fill="white"/>
-      <circle cx="58" cy="34" r="7" fill="white"/>
-      <circle cx="43" cy="35" r="5" fill="#2D3436"/>
-      <circle cx="59" cy="35" r="5" fill="#2D3436"/>
-      <circle cx="44" cy="33" r="2" fill="white"/>
-      <circle cx="60" cy="33" r="2" fill="white"/>
-      <polygon points="50,42 45,48 55,48" fill="#FF9500"/>
-      <ellipse cx="28" cy="65" rx="8" ry="18" fill="#2D3436"/>
-      <ellipse cx="72" cy="65" rx="8" ry="18" fill="#2D3436"/>
-      <ellipse cx="38" cy="90" rx="10" ry="6" fill="#FF9500"/>
-      <ellipse cx="62" cy="90" rx="10" ry="6" fill="#FF9500"/>
-      <circle cx="50" cy="18" rx="8" fill="#FFD700" opacity=".8"/>
-    </svg>`
-  },
-  {
-    name: "Pejsek",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="68" rx="27" ry="25" fill="#C8A870"/>
-      <circle cx="50" cy="42" r="24" fill="#C8A870"/>
-      <ellipse cx="33" cy="25" rx="9" ry="14" fill="#C8A870" transform="rotate(-15,33,25)"/>
-      <ellipse cx="67" cy="25" rx="9" ry="14" fill="#C8A870" transform="rotate(15,67,25)"/>
-      <ellipse cx="33" cy="26" rx="6" ry="10" fill="#A0784C" transform="rotate(-15,33,26)"/>
-      <ellipse cx="67" cy="26" rx="6" ry="10" fill="#A0784C" transform="rotate(15,67,26)"/>
-      <circle cx="41" cy="38" r="7" fill="white"/>
-      <circle cx="59" cy="38" r="7" fill="white"/>
-      <circle cx="42" cy="39" r="5" fill="#2D3436"/>
-      <circle cx="60" cy="39" r="5" fill="#2D3436"/>
-      <circle cx="43" cy="38" r="2" fill="white"/>
-      <circle cx="61" cy="38" r="2" fill="white"/>
-      <ellipse cx="50" cy="50" rx="10" ry="8" fill="#E8C090"/>
-      <ellipse cx="50" cy="52" rx="6" ry="4" fill="#FF8080"/>
-      <path d="M44,56 Q50,60 56,56" fill="none" stroke="#2D3436" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="34" cy="46" r="5" fill="#D4A878" opacity=".5"/>
-      <circle cx="66" cy="46" r="5" fill="#D4A878" opacity=".5"/>
-      <ellipse cx="50" cy="88" rx="12" ry="8" fill="#A0784C"/>
-    </svg>`
-  },
-  {
-    name: "Myšička",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="66" rx="25" ry="27" fill="#B0B0B0"/>
-      <circle cx="50" cy="42" r="23" fill="#B0B0B0"/>
-      <circle cx="33" cy="22" r="12" fill="#B0B0B0"/>
-      <circle cx="67" cy="22" r="12" fill="#B0B0B0"/>
-      <circle cx="33" cy="22" r="9" fill="#FFB6C1"/>
-      <circle cx="67" cy="22" r="9" fill="#FFB6C1"/>
-      <ellipse cx="50" cy="44" rx="14" ry="12" fill="#D8D8D8"/>
-      <circle cx="42" cy="37" r="6" fill="white"/>
-      <circle cx="58" cy="37" r="6" fill="white"/>
-      <circle cx="43" cy="38" r="4.5" fill="#2D3436"/>
-      <circle cx="59" cy="38" r="4.5" fill="#2D3436"/>
-      <circle cx="44" cy="37" r="1.5" fill="white"/>
-      <circle cx="60" cy="37" r="1.5" fill="white"/>
-      <ellipse cx="50" cy="48" rx="4" ry="3" fill="#FFB6C1"/>
-      <line x1="30" y1="48" x2="48" y2="50" stroke="#888" stroke-width="1" opacity=".6"/>
-      <line x1="30" y1="52" x2="48" y2="52" stroke="#888" stroke-width="1" opacity=".6"/>
-      <line x1="52" y1="50" x2="70" y2="48" stroke="#888" stroke-width="1" opacity=".6"/>
-      <line x1="52" y1="52" x2="70" y2="52" stroke="#888" stroke-width="1" opacity=".6"/>
-      <path d="M50,90 Q65,85 68,70" fill="none" stroke="#B0B0B0" stroke-width="4" stroke-linecap="round"/>
-    </svg>`
-  },
-  {
-    name: "Kočička",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="66" rx="27" ry="26" fill="#F4A460"/>
-      <circle cx="50" cy="41" r="24" fill="#F4A460"/>
-      <polygon points="28,22 22,6 38,18" fill="#F4A460"/>
-      <polygon points="72,22 78,6 62,18" fill="#F4A460"/>
-      <polygon points="29,21 24,9 37,18" fill="#FFB6C1"/>
-      <polygon points="71,21 76,9 63,18" fill="#FFB6C1"/>
-      <ellipse cx="50" cy="44" rx="16" ry="14" fill="#FDDCB0"/>
-      <ellipse cx="41" cy="37" rx="5" ry="7" fill="white"/>
-      <ellipse cx="59" cy="37" rx="5" ry="7" fill="white"/>
-      <ellipse cx="41" cy="38" rx="3" ry="5.5" fill="#2D8B22"/>
-      <ellipse cx="59" cy="38" rx="3" ry="5.5" fill="#2D8B22"/>
-      <ellipse cx="41" cy="39" rx="1.5" ry="4" fill="#2D3436"/>
-      <ellipse cx="59" cy="39" rx="1.5" ry="4" fill="#2D3436"/>
-      <circle cx="42" cy="36" r="1.5" fill="white"/>
-      <circle cx="60" cy="36" r="1.5" fill="white"/>
-      <ellipse cx="50" cy="49" rx="4" ry="3" fill="#FF8080"/>
-      <path d="M46,52 Q50,56 54,52" fill="none" stroke="#2D3436" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="28" y1="48" x2="46" y2="50" stroke="#888" stroke-width="1.2" opacity=".7"/>
-      <line x1="28" y1="52" x2="46" y2="52" stroke="#888" stroke-width="1.2" opacity=".7"/>
-      <line x1="54" y1="50" x2="72" y2="48" stroke="#888" stroke-width="1.2" opacity=".7"/>
-      <line x1="54" y1="52" x2="72" y2="52" stroke="#888" stroke-width="1.2" opacity=".7"/>
-      <circle cx="34" cy="45" r="5" fill="#F4A460" opacity=".4"/>
-      <circle cx="66" cy="45" r="5" fill="#F4A460" opacity=".4"/>
-    </svg>`
-  },
-  {
-    name: "Strašidýlko",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20,95 Q20,40 50,20 Q80,40 80,95 Q72,88 65,95 Q57,88 50,95 Q43,88 35,95 Q28,88 20,95 Z" fill="#C8B4FF"/>
-      <circle cx="41" cy="52" r="9" fill="white"/>
-      <circle cx="59" cy="52" r="9" fill="white"/>
-      <circle cx="42" cy="53" r="6.5" fill="#2D3436"/>
-      <circle cx="60" cy="53" r="6.5" fill="#2D3436"/>
-      <circle cx="44" cy="51" r="2.5" fill="white"/>
-      <circle cx="62" cy="51" r="2.5" fill="white"/>
-      <path d="M40,66 Q50,72 60,66" fill="none" stroke="#2D3436" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="44" cy="68" r="2" fill="#2D3436"/>
-      <circle cx="50" cy="70" r="2" fill="#2D3436"/>
-      <circle cx="56" cy="68" r="2" fill="#2D3436"/>
-      <ellipse cx="50" cy="32" rx="8" ry="6" fill="#EAD8FF" opacity=".7"/>
-    </svg>`
-  },
-  {
-    name: "Želvička",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="62" rx="34" ry="28" fill="#5DAA5D"/>
-      <ellipse cx="50" cy="58" rx="28" ry="22" fill="#3D8B3D"/>
-      <ellipse cx="50" cy="56" rx="20" ry="16" fill="#5DAA5D"/>
-      <path d="M32,52 L50,38 L68,52" fill="#3D8B3D" stroke="#3D8B3D" stroke-width="2"/>
-      <line x1="50" y1="40" x2="50" y2="72" stroke="#3D8B3D" stroke-width="2.5"/>
-      <line x1="24" y1="58" x2="76" y2="58" stroke="#3D8B3D" stroke-width="2.5"/>
-      <circle cx="50" cy="36" r="18" fill="#8BC08B"/>
-      <ellipse cx="50" cy="37" rx="13" ry="11" fill="#A8D8A8"/>
-      <circle cx="42" cy="32" r="5.5" fill="white"/>
-      <circle cx="58" cy="32" r="5.5" fill="white"/>
-      <circle cx="43" cy="33" r="4" fill="#2D6B2D"/>
-      <circle cx="59" cy="33" r="4" fill="#2D6B2D"/>
-      <circle cx="44" cy="32" r="1.5" fill="white"/>
-      <circle cx="60" cy="32" r="1.5" fill="white"/>
-      <ellipse cx="50" cy="42" rx="5" ry="3.5" fill="#7AB07A"/>
-      <path d="M46,45 Q50,48 54,45" fill="none" stroke="#2D3436" stroke-width="1.5" stroke-linecap="round"/>
-      <ellipse cx="24" cy="72" rx="8" ry="5" fill="#5DAA5D"/>
-      <ellipse cx="76" cy="72" rx="8" ry="5" fill="#5DAA5D"/>
-      <ellipse cx="32" cy="84" rx="8" ry="5" fill="#5DAA5D"/>
-      <ellipse cx="68" cy="84" rx="8" ry="5" fill="#5DAA5D"/>
-    </svg>`
-  },
-  {
-    name: "Krteček",
-    svg: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="68" rx="26" ry="24" fill="#6B4C3B"/>
-      <circle cx="50" cy="44" r="24" fill="#6B4C3B"/>
-      <ellipse cx="50" cy="46" rx="16" ry="14" fill="#8B6655"/>
-      <ellipse cx="50" cy="54" rx="20" ry="10" fill="#8B6655"/>
-      <circle cx="41" cy="37" r="7" fill="white" opacity=".7"/>
-      <circle cx="59" cy="37" r="7" fill="white" opacity=".7"/>
-      <circle cx="41" cy="37" r="5" fill="#2D1A0E"/>
-      <circle cx="59" cy="37" r="5" fill="#2D1A0E"/>
-      <circle cx="42" cy="36" r="2" fill="white"/>
-      <circle cx="60" cy="36" r="2" fill="white"/>
-      <ellipse cx="50" cy="50" rx="8" ry="6" fill="#A07060"/>
-      <ellipse cx="50" cy="52" rx="5" ry="3.5" fill="#FF9090"/>
-      <path d="M45,56 Q50,60 55,56" fill="none" stroke="#2D1A0E" stroke-width="1.5" stroke-linecap="round"/>
-      <ellipse cx="26" cy="65" rx="12" ry="8" fill="#5A3D2C" transform="rotate(-30,26,65)"/>
-      <ellipse cx="74" cy="65" rx="12" ry="8" fill="#5A3D2C" transform="rotate(30,74,65)"/>
-      <circle cx="35" cy="44" r="5" fill="#8B6655" opacity=".4"/>
-      <circle cx="65" cy="44" r="5" fill="#8B6655" opacity=".4"/>
-      <ellipse cx="38" cy="88" rx="9" ry="6" fill="#5A3D2C"/>
-      <ellipse cx="62" cy="88" rx="9" ry="6" fill="#5A3D2C"/>
-    </svg>`
-  },
-];
-
-let mascotIdx = 0;
-
-const renderMascot = () => {
-  document.getElementById('mascotFace').innerHTML  = MASCOTS[mascotIdx].svg;
-  document.getElementById('mascotName').textContent = MASCOTS[mascotIdx].name;
-};
-
-const flipToNext = () => {
-  const flipper = document.getElementById('mascotFlipper');
-  flipper.classList.remove('bounce', 'shake', 'flipping');
-  void flipper.offsetWidth;
-  flipper.classList.add('flipping');
-
-  // Swap maskot v půlce animace
-  setTimeout(() => {
-    mascotIdx = (mascotIdx + 1) % MASCOTS.length;
-    renderMascot();
-  }, 275);
-
-  // Odstraň třídu po skončení animace — timeout místo animationend
-  // (animationend není spolehlivý na mobilu při backgroundu/zamknutí)
-  setTimeout(() => {
-    flipper.classList.remove('flipping');
-  }, 560);
-};
-
-// ─── STATE ──────────────────────────────────────────────────────────────────
-let op       = '+';
-let diff     = 'easy';
-let current  = { a: 0, b: 0, ans: 0 };
-let inputStr = '';
-let score    = 0;
-let streak   = 0;
-let level    = 1;
-let roundQ   = 0;
-const ROUND   = 10;
-const SAVE_KEY = 'matikahraj_v2';
-
-const loadProg = () => {
-  try {
-    const d = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
-    score  = d.score  || 0;
-    streak = d.streak || 0;
-    level  = d.level  || 1;
-  } catch(_) {}
-  renderStats();
-};
-const saveProg = () => {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify({ score, streak, level })); } catch(_) {}
-};
-
-// ─── WEB AUDIO ───────────────────────────────────────────────────────────────
-let actx = null;
-const ctx = () => {
-  if (!actx) {
-    try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch(_) {}
-  }
-  // iOS suspenduje AudioContext po neaktivitě — probuď ho
-  if (actx && actx.state === 'suspended') {
-    actx.resume().catch(() => {});
-  }
-  return actx;
-};
-const tone = (freq, type, dur, vol=0.18, startTime=0) => {
-  const c = ctx(); if (!c) return;
-  const t = c.currentTime + startTime;
-  try {
-    const o = c.createOscillator(), g = c.createGain();
-    o.connect(g); g.connect(c.destination);
-    o.type = type; o.frequency.value = freq;
-    g.gain.setValueAtTime(vol, t);
-    g.gain.exponentialRampToValueAtTime(.001, t + dur);
-    o.start(t); o.stop(t + dur);
-  } catch(_) {}
-};
-
-// "Jééé!" — ascending arpeggio + vibrato-like shimmer, vocal feel
-let _okSoundIdx = 0;
-const OK_SOUNDS = [
-  // 0: Vzestupný arpeggio do-mi-sol
-  () => { tone(330,'sine',.12,.15,0); tone(415,'sine',.12,.15,.08); tone(523,'sine',.18,.18,.16); tone(660,'sine',.2,.15,.26); },
-  // 1: Fanfára si-re-fa#-si
-  () => { tone(494,'sine',.1,.15,0); tone(587,'sine',.1,.15,.07); tone(740,'sine',.1,.15,.14); tone(988,'sine',.22,.18,.21); },
-  // 2: Rychlý tryl nahoru
-  () => { [440,494,523,587,659,784].forEach((f,i)=>tone(f,'sine',.08,.15,i*.06)); },
-  // 3: Zvonkový pop
-  () => { tone(1047,'sine',.25,.12,0); tone(1319,'sine',.2,.12,.06); tone(1568,'sine',.25,.12,.12); },
-  // 4: Poskakovací durový terciový skok
-  () => { tone(392,'sine',.12,.15,0); tone(523,'sine',.12,.15,.1); tone(659,'sine',.12,.15,.2); tone(784,'sine',.2,.18,.3); },
-  // 5: Jazzový lick nahoru
-  () => { tone(330,'sine',.08,.15,0); tone(370,'sine',.08,.12,.06); tone(415,'sine',.08,.12,.12); tone(494,'sine',.08,.12,.18); tone(554,'sine',.15,.18,.24); tone(659,'sine',.2,.15,.32); },
-  // 6: Magický hvězdičkový shimmer
-  () => { [880,1047,1319,1568,2093].forEach((f,i)=>tone(f,'sine',.15,.12+i*.02,i*.04)); },
-  // 7: Funky dvoutónový skokánek
-  () => { tone(440,'square',.08,.08,0); tone(880,'sine',.08,.12,.08); tone(440,'square',.08,.08,.16); tone(1047,'sine',.2,.15,.24); },
-  // 8: Tympán + výšky
-  () => { tone(196,'triangle',.15,.2,0); tone(523,'sine',.1,.15,.05); tone(784,'sine',.1,.12,.1); tone(1047,'sine',.18,.1,.15); },
-  // 9: Blahopřejný fanfárový trojznak
-  () => { tone(523,'sine',.15,.18,0); tone(659,'sine',.15,.18,.1); tone(784,'sine',.15,.18,.2); tone(1047,'sine',.3,.2,.3); tone(784,'sine',.1,.1,.55); tone(1047,'sine',.2,.15,.65); },
-];
-const soundOk = () => {
-  OK_SOUNDS[_okSoundIdx % OK_SOUNDS.length]();
-  _okSoundIdx++;
-};
-
-// "O-ou..." — descending two-step, like a child's "aw"
-const soundErr = () => {
-  tone(370, 'sine', .18, .18, 0);
-  tone(280, 'sine', .12, .15, .14);
-  tone(220, 'sine', .22, .15, .22);
-  // Low thud
-  tone(110, 'triangle', .18, .10, .36);
-};
-
-// Level up fanfare
-const soundLvl = () => {
-  [262,330,392,523,659,784].forEach((f,i) => tone(f, 'sine', .18, .2, i*.08));
-};
-
-// ─── GENERATE ───────────────────────────────────────────────────────────────
-const ranges = {
-  easy:   { add:[1,10],  sub:[1,10],  mul:[1,5],  div:[1,5]  },
-  medium: { add:[5,20],  sub:[5,20],  mul:[2,10], div:[2,10] },
-  hard:   { add:[10,50], sub:[10,50], mul:[3,12], div:[3,12] },
-};
-const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
-
-const generate = () => {
-  canAnswer = true;  // vždy odblokuj při novém příkladu
-  const r = ranges[diff];
-  let a, b, ans;
-  if (op==='+')      { a=rnd(...r.add); b=rnd(...r.add); ans=a+b; }
-  else if (op==='-') { a=rnd(...r.sub); b=rnd(...r.sub); if(b>a)[a,b]=[b,a]; ans=a-b; }
-  else if (op==='×') { a=rnd(...r.mul); b=rnd(...r.mul); ans=a*b; }
-  else               { b=rnd(...r.div); ans=rnd(...r.div); a=b*ans; }
-  current = { a, b, ans };
-  inputStr = '';
-  renderTask();
-  document.getElementById('feedback').textContent = '';
-  document.getElementById('feedback').className = 'feedback';
-  const ad = document.getElementById('ansDisplay');
-  ad.textContent = '?';
-  ad.className = 'answer-display';
-};
-
-// ─── RENDER ─────────────────────────────────────────────────────────────────
-const opColors  = { '+':'var(--add)', '-':'var(--sub)', '×':'var(--mul)', '÷':'var(--div)' };
-const opSymbols = { '+':'+', '-':'−', '×':'×', '÷':'÷' };
-
-const renderTask = () => {
-  document.getElementById('num1').textContent = current.a;
-  document.getElementById('num2').textContent = current.b;
-  const od = document.getElementById('opDisplay');
-  od.textContent = opSymbols[op];
-  od.style.color = opColors[op];
-};
-const renderStats = () => {
-  document.getElementById('scoreVal').textContent  = score;
-  document.getElementById('streakVal').textContent = streak;
-  document.getElementById('levelVal').textContent  = level;
-  document.getElementById('progressFill').style.width = (roundQ/ROUND*100)+'%';
-};
-
-// ─── NUMPAD ──────────────────────────────────────────────────────────────────
-const npPress = d => {
-  if (inputStr.length >= 4) return;
-  inputStr += d;
-  document.getElementById('ansDisplay').textContent = inputStr || '?';
-  document.getElementById('ansDisplay').className = 'answer-display';
-};
-const npDel = () => {
-  inputStr = inputStr.slice(0,-1);
-  document.getElementById('ansDisplay').textContent = inputStr || '?';
-};
-const npOk = () => { if (inputStr) checkAnswer(); };
-
-// ─── CHECK ────────────────────────────────────────────────────────────────────
-let canAnswer = true;
-
-const checkAnswer = () => {
-  if (!canAnswer) return;
-  const given = parseInt(inputStr, 10);
-  const ad = document.getElementById('ansDisplay');
-  const fb = document.getElementById('feedback');
-
-  if (given === current.ans) {
-    canAnswer = false;
-    ad.textContent = given;
-    ad.className = 'answer-display correct';
-    soundOk();
-
-    score++;
-    streak++;
-    roundQ++;
-    if (streak % 5 === 0) {
-      document.getElementById('streakFire').classList.add('big');
-      setTimeout(() => document.getElementById('streakFire').classList.remove('big'), 500);
-    }
-    const newLevel = Math.floor(score/20)+1;
-    if (newLevel > level) { level = newLevel; soundLvl(); }
-
-    saveProg();
-    renderStats();
-
-    // Flip mascot to next character
-    flipToNext();
-
-    const phrases = ['Výborně! 🌟','Super! 🎉','Skvělé! 💪','Perfektní! 🔥','Parádní! ⭐','Úžasné! 🌈','Bomba! 💥'];
-    fb.textContent = phrases[Math.floor(Math.random()*phrases.length)];
-    fb.className = 'feedback ok';
-
-    document.getElementById('badgeScore').classList.add('pop');
-    setTimeout(() => document.getElementById('badgeScore').classList.remove('pop'), 300);
-
-    launchConfetti();
-
-    if (roundQ >= ROUND) {
-      roundQ = 0;
-      renderStats();
-      setTimeout(() => showCelebration(), 800);
-    } else {
-      setTimeout(() => { canAnswer = true; generate(); }, 1100);
-    }
-
-  } else {
-    canAnswer = false;
-    ad.textContent = given;
-    ad.className = 'answer-display wrong';
-    soundErr();
-    streak = 0;
-    saveProg();
-    renderStats();
-
-    // Shake mascot
-    const flipper = document.getElementById('mascotFlipper');
-    flipper.classList.remove('bounce','shake','flipping');
-    void flipper.offsetWidth;
-    flipper.classList.add('shake');
-    setTimeout(() => flipper.classList.remove('shake'), 450);
-
-    fb.textContent = `Ehm... správně je ${current.ans} 😅`;
-    fb.className = 'feedback err';
-    inputStr = '';
-
-    setTimeout(() => {
-      canAnswer = true;
-      ad.textContent = '?';
-      ad.className = 'answer-display';
-      fb.textContent = '';
-      fb.className = 'feedback';
-    }, 1900);
-  }
-};
-
-// ─── CONFETTI ────────────────────────────────────────────────────────────────
-const COLORS = ['#FF6B6B','#FFE66D','#4ECDC4','#A29BFE','#55EFC4','#fd79a8','#74b9ff'];
-const launchConfetti = (count=18) => {
-  for (let i=0; i<count; i++) {
-    setTimeout(() => {
-      const el = document.createElement('div');
-      el.className = 'confetti-piece';
-      const dur = .8 + Math.random() * 1.2;
-      el.style.cssText = `left:${Math.random()*100}vw;top:-20px;background:${COLORS[Math.floor(Math.random()*COLORS.length)]};transform:rotateZ(${Math.random()*360}deg);animation-duration:${dur}s`;
-      document.body.appendChild(el);
-      // Timeout jako záloha — animationend není na mobilu spolehlivý
-      const cleanup = () => { if (el.parentNode) el.remove(); };
-      el.addEventListener('animationend', cleanup, { once: true });
-      setTimeout(cleanup, (dur + 0.5) * 1000);
-    }, i*45);
-  }
-};
-
-// ─── CELEBRATION ─────────────────────────────────────────────────────────────
-const roundEmojis = ['🎉','🏆','🌈','🚀','⚡','🎯','💎','🦄'];
-const showCelebration = () => {
-  document.getElementById('celEmoji').textContent = roundEmojis[Math.floor(Math.random()*roundEmojis.length)];
-  document.getElementById('celTitle').textContent = `${ROUND} příkladů! Hurá!`;
-  document.getElementById('celSub').textContent   = `Celkem ⭐ ${score} bodů · Level ${level}`;
-  document.getElementById('celebration').classList.add('show');
-  launchConfetti(32);
-  soundLvl();
-};
-const hideCelebration = () => {
-  document.getElementById('celebration').classList.remove('show');
-  generate();
-};
-
-// ─── SETTERS ─────────────────────────────────────────────────────────────────
-const setOp = o => {
-  op = o;
-  document.querySelectorAll('.op-btn').forEach(b => b.classList.toggle('active', b.dataset.op===o));
-  generate();
-};
-const setDiff = d => {
-  diff = d;
-  document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.dataset.diff===d));
-  generate();
-};
-
-// ─── KEYBOARD ────────────────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter')     { e.preventDefault(); npOk(); return; }
-  if (e.key === 'Backspace') { e.preventDefault(); npDel(); return; }
-  if (e.key >= '0' && e.key <= '9') npPress(e.key);
-});
-
-document.querySelectorAll('.np-btn').forEach(btn => {
-  btn.addEventListener('pointerdown', () => {
-    btn.classList.add('pressed');
-    setTimeout(() => btn.classList.remove('pressed'), 120);
-  });
-});
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-// iOS: probuď AudioContext při prvním dotyku
-document.addEventListener('pointerdown', () => {
-  if (actx && actx.state === 'suspended') actx.resume().catch(() => {});
-}, { passive: true });
-
-// Probuď AudioContext při návratu záložky do popředí
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && actx && actx.state === 'suspended') {
-    actx.resume().catch(() => {});
-  }
-});
-
-loadProg();
-renderMascot();
-generate();
-</script>
 </body>
 </html>
