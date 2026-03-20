@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <meta name="theme-color" content="#FFF8F0"/>
-<title>Matýsek a Terezka učí angličtinu</title>
+<title>🇬🇧 Angličtina pro začátečníky</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet"/>
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 <style>
@@ -244,6 +244,46 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .mem-word-text{font-family:'Fredoka One',cursive;font-size:13px;color:var(--dark);text-align:center;line-height:1.2;word-break:break-word}
 
 /* Rhyme */
+
+/* ── FLASHCARD TRENÉŘI ── */
+.flash-card-wrap{perspective:800px;margin:12px 0}
+.flash-card{width:100%;min-height:220px;border-radius:var(--r);position:relative;
+  transform-style:preserve-3d;transition:transform .45s ease;cursor:pointer}
+.flash-card.flipped{transform:rotateY(180deg)}
+.flash-front,.flash-back{position:absolute;inset:0;border-radius:var(--r);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;backface-visibility:hidden;box-shadow:var(--shadow)}
+.flash-front{background:white;border:3px solid var(--border)}
+.flash-back{background:var(--warm);border:3px solid var(--yellow);transform:rotateY(180deg)}
+.flash-emoji{font-size:72px;line-height:1;margin-bottom:12px}
+.flash-word{font-family:'Fredoka One',cursive;font-size:32px;color:var(--dark);margin-bottom:6px;text-align:center}
+.flash-sub{font-size:15px;color:var(--muted);font-weight:700;text-align:center}
+.flash-hint{font-size:13px;color:var(--muted);margin-top:16px;font-weight:600}
+.flash-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.flash-btn-wrong{border:none;border-radius:999px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;background:#FFE8E8;color:#CC3333;font-family:'Nunito',sans-serif}
+.flash-btn-ok{border:none;border-radius:999px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;background:#E8FFE8;color:#228822;font-family:'Nunito',sans-serif}
+.flash-btn-wrong:active,.flash-btn-ok:active{transform:scale(.97)}
+.flash-stats{text-align:center;padding:12px;font-size:14px;font-weight:700;color:var(--muted)}
+.flash-done-card{background:white;border-radius:var(--r);padding:28px;text-align:center;box-shadow:var(--shadow);margin:16px 0}
+.phrase-card{background:white;border-radius:var(--r);padding:24px;box-shadow:var(--shadow);margin:12px 0;border:3px solid var(--border)}
+.phrase-en{font-family:'Fredoka One',cursive;font-size:24px;color:var(--dark);text-align:center;margin-bottom:8px;line-height:1.4}
+.phrase-hl{background:var(--yellow);border-radius:6px;padding:0 5px;color:var(--dark)}
+.phrase-cz{font-size:15px;color:var(--muted);font-weight:700;text-align:center;font-style:italic;margin-bottom:14px}
+.phrase-note-box{background:var(--warm);border-radius:12px;padding:12px 16px;border-left:4px solid var(--blue);display:none;margin-top:8px}
+.phrase-note-box.on{display:block}
+.phrase-note-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);font-weight:800;margin-bottom:4px}
+.phrase-note-text{font-size:.88rem;color:var(--dark);line-height:1.55}
+.phrase-reveal-btn{width:100%;border:none;border-radius:999px;padding:13px;background:var(--blue);color:white;font-family:'Fredoka One',cursive;font-size:16px;cursor:pointer;margin-top:12px;transition:all .15s}
+.phrase-reveal-btn:active{transform:scale(.97)}
+.phrase-progress-bar{height:5px;background:var(--border);border-radius:999px;margin-bottom:14px;overflow:hidden}
+.phrase-progress-fill{height:100%;background:var(--purple);border-radius:999px;transition:width .4s ease}
+.general-flash-btn{width:100%;border:3px solid var(--yellow);border-radius:var(--r);padding:14px 16px;background:var(--warm);color:var(--dark);cursor:pointer;font-family:'Fredoka One',cursive;font-size:17px;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:var(--shadow);transition:all .15s;margin-bottom:8px}
+.general-flash-btn:hover{transform:translateY(-2px)}
+.general-flash-btn:active{transform:scale(.97)}
+.general-flash-sub{font-size:12px;color:var(--muted);font-weight:700;font-family:'Nunito',sans-serif}
+.rhyme-line-wrap{opacity:0;transform:translateY(8px);transition:all .4s ease}
+.rhyme-line-wrap.visible{opacity:1;transform:translateY(0)}
+.rhyme-cz-line{font-size:13px;color:var(--muted);font-weight:600;font-style:italic;margin-top:2px;padding:0 16px 6px;line-height:1.4}
 .rhyme-card{background:white;border-radius:var(--r);padding:28px 24px;box-shadow:var(--shadow);
   border:2px solid var(--border);margin-bottom:14px}
 .rhyme-title{font-family:'Fredoka One',cursive;font-size:22px;color:var(--dark);text-align:center;margin-bottom:20px}
@@ -333,6 +373,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
       <button class="diff-btn" data-d="medium" onclick="setDiff('medium')">🐥 Střední</button>
       <button class="diff-btn" data-d="hard" onclick="setDiff('hard')">🦅 Těžké</button>
     </div>
+    <button class="general-flash-btn" onclick="startGeneralFlash()">
+      🃏 Globální trenér slovíček
+      <span class="general-flash-sub">Všechna slovíčka ze všech témat najednou</span>
+    </button>
     <div class="section-title">Vyber téma 👇</div>
     <div class="topic-grid" id="topicGrid"></div>
   </div>
@@ -407,11 +451,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   <div class="screen" id="screenDone">
     <div id="doneContent"></div>
   </div>
+  <div class="screen" id="screenFlash">
+    <div id="flashContent"></div>
+  </div>
+  <div class="screen" id="screenPhrases">
+    <div id="phrasesContent"></div>
+  </div>
 
 </div>
 
 <script>
-const EX_KEYS = ['story','listen','match','quiz','memory','rhyme'];
+const EX_KEYS = ['flash','phrases','story','listen','match','quiz','memory','rhyme'];
 
 const APP_DATA = { topics: [
 {
@@ -450,7 +500,8 @@ const APP_DATA = { topics: [
       {en:"The butterfly flies out and lands on her nose!",cz:"Motýl vyletí a sedne si jí na nos!",bg:"#FFE8F8",char:"ter"}
     ]
   },
-  rhyme:{title:"Rainbow Rhyme",lines:["Red and yellow and pink and green,","Purple and orange and blue.","I can name a rainbow,","Name a rainbow,","Can you name it too?"]}
+  rhyme:{title:"Rainbow Rhyme",lines:["Red and yellow and pink and green,","Purple and orange and blue.","I can name a rainbow,","Name a rainbow,","Can you name it too?"],czLines:["Červená, žlutá, růžová a zelená,", "fialová, oranžová a modrá.", "Umím pojmenovat duhu,", "pojmenovat duhu,", "pojmenuješ ji i ty?"]},
+  phrases:[{en:'What colour is it?',cz:'Jaká je to barva?',hl:'is',note:'\'is\' = sloveso být pro he/she/it'},{en:'It is red.',cz:'Je to červené.',hl:'It is',note:'\'It is\' — zkrátíme na \'It\'s\''},{en:'I like blue and green.',cz:'Mám rád modrou a zelenou.',hl:'and',note:'\'and\' = a (spojuje dvě věci)'},{en:'The sky is blue.',cz:'Obloha je modrá.',hl:'The',note:'\'The\' = určitý člen — ta konkrétní obloha'},{en:'a yellow flower',cz:'žlutá květina',hl:'a',note:'\'a\' = neurčitý člen — jedna libovolná květina'},{en:'She paints with red.',cz:'Maluje červenou.',hl:'with',note:'\'with\' = s — \'with red\' = červenou (nástrojem)'},{en:'It is pink, not purple.',cz:'Je to růžové, ne fialové.',hl:'not',note:'\'not\' = ne — záporná částice'},{en:'I can see orange and black.',cz:'Vidím oranžovou a černou.',hl:'can',note:'\'can\' = umím, mohu — způsobové sloveso'}]
 },
 {
   id:"zvirata", emoji:"🐾", title:"Animals", titleCz:"Zvířata", color:"#5BC26A", colorLight:"#E8F8EA",
@@ -489,7 +540,8 @@ const APP_DATA = { topics: [
       {en:"It is a perfect morning.",cz:"Je to dokonalé ráno.",bg:"#FFFBF0",char:"both"}
     ]
   },
-  rhyme:{title:"Old MacDonald",lines:["Old MacDonald had a farm,","And on his farm he had a dog.","With a woof woof here,","And a woof woof there,","Old MacDonald had a farm!"]}
+  rhyme:{title:"Old MacDonald",lines:["Old MacDonald had a farm,","And on his farm he had a dog.","With a woof woof here,","And a woof woof there,","Old MacDonald had a farm!"],czLines:["Starý MacDonald měl statek,", "a na statku měl psa.", "Tady haf haf,", "tamhle haf haf,", "starý MacDonald měl statek!"]},
+  phrases:[{en:'a cat',cz:'kočka (jedna, neurčitá)',hl:'a',note:'\'a\' = neurčitý člen — jedna kočka obecně'},{en:'the dog',cz:'ten pes (konkrétní)',hl:'the',note:'\'the\' = určitý člen — víme o kterém psu mluvíme'},{en:'The cat is on the table.',cz:'Kočka je na stole.',hl:'on',note:'\'on\' = na povrchu — on the table, on the floor'},{en:'The fish swims in the water.',cz:'Ryba plave ve vodě.',hl:'in',note:'\'in\' = v (uvnitř) — in the water, in the room'},{en:'The bird flies over the tree.',cz:'Pták letí nad stromem.',hl:'over',note:'\'over\' = nad, přes'},{en:'I have a rabbit and a cat.',cz:'Mám králíka a kočku.',hl:'and',note:'\'and\' = a — spojuje dva výrazy'},{en:'The frog jumps but not far.',cz:'Žába skáče, ale ne daleko.',hl:'but',note:'\'but\' = ale — vyjadřuje protiklad'},{en:'It is a big elephant.',cz:'Je to velký slon.',hl:'a big',note:'Přídavné jméno stojí před podstatným jménem'}]
 },
 {
   id:"cisla", emoji:"🔢", title:"Numbers", titleCz:"Čísla", color:"#FFB300", colorLight:"#FFFBE8",
@@ -526,7 +578,8 @@ const APP_DATA = { topics: [
       {en:"Five for you, five for me! says Terezka.",cz:"Pět pro tebe, pět pro mě! říká Terezka.",bg:"#FFE8E8",char:"ter"}
     ]
   },
-  rhyme:{title:"Count with Me",lines:["One, two, three, count with me,","Four, five, six, easy as can be,","Seven, eight, nine, all in a line,","Count to nine and you'll do fine!"]}
+  rhyme:{title:"Count with Me",lines:["One, two, three, count with me,","Four, five, six, easy as can be,","Seven, eight, nine, all in a line,","Count to nine and you'll do fine!"],czLines:["Jedna, dvě, tři, počítej se mnou,", "čtyři, pět, šest — jak je to snadné.", "Sedm, osm, devět, všechny v řadě,", "počítej do devíti a dáš to!"]},
+  phrases:[{en:'I have three apples.',cz:'Mám tři jablka.',hl:'have',note:'\'I have\' = mám — sloveso mít'},{en:'There are five dogs.',cz:'Je tam pět psů.',hl:'There are',note:'\'There are\' = jsou tam — pro množné číslo'},{en:'There is one cat.',cz:'Je tam jedna kočka.',hl:'There is',note:'\'There is\' = je tam — pro jednotné číslo'},{en:'How many birds are there?',cz:'Kolik je tam ptáků?',hl:'How many',note:'\'How many\' = kolik — pro počitatelné věci'},{en:'She has two sisters.',cz:'Má dvě sestry.',hl:'She has',note:'\'She has\' = ona má — 3. os. j. č. přidáváme -s'},{en:'He is seven years old.',cz:'Je mu sedm let.',hl:'years old',note:'\'X years old\' = je mu X let'},{en:'one and two make three',cz:'jedna a dvě jsou tři',hl:'make',note:'\'make\' = dávají dohromady — v matematice'},{en:'the first day',cz:'první den',hl:'the first',note:'\'the first\' = první — řadová číslovka s určitým členem'}]
 },
 {
   id:"telo", emoji:"🦴", title:"Body", titleCz:"Tělo", color:"#26C6DA", colorLight:"#E0F7FA",
@@ -563,7 +616,8 @@ const APP_DATA = { topics: [
       {en:"After the play they laugh with their whole body!",cz:"Po hře se smějí celým tělem!",bg:"#F0FFF0",char:"both"}
     ]
   },
-  rhyme:{title:"Head, Shoulders, Knees and Toes",lines:["Head, shoulders, knees and toes,","Knees and toes!","And eyes and ears and mouth and nose,","Head, shoulders, knees and toes!"]}
+  rhyme:{title:"Head, Shoulders, Knees and Toes",lines:["Head, shoulders, knees and toes,","Knees and toes!","And eyes and ears and mouth and nose,","Head, shoulders, knees and toes!"],czLines:["Hlava, ramena, kolena a chodidla,", "kolena a chodidla!", "A oči a uši a ústa a nos,", "hlava, ramena, kolena a chodidla!"]},
+  phrases:[{en:'My head hurts.',cz:'Bolí mě hlava.',hl:'My',note:'\'My\' = můj/moje — přivlastňovací zájmeno'},{en:'She has big eyes.',cz:'Má velké oči.',hl:'has',note:'\'has\' = má — 3. os. j. č. slovesa \'have\''},{en:'Touch your nose!',cz:'Dotkni se nosu!',hl:'your',note:'\'your\' = tvůj/tvoje — 2. osoba'},{en:'His leg is long.',cz:'Jeho noha je dlouhá.',hl:'His',note:'\'His\' = jeho (pro muže) — \'Her\' = její (pro ženu)'},{en:'She covers her mouth.',cz:'Zakrývá si ústa.',hl:'her',note:'\'her\' = její — přivlastňovací i předmět'},{en:'I can move my arms.',cz:'Umím hýbat pažemi.',hl:'can',note:'\'can\' = umím, dokážu — způsobové sloveso'},{en:'He waves his hand at me.',cz:'Mává na mě rukou.',hl:'at',note:'\'at me\' = na mě — \'at\' pro směr pozornosti'},{en:'Ears are for listening.',cz:'Uši jsou k naslouchání.',hl:'for',note:'\'for\' = pro, k čemu — vyjadřuje účel'}]
 },
 {
   id:"rodina", emoji:"👨‍👩‍👧", title:"Family", titleCz:"Rodina", color:"#C77DFF", colorLight:"#F5E8FF",
@@ -602,7 +656,8 @@ const APP_DATA = { topics: [
       {en:"This is the best present ever, she says.",cz:"To je nejlepší dárek vůbec, řekne.",bg:"#FFE8E8",char:"both"}
     ]
   },
-  rhyme:{title:"Family Rhyme",lines:["Mummy, Daddy, sister, brother,","Grandma, Grandpa — one another.","Baby smiles and baby grows,","Home is where the love still glows."]}
+  rhyme:{title:"Family Rhyme",lines:["Mummy, Daddy, sister, brother,","Grandma, Grandpa — one another.","Baby smiles and baby grows,","Home is where the love still glows."],czLines:["Maminka, tatínek, sestra, bratr,", "babička, děda — všichni za ruku.", "Miminko se usmívá a roste,", "domov je tam, kde svítí láska."]},
+  phrases:[{en:'This is my mum.',cz:'Toto je moje máma.',hl:'This is',note:'\'This is\' = toto je — představujeme někoho'},{en:'She is my sister.',cz:'Je to moje sestra.',hl:'She is',note:'\'She\' = ona — pro ženský rod'},{en:'He is my brother.',cz:'Je to můj bratr.',hl:'He is',note:'\'He\' = on — pro mužský rod'},{en:'I live with my family.',cz:'Žiji se svou rodinou.',hl:'with',note:'\'with\' = s (někým) — vyjadřuje doprovod'},{en:'Grandma and Grandpa are old.',cz:'Babička a děda jsou staří.',hl:'are',note:'\'are\' = jsou — sloveso být pro množné číslo'},{en:'My baby sister is cute.',cz:'Moje malá sestřička je roztomilá.',hl:'My',note:'\'My\' = moje — přivlastňovací zájmeno'},{en:'He loves his home.',cz:'Miluje svůj domov.',hl:'his',note:'\'his\' = jeho — přivlastňovací pro muže'},{en:'They are a happy family.',cz:'Jsou to šťastná rodina.',hl:'They are',note:'\'They are\' = oni jsou — množné číslo'}]
 },
 {
   id:"jidlo", emoji:"🍎", title:"Food", titleCz:"Jídlo", color:"#FF7043", colorLight:"#FFF3E0",
@@ -639,7 +694,8 @@ const APP_DATA = { topics: [
       {en:"I want to live in grandma's kitchen! says Matýsek.",cz:"Chci bydlet v babiččině kuchyni! říká Matýsek.",bg:"#FFF8DC",char:"mat"}
     ]
   },
-  rhyme:{title:"I Like Food",lines:["I like apples, I like bread,","I like milk before I go to bed.","I like eggs and I like cake,","I like all the food we bake!"]}
+  rhyme:{title:"I Like Food",lines:["I like apples, I like bread,","I like milk before I go to bed.","I like eggs and I like cake,","I like all the food we bake!"],czLines:["Mám rád jablka, mám rád chléb,", "mám rád mléko před spaním.", "Mám rád vejce a dort,", "mám rád všechno, co se peče!"]},
+  phrases:[{en:'I am hungry.',cz:'Mám hlad.',hl:'am',note:'\'I am\' = jsem — 1. os. j. č. slovesa být'},{en:'Do you like pizza?',cz:'Máš ráda pizzu?',hl:'Do you',note:'\'Do you...?\' = tvoříme otázku pomocí \'do\''},{en:'I do not like carrots.',cz:'Nemám ráda mrkev.',hl:'do not',note:'\'do not\' = zápor — zkráceno na \'don\'t\''},{en:'She drinks milk with cake.',cz:'Pije mléko s koláčem.',hl:'with',note:'\'with\' = s (čím) — doprovod jídla'},{en:'We eat lunch at noon.',cz:'Obědváme v poledne.',hl:'at noon',note:'\'at\' pro přesný čas — at noon, at 3 o clock'},{en:'an apple',cz:'jablko — an před samohláskou',hl:'an',note:'\'an\' = neurčitý člen před samohláskou (a, e, i, o, u)'},{en:'Can I have some bread?',cz:'Mohu dostat trochu chleba?',hl:'some',note:'\'some\' = trochu, nějaký — s nepočitatelnými'},{en:'I like apples but not eggs.',cz:'Mám ráda jablka, ale ne vejce.',hl:'but not',note:'\'but not\' = ale ne — vyjadřuje výjimku'}]
 },
 {
   id:"obleceni", emoji:"👕", title:"Clothes", titleCz:"Oblečení", color:"#7C4DFF", colorLight:"#EDE7F6",
@@ -676,7 +732,8 @@ const APP_DATA = { topics: [
       {en:"I look like a princess! says Terezka happily.",cz:"Vypadám jako princezna! říká Terezka šťastně.",bg:"#FFE8F8",char:"ter"}
     ]
   },
-  rhyme:{title:"Getting Dressed",lines:["Put on your shirt, put on your shoes,","Do not forget your socks today!","Hat on your head and coat on your back,","Gloves on your hands — hip hip hooray!"]}
+  rhyme:{title:"Getting Dressed",lines:["Put on your shirt, put on your shoes,","Do not forget your socks today!","Hat on your head and coat on your back,","Gloves on your hands — hip hip hooray!"],czLines:["Oblékni tričko, oblékni boty,", "nezapomeň dnes ponožky!", "Čepice na hlavu, kabát na záda,", "rukavice na ruce — hurá!"]},
+  phrases:[{en:'Put on your coat!',cz:'Oblékni si kabát!',hl:'Put on',note:'\'put on\' = obléci si — frazeální sloveso'},{en:'Take off your shoes!',cz:'Vyzuj si boty!',hl:'Take off',note:'\'take off\' = sundat, svléci — opak \'put on\''},{en:'She is wearing a red dress.',cz:'Má na sobě červené šaty.',hl:'wearing',note:'\'is wearing\' = má na sobě — průběhový čas'},{en:'I dressed up for the party.',cz:'Oblékl jsem se na večírek.',hl:'for',note:'\'for\' = na, pro — vyjadřuje příležitost'},{en:'He looks like an explorer.',cz:'Vypadá jako průzkumník.',hl:'like',note:'\'like\' = jako — přirovnání'},{en:'Don\'t forget your gloves!',cz:'Nezapomeň rukavice!',hl:'Don\'t',note:'\'Don\'t\' = zkrácené \'Do not\' — záporný rozkaz'},{en:'Her scarf is around her neck.',cz:'Šálu má omotanou kolem krku.',hl:'around',note:'\'around\' = kolem, okolo'},{en:'These shoes are too big.',cz:'Tyhle boty jsou příliš velké.',hl:'too',note:'\'too\' = příliš — nadměrná míra (too big, too cold)'}]
 },
 {
   id:"dum", emoji:"🏠", title:"House", titleCz:"Dům", color:"#8D6E63", colorLight:"#EFEBE9",
@@ -713,7 +770,8 @@ const APP_DATA = { topics: [
       {en:"This house feels like home already, says mum.",cz:"Tento dům se už cítí jako domov, říká máma.",bg:"#FFF8F0",char:"both"}
     ]
   },
-  rhyme:{title:"My House",lines:["This is my house, this is my door,","This is my window, this is my floor.","This is my kitchen, my table, my chair,","Home is the place I love — right there!"]}
+  rhyme:{title:"My House",lines:["This is my house, this is my door,","This is my window, this is my floor.","This is my kitchen, my table, my chair,","Home is the place I love — right there!"],czLines:["Toto je můj dům, toto jsou mé dveře,", "toto je mé okno, toto je má podlaha.", "Toto je má kuchyně, stůl a židle,", "domov — to je místo, které miluju."]},
+  phrases:[{en:'He goes up the stairs.',cz:'Jde nahoru po schodech.',hl:'up',note:'\'up the stairs\' = nahoru po schodech — směr'},{en:'She hides behind the sofa.',cz:'Schovává se za pohovkou.',hl:'behind',note:'\'behind\' = za (schovaný za něčím)'},{en:'The cat is under the table.',cz:'Kočka je pod stolem.',hl:'under',note:'\'under\' = pod'},{en:'Look out of the window!',cz:'Podívej se z okna!',hl:'out of',note:'\'out of\' = z — pohyb nebo pohled ven z něčeho'},{en:'Come into the kitchen!',cz:'Pojď do kuchyně!',hl:'into',note:'\'into\' = do (pohyb dovnitř) — \'in\' = staticky uvnitř'},{en:'The flowers are on the table.',cz:'Květiny jsou na stole.',hl:'on',note:'\'on\' = na povrchu — on the table, on the floor'},{en:'Dad sits down on the sofa.',cz:'Táta si sedne na pohovku.',hl:'down',note:'\'sit down\' = sednout si — frazeální sloveso'},{en:'Next to the door',cz:'vedle dveří',hl:'Next to',note:'\'next to\' = vedle, bezprostředně u'}]
 },
 {
   id:"skola", emoji:"📚", title:"School", titleCz:"Škola", color:"#5C6BC0", colorLight:"#E8EAF6",
@@ -750,7 +808,8 @@ const APP_DATA = { topics: [
       {en:"The teacher rings the bell: Wonderful! she says.",cz:"Učitelka zazvoní: Úžasné! říká.",bg:"#E8F4FF",char:"both"}
     ]
   },
-  rhyme:{title:"Pack Your Bag",lines:["Pack your bag, pack your pencil, pack your book,","Pack your ruler — take a look!","Ring the bell, sit in your place,","School today — a smiling face!"]}
+  rhyme:{title:"Pack Your Bag",lines:["Pack your bag, pack your pencil, pack your book,","Pack your ruler — take a look!","Ring the bell, sit in your place,","School today — a smiling face!"],czLines:["Sbal batoh, sbal tužku, sbal knihu,", "sbal pravítko — podívej se!", "Zazvoní zvonek, sedni si na místo,", "dnes ve škole — s úsměvem!"]},
+  phrases:[{en:'She gives the book to me.',cz:'Dá mi tu knihu.',hl:'to',note:'\'to me\' = mně — nepřímý předmět s předložkou \'to\''},{en:'He draws with a pencil.',cz:'Kreslí tužkou.',hl:'with',note:'\'with\' = s — nástrojem (s tužkou, s nůžkami)'},{en:'We sit in the classroom.',cz:'Sedíme ve třídě.',hl:'in',note:'\'in\' = uvnitř prostoru — in the classroom'},{en:'The teacher rings the bell.',cz:'Učitelka zazvoní na zvonek.',hl:'The',note:'\'The teacher\' — víme o které učitelce mluvíme'},{en:'a big book',cz:'velká kniha',hl:'a',note:'\'a big book\' — přídavné jméno stojí před podstatným'},{en:'She cuts with scissors.',cz:'Stříhá nůžkami.',hl:'with',note:'\'with scissors\' = nůžkami — vyjadřuje nástroj'},{en:'Pack your bag before school.',cz:'Sbal si batoh před školou.',hl:'before',note:'\'before\' = před (časově i místně)'},{en:'Well done! That is great.',cz:'Výborně! To je skvělé.',hl:'That is',note:'\'That is\' = to je — ukazujeme na výsledek'}]
 },
 {
   id:"pocasi", emoji:"⛅", title:"Weather", titleCz:"Počasí", color:"#29B6F6", colorLight:"#E1F5FE",
@@ -787,7 +846,8 @@ const APP_DATA = { topics: [
       {en:"But then a huge rainbow fills the sky! shouts Terezka happily.",cz:"Pak ale obrovská duha vyplní oblohu! jásá Terezka.",bg:"#E8FFF0",char:"ter"}
     ]
   },
-  rhyme:{title:"What Is the Weather?",lines:["Sun is shining, nice and bright,","Rain is falling — hold on tight!","Snow is white and wind is cold,","Rainbow colours to behold!"]}
+  rhyme:{title:"What Is the Weather?",lines:["Sun is shining, nice and bright,","Rain is falling — hold on tight!","Snow is white and wind is cold,","Rainbow colours to behold!"],czLines:["Slunce svítí, je krásně,", "déšť padá — drž se pevně!", "Sníh je bílý a vítr je studený,", "duha — jak je krásná!"]},
+  phrases:[{en:'It is sunny today.',cz:'Dnes je slunečno.',hl:'today',note:'\'today\' = dnes — příslovce času, stojí na konci věty'},{en:'It rains in the morning.',cz:'Ráno prší.',hl:'in the morning',note:'\'in the morning\' — ale \'at night\' (v noci)'},{en:'I need an umbrella.',cz:'Potřebuji deštník.',hl:'an',note:'\'an umbrella\' — \'an\' před slovem začínajícím samohláskou'},{en:'After the rain, a rainbow.',cz:'Po dešti přichází duha.',hl:'After',note:'\'After\' = po (časově) — after the rain, after school'},{en:'There is fog in the valley.',cz:'V údolí je mlha.',hl:'There is',note:'\'There is\' = je tam — popis prostředí'},{en:'It is cold but sunny.',cz:'Je zima, ale slunečno.',hl:'but',note:'\'but\' = ale — vyjadřuje protiklad'},{en:'The storm lasts all day.',cz:'Bouřka trvá celý den.',hl:'all day',note:'\'all day\' = celý den — \'all\' + časový výraz'},{en:'The wind blows it inside out.',cz:'Vítr ho otočí naruby.',hl:'inside out',note:'\'inside out\' = naruby — ustálené frazeální spojení'}]
 },
 {
   id:"doprava", emoji:"🚗", title:"Transport", titleCz:"Doprava", color:"#EF5350", colorLight:"#FFEBEE",
@@ -824,7 +884,8 @@ const APP_DATA = { topics: [
       {en:"And a rocket to the moon! they both shout.",cz:"A raketu na Měsíc! křičí oba.",bg:"#F0E8FF",char:"both"}
     ]
   },
-  rhyme:{title:"We Can Go",lines:["Car and bus and train and bike,","Travel any way you like!","Plane and boat and tram and taxi,","Getting there is never tricky!"]}
+  rhyme:{title:"We Can Go",lines:["Car and bus and train and bike,","Travel any way you like!","Plane and boat and tram and taxi,","Getting there is never tricky!"],czLines:["Auto, autobus, vlak a kolo,", "cestuj jak se ti líbí!", "Letadlo, loď, tramvaj a taxi,", "dostat se tam vždy nějak jde!"]},
+  phrases:[{en:'He goes by bus.',cz:'Jede autobusem.',hl:'by',note:'\'by bus/car/train\' = dopravním prostředkem — bez členu'},{en:'She gets on the tram.',cz:'Nastoupí do tramvaje.',hl:'gets on',note:'\'get on\' = nastoupit — \'get off\' = vystoupit'},{en:'They arrive at the station.',cz:'Přijedou na nádraží.',hl:'at',note:'\'at the station\' = na nádraží — \'at\' pro konkrétní místo'},{en:'I want to fly in a rocket.',cz:'Chci letět v raketě.',hl:'want to',note:'\'want to\' = chci — po \'want to\' stojí infinitiv'},{en:'The plane flies over the sea.',cz:'Letadlo letí nad mořem.',hl:'over',note:'\'over\' = nad, přes (s pohybem)'},{en:'We travel to the mountains.',cz:'Jedeme do hor.',hl:'to',note:'\'to\' = do — vyjadřuje směr pohybu'},{en:'The boat is on the river.',cz:'Loď je na řece.',hl:'on',note:'\'on the river\' = na řece — loď leží na povrchu vody'},{en:'Can I ride a bike here?',cz:'Mohu tady jet na kole?',hl:'Can I',note:'\'Can I...?\' = Mohu...? — zdvořilá žádost o svolení'}]
 },
 {
   id:"pocity", emoji:"😊", title:"Emotions", titleCz:"Pocity", color:"#FFA726", colorLight:"#FFF8E1",
@@ -861,7 +922,8 @@ const APP_DATA = { topics: [
       {en:"Can I be silly now? asks Matýsek with a big grin.",cz:"Mohu teď být bláznivý? ptá se Matýsek s velkým úsměvem.",bg:"#FFF0DC",char:"mat"}
     ]
   },
-  rhyme:{title:"How Do You Feel?",lines:["Happy, sad and angry too,","Excited, bored — what about you?","Scared and silly, tired today,","Feelings change throughout the day!"]}
+  rhyme:{title:"How Do You Feel?",lines:["Happy, sad and angry too,","Excited, bored — what about you?","Scared and silly, tired today,","Feelings change throughout the day!"],czLines:["Šťastný, smutný a naštvaný taky,", "nadšený, znuděný — a co ty?", "Vystrašený, bláznivý, unavený dnes,", "pocity se mění celý den!"]},
+  phrases:[{en:'I feel happy.',cz:'Cítím se šťastně.',hl:'feel',note:'\'feel\' = cítit se — \'I feel\' + přídavné jméno'},{en:'She is excited about it.',cz:'Je z toho nadšená.',hl:'about',note:'\'excited about\' = nadšený z — předložka k emoci'},{en:'He is scared of spiders.',cz:'Bojí se pavouků.',hl:'of',note:'\'scared of\' = mít strach z — také \'afraid of\''},{en:'I am not bored at all.',cz:'Vůbec se nenudím.',hl:'at all',note:'\'not at all\' = vůbec ne — zesiluje zápor'},{en:'She looks surprised.',cz:'Vypadá překvapeně.',hl:'looks',note:'\'look\' + přídavné jméno = vypadat — \'look happy/sad\''},{en:'Are you angry with me?',cz:'Zlobíš se na mě?',hl:'with',note:'\'angry with someone\' = zlobit se na někoho'},{en:'I am happy because it is sunny.',cz:'Jsem šťastný, protože svítí slunce.',hl:'because',note:'\'because\' = protože — příčinná spojka'},{en:'He stamps his feet when angry.',cz:'Dupá nohama, když je naštvaný.',hl:'when',note:'\'when\' = když — časová spojka'}]
 }
 ]};
 </script>
@@ -937,16 +999,16 @@ const showScreen = (id) => {
 
 // ── HOME ──────────────────────────────────────────────────────────────────────
 const matSpeeches = [
-  "Hello! I am Matýsek! 👋","Let's learn English! 📚",
-  "You are doing great! ⭐","Can you say 'butterfly'? 🦋",
-  "English is fun! 😄","How many words do you know? 🔢",
-  "Let's read a story! 📖","What is your favourite topic? 🎯"
+  "Hello! / Ahoj! 👋","Let's learn English! / Učíme se anglicky! 📚",
+  "You are doing great! / Jde ti to skvěle! ⭐","Can you say 'butterfly'? = motýl 🦋",
+  "English is fun! / Angličtina je zábavná! 😄","How many words do you know? / Kolik slovíček znáš? 🔢",
+  "Let's read a story! / Přečteme si příběh! 📖","What is your favourite topic? / Jaké téma máš nejraději? 🎯"
 ];
 const terSpeeches = [
-  "Hi! I am Terezka! 🌸","Come and play with us! 🎮",
-  "Well done! Keep going! 💪","My favourite colour is pink! 🩷",
-  "You are amazing! ✨","Can you feel happy in English? 😄",
-  "Let's play the memory game! 🧩","I love ice cream! 🍦"
+  "Hi! I am Terezka! / Ahoj! 🌸","Come and play! / Pojď si hrát! 🎮",
+  "Well done! / Výborně! 💪","My favourite colour is pink! / Mám nejraději růžovou! 🩷",
+  "You are amazing! / Jsi úžasný! ✨","Can you feel happy in English? 😄",
+  "Let's play the memory game! / Zahrajeme si paměť! 🧩","I love ice cream! / Miluji zmrzlinu! 🍦"
 ];
 
 const renderHome = () => {
@@ -1012,6 +1074,7 @@ const updateXP = () => {
 };
 
 const goHome = () => {
+  if (flashState && flashState.savedTopic) { currentTopic=flashState.savedTopic; flashState=null; }
   if (window._bounceTmr) clearInterval(window._bounceTmr);
   renderHome();
   showScreen('screenHome');
@@ -1025,6 +1088,8 @@ const openTopic = (id) => {
   document.getElementById('topicHeaderSub').textContent = currentTopic.titleCz;
 
   const exercises = [
+    {id:'flash',   icon:'🃏',name:'Trenér slov',  desc:'Procvič slovíčka — oba směry', fn:startFlash},
+    {id:'phrases', icon:'💬',name:'Trenér frází', desc:'Předložky, členy, spojky', fn:startPhrases},
     {id:'story',  icon:'📖',name:'Příběh',  desc:'Matýsek a Terezka vypráví', fn:startStory},
     {id:'listen', icon:'🔊',name:'Poslouchej',desc:'Slyš a opakuj slovo',     fn:startListen},
     {id:'match',  icon:'🔗',name:'Spoj',    desc:'Obrázek + anglické slovo',  fn:startMatch},
@@ -1527,7 +1592,10 @@ const memTap = (i) => {
 const startRhyme = () => {
   currentEx = 'rhyme';
   const rhyme = currentTopic.rhyme;
-  const linesHTML = rhyme.lines.map((line,i) => `<div class="rhyme-line" id="rline_${i}">${line}</div>`).join('');
+  const linesHTML = rhyme.lines.map((line,i) => {
+    const czLine = rhyme.czLines ? `<div class="rhyme-cz-line">${rhyme.czLines[i]||''}</div>` : '';
+    return `<div class="rhyme-line-wrap" id="rline_${i}"><div class="rhyme-line">${line}</div>${czLine}</div>`;
+  }).join('');
   document.getElementById('rhymeContent').innerHTML =
     mkCompanion('Poslouchej říkanku! 📜', 'Opakuj po nás!') +
     `<div class="rhyme-card">
@@ -1539,7 +1607,7 @@ const startRhyme = () => {
       <button class="listen-nav-btn" onclick="goTopic()" style="flex:1">← Zpět</button>
     </div>`;
   showScreen('screenRhyme');
-  requestAnimationFrame(() => document.querySelectorAll('.rhyme-line').forEach(el => el.classList.add('visible')));
+  requestAnimationFrame(() => document.querySelectorAll('.rhyme-line-wrap').forEach(el => el.classList.add('visible')));
 };
 
 let rhymePlaying = false;
@@ -1551,7 +1619,7 @@ const playRhyme = async () => {
   const rhyme = currentTopic.rhyme;
   rhyme.lines.forEach((_,i) => {
     const el = document.getElementById(`rline_${i}`);
-    if (el) { el.classList.remove('visible'); setTimeout(() => el.classList.add('visible'), i*600); }
+    if (el) { el.classList.remove('visible'); setTimeout(() => el.classList.add('visible'), i*700); }
   });
   setTimeout(() => speakEN(rhyme.lines.join('. '), 0.85), 200);
   setTimeout(() => {
@@ -1588,6 +1656,201 @@ const completeEx = (exId) => {
   updateXP();
 };
 
+
+// ══ TRENÉR SLOVÍČEK ══════════════════════════════════════════
+let flashState = null;
+
+const startFlash = () => {
+  currentEx = 'flash';
+  let cards = [];
+  currentTopic.words.forEach(w => {
+    cards.push({word:w, dir:'enToCz'});
+    cards.push({word:w, dir:'czToEn'});
+  });
+  cards = shuffle(cards);
+  flashState = {queue:[...cards],idx:0,correct:0,total:cards.length,flipped:false,isGeneral:false,savedTopic:null};
+  renderFlash();
+  showScreen('screenFlash');
+};
+
+const startGeneralFlash = () => {
+  const allWords = APP_DATA.topics.reduce((acc,t) => { t.words.forEach(w=>acc.push(w)); return acc; },[]);
+  const saved = currentTopic;
+  currentTopic = {id:'_general',title:'Globální trenér',words:allWords};
+  currentEx = 'flash';
+  let cards = [];
+  allWords.forEach(w => { cards.push({word:w,dir:'enToCz'}); cards.push({word:w,dir:'czToEn'}); });
+  cards = shuffle(cards);
+  flashState = {queue:[...cards],idx:0,correct:0,total:cards.length,flipped:false,isGeneral:true,savedTopic:saved};
+  renderFlash();
+  showScreen('screenFlash');
+};
+
+const renderFlash = () => {
+  if (!flashState) return;
+  const {queue,idx,correct} = flashState;
+  if (idx >= queue.length) { renderFlashDone(); return; }
+  const card = queue[idx];
+  const w = card.word;
+  const isEn = card.dir === 'enToCz';
+  const frontWord = isEn ? w.en : w.cz;
+  const backWord  = isEn ? w.cz : w.en;
+  const frontSub  = isEn ? 'Anglicky — co to znamená česky?' : 'Česky — jak se to řekne anglicky?';
+  const backSub   = isEn ? ('🇬🇧 ' + w.en) : ('🇨🇿 ' + w.cz);
+  const pct = Math.round((idx/queue.length)*100);
+  document.getElementById('flashContent').innerHTML =
+    mkCompanion('Procvičuj slovíčka! 🃏', 'Otočením odhalíš odpověď!') +
+    `<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px">
+      <div style="font-size:13px;font-weight:800;color:var(--muted)">📚 ${queue.length-idx} zbývá · ✅ ${correct}/${idx}</div>
+      <button class="listen-nav-btn" onclick="flashState.isGeneral?goHome():goTopic()">✕ Konec</button>
+    </div>
+    <div style="background:var(--border);border-radius:999px;height:6px;margin-bottom:12px">
+      <div style="background:var(--green);height:6px;border-radius:999px;width:${pct}%;transition:width .3s"></div>
+    </div>
+    <div class="flash-card-wrap">
+      <div class="flash-card" id="flashCard" onclick="flipFlashCard()">
+        <div class="flash-front">
+          <span class="flash-emoji">${w.emoji}</span>
+          <div class="flash-word">${frontWord}</div>
+          <div class="flash-sub">${frontSub}</div>
+          <div class="flash-hint">👆 Klepni pro odpověď</div>
+        </div>
+        <div class="flash-back">
+          <span class="flash-emoji">${w.emoji}</span>
+          <div class="flash-word">${backWord}</div>
+          <div class="flash-sub">${backSub}</div>
+        </div>
+      </div>
+    </div>
+    <div class="flash-btns" id="flashBtns" style="display:none">
+      <button class="flash-btn-wrong" onclick="flashAnswer(false)">❌ Nevěděl/a jsem</button>
+      <button class="flash-btn-ok"    onclick="flashAnswer(true)">✅ Věděl/a jsem</button>
+    </div>
+    <div class="flash-stats">Karta ${idx+1} z ${queue.length}</div>`;
+  flashState.flipped = false;
+};
+
+const flipFlashCard = () => {
+  if (!flashState || flashState.flipped) return;
+  const el = document.getElementById('flashCard');
+  if (el) el.classList.add('flipped');
+  const btns = document.getElementById('flashBtns');
+  if (btns) btns.style.display = 'grid';
+  flashState.flipped = true;
+  setTimeout(() => speakEN(flashState.queue[flashState.idx].word.en), 300);
+};
+
+const flashAnswer = (ok) => {
+  if (!flashState) return;
+  const card = flashState.queue[flashState.idx];
+  if (ok) { flashState.correct++; }
+  else {
+    const at = Math.min(flashState.idx+3+Math.floor(Math.random()*2), flashState.queue.length);
+    flashState.queue.splice(at, 0, Object.assign({},card));
+  }
+  flashState.idx++;
+  renderFlash();
+};
+
+const renderFlashDone = () => {
+  const {correct,total,isGeneral} = flashState;
+  const pct = Math.round((correct/total)*100);
+  const stars = pct>=90?'⭐⭐⭐':pct>=60?'⭐⭐':'⭐';
+  document.getElementById('flashContent').innerHTML =
+    `<div class="flash-done-card">
+      <div style="font-size:64px;margin-bottom:12px">🎉</div>
+      <div class="rhyme-title">Skvělá práce!</div>
+      <div style="font-size:40px;margin:12px 0">${stars}</div>
+      <div style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:6px">${correct} z ${total} správně</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:20px">${pct} % úspěšnost</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      ${isGeneral
+        ? `<button class="listen-nav-btn" onclick="goHome()" style="flex:1">← Domů</button>
+           <button class="listen-nav-btn primary" onclick="startGeneralFlash()" style="flex:2">↺ Znovu</button>`
+        : `<button class="listen-nav-btn" onclick="goTopic()" style="flex:1">← Zpět</button>
+           <button class="listen-nav-btn primary" onclick="startFlash()" style="flex:2">↺ Znovu</button>`
+      }
+    </div>`;
+  if (!isGeneral) completeEx('flash');
+};
+
+// ══ TRENÉR FRÁZÍ ═════════════════════════════════════════════
+let phraseState = null;
+
+const startPhrases = () => {
+  currentEx = 'phrases';
+  const phrases = currentTopic.phrases || [];
+  if (!phrases.length) { alert('Pro toto téma zatím nemáme fráze.'); return; }
+  const queue = shuffle([...phrases]);
+  phraseState = {queue, idx:0, revealed:false, total:queue.length};
+  renderPhrase();
+  showScreen('screenPhrases');
+};
+
+const renderPhrase = () => {
+  if (!phraseState) return;
+  const {queue,idx,total} = phraseState;
+  if (idx >= queue.length) { renderPhrasesDone(); return; }
+  const p = queue[idx];
+  const pct = Math.round((idx/total)*100);
+  // Zvýrazni klíčové slovo bezpečně
+  const hlIdx = p.en.toLowerCase().indexOf(p.hl.toLowerCase());
+  const enHighlighted = hlIdx === -1 ? p.en
+    : p.en.slice(0,hlIdx) + '<span class="phrase-hl">' + p.en.slice(hlIdx,hlIdx+p.hl.length) + '</span>' + p.en.slice(hlIdx+p.hl.length);
+  document.getElementById('phrasesContent').innerHTML =
+    mkCompanion('Procvičuj fráze! 💬', 'Nauč se předložky a členy!') +
+    `<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px">
+      <div style="font-size:13px;font-weight:800;color:var(--muted)">💬 ${idx+1} / ${total}</div>
+      <button class="listen-nav-btn" onclick="goTopic()">✕ Konec</button>
+    </div>
+    <div class="phrase-progress-bar"><div class="phrase-progress-fill" style="width:${pct}%"></div></div>
+    <div class="phrase-card">
+      <div class="phrase-en">${enHighlighted}</div>
+      <div class="phrase-cz">${p.cz}</div>
+      <button class="phrase-reveal-btn" id="phraseRevealBtn" onclick="revealPhrase()">💡 Proč <em>${p.hl}</em>?</button>
+      <div class="phrase-note-box" id="phraseNote">
+        <div class="phrase-note-label">📌 Gramatická poznámka</div>
+        <div class="phrase-note-text">${p.note}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      ${idx>0?'<button class="listen-nav-btn" onclick="phraseBack()" style="flex:1">← Zpět</button>':''}
+      <button class="listen-nav-btn primary" onclick="phraseNext()" style="flex:2">
+        ${idx<total-1?'Další →':'Hotovo! ⭐'}
+      </button>
+    </div>`;
+  phraseState.revealed = false;
+  setTimeout(() => speakEN(p.en), 400);
+};
+
+const revealPhrase = () => {
+  if (phraseState.revealed) return;
+  phraseState.revealed = true;
+  const btn = document.getElementById('phraseRevealBtn');
+  if (btn) btn.style.opacity = '.4';
+  const note = document.getElementById('phraseNote');
+  if (note) note.classList.add('on');
+};
+
+const phraseNext = () => { phraseState.idx++; renderPhrase(); };
+const phraseBack = () => { if (phraseState.idx>0) { phraseState.idx--; renderPhrase(); } };
+
+const renderPhrasesDone = () => {
+  document.getElementById('phrasesContent').innerHTML =
+    `<div class="flash-done-card">
+      <div style="font-size:64px;margin-bottom:12px">🌟</div>
+      <div class="rhyme-title">Fráze zvládnuty!</div>
+      <div style="font-size:15px;color:var(--muted);margin:12px 0 20px;line-height:1.6">
+        Procvičil/a sis ${phraseState.total} frází.<br>Předložky a členy jsou základ!
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="listen-nav-btn" onclick="goTopic()" style="flex:1">← Zpět</button>
+      <button class="listen-nav-btn primary" onclick="startPhrases()" style="flex:2">↺ Znovu</button>
+    </div>`;
+  completeEx('phrases');
+};
 // ── SPEECH ────────────────────────────────────────────────────────────────────
 const speakEN = (text, rate=1.0) => {
   text = stripEmoji(text); if (!text) return;
