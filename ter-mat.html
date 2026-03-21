@@ -1247,7 +1247,7 @@ const renderStoryPage = () => {
     </div>` +
     `<div style="display:flex;gap:10px;margin-top:10px;">${navLeft}${navRight}</div>`;
 
-  setTimeout(() => speakEN(page.en), 400);
+  if (!IS_RESTRICTED_BROWSER) setTimeout(() => speakEN(page.en), 400);
 };
 
 const storyNext = () => { storyPage++; renderStoryPage(); window.scrollTo({top:0,behavior:'smooth'}); };
@@ -1283,7 +1283,7 @@ const renderListenCard = () => {
         ?`<button class="listen-nav-btn primary" onclick="listenNext()">Další →</button>`
         :`<button class="listen-nav-btn primary" onclick="completeEx('listen')">Hotovo! ⭐</button>`}
     </div>`;
-  setTimeout(() => speakEN(w.en), 400);
+  if (!IS_RESTRICTED_BROWSER) setTimeout(() => speakEN(w.en), 400);
 };
 
 const listenNext = () => { listenIdx++; renderListenCard(); };
@@ -1429,7 +1429,7 @@ const renderCurrentQ = () => {
     <div class="qz-score">✅ ${quizCorrect} správně</div>`;
   document.getElementById('quizContent').innerHTML=header+renderQType(q);
   // Auto-play listen
-  if(q.type==='listenWord'||q.type==='listenEmoji') setTimeout(()=>speakEN(q.word.en),500);
+  if(!IS_RESTRICTED_BROWSER && (q.type==='listenWord'||q.type==='listenEmoji')) setTimeout(()=>speakEN(q.word.en),500);
   // Flash countdown
   if(q.type==='flashHide'){
     let cnt=2;
@@ -1709,7 +1709,7 @@ const playRhyme = async () => {
     const el = document.getElementById(`rline_${i}`);
     if (el) { el.classList.remove('visible'); setTimeout(() => el.classList.add('visible'), i*700); }
   });
-  setTimeout(() => speakEN(rhyme.lines.join('. '), 0.85), 200);
+  if (!IS_RESTRICTED_BROWSER) setTimeout(() => speakEN(rhyme.lines.join('. '), 0.85), 200);
   setTimeout(() => {
     rhymePlaying = false;
     if (btn) { btn.textContent = '↺ Přehrát znovu'; btn.className = 'rhyme-play-btn replay'; }
@@ -1833,7 +1833,7 @@ const flipFlashCard = () => {
   const btns = document.getElementById('flashBtns');
   if (btns) btns.style.display = 'grid';
   flashState.flipped = true;
-  setTimeout(() => speakEN(flashState.queue[flashState.idx].word.en), 300);
+  if (!IS_RESTRICTED_BROWSER) setTimeout(() => speakEN(flashState.queue[flashState.idx].word.en), 300);
 };
 
 const flashAnswer = (ok) => {
@@ -1921,7 +1921,7 @@ const renderPhrase = () => {
       </button>
     </div>`;
   phraseState.revealed = false;
-  setTimeout(() => speakEN(p.en), 400);
+  if (!IS_RESTRICTED_BROWSER) setTimeout(() => speakEN(p.en), 400);
 };
 
 const revealPhrase = () => {
@@ -2031,7 +2031,7 @@ const renderObStep1 = (el) => {
           </div>`).join('')}
       </div>
     </div>`;
-  speakEN('cat');
+  if (!IS_RESTRICTED_BROWSER) speakEN('cat');
 };
 
 const obPickAnswer = (el, correct) => {
@@ -2263,21 +2263,18 @@ else { renderHome(); }
 
 <script>
 // ── DETEKCE OMEZENÉHO PROHLÍŽEČE ──────────────────────────────
-(function(){
-  const ua = navigator.userAgent || '';
-  const isFBIAB = ua.includes('FBAN') || ua.includes('FBAV') ||
-                  ua.includes('Instagram') || ua.includes('LinkedInApp') ||
-                  ua.includes('Twitter') || ua.includes('Line/') ||
-                  ua.includes('KAKAOTALK') || ua.includes('MicroMessenger');
-  // Také detekuj podle absence speechSynthesis
-  const noSpeech = !('speechSynthesis' in window);
-  if (isFBIAB || noSpeech) {
-    const banner = document.getElementById('browserBanner');
-    const btn    = document.getElementById('bbOpenBtn');
-    if (banner) banner.classList.add('show');
-    if (btn)    btn.href = window.location.href;
-  }
-})();
+const ua = navigator.userAgent || '';
+const IS_RESTRICTED_BROWSER = ua.includes('FBAN') || ua.includes('FBAV') ||
+  ua.includes('Instagram') || ua.includes('LinkedInApp') ||
+  ua.includes('Twitter') || ua.includes('Line/') ||
+  ua.includes('KAKAOTALK') || ua.includes('MicroMessenger');
+const noSpeech = !('speechSynthesis' in window);
+if (IS_RESTRICTED_BROWSER || noSpeech) {
+  const banner = document.getElementById('browserBanner');
+  const btn    = document.getElementById('bbOpenBtn');
+  if (banner) banner.classList.add('show');
+  if (btn)    btn.href = window.location.href;
+}
 </script>
 </body>
 </html>
