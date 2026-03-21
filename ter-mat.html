@@ -384,6 +384,33 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .companion-avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;overflow:hidden;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,.10)}
 .companion-avatar.mat{background:#D4EEFF}.companion-avatar.ter{background:#FFE8E8}
 .companion-speech{font-size:12px;font-weight:800;color:var(--dark);max-width:100px}
+
+/* ── BROWSER WARNING BANNER ── */
+#browserBanner{
+  display:none;
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(10,20,40,.85);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
+}
+#browserBanner.show{display:flex}
+.bb-card{
+  background:white;border-radius:20px;padding:28px 24px;
+  max-width:340px;width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.bb-ico{font-size:52px;margin-bottom:12px}
+.bb-title{font-family:'Fredoka One',cursive;font-size:22px;color:#0F1C3F;margin-bottom:8px}
+.bb-text{font-size:14px;color:#6B7A99;font-weight:700;line-height:1.55;margin-bottom:20px}
+.bb-btn{
+  display:block;width:100%;border:none;border-radius:12px;
+  padding:14px;background:#2563EB;color:white;
+  font-family:'Fredoka One',cursive;font-size:17px;
+  cursor:pointer;margin-bottom:10px;text-decoration:none;
+}
+.bb-skip{
+  font-size:13px;color:#6B7A99;font-weight:700;
+  cursor:pointer;text-decoration:underline;
+}
 </style>
 </head>
 <body>
@@ -2216,6 +2243,41 @@ const escQ = (s) => (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
 // ── INIT ──────────────────────────────────────────────────────────────────────
 if (shouldShowOnboarding()) { startOnboarding(); }
 else { renderHome(); }
+</script>
+
+<div id="browserBanner">
+  <div class="bb-card">
+    <div class="bb-ico">🔊</div>
+    <div class="bb-title">Zvuky nefungují?</div>
+    <div class="bb-text">
+      Otevřeli jste appku ve Facebooku nebo Instagramu.<br>
+      Tyto prohlížeče blokují zvuk.<br><br>
+      Pro plný zážitek otevřete v&nbsp;<strong>Chrome nebo Safari</strong>.
+    </div>
+    <a id="bbOpenBtn" href="" target="_blank" class="bb-btn">🌐 Otevřít v Chrome / Safari</a>
+    <div class="bb-skip" onclick="document.getElementById('browserBanner').classList.remove('show')">
+      Pokračovat bez zvuku
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DETEKCE OMEZENÉHO PROHLÍŽEČE ──────────────────────────────
+(function(){
+  const ua = navigator.userAgent || '';
+  const isFBIAB = ua.includes('FBAN') || ua.includes('FBAV') ||
+                  ua.includes('Instagram') || ua.includes('LinkedInApp') ||
+                  ua.includes('Twitter') || ua.includes('Line/') ||
+                  ua.includes('KAKAOTALK') || ua.includes('MicroMessenger');
+  // Také detekuj podle absence speechSynthesis
+  const noSpeech = !('speechSynthesis' in window);
+  if (isFBIAB || noSpeech) {
+    const banner = document.getElementById('browserBanner');
+    const btn    = document.getElementById('bbOpenBtn');
+    if (banner) banner.classList.add('show');
+    if (btn)    btn.href = window.location.href;
+  }
+})();
 </script>
 </body>
 </html>
