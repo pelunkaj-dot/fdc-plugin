@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#FFF8F0"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Španělština"/>
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAF8WlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDIgNzkuMTY0MzUyLCAyMDIwLzAxLzMwLTE1OjUwOjM4ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIwLTAzLTEwVDExOjIwOjIyKzAxOjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDIwLTAzLTEwVDExOjIwOjIyKzAxOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMC0wMy0xMFQxMToyMDoyMiswMTowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo2ZDZkNmQ2ZC02ZDZkLTZkNmQtNmQ2ZC02ZDZkNmQ2ZDZkNmQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NmQ2ZDZkNmQtNmQ2ZC02ZDZkLTZkNmQtNmQ2ZDZkNmQ2ZDZkIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6NmQ2ZDZkNmQtNmQ2ZC02ZDZkLTZkNmQtNmQ2ZDZkNmQ2ZDZkIiBkYzpmb3JtYXQ9ImltYWdlL3BuZyIgcGhvdG9zaG9wOkNvbG9yTW9kZT0iMyIgcGhvdG9zaG9wOklDQ1Byb2ZpbGU9InNSR0IgSUVDNjE5NjYtMi4xIj4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo2ZDZkNmQ2ZC02ZDZkLTZkNmQtNmQ2ZC02ZDZkNmQ2ZDZkNmQiIHN0RXZ0OndoZW49IjIwMjAtMDMtMTBUMTE6MjA6MjIrMDE6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMS4xIChXaW5kb3dzKSIvPiA8L3JkZjpTZXE+IDwveG1wTU06SGlzdG9yeT4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B"/>
+<link id="pwa-manifest" rel="manifest"/>
+<title>🇪🇸 Španělština pro děti</title>
+<style>
+/* Systémové fonty — fungují offline */
+@font-face {
+  font-family: 'Fredoka One';
+  src: local('Fredoka One'), local('Nunito-Bold'), local('Comfortaa'), local('Comic Sans MS');
+  font-weight: normal;
+}
+</style>
+<!-- ResponsiveVoice nahrazen Web Speech API -->
+<style>
+:root {
+  --cream:#FFF8F0; --warm:#FFF0DC; --dark:#2C1810; --muted:#8A6A58;
+  --border:#EAD8C8; --blue:#4A9FE8; --coral:#FF6B6B; --green:#5BC26A;
+  --yellow:#FFD93D; --purple:#B06EF0; --mat:#4A9FE8; --ter:#FF6B6B;
+  --shadow:0 6px 24px rgba(44,24,16,.10); --r:20px;
+  font-family:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,#FFD93D44 2px,transparent 2px),
+    radial-gradient(circle,#FF6B6B33 2px,transparent 2px),
+    radial-gradient(circle,#4A9FE833 2px,transparent 2px);
+  background-size:60px 60px,90px 90px,120px 120px;
+  background-position:0 0,30px 30px,15px 45px}
+.app{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:16px 16px 60px}
+.fredoka{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif}
+.screen{display:none}.screen.active{display:block}
+
+/* HOME */
+.home-header{text-align:center;padding:24px 0 8px}
+.home-title{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:30px;color:var(--dark);line-height:1.2;margin-bottom:4px}
+.home-sub{font-size:14px;color:var(--muted);font-weight:700}
+.chars-row{display:flex;justify-content:center;align-items:flex-end;gap:12px;margin:16px 0 8px}
+.char-bubble{display:flex;flex-direction:column;align-items:center;gap:4px}
+.char-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:38px;box-shadow:0 4px 14px rgba(0,0,0,.12);border:3px solid white;position:relative;overflow:hidden}
+.char-avatar.mat{background:#D4EEFF}.char-avatar.ter{background:#FFE8E8}
+.char-name{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:13px;color:var(--muted)}
+.speech-bubble{background:white;border-radius:16px;padding:10px 14px;font-size:13px;font-weight:800;color:var(--dark);
+  box-shadow:var(--shadow);max-width:160px;text-align:center;position:relative;margin-bottom:8px;border:2px solid var(--border)}
+.speech-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:white}
+
+/* Streak */
+
+/* Install button */
+.install-btn{display:none;align-items:center;justify-content:center;gap:8px;
+  margin:10px auto 0;background:var(--blue);color:white;border:none;border-radius:999px;
+  padding:10px 24px;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:15px;cursor:pointer;
+  box-shadow:0 4px 14px rgba(74,159,232,.35);transition:all .15s}
+.install-btn:active{transform:scale(.97)}
+.streak-bar{display:flex;justify-content:center;margin:4px 0 12px}
+.streak-badge{background:white;border-radius:999px;padding:6px 18px;
+  font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:15px;color:var(--dark);
+  box-shadow:0 2px 8px rgba(0,0,0,.07);border:2px solid var(--border)}
+
+/* Difficulty */
+.diff-bar{background:white;border-radius:999px;padding:6px;display:flex;gap:6px;margin:16px 0;
+  box-shadow:0 3px 12px rgba(0,0,0,.07);border:2px solid var(--border)}
+.diff-btn{flex:1;border:none;border-radius:999px;padding:10px 8px;
+  font-family:'Nunito','Segoe UI',system-ui,-apple-system,sans-serif;font-weight:900;font-size:13px;cursor:pointer;
+  transition:all .15s;color:var(--muted);background:transparent;touch-action:manipulation}
+.diff-btn.active{color:white}
+.diff-btn[data-d="easy"].active{background:#5BC26A}
+.diff-btn[data-d="medium"].active{background:#FFB347}
+.diff-btn[data-d="hard"].active{background:#FF6B6B}
+
+/* Topic grid */
+.section-title{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:18px;color:var(--dark);margin:20px 0 12px}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.topic-card{border-radius:var(--r);padding:20px 12px 16px;cursor:pointer;border:3px solid transparent;
+  transition:all .15s;text-align:center;box-shadow:var(--shadow);touch-action:manipulation;position:relative;overflow:hidden}
+
+/* ── PAYWALL ── */
+.topic-card.locked{
+  opacity:.75;
+  cursor:pointer;
+  position:relative;
+}
+.topic-card.locked::after{
+  content:'🔒';
+  position:absolute;
+  top:8px;right:8px;
+  font-size:16px;
+  opacity:.7;
+}
+.topic-card.locked:hover{
+  transform:translateY(-2px);
+  opacity:.9;
+}
+#paywallModal{
+  display:none;
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(10,15,30,.7);
+  backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+#paywallModal.show{display:flex}
+.pw-card{
+  background:white;
+  border-radius:24px;
+  padding:32px 24px;
+  max-width:340px;width:100%;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  animation:popIn .3s ease;
+}
+.pw-ico{font-size:56px;margin-bottom:12px}
+.pw-title{
+  font-family:'Fredoka One',cursive;
+  font-size:22px;color:#1A1A2E;
+  margin-bottom:8px;line-height:1.2;
+}
+.pw-text{
+  font-size:14px;color:#6B7A9A;
+  font-weight:700;line-height:1.6;
+  margin-bottom:20px;
+}
+.pw-free-badge{
+  display:inline-block;
+  background:#E8F8EA;color:#2E7D32;
+  border-radius:999px;padding:5px 14px;
+  font-size:13px;font-weight:800;
+  margin-bottom:18px;
+}
+.pw-btn{
+  display:block;width:100%;
+  border:none;border-radius:14px;
+  padding:16px;
+  background:linear-gradient(135deg,#E8B800,#F0D000);
+  color:#1A1A00;
+  font-family:'Fredoka One',cursive;
+  font-size:18px;cursor:pointer;
+  text-decoration:none;
+  box-shadow:0 4px 16px rgba(232,184,0,.35);
+  margin-bottom:10px;
+  transition:all .15s;
+}
+.pw-btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.pw-btn:active{transform:scale(.97)}
+.pw-close{
+  font-size:13px;color:#9AA0B4;
+  font-weight:700;cursor:pointer;
+  text-decoration:underline;
+}
+.pw-features{
+  background:#F8F9FF;border-radius:12px;
+  padding:12px 14px;text-align:left;
+  margin-bottom:18px;
+}
+.pw-feat{
+  font-size:13px;font-weight:800;color:#1A1A2E;
+  padding:3px 0;
+}
+.topic-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,transparent 60%);pointer-events:none}
+.topic-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(0,0,0,.14)}
+.topic-card:active{transform:scale(.97)}
+.topic-emoji{font-size:40px;line-height:1;margin-bottom:8px;display:block}
+.topic-name{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:16px;color:var(--dark);display:block}
+.topic-name-cz{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
+.topic-stars{font-size:14px;margin-top:6px}
+.topic-progress{position:absolute;top:8px;right:8px;display:flex;gap:2px;flex-wrap:wrap;max-width:24px}
+.tp-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5)}
+.tp-dot.done{background:white}
+
+/* Topic screen */
+.topic-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.back-btn{width:44px;height:44px;border-radius:50%;border:2px solid var(--border);background:white;
+  cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;
+  touch-action:manipulation;box-shadow:0 2px 8px rgba(0,0,0,.07);flex-shrink:0}
+.back-btn:hover{border-color:var(--blue)}
+.topic-header-info h2{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:24px;color:var(--dark)}
+.topic-header-info p{font-size:13px;color:var(--muted);font-weight:700}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ex-card{border-radius:var(--r);padding:22px 16px 18px;cursor:pointer;text-align:center;
+  transition:all .15s;border:3px solid transparent;box-shadow:var(--shadow);touch-action:manipulation}
+.ex-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.13)}
+.ex-card:active{transform:scale(.97)}
+.ex-icon{font-size:40px;margin-bottom:8px;display:block}
+.ex-name{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:17px;color:var(--dark)}
+.ex-desc{font-size:12px;color:var(--muted);font-weight:700;margin-top:4px}
+.ex-done-badge{display:inline-block;background:var(--green);color:white;border-radius:999px;
+  padding:2px 10px;font-size:11px;font-weight:900;margin-top:6px}
+
+/* Exercise header */
+.ex-header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.ex-title-bar{flex:1;background:white;border-radius:999px;padding:8px 16px;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;
+  font-size:16px;color:var(--dark);border:2px solid var(--border)}
+.progress-dots{display:flex;gap:6px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.pdot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:all .2s}
+.pdot.done{background:var(--green)}.pdot.active{background:var(--blue);width:26px;border-radius:5px}
+
+/* Story */
+.story-card{background:white;border-radius:var(--r);padding:24px;box-shadow:var(--shadow);
+  margin-bottom:14px;border:2px solid var(--border)}
+.story-chars{display:flex;justify-content:center;gap:24px;margin-bottom:16px}
+.story-char{text-align:center}
+.story-char-face{width:64px;height:64px;border-radius:50%;font-size:32px;display:flex;
+  align-items:center;justify-content:center;border:3px solid white;
+  box-shadow:0 3px 12px rgba(0,0,0,.10);margin:0 auto 4px}
+.story-text{font-size:18px;font-weight:800;color:var(--dark);line-height:1.6;margin-bottom:10px;text-align:center}
+.story-text .hl{background:var(--yellow);border-radius:6px;padding:0 4px;color:var(--dark)}
+.story-cz{font-size:14px;color:var(--muted);font-weight:700;text-align:center;font-style:italic;line-height:1.5}
+.play-story-btn{width:100%;border:none;border-radius:999px;padding:14px;background:var(--blue);color:white;
+  font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:18px;cursor:pointer;margin-top:14px;
+  box-shadow:0 4px 14px rgba(74,159,232,.35);touch-action:manipulation;transition:all .12s}
+.play-story-btn:active{transform:scale(.97)}
+
+/* Match */
+.match-instruction{text-align:center;font-size:15px;font-weight:800;color:var(--dark);
+  margin-bottom:16px;background:white;border-radius:14px;padding:12px;border:2px solid var(--border)}
+.match-grid-wrap{display:flex;gap:16px}
+.match-col{flex:1;display:flex;flex-direction:column;gap:10px}
+.match-item{background:white;border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;
+  border:3px solid transparent;box-shadow:0 3px 10px rgba(0,0,0,.07);
+  transition:all .12s;touch-action:manipulation;user-select:none}
+.match-item:hover{border-color:var(--blue);transform:translateY(-1px)}
+.match-item.selected{border-color:var(--blue);background:#EDF5FF}
+.match-item.correct{border-color:var(--green);background:#EDFFF1;animation:correctPop .3s ease}
+.match-item.wrong{border-color:var(--coral);background:#FFF0F0;animation:wrongShake .3s ease}
+.match-item.matched{opacity:.45;cursor:default}
+@keyframes correctPop{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes wrongShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.match-emoji{font-size:36px;line-height:1;display:block;margin-bottom:4px}
+.match-word{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:16px;color:var(--dark)}
+.match-score{text-align:center;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:22px;color:var(--dark);margin-top:12px}
+
+/* Listen */
+.listen-card{background:white;border-radius:var(--r);padding:24px;box-shadow:var(--shadow);
+  text-align:center;margin-bottom:14px;border:2px solid var(--border)}
+.listen-emoji{font-size:80px;line-height:1;margin-bottom:16px;display:block}
+.listen-word{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:36px;color:var(--dark);margin-bottom:6px}
+.listen-cz{font-size:16px;color:var(--muted);font-weight:700;margin-bottom:20px}
+.listen-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.listen-btn{border:none;border-radius:999px;padding:12px 24px;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;
+  font-size:17px;cursor:pointer;transition:all .12s;touch-action:manipulation}
+.listen-btn.play{background:var(--blue);color:white;box-shadow:0 4px 14px rgba(74,159,232,.35)}
+.listen-btn.slow{background:#E8F3FF;color:var(--blue)}
+.listen-btn:active{transform:scale(.96)}
+.listen-nav{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.listen-nav-btn{border:2px solid var(--border);background:white;border-radius:999px;
+  padding:10px 20px;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:15px;cursor:pointer;
+  transition:all .12s;touch-action:manipulation;color:var(--dark)}
+.listen-nav-btn.primary{background:var(--green);border-color:var(--green);color:white}
+.listen-nav-btn:hover:not(.primary){border-color:var(--blue)}
+.listen-progress-text{font-size:13px;color:var(--muted);font-weight:700;text-align:center;margin-bottom:10px}
+
+/* Quiz — 12 question types */
+@keyframes quizPop{0%{transform:scale(.7) rotate(-5deg)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes qzIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+.qz-topbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.qz-pbar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.qz-pfill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:4px;transition:width .4s}
+.qz-counter{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:13px;color:var(--muted);white-space:nowrap}
+.qz-score{text-align:center;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:10px}
+.qz-card{background:white;border-radius:var(--r);padding:20px;box-shadow:var(--shadow);margin-bottom:12px;text-align:center;border:2px solid var(--border);animation:qzIn .25s ease}
+.qz-big-emoji{font-size:96px;line-height:1;display:block;margin:0 auto 6px;animation:quizPop .35s ease}
+.qz-big-word{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:40px;color:var(--dark);margin:8px 0;animation:quizPop .3s ease}
+.qz-cz-label{font-size:14px;color:var(--muted);font-weight:700;margin-top:2px}
+.qz-instruction{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:10px}
+.qz-type-badge{display:inline-block;font-size:11px;font-weight:700;color:var(--muted);background:var(--warm);border-radius:8px;padding:2px 8px;margin-bottom:8px}
+/* 2×2 choice grid */
+.qz-2x2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.qz-choice{border:3px solid var(--border);background:white;border-radius:16px;padding:13px 8px;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;cursor:pointer;touch-action:manipulation;color:var(--dark);transition:all .12s;min-height:70px;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.qz-choice:hover:not(:disabled){border-color:var(--blue);background:#EDF5FF;transform:translateY(-2px)}
+.qz-choice:active:not(:disabled){transform:scale(.96)}
+.qz-choice.correct{border-color:var(--green)!important;background:#EDFFF1!important;animation:correctPop .3s ease}
+.qz-choice.wrong{border-color:var(--coral)!important;background:#FFF0F0!important;animation:wrongShake .3s ease}
+.qz-choice:disabled{cursor:default}
+.qz-emoji-btn{font-size:42px;display:block;margin-bottom:2px;line-height:1}
+.qz-word-btn{font-size:19px}
+.qz-both-row{display:flex;align-items:center;justify-content:center;gap:7px}
+.qz-both-emoji{font-size:28px}
+.qz-both-word{font-size:16px;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif}
+/* True/False */
+.qz-tf-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px}
+.qz-tf-btn{border:none;border-radius:20px;padding:26px 12px;font-size:34px;cursor:pointer;touch-action:manipulation;transition:all .14s;color:white;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif}
+.qz-tf-btn.yes{background:var(--green);box-shadow:0 5px 16px rgba(91,194,106,.35)}
+.qz-tf-btn.no{background:var(--coral);box-shadow:0 5px 16px rgba(255,107,107,.35)}
+.qz-tf-btn:hover{transform:translateY(-3px) scale(1.03)}
+.qz-tf-btn:active{transform:scale(.96)}
+.qz-tf-label{font-size:14px;display:block;margin-top:4px}
+.qz-tf-show{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0}
+.qz-tf-show-emoji{font-size:68px}
+.qz-tf-show-word{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:32px;color:var(--dark)}
+/* Odd one out */
+.qz-oot-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.qz-oot-item{border:3px solid var(--border);background:white;border-radius:16px;padding:16px 8px;text-align:center;cursor:pointer;touch-action:manipulation;transition:all .12s}
+.qz-oot-item:hover{border-color:var(--blue);transform:translateY(-2px)}
+.qz-oot-emoji{font-size:38px;display:block;margin-bottom:4px;line-height:1}
+.qz-oot-label{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:15px;color:var(--dark)}
+.qz-oot-item.correct{border-color:var(--green);background:#EDFFF1;animation:correctPop .3s}
+.qz-oot-item.wrong{border-color:var(--coral);background:#FFF0F0;animation:wrongShake .3s}
+/* Quick pick (2 big options) */
+.qz-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px}
+.qz-big2{border:3px solid var(--border);background:white;border-radius:20px;padding:22px 10px;text-align:center;cursor:pointer;touch-action:manipulation;transition:all .12s}
+.qz-big2:hover{border-color:var(--blue);transform:scale(1.04)}
+.qz-big2.correct{border-color:var(--green);background:#EDFFF1;animation:correctPop .3s}
+.qz-big2.wrong{border-color:var(--coral);background:#FFF0F0;animation:wrongShake .3s}
+/* Flash hide */
+.qz-flash-emoji{font-size:108px;display:block;text-align:center;margin:4px auto;transition:all .5s}
+.qz-flash-count{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:44px;color:var(--blue);text-align:center;min-height:60px}
+/* Listen */
+.qz-listen-icon{font-size:84px;display:block;text-align:center;margin:4px auto;cursor:pointer;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.qz-listen-replay{border:none;border-radius:999px;padding:10px 24px;background:#E8F3FF;color:var(--blue);font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:15px;cursor:pointer;margin-top:8px;touch-action:manipulation}
+/* First letter hint */
+.qz-first-letter{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:20px;color:var(--blue);background:#E8F3FF;border-radius:12px;padding:8px 18px;display:inline-block;margin-top:6px;letter-spacing:4px}
+/* Result */
+.qz-result{background:white;border-radius:var(--r);padding:32px 24px;text-align:center;box-shadow:var(--shadow);border:2px solid var(--border)}
+.qz-result-emoji{font-size:72px;display:block;margin-bottom:12px}
+.qz-result-score{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:46px;color:var(--blue);margin-bottom:8px}
+.qz-result-sub{font-size:14px;color:var(--muted);font-weight:700;margin-bottom:20px}
+
+/* Memory */
+.mem-score{text-align:center;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:18px;color:var(--dark);margin-bottom:12px}
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.mem-card{aspect-ratio:1;cursor:pointer;perspective:600px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.mem-card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;
+  transition:transform .35s ease;border-radius:14px}
+.mem-card.flipped .mem-card-inner,.mem-card.matched .mem-card-inner{transform:rotateY(180deg)}
+.mem-card-front,.mem-card-back{position:absolute;inset:0;backface-visibility:hidden;
+  border-radius:14px;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:4px}
+.mem-card-front{background:linear-gradient(135deg,var(--blue),#7BC8FF);color:white;font-size:22px;
+  box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.mem-card-back{background:white;border:3px solid var(--border);box-shadow:0 3px 10px rgba(0,0,0,.07);
+  transform:rotateY(180deg)}
+.mem-card.matched .mem-card-back{border-color:var(--green);background:#EDFFF1}
+.mem-card.wrong-flash .mem-card-back{border-color:var(--coral);background:#FFF0F0}
+.mem-emoji-big{font-size:28px;line-height:1}
+.mem-word-text{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:13px;color:var(--dark);text-align:center;line-height:1.2;word-break:break-word}
+
+/* Rhyme */
+
+.rhyme-line-wrap{opacity:0;transform:translateY(8px);transition:all .4s ease}
+.rhyme-line-wrap.visible{opacity:1;transform:translateY(0)}
+.rhyme-cz-line{font-size:13px;color:var(--muted);font-weight:600;font-style:italic;
+  margin-top:2px;padding:0 16px 6px;line-height:1.4}
+
+/* ── FLASHCARD TRENÉR ── */
+
+.general-flash-btn{width:100%;border:3px solid var(--yellow);border-radius:var(--r);
+  padding:16px;background:var(--warm);color:var(--dark);cursor:pointer;
+  font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;
+  font-size:18px;display:flex;flex-direction:column;align-items:center;gap:4px;
+  box-shadow:var(--shadow);transition:all .15s;margin-bottom:4px}
+.general-flash-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.general-flash-btn:active{transform:scale(.97)}
+.general-flash-sub{font-size:12px;color:var(--muted);font-weight:700;
+  font-family:'Nunito','Segoe UI',sans-serif}
+.flash-header{display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px}
+.flash-progress{font-size:13px;font-weight:800;color:var(--muted)}
+.flash-card-wrap{perspective:800px;margin:12px 0}
+.flash-card{width:100%;min-height:220px;border-radius:var(--r);position:relative;
+  transform-style:preserve-3d;transition:transform .45s ease;cursor:pointer}
+.flash-card.flipped{transform:rotateY(180deg)}
+.flash-front,.flash-back{position:absolute;inset:0;border-radius:var(--r);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;backface-visibility:hidden;box-shadow:var(--shadow)}
+.flash-front{background:white;border:3px solid var(--border)}
+.flash-back{background:var(--warm);border:3px solid var(--yellow);transform:rotateY(180deg)}
+.flash-emoji{font-size:72px;line-height:1;margin-bottom:12px}
+.flash-word{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;
+  font-size:32px;color:var(--dark);margin-bottom:6px;text-align:center}
+.flash-sub{font-size:15px;color:var(--muted);font-weight:700;text-align:center}
+.flash-hint{font-size:13px;color:var(--muted);margin-top:16px;font-weight:600}
+.flash-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.flash-btn-wrong{border:none;border-radius:999px;padding:14px;font-size:15px;font-weight:800;
+  cursor:pointer;background:#FFE8E8;color:#CC3333;font-family:'Nunito',sans-serif}
+.flash-btn-ok{border:none;border-radius:999px;padding:14px;font-size:15px;font-weight:800;
+  cursor:pointer;background:#E8FFE8;color:#228822;font-family:'Nunito',sans-serif}
+.flash-btn-wrong:active,.flash-btn-ok:active{transform:scale(.97)}
+.flash-direction{display:flex;gap:8px;margin:8px 0}
+.flash-dir-btn{flex:1;border:2px solid var(--border);border-radius:999px;padding:8px;
+  font-size:13px;font-weight:800;cursor:pointer;background:white;color:var(--muted);
+  font-family:'Nunito',sans-serif;transition:all .15s}
+.flash-dir-btn.active{background:var(--blue);color:white;border-color:var(--blue)}
+.flash-stats{text-align:center;padding:12px;font-size:14px;font-weight:700;color:var(--muted)}
+.flash-done-card{background:white;border-radius:var(--r);padding:28px;text-align:center;
+  box-shadow:var(--shadow);margin:16px 0}
+.rhyme-card{background:white;border-radius:var(--r);padding:28px 24px;box-shadow:var(--shadow);
+  border:2px solid var(--border);margin-bottom:14px}
+.rhyme-title{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:22px;color:var(--dark);text-align:center;margin-bottom:20px}
+.rhyme-lines{display:flex;flex-direction:column;gap:12px}
+.rhyme-line{font-size:17px;font-weight:800;color:var(--dark);line-height:1.4;padding:10px 16px;
+  border-radius:12px;background:var(--cream);border:2px solid var(--border);
+  opacity:0;transform:translateY(8px);transition:all .3s ease}
+.rhyme-line.visible{opacity:1;transform:translateY(0)}
+.rhyme-play-btn{width:100%;border:none;border-radius:999px;padding:14px;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;
+  font-size:18px;cursor:pointer;margin-top:16px;transition:all .12s;touch-action:manipulation}
+.rhyme-play-btn.play{background:var(--purple);color:white;box-shadow:0 4px 14px rgba(176,110,240,.35)}
+.rhyme-play-btn.replay{background:var(--warm);color:var(--purple);border:2px solid var(--border)}
+
+/* Completion */
+.completion-card{background:white;border-radius:var(--r);padding:36px 24px;box-shadow:var(--shadow);
+  text-align:center;border:2px solid var(--border)}
+.completion-emoji{font-size:72px;line-height:1;margin-bottom:12px;display:block}
+.completion-title{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:28px;color:var(--dark);margin-bottom:8px}
+.completion-sub{font-size:15px;color:var(--muted);font-weight:700;line-height:1.5;margin-bottom:20px}
+.stars-row{font-size:40px;margin-bottom:16px;letter-spacing:4px}
+.completion-btns{display:flex;flex-direction:column;gap:10px}
+.comp-btn{border:none;border-radius:999px;padding:14px;font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;
+  font-size:18px;cursor:pointer;transition:all .12s;touch-action:manipulation}
+.comp-btn.primary{background:var(--blue);color:white;box-shadow:0 4px 14px rgba(74,159,232,.35)}
+.comp-btn.secondary{background:var(--warm);color:var(--dark);border:2px solid var(--border)}
+
+/* Confetti */
+.cf{position:fixed;width:10px;height:14px;border-radius:3px;pointer-events:none;z-index:999;animation:cfFall linear forwards}
+@keyframes cfFall{0%{transform:translateY(-20px) rotateZ(0)}100%{transform:translateY(100vh) rotateZ(540deg);opacity:0}}
+
+/* Float emoji */
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(.5)}50%{opacity:1;transform:translateY(-70px) scale(1.3)}100%{opacity:0;transform:translateY(-130px) scale(.8)}}
+
+/* Character bounce */
+@keyframes charBounce{0%,100%{transform:translateY(0)}20%,60%{transform:translateY(-12px)}40%,80%{transform:translateY(-6px)}}
+@keyframes charWiggle{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.char-avatar.bouncing{animation:charBounce .7s ease}
+.char-avatar.wiggling{animation:charWiggle .25s ease 3}
+
+/* XP bar */
+.xp-bar{background:white;border-radius:999px;padding:8px 16px;display:flex;align-items:center;
+  gap:10px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:2px solid var(--border)}
+.xp-stars{font-size:18px;flex-shrink:0}
+.xp-track{flex:1;height:10px;background:var(--warm);border-radius:5px;overflow:hidden}
+.xp-fill{height:100%;background:var(--yellow);border-radius:5px;transition:width .4s ease}
+.xp-label{font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:14px;color:var(--dark);flex-shrink:0}
+
+/* Companion bar */
+.companion-bar{display:flex;align-items:center;justify-content:space-between;background:white;
+  border-radius:999px;padding:6px 14px 6px 6px;box-shadow:0 3px 12px rgba(0,0,0,.08);
+  border:2px solid var(--border);margin-bottom:14px;gap:8px}
+.companion-char{display:flex;align-items:center;gap:8px}
+.companion-avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;overflow:hidden;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,.10)}
+.companion-avatar.mat{background:#D4EEFF}.companion-avatar.ter{background:#FFE8E8}
+.companion-speech{font-size:12px;font-weight:800;color:var(--dark);max-width:100px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HOME -->
+  <div class="screen active" id="screenHome">
+    <div class="home-header">
+      <div class="home-title fredoka">🇪🇸 Matýsek a Terezka</div>
+      <div class="home-sub">Učíme se španělsky! ✨</div>
+      <button id="installBtn" class="install-btn" onclick="installPWA()">📲 Přidat na plochu</button>
+    </div>
+    <div class="chars-row">
+      <div class="char-bubble">
+        <div class="speech-bubble" id="matSpeech">Hello! I am Matýsek! 👋</div>
+        <div class="char-avatar mat" id="avatarMat"></div>
+        <div class="char-name">Matýsek</div>
+      </div>
+      <div class="char-bubble">
+        <div class="speech-bubble" id="terSpeech">Hi! I am Terezka! 🌸</div>
+        <div class="char-avatar ter" id="avatarTer"></div>
+        <div class="char-name">Terezka</div>
+      </div>
+    </div>
+    <div class="streak-bar"><div class="streak-badge" id="streakBadge">🔥 1 den v řadě</div></div>
+    <div class="xp-bar">
+      <div class="xp-stars">⭐</div>
+      <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      <div class="xp-label" id="xpLabel">0 hvězd</div>
+    </div>
+    <div class="diff-bar">
+      <button class="diff-btn active" data-d="easy" onclick="setDiff('easy')">🐣 Snadné</button>
+      <button class="diff-btn" data-d="medium" onclick="setDiff('medium')">🐥 Střední</button>
+      <button class="diff-btn" data-d="hard" onclick="setDiff('hard')">🦅 Těžké</button>
+    </div>
+    <button class="general-flash-btn" onclick="startGeneralFlash()">
+      🃏 Generální trenér slovíček
+      <span class="general-flash-sub">Všechna slovíčka ze všech témat</span>
+    </button>
+    <div class="section-title">Vyber téma 👇</div>
+    <div class="topic-grid" id="topicGrid"></div>
+  </div>
+
+  <!-- TOPIC -->
+  <div class="screen" id="screenTopic">
+    <div class="topic-header">
+      <button class="back-btn" onclick="goHome()">←</button>
+      <div class="topic-header-info">
+        <h2 id="topicHeaderTitle"></h2>
+        <p id="topicHeaderSub"></p>
+      </div>
+    </div>
+    <div class="ex-grid" id="exGrid"></div>
+  </div>
+
+  <!-- STORY -->
+  <div class="screen" id="screenStory">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goTopic()">←</button>
+      <div class="ex-title-bar">📖 Příběh</div>
+    </div>
+    <div id="storyContent"></div>
+  </div>
+
+  <!-- MATCH -->
+  <div class="screen" id="screenMatch">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goTopic()">←</button>
+      <div class="ex-title-bar">🔗 Spoj slovo s obrázkem</div>
+    </div>
+    <div id="matchContent"></div>
+  </div>
+
+  <!-- LISTEN -->
+  <div class="screen" id="screenListen">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goTopic()">←</button>
+      <div class="ex-title-bar">🔊 Poslouchej a opakuj</div>
+    </div>
+    <div id="listenContent"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screenQuiz">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goTopic()">←</button>
+      <div class="ex-title-bar">🎯 Kvíz</div>
+    </div>
+    <div id="quizContent"></div>
+  </div>
+
+  <!-- MEMORY -->
+  <div class="screen" id="screenMemory">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goTopic()">←</button>
+      <div class="ex-title-bar">🧩 Paměť</div>
+    </div>
+    <div id="memoryContent"></div>
+  </div>
+
+  <!-- RHYME -->
+  <div class="screen" id="screenRhyme">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goTopic()">←</button>
+      <div class="ex-title-bar">📜 Říkanka</div>
+    </div>
+    <div id="rhymeContent"></div>
+  </div>
+
+  <!-- DONE -->
+  <div class="screen" id="screenDone">
+    <div id="doneContent"></div>
+  </div>
+
+  <div class="screen" id="screenFlash">
+    <div id="flashContent"></div>
+  </div>
+
+</div>
+
+<script>
+const EX_KEYS = ['flash','story','listen','match','quiz','memory','rhyme'];
+
+const APP_DATA = { topics: [
+{
+  id:"barvy", emoji:"🎨", title:"Colores", titleCz:"Barvy", color:"#FF6B6B", colorLight:"#FFE8E8",
+  words:[
+    {es:"rojo",cz:"červená",emoji:"🔴"},{es:"azul",cz:"modrá",emoji:"🔵"},
+    {es:"verde",cz:"zelená",emoji:"🟢"},{es:"amarillo",cz:"žlutá",emoji:"🟡"},
+    {es:"morado",cz:"fialová",emoji:"🟣"},{es:"naranja",cz:"oranžová",emoji:"🟠"},
+    {es:"rosa",cz:"růžová",emoji:"🩷"},{es:"blanco",cz:"bílá",emoji:"⬜"},
+    {es:"negro",cz:"černá",emoji:"⬛"}
+  ],
+  stories:{
+    easy:[
+      {es:"Matýsek encuentra una caja de pinturas.",cz:"Matýsek najde krabičku s barvami.",bg:"#FFF8DC",char:"mat"},
+      {es:"Pinta el sol de amarillo.",cz:"Namaluje slunce žlutě.",bg:"#FFF8DC",char:"mat"},
+      {es:"Pinta el cielo de azul.",cz:"Namaluje oblohu modře.",bg:"#E8F4FF",char:"mat"},
+      {es:"Terezka mira el dibujo.",cz:"Terezka se podívá na obrázek.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Es precioso! dice ella.",cz:"Je to krásné! říká.",bg:"#FFE8E8",char:"ter"}
+    ],
+    medium:[
+      {es:"Matýsek y Terezka quieren pintar un arcoíris.",cz:"Chtějí namalovat duhu.",bg:"#F0F8FF",char:"both"},
+      {es:"¡Yo pinto el rojo y el naranja! dice Matýsek.",cz:"Já namaluji červenou a oranžovou! říká Matýsek.",bg:"#FFF0E8",char:"mat"},
+      {es:"¡Yo pinto el amarillo y el verde! dice Terezka.",cz:"Já namaluji žlutou a zelenou! říká Terezka.",bg:"#F0FFE8",char:"ter"},
+      {es:"Juntos añaden el azul y el morado.",cz:"Společně přidají modrou a fialovou.",bg:"#F0E8FF",char:"both"},
+      {es:"El arcoíris tiene seis colores.",cz:"Duha má šest barev.",bg:"#FFFBF0",char:"both"},
+      {es:"¡Somos un buen equipo! dicen los dos.",cz:"Jsme skvělý tým! říkají oba.",bg:"#FFFBF0",char:"both"}
+    ],
+    hard:[
+      {es:"Matýsek tiene un estuche mágico.",cz:"Matýsek má kouzelný penál.",bg:"#F8F0FF",char:"mat"},
+      {es:"Cada lápiz es de un color diferente.",cz:"Každá tužka má jinou barvu.",bg:"#F8F0FF",char:"mat"},
+      {es:"Dibuja una manzana roja para Terezka.",cz:"Nakreslí červené jablko pro Terezku.",bg:"#FFE8E8",char:"mat"},
+      {es:"¡La manzana salta del papel!",cz:"Jablko vyskočí z papíru!",bg:"#FFE8E8",char:"ter"},
+      {es:"¿Cómo? pregunta Terezka con los ojos muy abiertos.",cz:"Jak?! ptá se Terezka s velkýma očima.",bg:"#FFF8DC",char:"ter"},
+      {es:"Los lápices son mágicos, susurra Matýsek.",cz:"Ty tužky jsou kouzelné, šeptá Matýsek.",bg:"#F8F0FF",char:"mat"},
+      {es:"Terezka coge el lápiz rosa y dibuja una mariposa.",cz:"Terezka chytí růžovou tužku a nakreslí motýla.",bg:"#FFE8F8",char:"ter"},
+      {es:"¡La mariposa vuela y se posa en su nariz!",cz:"Motýl vyletí a sedne si jí na nos!",bg:"#FFE8F8",char:"ter"}
+    ]
+  },
+  rhyme:{title:"Canción del arcoíris",lines:["Rojo, amarillo, rosa y verde,","morado, naranja y azul.","Puedo nombrar el arcoíris,","¿puedes nombrarlo tú?"],czLines:["Červená, žlutá, růžová a zelená,", "fialová, oranžová a modrá.", "Umím pojmenovat duhu,", "pojmenuješ ji i ty?"]}
+},
+{
+  id:"zvirata", emoji:"🐾", title:"Animales", titleCz:"Zvířata", color:"#5BC26A", colorLight:"#E8F8EA",
+  words:[
+    {es:"gato",cz:"kočka",emoji:"🐱"},{es:"perro",cz:"pes",emoji:"🐶"},
+    {es:"pájaro",cz:"pták",emoji:"🐦"},{es:"pez",cz:"ryba",emoji:"🐟"},
+    {es:"conejo",cz:"králík",emoji:"🐰"},{es:"caballo",cz:"kůň",emoji:"🐴"},
+    {es:"elefante",cz:"slon",emoji:"🐘"},{es:"mariposa",cz:"motýl",emoji:"🦋"},
+    {es:"rana",cz:"žába",emoji:"🐸"}
+  ],
+  stories:{
+    easy:[
+      {es:"Terezka tiene un gato pequeño.",cz:"Terezka má malou kočku.",bg:"#FFF8E8",char:"ter"},
+      {es:"El gato es naranja.",cz:"Kočka je oranžová.",bg:"#FFF8E8",char:"ter"},
+      {es:"El gato ve un pez.",cz:"Kočka vidí rybu.",bg:"#E8F8FF",char:"ter"},
+      {es:"¡Salta! Pero el pez nada lejos.",cz:"Skočí! Ale ryba odplave.",bg:"#E8F8FF",char:"ter"},
+      {es:"¡Mejor suerte la próxima vez! ríe Terezka.",cz:"Příště to vyjde, směje se Terezka.",bg:"#FFF8E8",char:"ter"}
+    ],
+    medium:[
+      {es:"Matýsek y Terezka visitan el zoo.",cz:"Navštíví zoo.",bg:"#F0FFF0",char:"both"},
+      {es:"Primero ven un elefante grande.",cz:"Nejdřív uvidí velkého slona.",bg:"#F0FFF0",char:"both"},
+      {es:"¡Hola, elefante! grita Matýsek.",cz:"Ahoj, slone! volá Matýsek.",bg:"#FFF8DC",char:"mat"},
+      {es:"¡El elefante lanza agua con la trompa!",cz:"Slon vystříká vodu z chobotu!",bg:"#E8F4FF",char:"mat"},
+      {es:"Matýsek se moja mucho.",cz:"Matýsek je celý mokrý.",bg:"#E8F4FF",char:"mat"},
+      {es:"Terezka se ríe y se ríe.",cz:"Terezka se směje a směje.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Ha sido la mejor ducha del mundo! dice Matýsek.",cz:"To byla nejlepší sprcha vůbec! říká Matýsek.",bg:"#F0FFF0",char:"both"}
+    ],
+    hard:[
+      {es:"Una mañana un conejo pequeño está en el jardín.",cz:"Jednoho rána sedí v zahradě malý králík.",bg:"#F0FFF0",char:"both"},
+      {es:"Terezka lo ve primero.",cz:"Terezka ho vidí jako první.",bg:"#FFE8E8",char:"ter"},
+      {es:"Shhh, Matýsek. No lo asustes, susurra ella.",cz:"Pst, Matýšku. Nevystraš ho, šeptá.",bg:"#FFE8E8",char:"ter"},
+      {es:"Matýsek camina muy despacio.",cz:"Matýsek jde velmi pomalu.",bg:"#FFF8DC",char:"mat"},
+      {es:"Pone una zanahoria en el suelo.",cz:"Položí mrkev na zem.",bg:"#FFF8DC",char:"mat"},
+      {es:"El conejo olfatea. Un salto. Dos saltos.",cz:"Králík čuchá. Jeden skok. Dva skoky.",bg:"#F0FFF0",char:"both"},
+      {es:"¡Se come la zanahoria! Un pájaro canta sobre ellos.",cz:"Sní mrkev! Nad nimi zpívá pták.",bg:"#E8F4FF",char:"both"},
+      {es:"Es una mañana perfecta.",cz:"Je to dokonalé ráno.",bg:"#FFFBF0",char:"both"}
+    ]
+  },
+  rhyme:{title:"Los animales",lines:["El gato dice miau miau,","el perro dice guau guau.","La rana dice croac croac,","¡qué divertidos son ya!"],czLines:["Kočka říká mňau mňau,", "pes říká haf haf.", "Žába říká kvak kvak,", "jak je to zábavné!"]}
+},
+{
+  id:"cisla", emoji:"🔢", title:"Números", titleCz:"Čísla", color:"#FFB300", colorLight:"#FFFBE8",
+  words:[
+    {es:"uno",cz:"jedna",emoji:"1️⃣"},{es:"dos",cz:"dvě",emoji:"2️⃣"},
+    {es:"tres",cz:"tři",emoji:"3️⃣"},{es:"cuatro",cz:"čtyři",emoji:"4️⃣"},
+    {es:"cinco",cz:"pět",emoji:"5️⃣"},{es:"seis",cz:"šest",emoji:"6️⃣"},
+    {es:"siete",cz:"sedm",emoji:"7️⃣"},{es:"ocho",cz:"osm",emoji:"8️⃣"},
+    {es:"nueve",cz:"devět",emoji:"9️⃣"}
+  ],
+  stories:{
+    easy:[
+      {es:"Matýsek cuenta sus coches de juguete.",cz:"Matýsek počítá svá autíčka.",bg:"#FFF8DC",char:"mat"},
+      {es:"Uno, dos, tres — tiene tres coches.",cz:"Jedna, dvě, tři — má tři auta.",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka cuenta sus muñecas.",cz:"Terezka počítá své panenky.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Tiene cinco muñecas!",cz:"Má pět panenek!",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Ocho juguetes en total! gritan.",cz:"To je osm hraček dohromady! křičí.",bg:"#FFF0DC",char:"both"}
+    ],
+    medium:[
+      {es:"¡Es el cumpleaños de Matýsek!",cz:"Je Matýskův narozeninový den!",bg:"#FFF8DC",char:"mat"},
+      {es:"Tiene siete años.",cz:"Je mu sedm let.",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka trae seis globos.",cz:"Terezka přinese šest balónků.",bg:"#FFE8E8",char:"ter"},
+      {es:"Mamá enciende nueve velas en la tarta.",cz:"Máma zapálí devět svíček na dortu.",bg:"#FFF0F8",char:"both"},
+      {es:"Uno, dos, tres — ¡Matýsek las apaga todas!",cz:"Jedna, dvě, tři — Matýsek je všechny sfouká!",bg:"#FFFBE8",char:"mat"},
+      {es:"¡Pide un deseo! dice Terezka con ocho dedos arriba.",cz:"Přej si! říká Terezka s osmi prsty nahoru.",bg:"#FFE8E8",char:"ter"}
+    ],
+    hard:[
+      {es:"Terezka quiere hacer galletas.",cz:"Terezka chce upéct sušenky.",bg:"#FFF8DC",char:"ter"},
+      {es:"Necesita cuatro huevos y dos tazas de harina.",cz:"Potřebuje čtyři vejce a dva hrnky mouky.",bg:"#FFF8DC",char:"ter"},
+      {es:"Matýsek lee la receta: añade seis cucharadas de azúcar.",cz:"Matýsek čte recept: přidej šest lžic cukru.",bg:"#E8F4FF",char:"mat"},
+      {es:"Ponen nueve galletas en el horno.",cz:"Dají devět sušenek do trouby.",bg:"#FFF0E8",char:"both"},
+      {es:"Uno, dos, tres... ¡ocho galletas salen perfectas!",cz:"Jedna, dvě, tři... osm sušenek vyjde perfektně!",bg:"#FFFBE8",char:"both"},
+      {es:"Una galleta está quemada, ríe Matýsek.",cz:"Jedna sušenka je spálená, směje se Matýsek.",bg:"#FFF8DC",char:"mat"},
+      {es:"¡Cinco para ti, cinco para mí! dice Terezka.",cz:"Pět pro tebe, pět pro mě! říká Terezka.",bg:"#FFE8E8",char:"ter"}
+    ]
+  },
+  rhyme:{title:"Cuenta conmigo",lines:["Uno, dos, tres, cuenta conmigo,","cuatro, cinco, seis, qué fácil es.","Siete, ocho, nueve, todos en fila,","¡contar hasta nueve es maravilla!"],czLines:["Jedna, dvě, tři, počítej se mnou,", "čtyři, pět, šest, jak je to snadné.", "Sedm, osm, devět, všechna v řadě,", "počítat do devíti — to dáš!"]}
+},
+{
+  id:"telo", emoji:"🦴", title:"Cuerpo", titleCz:"Tělo", color:"#26C6DA", colorLight:"#E0F7FA",
+  words:[
+    {es:"cabeza",cz:"hlava",emoji:"🧠"},{es:"ojos",cz:"oči",emoji:"👀"},
+    {es:"nariz",cz:"nos",emoji:"👃"},{es:"boca",cz:"ústa",emoji:"👄"},
+    {es:"orejas",cz:"uši",emoji:"👂"},{es:"brazo",cz:"paže",emoji:"💪"},
+    {es:"pierna",cz:"noha",emoji:"🦵"},{es:"mano",cz:"ruka",emoji:"✋"},
+    {es:"pie",cz:"chodidlo",emoji:"🦶"}
+  ],
+  stories:{
+    easy:[
+      {es:"Terezka está resfriada.",cz:"Terezka je nastydlá.",bg:"#FFE8E8",char:"ter"},
+      {es:"Tiene la nariz roja.",cz:"Nos má červený.",bg:"#FFE8E8",char:"ter"},
+      {es:"Matýsek trae una bufanda grande.",cz:"Matýsek přinese velkou šálu.",bg:"#E8F4FF",char:"mat"},
+      {es:"Se la envuelve alrededor del cuello.",cz:"Omotá mu ji kolem krku.",bg:"#E8F4FF",char:"mat"},
+      {es:"¡Ahora estoy calentita! dice Terezka.",cz:"Teď mi je teplo! říká Terezka.",bg:"#F0F8F0",char:"ter"}
+    ],
+    medium:[
+      {es:"Matýsek y Terezka juegan en el parque.",cz:"Hrají si v parku.",bg:"#F0FFF0",char:"both"},
+      {es:"Matýsek se cae y se hace daño en la pierna.",cz:"Matýsek spadne a urazí si nohu.",bg:"#FFF8DC",char:"mat"},
+      {es:"¡Me duelen la pierna y el pie! dice él.",cz:"Bolí mě noha a chodidlo! říká.",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka le da un beso en la mano. ¡Eso ayuda!",cz:"Terezka ho políbí na ruku. To pomůže!",bg:"#FFE8E8",char:"ter"},
+      {es:"Saltan y agitan los brazos.",cz:"Vyskočí a mávají rukama.",bg:"#F0F8FF",char:"both"},
+      {es:"¡Usa la cabeza y corre! ríe Terezka.",cz:"Použij hlavu a běž! směje se Terezka.",bg:"#FFE8E8",char:"ter"}
+    ],
+    hard:[
+      {es:"¡Hoy es la obra de teatro del colegio!",cz:"Dnes je školní divadelní hra!",bg:"#FFFBE8",char:"both"},
+      {es:"Matýsek debe ser una estatua — ¡sin moverse!",cz:"Matýsek musí být socha — nesmí se hýbat!",bg:"#FFF8DC",char:"mat"},
+      {es:"No puede mover las manos ni los pies.",cz:"Nesmí hýbat rukama ani nohama.",bg:"#FFF8DC",char:"mat"},
+      {es:"¡Pero le pica la nariz!",cz:"Ale svědí ho nos!",bg:"#E8F4FF",char:"mat"},
+      {es:"Mueve los ojos despacio para mirar a Terezka.",cz:"Pomalu pohybuje očima a kouká na Terezku.",bg:"#FFE8F8",char:"ter"},
+      {es:"Terezka se tapa la boca — ¡quiere reír!",cz:"Terezka si zakryje ústa — chce se smát!",bg:"#FFE8F8",char:"ter"},
+      {es:"¡Después de la obra se ríen con todo el cuerpo!",cz:"Po hře se smějí celým tělem!",bg:"#F0FFF0",char:"both"}
+    ]
+  },
+  rhyme:{title:"Cabeza, hombros, rodillas y pies",lines:["Cabeza, hombros, rodillas y pies,","¡rodillas y pies!","Ojos, orejas, boca y nariz,","¡cabeza, hombros, rodillas y pies!"],czLines:["Hlava, ramena, kolena a chodidla,", "kolena a chodidla!", "Oči, uši, ústa a nos,", "hlava, ramena, kolena a chodidla!"]}
+},
+{
+  id:"rodina", emoji:"👨‍👩‍👧", title:"Familia", titleCz:"Rodina", color:"#C77DFF", colorLight:"#F5E8FF",
+  words:[
+    {es:"mamá",cz:"máma",emoji:"👩"},{es:"papá",cz:"táta",emoji:"👨"},
+    {es:"hermana",cz:"sestra",emoji:"👧"},{es:"hermano",cz:"bratr",emoji:"👦"},
+    {es:"abuela",cz:"babička",emoji:"👵"},{es:"abuelo",cz:"děda",emoji:"👴"},
+    {es:"bebé",cz:"miminko",emoji:"👶"},{es:"mascota",cz:"mazlíček",emoji:"🐾"},
+    {es:"hogar",cz:"domov",emoji:"🏠"}
+  ],
+  stories:{
+    easy:[
+      {es:"Esta es la familia de Matýsek.",cz:"Toto je Matýskova rodina.",bg:"#F5E8FF",char:"mat"},
+      {es:"Tiene una mamá y un papá.",cz:"Má mámu a tátu.",bg:"#F5E8FF",char:"mat"},
+      {es:"¡Y tiene una hermanita — Terezka!",cz:"A má malou sestru — Terezku!",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Yo no soy pequeña! dice Terezka.",cz:"Já nejsem malá! říká Terezka.",bg:"#FFE8E8",char:"ter"},
+      {es:"Matýsek sonríe. Quiere mucho a su hermana.",cz:"Matýsek se usměje. Má svoji sestru rád.",bg:"#F5E8FF",char:"mat"}
+    ],
+    medium:[
+      {es:"El domingo es el día de la abuela.",cz:"Neděle je babiččin den.",bg:"#FFF8F0",char:"both"},
+      {es:"Matýsek y Terezka van a casa de la abuela.",cz:"Jdou k babičce.",bg:"#FFF8F0",char:"both"},
+      {es:"El abuelo abre la puerta.",cz:"Děda otevře dveře.",bg:"#F0F8FF",char:"both"},
+      {es:"¡La abuela ha hecho una tarta! dice él.",cz:"Babička upekla dort! říká.",bg:"#F0F8FF",char:"both"},
+      {es:"Huelen el chocolate desde el jardín.",cz:"Čokoládu cítí už ze zahrady.",bg:"#FFF8DC",char:"both"},
+      {es:"La hermanita bebé ya está en los brazos de la abuela.",cz:"Malá sestřička už leží babičce v náručí.",bg:"#FFE8E8",char:"ter"},
+      {es:"El hogar es el mejor lugar del mundo.",cz:"Domov je nejlepší místo na světě.",bg:"#F5E8FF",char:"both"}
+    ],
+    hard:[
+      {es:"Matýsek quiere hacer un regalo para mamá.",cz:"Matýsek chce udělat dárek pro mámu.",bg:"#FFF8F0",char:"mat"},
+      {es:"¿Qué le gusta? le pregunta a Terezka.",cz:"Co má ráda? ptá se Terezky.",bg:"#FFF8F0",char:"mat"},
+      {es:"Le gustan las flores y el té, dice Terezka.",cz:"Má ráda květiny a čaj, říká Terezka.",bg:"#FFE8E8",char:"ter"},
+      {es:"Matýsek recoge flores del jardín.",cz:"Matýsek natrhá květiny ze zahrady.",bg:"#F0FFF0",char:"mat"},
+      {es:"Terezka le pide a papá que ayude a hacer el té.",cz:"Terezka požádá tátu, aby pomohl uvařit čaj.",bg:"#F0F8FF",char:"ter"},
+      {es:"La abuela escribe una tarjeta: Para la mejor mamá.",cz:"Babička napíše kartičku: Pro nejlepší mámu.",bg:"#F5E8FF",char:"both"},
+      {es:"Mamá abre la puerta y se para.",cz:"Máma otevře dveře a zastaví se.",bg:"#FFF8F0",char:"both"},
+      {es:"Es el mejor regalo del mundo, dice ella.",cz:"To je nejlepší dárek vůbec, řekne.",bg:"#FFE8E8",char:"both"}
+    ]
+  },
+  rhyme:{title:"Mi familia",lines:["Mamá, papá, hermana, hermano,","abuela, abuelo — todos de la mano.","El bebé sonríe y va creciendo,","en el hogar el amor va creciendo."],czLines:["Maminka, tatínek, sestra, bratr,", "babička, děda — všichni za ruku.", "Miminko se usmívá a roste,", "v domově láska žije."]}
+},
+{
+  id:"jidlo", emoji:"🍎", title:"Comida", titleCz:"Jídlo", color:"#FF7043", colorLight:"#FFF3E0",
+  words:[
+    {es:"manzana",cz:"jablko",emoji:"🍎"},{es:"plátano",cz:"banán",emoji:"🍌"},
+    {es:"pan",cz:"chléb",emoji:"🍞"},{es:"leche",cz:"mléko",emoji:"🥛"},
+    {es:"huevo",cz:"vejce",emoji:"🥚"},{es:"tarta",cz:"dort",emoji:"🎂"},
+    {es:"pizza",cz:"pizza",emoji:"🍕"},{es:"helado",cz:"zmrzlina",emoji:"🍦"},
+    {es:"zanahoria",cz:"mrkev",emoji:"🥕"}
+  ],
+  stories:{
+    easy:[
+      {es:"Matýsek tiene hambre.",cz:"Matýsek má hlad.",bg:"#FFF8DC",char:"mat"},
+      {es:"Encuentra una manzana y un plátano.",cz:"Najde jablko a banán.",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka prepara leche con pan.",cz:"Terezka připraví mléko s chlebem.",bg:"#FFE8E8",char:"ter"},
+      {es:"Se sientan y comen juntos.",cz:"Sedí a jedí spolu.",bg:"#F0FFF0",char:"both"},
+      {es:"¡Qué rico! dice Matýsek. ¡Me encanta la comida!",cz:"Mňam! říká Matýsek. Miluji jídlo!",bg:"#FFF8DC",char:"mat"}
+    ],
+    medium:[
+      {es:"Terezka quiere hacer una tarta.",cz:"Terezka chce upéct dort.",bg:"#FFE8F8",char:"ter"},
+      {es:"Necesita huevos, leche y zanahorias.",cz:"Potřebuje vejce, mléko a mrkev.",bg:"#FFE8F8",char:"ter"},
+      {es:"¿Una tarta de zanahoria? pregunta Matýsek.",cz:"Mrkvový dort? ptá se Matýsek.",bg:"#FFF8DC",char:"mat"},
+      {es:"¡Sí! ¡Es deliciosa! dice Terezka.",cz:"Ano! Je to výborné! říká Terezka.",bg:"#FFE8F8",char:"ter"},
+      {es:"Ponen helado encima.",cz:"Navrch dají zmrzlinu.",bg:"#E8F8FF",char:"both"},
+      {es:"¡Es la mejor tarta del mundo! dice Matýsek.",cz:"Toto je nejlepší dort vůbec! říká Matýsek.",bg:"#FFF0DC",char:"both"}
+    ],
+    hard:[
+      {es:"Matýsek y Terezka visitan la cocina de la abuela.",cz:"Navštíví babiččinu kuchyni.",bg:"#FFF8F0",char:"both"},
+      {es:"La abuela hace pizza para comer.",cz:"Babička dělá pizzu na oběd.",bg:"#FFF8F0",char:"both"},
+      {es:"¿Puedo poner el huevo encima? pregunta Matýsek.",cz:"Mohu dát vejce navrch? ptá se Matýsek.",bg:"#FFF8DC",char:"mat"},
+      {es:"La abuela también corta pan y zanahorias.",cz:"Babička také nakrájí chléb a mrkev.",bg:"#F0FFF0",char:"both"},
+      {es:"Después de comer toman helado de fresa.",cz:"Po obědě jedí jahodovou zmrzlinu.",bg:"#FFE8E8",char:"both"},
+      {es:"Terezka bebe leche fría con su pastel.",cz:"Terezka pije studené mléko ke koláči.",bg:"#FFE8F8",char:"ter"},
+      {es:"¡Quiero vivir en la cocina de la abuela! dice Matýsek.",cz:"Chci bydlet v babiččině kuchyni! říká Matýsek.",bg:"#FFF8DC",char:"mat"}
+    ]
+  },
+  rhyme:{title:"Me gusta la comida",lines:["Me gustan las manzanas y el pan,","la leche y los huevos también.","Me gusta la tarta y el helado,","¡la comida me hace feliz de verdad!"],czLines:["Mám rád jablka a chléb,", "mléko a vejce taky.", "Mám rád dort a zmrzlinu,", "všechno co se peče!"]}
+},
+{
+  id:"obleceni", emoji:"👕", title:"Ropa", titleCz:"Oblečení", color:"#7C4DFF", colorLight:"#EDE7F6",
+  words:[
+    {es:"camiseta",cz:"tričko",emoji:"👕"},{es:"pantalones",cz:"kalhoty",emoji:"👖"},
+    {es:"zapatos",cz:"boty",emoji:"👟"},{es:"gorro",cz:"čepice",emoji:"🎩"},
+    {es:"vestido",cz:"šaty",emoji:"👗"},{es:"calcetines",cz:"ponožky",emoji:"🧦"},
+    {es:"abrigo",cz:"kabát",emoji:"🧥"},{es:"bufanda",cz:"šála",emoji:"🧣"},
+    {es:"guantes",cz:"rukavice",emoji:"🧤"}
+  ],
+  stories:{
+    easy:[
+      {es:"Es una mañana fría.",cz:"Je studené ráno.",bg:"#E8F4FF",char:"both"},
+      {es:"Matýsek se pone el abrigo y el gorro.",cz:"Matýsek si oblékne kabát a čepici.",bg:"#E8F4FF",char:"mat"},
+      {es:"¡No olvides los guantes! dice mamá.",cz:"Nezapomeň rukavice! říká máma.",bg:"#FFF8F0",char:"mat"},
+      {es:"Terezka lleva un vestido rojo y zapatos.",cz:"Terezka má na sobě červené šaty a boty.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Estás preciosa! dice Matýsek.",cz:"Vypadáš krásně! říká Matýsek.",bg:"#FFE8E8",char:"ter"}
+    ],
+    medium:[
+      {es:"Matýsek no encuentra sus zapatos.",cz:"Matýsek nemůže najít boty.",bg:"#FFF8DC",char:"mat"},
+      {es:"Mira debajo de la cama.",cz:"Hledá pod postelí.",bg:"#FFF8DC",char:"mat"},
+      {es:"Comprueba detrás de la puerta.",cz:"Zkontroluje za dveřmi.",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka señala sus pies — ¡lleva los calcetines al revés!",cz:"Terezka ukáže na jeho nohy — ponožky má obráceně!",bg:"#FFE8E8",char:"ter"},
+      {es:"Se ríen los dos. ¡La camiseta también está del revés!",cz:"Oba se smějí. Tričko má taky naruby!",bg:"#FFF0DC",char:"both"},
+      {es:"¡Vestirse es difícil! dice Matýsek.",cz:"Oblékání je těžké! říká Matýsek.",bg:"#FFF8DC",char:"mat"}
+    ],
+    hard:[
+      {es:"¡Matýsek y Terezka van a una fiesta de disfraces!",cz:"Jdou na kostýmový večírek!",bg:"#F5E8FF",char:"both"},
+      {es:"Matýsek se pone un gorro, un abrigo y zapatos grandes.",cz:"Matýsek si dá čepici, kabát a velké boty.",bg:"#E8F4FF",char:"mat"},
+      {es:"¡Parece un explorador!",cz:"Vypadá jako průzkumník!",bg:"#E8F4FF",char:"mat"},
+      {es:"Terezka lleva un vestido brillante y guantes.",cz:"Terezka má třpytivé šaty a rukavice.",bg:"#FFE8F8",char:"ter"},
+      {es:"Se enrolla la bufanda alrededor del cuello.",cz:"Omotá si šálu kolem krku.",bg:"#FFE8F8",char:"ter"},
+      {es:"¡Matýsek gana el premio al mejor disfraz!",cz:"Matýsek vyhraje cenu za nejlepší kostým!",bg:"#FFF8DC",char:"mat"},
+      {es:"¡Parezco una princesa! dice Terezka feliz.",cz:"Vypadám jako princezna! říká Terezka šťastně.",bg:"#FFE8F8",char:"ter"}
+    ]
+  },
+  rhyme:{title:"Vístete",lines:["Ponte la camiseta, ponte los zapatos,","¡no olvides los calcetines hoy!","El gorro en la cabeza, el abrigo en la espalda,","guantes en las manos — ¡vamos ya!"],czLines:["Oblékni tričko, oblékni boty,", "nezapomeň dnes ponožky!", "Čepice na hlavu, kabát na záda,", "rukavice na ruce — hurá!"]}
+},
+{
+  id:"dum", emoji:"🏠", title:"La casa", titleCz:"Dům", color:"#8D6E63", colorLight:"#EFEBE9",
+  words:[
+    {es:"cocina",cz:"kuchyně",emoji:"🍳"},{es:"dormitorio",cz:"ložnice",emoji:"🛏️"},
+    {es:"baño",cz:"koupelna",emoji:"🛁"},{es:"puerta",cz:"dveře",emoji:"🚪"},
+    {es:"ventana",cz:"okno",emoji:"🪟"},{es:"sofá",cz:"pohovka",emoji:"🛋️"},
+    {es:"mesa",cz:"stůl",emoji:"🪑"},{es:"jardín",cz:"zahrada",emoji:"🌻"},
+    {es:"escalera",cz:"schody",emoji:"🪜"}
+  ],
+  stories:{
+    easy:[
+      {es:"Matýsek se despierta en su dormitorio.",cz:"Matýsek se probudí v ložnici.",bg:"#FFF8DC",char:"mat"},
+      {es:"Baja la escalera hasta la cocina.",cz:"Sejde po schodech do kuchyně.",bg:"#FFF8DC",char:"mat"},
+      {es:"Mamá está junto a la mesa con el desayuno.",cz:"Máma stojí u stolu se snídaní.",bg:"#FFF0F8",char:"both"},
+      {es:"Terezka mira por la ventana.",cz:"Terezka se dívá z okna.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡El jardín está precioso hoy! dice ella.",cz:"Zahrada dnes vypadá krásně! říká.",bg:"#FFE8E8",char:"ter"}
+    ],
+    medium:[
+      {es:"Matýsek y Terezka juegan al escondite.",cz:"Hrají schovávanou.",bg:"#FFF0DC",char:"both"},
+      {es:"Matýsek se esconde detrás del sofá.",cz:"Matýsek se schová za pohovku.",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka comprueba la cocina y el baño.",cz:"Terezka zkontroluje kuchyni a koupelnu.",bg:"#FFE8E8",char:"ter"},
+      {es:"Abre cada puerta con cuidado.",cz:"Opatrně otevírá každé dveře.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Te encontré! ¡El sofá se mueve! grita ella.",cz:"Našla jsem tě! Pohovka se hýbe! volá.",bg:"#FFE8E8",char:"ter"},
+      {es:"Matýsek ríe. ¡Esta casa es demasiado pequeña!",cz:"Matýsek se směje. Tento dům je příliš malý!",bg:"#FFF8DC",char:"mat"}
+    ],
+    hard:[
+      {es:"Hoy la familia se muda a una casa nueva.",cz:"Rodina se dnes stěhuje do nového domu.",bg:"#FFF0DC",char:"both"},
+      {es:"Matýsek sube la escalera corriendo hasta el dormitorio.",cz:"Matýsek vyběhne po schodech do ložnice.",bg:"#FFF8DC",char:"mat"},
+      {es:"¡Su ventana da al jardín!",cz:"Z jeho okna je výhled do zahrady!",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka encuentra el baño primero.",cz:"Terezka jako první najde koupelnu.",bg:"#FFE8E8",char:"ter"},
+      {es:"Pone flores en la mesa de la cocina.",cz:"Dá květiny na stůl do kuchyně.",bg:"#FFE8E8",char:"ter"},
+      {es:"Papá se sienta en el sofá y suspira feliz.",cz:"Táta si sedne na pohovku a spokojeně vydechne.",bg:"#F0F8FF",char:"both"},
+      {es:"Esta casa ya parece un hogar, dice mamá.",cz:"Tento dům se už cítí jako domov, říká máma.",bg:"#FFF8F0",char:"both"}
+    ]
+  },
+  rhyme:{title:"Mi casa",lines:["Esta es mi casa, esta es mi puerta,","esta es mi ventana, este es mi suelo.","Esta es mi cocina, mi mesa, mi silla,","el hogar que tanto quiero."],czLines:["Toto je můj dům, toto jsou mé dveře,", "toto je mé okno, toto je má podlaha.", "Toto je má kuchyně, můj stůl, má židle,", "domov který tak miluji."]}
+},
+{
+  id:"skola", emoji:"📚", title:"El colegio", titleCz:"Škola", color:"#5C6BC0", colorLight:"#E8EAF6",
+  words:[
+    {es:"libro",cz:"kniha",emoji:"📚"},{es:"lápiz",cz:"tužka",emoji:"✏️"},
+    {es:"mochila",cz:"batoh",emoji:"🎒"},{es:"profesora",cz:"učitelka",emoji:"👩‍🏫"},
+    {es:"regla",cz:"pravítko",emoji:"📏"},{es:"tijeras",cz:"nůžky",emoji:"✂️"},
+    {es:"pinturas",cz:"pastelky",emoji:"🖍️"},{es:"globo terráqueo",cz:"globus",emoji:"🌍"},
+    {es:"campana",cz:"zvonek",emoji:"🔔"}
+  ],
+  stories:{
+    easy:[
+      {es:"Es el primer día de colegio.",cz:"Je první den školy.",bg:"#E8F4FF",char:"both"},
+      {es:"Matýsek prepara la mochila con los libros.",cz:"Matýsek si nachystá batoh s knihami.",bg:"#E8F4FF",char:"mat"},
+      {es:"Pone el lápiz y las pinturas.",cz:"Dá do něj tužku a pastelku.",bg:"#E8F4FF",char:"mat"},
+      {es:"La profesora toca la campana.",cz:"Učitelka zazvoní na zvonek.",bg:"#FFF8E0",char:"both"},
+      {es:"¡Sentaos todos! dice ella.",cz:"Všichni si sedněte! říká.",bg:"#FFF8E0",char:"both"}
+    ],
+    medium:[
+      {es:"Matýsek necesita una regla para clase de arte.",cz:"Matýsek potřebuje pravítko na výtvarku.",bg:"#FFF8DC",char:"mat"},
+      {es:"Abre la mochila — ¡no hay regla!",cz:"Otevře batoh — žádné pravítko!",bg:"#FFF8DC",char:"mat"},
+      {es:"Le pide un lápiz prestado a Terezka.",cz:"Půjčí si tužku od Terezky.",bg:"#FFE8E8",char:"ter"},
+      {es:"La profesora les muestra el globo terráqueo.",cz:"Učitelka jim ukáže globus.",bg:"#E8F4FF",char:"both"},
+      {es:"Coge las tijeras y recorta una forma.",cz:"Vezme nůžky a vystřihne tvar.",bg:"#E8F4FF",char:"both"},
+      {es:"Matýsek dibuja con las pinturas. ¡Precioso!",cz:"Matýsek kreslí pastelkou. Krásné!",bg:"#FFF8DC",char:"mat"}
+    ],
+    hard:[
+      {es:"Hoy Matýsek y Terezka tienen un gran proyecto.",cz:"Dnes mají velký projekt.",bg:"#FFFBE8",char:"both"},
+      {es:"La profesora da a cada uno un libro grande.",cz:"Učitelka každému dá velkou knihu.",bg:"#E8F4FF",char:"both"},
+      {es:"Matýsek dibuja un mapa y usa la regla.",cz:"Matýsek nakreslí mapu a použije pravítko.",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka rotula los países con el lápiz.",cz:"Terezka popíše státy tužkou.",bg:"#FFE8E8",char:"ter"},
+      {es:"Recorta imágenes con las tijeras.",cz:"Vystřihne obrázky nůžkami.",bg:"#FFE8E8",char:"ter"},
+      {es:"Añaden colores con las pinturas.",cz:"Přidají barvy pastelkami.",bg:"#FFF0DC",char:"both"},
+      {es:"La profesora toca la campana: ¡Maravilloso! dice.",cz:"Učitelka zazvoní: Úžasné! říká.",bg:"#E8F4FF",char:"both"}
+    ]
+  },
+  rhyme:{title:"Prepara la mochila",lines:["Mochila, lápiz, libro y regla,","¡mira bien lo que hay que llevar!","Toca la campana, siéntate en tu sitio,","hoy en el colegio vas a disfrutar."],czLines:["Batoh, tužka, kniha a pravítko,", "dobře se podívej co vzít!", "Zazvoní zvonek, sedni si na místo,", "dnes ve škole si užiješ."]}
+},
+{
+  id:"pocasi", emoji:"⛅", title:"El tiempo", titleCz:"Počasí", color:"#29B6F6", colorLight:"#E1F5FE",
+  words:[
+    {es:"sol",cz:"slunce",emoji:"☀️"},{es:"lluvia",cz:"déšť",emoji:"🌧️"},
+    {es:"nieve",cz:"sníh",emoji:"❄️"},{es:"nube",cz:"mrak",emoji:"☁️"},
+    {es:"viento",cz:"vítr",emoji:"💨"},{es:"arcoíris",cz:"duha",emoji:"🌈"},
+    {es:"tormenta",cz:"bouřka",emoji:"⛈️"},{es:"niebla",cz:"mlha",emoji:"🌫️"},
+    {es:"paraguas",cz:"deštník",emoji:"☂️"}
+  ],
+  stories:{
+    easy:[
+      {es:"Matýsek se despierta y mira por la ventana.",cz:"Matýsek se probudí a podívá se ven.",bg:"#FFF8DC",char:"mat"},
+      {es:"¡Brilla el sol!",cz:"Slunce svítí!",bg:"#FFFBE0",char:"mat"},
+      {es:"No hay nubes en el cielo.",cz:"Na obloze nejsou žádné mraky.",bg:"#E8F4FF",char:"mat"},
+      {es:"Terezka sale corriendo a jugar.",cz:"Terezka vyběhne ven na hřiště.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Es un día de sol perfecto! grita ella.",cz:"Je to perfektní slunečný den! volá.",bg:"#FFE8E8",char:"ter"}
+    ],
+    medium:[
+      {es:"Empieza a llover.",cz:"Začíná pršet.",bg:"#E8F4FF",char:"both"},
+      {es:"Matýsek coge el paraguas.",cz:"Matýsek vezme deštník.",bg:"#E8F4FF",char:"mat"},
+      {es:"¡Pero el viento lo vuelve del revés!",cz:"Ale vítr ho otočí naruby!",bg:"#E8F4FF",char:"mat"},
+      {es:"Entran corriendo. ¡Hay tormenta!",cz:"Utečou dovnitř. Je bouřka!",bg:"#F0E8FF",char:"both"},
+      {es:"Después de la lluvia ven un arcoíris.",cz:"Po dešti uvidí duhu.",bg:"#E8FFF0",char:"both"},
+      {es:"¡Siete colores! cuenta Matýsek. ¡Precioso! dice Terezka.",cz:"Sedm barev! počítá Matýsek. Krásné! říká Terezka.",bg:"#E8FFF0",char:"both"}
+    ],
+    hard:[
+      {es:"El tiempo está raro hoy.",cz:"Počasí je dnes divné.",bg:"#E8F4FF",char:"both"},
+      {es:"Por la mañana hay mucha niebla.",cz:"Ráno je hustá mlha.",bg:"#E8F4FF",char:"both"},
+      {es:"Matýsek no puede ver el jardín desde la ventana.",cz:"Matýsek nevidí zahradu z okna.",bg:"#FFF8DC",char:"mat"},
+      {es:"Al mediodía sale el sol.",cz:"V poledne vyjde slunce.",bg:"#FFFBE0",char:"both"},
+      {es:"Luego llegan nubes oscuras y lluvia fuerte.",cz:"Pak přijdou tmavé mraky a vydatný déšť.",bg:"#E8E8F8",char:"both"},
+      {es:"¡Un rayo! ¡Un trueno sacude la casa!",cz:"Blesk! Hrom otřese domem!",bg:"#F0E8FF",char:"both"},
+      {es:"¡Pero luego un arcoíris enorme llena el cielo! grita Terezka.",cz:"Pak ale obrovská duha vyplní oblohu! jásá Terezka.",bg:"#E8FFF0",char:"ter"}
+    ]
+  },
+  rhyme:{title:"¿Qué tiempo hace?",lines:["El sol brilla, hace buen tiempo,","la lluvia cae — ¡agárrate fuerte!","La nieve es blanca y el viento es frío,","¡el arcoíris es lo más bonito!"],czLines:["Slunce svítí, je krásně,", "déšť padá — drž se pevně!", "Sníh je bílý a vítr je studený,", "duha — to je paráda!"]}
+},
+{
+  id:"doprava", emoji:"🚗", title:"Transporte", titleCz:"Doprava", color:"#EF5350", colorLight:"#FFEBEE",
+  words:[
+    {es:"coche",cz:"auto",emoji:"🚗"},{es:"autobús",cz:"autobus",emoji:"🚌"},
+    {es:"tren",cz:"vlak",emoji:"🚂"},{es:"bicicleta",cz:"kolo",emoji:"🚲"},
+    {es:"avión",cz:"letadlo",emoji:"✈️"},{es:"barco",cz:"loď",emoji:"⛵"},
+    {es:"taxi",cz:"taxi",emoji:"🚕"},{es:"tranvía",cz:"tramvaj",emoji:"🚃"},
+    {es:"cohete",cz:"raketa",emoji:"🚀"}
+  ],
+  stories:{
+    easy:[
+      {es:"Matýsek y Terezka quieren visitar a la abuela.",cz:"Chtějí navštívit babičku.",bg:"#FFF8DC",char:"both"},
+      {es:"Toman el autobús hasta la estación.",cz:"Jdou autobusem na nádraží.",bg:"#E8F4FF",char:"both"},
+      {es:"En la estación ven un tren grande.",cz:"Na nádraží vidí velký vlak.",bg:"#E8F4FF",char:"both"},
+      {es:"¡Chucuchú! hace el tren.",cz:"Cú cú! dělá vlak.",bg:"#E8F4FF",char:"both"},
+      {es:"¡Ya hemos llegado! dice Terezka feliz.",cz:"Jsme tady! říká Terezka šťastně.",bg:"#FFE8E8",char:"ter"}
+    ],
+    medium:[
+      {es:"¡Es un día de gran aventura!",cz:"Je velký dobrodružný den!",bg:"#FFF8DC",char:"both"},
+      {es:"Primero Matýsek va en bicicleta.",cz:"Nejdřív Matýsek jede na kole.",bg:"#FFF8DC",char:"mat"},
+      {es:"Luego toman un tranvía por la ciudad.",cz:"Pak jedou tramvají přes město.",bg:"#E8F4FF",char:"both"},
+      {es:"Ven un taxi y un barco en el río.",cz:"Uvidí taxi a loď na řece.",bg:"#E8F4FF",char:"both"},
+      {es:"¡Mira! ¡Un avión en el cielo! grita Terezka.",cz:"Koukej! Letadlo na obloze! volá Terezka.",bg:"#FFFBE8",char:"ter"},
+      {es:"¡Algún día quiero volar en un cohete! dice Matýsek.",cz:"Jednou chci letět v raketě! říká Matýsek.",bg:"#FFF8DC",char:"mat"}
+    ],
+    hard:[
+      {es:"Matýsek dibuja su mapa de sueños del mundo.",cz:"Matýsek nakreslí svoji snovou mapu světa.",bg:"#FFF8DC",char:"mat"},
+      {es:"Para llegar necesito un coche y un barco, dice.",cz:"Abych se tam dostal, potřebuji auto a loď, říká.",bg:"#FFF8DC",char:"mat"},
+      {es:"Luego un avión para cruzar el océano.",cz:"Pak letadlo přes oceán.",bg:"#E8F4FF",char:"mat"},
+      {es:"¡Y un tren por las montañas!",cz:"A vlak přes hory!",bg:"#E8F4FF",char:"mat"},
+      {es:"Terezka añade: y un taxi por la ciudad.",cz:"Terezka dodá: a taxi ve městě.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Y una bicicleta en el parque, y el tranvía!",cz:"A kolo v parku, a tramvaj!",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Y un cohete a la luna! gritan los dos.",cz:"A raketu na Měsíc! křičí oba.",bg:"#F0E8FF",char:"both"}
+    ]
+  },
+  rhyme:{title:"Nos vamos",lines:["Coche, autobús, tren y bicicleta,","¡viaja como más te gusta!","Avión, barco, tranvía y taxi,","¡llegar es lo que nos gusta!"],czLines:["Auto, autobus, vlak a kolo,", "cestuj jak se ti líbí!", "Letadlo, loď, tramvaj a taxi,", "dostat se tam je hračka!"]}
+},
+{
+  id:"pocity", emoji:"😊", title:"Emociones", titleCz:"Pocity", color:"#FFA726", colorLight:"#FFF8E1",
+  words:[
+    {es:"feliz",cz:"šťastný",emoji:"😄"},{es:"triste",cz:"smutný",emoji:"😢"},
+    {es:"enfadado",cz:"naštvaný",emoji:"😠"},{es:"asustado",cz:"vystrašený",emoji:"😨"},
+    {es:"sorprendido",cz:"překvapený",emoji:"😮"},{es:"cansado",cz:"unavený",emoji:"😴"},
+    {es:"emocionado",cz:"nadšený",emoji:"🤩"},{es:"aburrido",cz:"znuděný",emoji:"😑"},
+    {es:"tonto",cz:"bláznivý",emoji:"🤪"}
+  ],
+  stories:{
+    easy:[
+      {es:"Terezka gana un premio en el colegio.",cz:"Terezka vyhraje cenu ve škole.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Está muy feliz!",cz:"Je velmi šťastná!",bg:"#FFE8E8",char:"ter"},
+      {es:"Matýsek también está emocionado.",cz:"Matýsek je také nadšený.",bg:"#FFF8DC",char:"mat"},
+      {es:"Salta y da palmas.",cz:"Skáče a tleská rukama.",bg:"#FFF8DC",char:"mat"},
+      {es:"¡Hoy no estamos aburridos! gritan.",cz:"Dnes nejsou znuděni! křičí.",bg:"#FFFBE8",char:"both"}
+    ],
+    medium:[
+      {es:"Matýsek no encuentra su juguete favorito.",cz:"Matýsek nemůže najít svoji oblíbenou hračku.",bg:"#FFF8DC",char:"mat"},
+      {es:"Está triste y se sienta solo.",cz:"Je smutný a sedí sám.",bg:"#FFF8DC",char:"mat"},
+      {es:"Terezka está sorprendida — ¡Matýsek nunca llora!",cz:"Terezka je překvapená — Matýsek nikdy nepláče!",bg:"#FFE8E8",char:"ter"},
+      {es:"Está un poco asustada de que esté tan mal.",cz:"Trochu se bojí, že je velmi rozrušený.",bg:"#FFE8E8",char:"ter"},
+      {es:"Le da un abrazo muy fuerte.",cz:"Obejme ho pevně.",bg:"#FFE8E8",char:"ter"},
+      {es:"¡Encuentran el juguete debajo del sofá! ¡Matýsek está feliz otra vez!",cz:"Najdou hračku pod pohovkou! Matýsek je zase šťastný!",bg:"#FFF0DC",char:"both"}
+    ],
+    hard:[
+      {es:"Hoy es la clase de teatro.",cz:"Dnes je hodina dramatiky.",bg:"#F5E8FF",char:"both"},
+      {es:"¡Matýsek debe actuar feliz, luego triste, luego enfadado!",cz:"Matýsek musí hrát šťastného, pak smutného, pak naštvaného!",bg:"#FFF8DC",char:"mat"},
+      {es:"Salta por todas partes — ¡emocionado y feliz!",cz:"Skáče kolem dokola — nadšený a šťastný!",bg:"#FFFBE8",char:"mat"},
+      {es:"Baja los hombros — cansado y triste.",cz:"Svěsí ramena — unavený a smutný.",bg:"#E8E8F8",char:"mat"},
+      {es:"Da patadas en el suelo — ¡enfadado!",cz:"Dupne nohama — naštvaný!",bg:"#FFE8E8",char:"mat"},
+      {es:"Terezka mira. ¡Está sorprendida — lo hace muy bien!",cz:"Terezka sleduje. Je překvapená — je v tom tak dobrý!",bg:"#FFE8F8",char:"ter"},
+      {es:"¿Ahora puedo hacer el tonto? pregunta Matýsek con una gran sonrisa.",cz:"Mohu teď být bláznivý? ptá se Matýsek s velkým úsměvem.",bg:"#FFF0DC",char:"mat"}
+    ]
+  },
+  rhyme:{title:"¿Cómo te sientes?",lines:["Feliz, triste y enfadado también,","emocionado, aburrido — ¿y tú?","Asustado, tonto, cansado hoy,","los sentimientos cambian en el día."],czLines:["Šťastný, smutný a naštvaný taky,", "nadšený, znuděný — co ty?", "Vystrašený, bláznivý, unavený dnes,", "pocity se mění celý den."]}
+}
+]};
+</script>
+
+<script>
+// ── AVATARS ──────────────────────────────────────────────────────────────────
+const MAT_SVG = `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"> <ellipse cx="40" cy="26" rx="22" ry="16" fill="#C9A32A"/> <circle cx="28" cy="18" r="7" fill="#C9A32A"/> <circle cx="34" cy="13" r="7.5" fill="#C9A32A"/> <circle cx="40" cy="11" r="8" fill="#C9A32A"/> <circle cx="47" cy="13" r="7.5" fill="#C9A32A"/> <circle cx="53" cy="18" r="7" fill="#C9A32A"/> <circle cx="31" cy="10" r="5" fill="#A8821E"/> <circle cx="40" cy="6" r="5.5" fill="#A8821E"/> <circle cx="49" cy="10" r="5" fill="#A8821E"/> <circle cx="36" cy="9" r="3" fill="#E0C060" opacity="0.7"/> <circle cx="44" cy="9" r="3" fill="#E0C060" opacity="0.7"/> <circle cx="19" cy="34" r="8" fill="#C9A32A"/> <circle cx="61" cy="34" r="8" fill="#C9A32A"/> <ellipse cx="40" cy="40" rx="21" ry="22" fill="#F5CFA0"/> <ellipse cx="19" cy="40" rx="5" ry="6" fill="#F5CFA0"/> <ellipse cx="19" cy="40" rx="3" ry="4" fill="#E8B888"/> <ellipse cx="61" cy="40" rx="5" ry="6" fill="#F5CFA0"/> <ellipse cx="61" cy="40" rx="3" ry="4" fill="#E8B888"/> <ellipse cx="31" cy="35" rx="6.5" ry="5" fill="white" stroke="#2A1408" stroke-width="0.7"/> <circle cx="32" cy="35.5" r="3.5" fill="#5A7055"/> <circle cx="32" cy="35.5" r="2.2" fill="#3A4E35"/> <circle cx="33.5" cy="34" r="1.4" fill="white"/> <path d="M25 31 C28 29 34 29 37 31" fill="none" stroke="#2A1408" stroke-width="0.8" stroke-linecap="round" opacity="0.5"/> <ellipse cx="49" cy="35" rx="6.5" ry="5" fill="white" stroke="#2A1408" stroke-width="0.7"/> <circle cx="50" cy="35.5" r="3.5" fill="#5A7055"/> <circle cx="50" cy="35.5" r="2.2" fill="#3A4E35"/> <circle cx="51.5" cy="34" r="1.4" fill="white"/> <path d="M43 31 C46 29 52 29 55 31" fill="none" stroke="#2A1408" stroke-width="0.8" stroke-linecap="round" opacity="0.5"/> <path d="M26 29 Q31 27 36 28.5" stroke="#7A5018" stroke-width="1.8" fill="none" stroke-linecap="round"/> <path d="M44 28.5 Q49 27 54 29" stroke="#7A5018" stroke-width="1.8" fill="none" stroke-linecap="round"/> <ellipse cx="40" cy="41" rx="2" ry="1.5" fill="#D89858" opacity="0.6"/> <path d="M34 47 Q40 53 46 47" fill="white" stroke="#2A1408" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path d="M34 47 Q40 50 46 47" fill="#F5CFA0"/> <ellipse cx="24" cy="43" rx="7" ry="5" fill="#F09080" opacity="0.28"/> <ellipse cx="56" cy="43" rx="7" ry="5" fill="#F09080" opacity="0.28"/> <rect x="35" y="59" width="10" height="9" rx="4.5" fill="#F5CFA0"/> <path d="M16 67 L12 80 L68 80 L64 67 L53 63 Q40 59 27 63 Z" fill="#4B88D0"/> </svg>`;
+const TER_SVG = `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"> <path d="M18 20 C16 16 15 13 16 11 C17 9 19 9 20 11 C21 13 20 17 19 20 Z" fill="#5A2D0C"/> <ellipse cx="18" cy="22" rx="4" ry="2.8" fill="#D81B60"/> <ellipse cx="18" cy="22" rx="2.8" ry="1.7" fill="#FF6BAE"/> <path d="M16 25 C14 33 13 43 15 50 C16 53 19 54 20 51 C20 46 19 37 20 30 Z" fill="#5A2D0C"/> <path d="M62 20 C64 16 65 13 64 11 C63 9 61 9 60 11 C59 13 60 17 61 20 Z" fill="#5A2D0C"/> <ellipse cx="62" cy="22" rx="4" ry="2.8" fill="#D81B60"/> <ellipse cx="62" cy="22" rx="2.8" ry="1.7" fill="#FF6BAE"/> <path d="M64 25 C66 33 67 43 65 50 C64 53 61 54 60 51 C60 46 61 37 60 30 Z" fill="#5A2D0C"/> <ellipse cx="40" cy="18" rx="21" ry="13" fill="#5A2D0C"/> <ellipse cx="40" cy="33" rx="20" ry="20" fill="#F5CFA0"/> <ellipse cx="20" cy="33" rx="4.5" ry="5.5" fill="#F5CFA0"/> <ellipse cx="20" cy="33" rx="2.8" ry="3.8" fill="#E8B888"/> <ellipse cx="60" cy="33" rx="4.5" ry="5.5" fill="#F5CFA0"/> <ellipse cx="60" cy="33" rx="2.8" ry="3.8" fill="#E8B888"/> <rect x="17" y="17" width="7" height="15" rx="3.5" fill="#5A2D0C"/> <rect x="56" y="17" width="7" height="15" rx="3.5" fill="#5A2D0C"/> <ellipse cx="31" cy="28" rx="6" ry="4.8" fill="white" stroke="#2A1408" stroke-width="0.7"/> <circle cx="32" cy="28.5" r="3.2" fill="#18090A"/> <circle cx="33.6" cy="27" r="1.4" fill="white"/> <line x1="26" y1="25" x2="24" y2="21.5" stroke="#18090A" stroke-width="1.3" stroke-linecap="round"/> <line x1="28.8" y1="23.5" x2="28" y2="20" stroke="#18090A" stroke-width="1.3" stroke-linecap="round"/> <line x1="32" y1="23" x2="32" y2="19.5" stroke="#18090A" stroke-width="1.3" stroke-linecap="round"/> <line x1="35.5" y1="23.5" x2="36.5" y2="20.5" stroke="#18090A" stroke-width="1.3" stroke-linecap="round"/> <ellipse cx="49" cy="28" rx="6" ry="4.8" fill="white" stroke="#2A1408" stroke-width="0.7"/> <circle cx="50" cy="28.5" r="3.2" fill="#18090A"/> <circle cx="51.6" cy="27" r="1.4" fill="white"/> <line x1="44" y1="25" x2="42.5" y2="21.5" stroke="#18090A" stroke-width="1.3" stroke-linecap="round"/> <line x1="46.8" y1="23.5" x2="46" y2="20" stroke="#18090A" stroke-width="1.3" stroke-linecap="round"/> <line x1="50" y1="23" x2="50" y2="19.5" stroke="#18090A" stroke-width="1.3" stroke-linecap="round"/> <line x1="53.5" y1="23.5" x2="54.5" y2="20.5" stroke="#18090A" stroke-width="1.3" stroke-linecap="round"/> <path d="M26 21.5 Q31 19.5 36 21" stroke="#7A4A20" stroke-width="1.1" fill="none" stroke-linecap="round" opacity="0.7"/> <path d="M44 21 Q49 19.5 54 21.5" stroke="#7A4A20" stroke-width="1.1" fill="none" stroke-linecap="round" opacity="0.7"/> <path d="M39 31 C38 33 36.5 35 37 36 C37.5 37 39 36.5 40 36.5 C41 36.5 42.5 37 43 36 C43.5 35 42 33 41 31 Z" fill="#E8A870" opacity="0.75"/> <circle cx="37.8" cy="35.5" r="1.3" fill="#C87840" opacity="0.55"/> <circle cx="42.2" cy="35.5" r="1.3" fill="#C87840" opacity="0.55"/> <path d="M33 41 Q40 48 47 41" fill="white" stroke="#2A1408" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path d="M33 41 Q40 44 47 41" fill="#F5CFA0"/> <ellipse cx="23" cy="36" rx="6.5" ry="4.5" fill="#F09080" opacity="0.3"/> <ellipse cx="57" cy="36" rx="6.5" ry="4.5" fill="#F09080" opacity="0.3"/> <circle cx="20.5" cy="35" r="1.3" fill="#FFD700"/> <rect x="35" y="52" width="10" height="9" rx="4.5" fill="#F5CFA0"/> <path d="M16 60 L12 80 L68 80 L64 60 L53 56 Q40 52 27 56 Z" fill="#E24440"/> <circle cx="29" cy="67" r="3" fill="#FF8C00" opacity="0.85"/> <circle cx="29" cy="67" r="1.7" fill="#FFF176"/> <circle cx="51" cy="69" r="2.7" fill="#E2185A" opacity="0.85"/> <circle cx="51" cy="69" r="1.4" fill="#FFF176"/> <circle cx="40" cy="72" r="2.4" fill="#78C800" opacity="0.85"/> <circle cx="40" cy="72" r="1.1" fill="#FFF176"/> </svg>`;
+
+const mkCompanion = (matTxt, terTxt) =>
+  `<div class="companion-bar">
+    <div class="companion-char">
+      <div class="companion-avatar mat">${MAT_SVG}</div>
+      <div class="companion-speech">${matTxt}</div>
+    </div>
+    <div class="companion-char">
+      <div class="companion-speech" style="text-align:right">${terTxt}</div>
+      <div class="companion-avatar ter">${TER_SVG}</div>
+    </div>
+  </div>`;
+
+// ── STRIP EMOJI ───────────────────────────────────────────────────────────────
+const stripEmoji = (s) => s.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}]/gu,'').replace(/\s+/g,' ').trim();
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let currentDiff  = 'easy';
+let currentTopic = null;
+let currentEx    = null;
+let listenIdx    = 0;
+let matchSelected = null;
+let matchPairs   = [];
+let matchDone    = 0;
+let storyPage    = 0;
+let stars        = 0;
+let progress     = {};
+
+const loadProgress = () => {
+  try {
+    const s = localStorage.getItem('matyter_v2');
+    if (s) { const d = JSON.parse(s); stars = d.stars||0; progress = d.progress||{}; }
+  } catch(_){}
+};
+const saveProgress = () => {
+  try {
+    const s = localStorage.getItem('matyter_v2');
+    const existing = s ? JSON.parse(s) : {};
+    localStorage.setItem('matyter_v2', JSON.stringify({...existing, stars, progress}));
+  } catch(_){}
+};
+
+// ── STREAK ────────────────────────────────────────────────────────────────────
+const updateStreak = () => {
+  try {
+    const s = localStorage.getItem('matyter_v2');
+    const data = s ? JSON.parse(s) : {};
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    let streak = data.streak || 1;
+    if (data.lastVisit === today) { return streak; }
+    if (data.lastVisit === yesterday) { streak++; }
+    else { streak = 1; }
+    localStorage.setItem('matyter_v2', JSON.stringify({...data, streak, lastVisit: today}));
+    return streak;
+  } catch { return 1; }
+};
+
+// ── SCREENS ───────────────────────────────────────────────────────────────────
+const showScreen = (id) => {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+const matSpeeches = [
+  "¡Hola! Soy Matýsek! 👋 / Ahoj! Jsem Matýsek!",
+  "¡Vamos a aprender español! 🇪🇸 / Učíme se španělsky!",
+  "¡Muy bien! ⭐ / Výborně!",
+  "¿Cómo te llamas? 😊 / Jak se jmenuješ?",
+  "¡El español es divertido! 😄 / Španělština je zábavná!",
+  "¿Cuántas palabras sabes? 🔢 / Kolik slovíček znáš?",
+  "¡Vamos a leer un cuento! 📖 / Přečteme si příběh!",
+  "¡Practica cada día! 💪 / Cvič každý den!"
+];
+const terSpeeches = [
+  "¡Hola! Soy Terezka! 🌸 / Ahoj! Jsem Terezka!",
+  "¡Ven a jugar con nosotros! 🎮 / Pojď si hrát!",
+  "¡Fantástico! Sigue así! 💪 / Skvělé! Pokračuj!",
+  "¡Mi color favorito es el rosa! 🩷 / Mám nejradši růžovou!",
+  "¡Eres increíble! ✨ / Jsi úžasný/á!",
+  "¿Puedes decir 'mariposa'? 🦋 / Řekni 'mariposa' = motýl",
+  "¡Juguemos a la memoria! 🧩 / Zahrajeme si paměť!",
+  "¡Me encanta el helado! 🍦 / Miluji zmrzlinu!"
+];
+
+const renderHome = () => {
+  loadProgress();
+  updateXP();
+  const streak = updateStreak();
+  document.getElementById('streakBadge').textContent = `🔥 ${streak} ${streak === 1 ? 'den' : streak < 5 ? 'dny' : 'dní'} v řadě`;
+  document.getElementById('matSpeech').textContent = matSpeeches[Math.floor(Math.random()*matSpeeches.length)];
+  document.getElementById('terSpeech').textContent = terSpeeches[Math.floor(Math.random()*terSpeeches.length)];
+
+  // Insert avatars
+  document.getElementById('avatarMat').innerHTML = MAT_SVG;
+  document.getElementById('avatarTer').innerHTML = TER_SVG;
+
+  const grid = document.getElementById('topicGrid');
+  grid.innerHTML = '';
+  APP_DATA.topics.forEach(topic => {
+    const prog = progress[topic.id] || {};
+    const doneCount = EX_KEYS.filter(k => prog[k]).length;
+    const card = document.createElement('div');
+    card.className = 'topic-card';
+    card.style.background = topic.colorLight;
+    card.style.borderColor = doneCount === 6 ? topic.color : 'transparent';
+    const dots = EX_KEYS.map(k => `<div class="tp-dot${prog[k]?' done':''}"></div>`).join('');
+    card.innerHTML = `
+      <div class="topic-progress">${dots}</div>
+      <span class="topic-emoji">${topic.emoji}</span>
+      <span class="topic-name">${topic.title}</span>
+      <div class="topic-name-cz">${topic.titleCz}</div>
+      <div class="topic-stars">${doneCount===6?'🏆':doneCount>0?'⭐'.repeat(Math.min(doneCount,6)):''}</div>
+    `;
+    const isFree = topic.id === 'zvirata';
+    if (!isFree) card.classList.add('locked');
+    card.onclick = () => isFree ? openTopic(topic.id) : showPaywall();
+    grid.appendChild(card);
+  });
+
+  // Periodic character bounce
+  if (window._bounceTmr) clearInterval(window._bounceTmr);
+  window._bounceTmr = setInterval(() => {
+    const ids = ['avatarMat','avatarTer'];
+    const el = document.getElementById(ids[Math.floor(Math.random()*2)]);
+    if (el && !el.classList.contains('bouncing')) {
+      el.classList.add('bouncing');
+      setTimeout(() => el.classList.remove('bouncing'), 800);
+    }
+  }, 3000);
+};
+
+const setDiff = (d) => {
+  currentDiff = d;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.toggle('active', b.dataset.d === d));
+};
+
+const updateXP = () => {
+  const maxStars = APP_DATA.topics.length * 6;
+  const totalDone = APP_DATA.topics.reduce((acc, t) => {
+    const p = progress[t.id] || {};
+    return acc + EX_KEYS.filter(k => p[k]).length;
+  }, 0);
+  stars = totalDone;
+  const pct = Math.round(totalDone / maxStars * 100);
+  document.getElementById('xpFill').style.width = pct + '%';
+  document.getElementById('xpLabel').textContent = totalDone + ' hvězd';
+};
+
+const goHome = () => {
+  if (flashState && flashState.savedTopic) {
+    currentTopic = flashState.savedTopic;
+    flashState = null;
+  }
+  if (window._bounceTmr) clearInterval(window._bounceTmr);
+  renderHome();
+  showScreen('screenHome');
+};
+
+// ── TOPIC ─────────────────────────────────────────────────────────────────────
+const openTopic = (id) => {
+  currentTopic = APP_DATA.topics.find(t => t.id === id);
+  const prog = progress[id] || {};
+  document.getElementById('topicHeaderTitle').textContent = currentTopic.emoji + ' ' + currentTopic.title;
+  document.getElementById('topicHeaderSub').textContent = currentTopic.titleCz;
+
+  const exercises = [
+    {id:'flash',  icon:'🃏',name:'Trenér',  desc:'Procvič si slovíčka', fn:startFlash},
+    {id:'story',  icon:'📖',name:'Příběh',  desc:'Matýsek a Terezka vypráví', fn:startStory},
+    {id:'listen', icon:'🔊',name:'Poslouchej',desc:'Slyš a opakuj slovo',     fn:startListen},
+    {id:'match',  icon:'🔗',name:'Spoj',    desc:'Obrázek + španělské slovo',  fn:startMatch},
+    {id:'quiz',   icon:'🎯',name:'Kvíz',    desc:'Vyber správné slovo',       fn:startQuiz},
+    {id:'memory', icon:'🧩',name:'Paměť',   desc:'Najdi dvojice karet',       fn:startMemory},
+    {id:'rhyme',  icon:'📜',name:'Říkanka', desc:'Vyslovíme spolu nahlas',    fn:startRhyme},
+  ];
+
+  const grid = document.getElementById('exGrid');
+  grid.innerHTML = '';
+  exercises.forEach(ex => {
+    const done = prog[ex.id];
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.style.background = done ? currentTopic.colorLight : 'white';
+    card.style.borderColor = done ? currentTopic.color : 'transparent';
+    card.innerHTML = `
+      <span class="ex-icon">${ex.icon}</span>
+      <div class="ex-name">${ex.name}</div>
+      <div class="ex-desc">${ex.desc}</div>
+      ${done ? '<span class="ex-done-badge">✓ Hotovo</span>' : ''}
+    `;
+    card.onclick = ex.fn;
+    grid.appendChild(card);
+  });
+  showScreen('screenTopic');
+};
+
+const goTopic = () => openTopic(currentTopic.id);
+
+// ── STORY ─────────────────────────────────────────────────────────────────────
+const startStory = () => {
+  currentEx = 'story'; storyPage = 0;
+  renderStoryPage(); showScreen('screenStory');
+};
+
+const renderStoryPage = () => {
+  const pages = currentTopic.stories[currentDiff];
+  const page = pages[storyPage];
+  const total = pages.length;
+  const isLast = storyPage === total - 1;
+
+  const words = currentTopic.words.map(w => w.es);
+  let highlighted = page.es;
+  words.forEach(word => {
+    const re = new RegExp('\\b' + word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b', 'gi');
+    highlighted = highlighted.replace(re, `<span class="hl">${word}</span>`);
+  });
+
+  const matFaceHTML = `<div class="story-char"><div class="story-char-face" style="background:#D4EEFF;overflow:hidden">${MAT_SVG}</div><div style="font-family:Fredoka One,cursive;font-size:12px;color:var(--muted);margin-top:4px">Matýsek</div></div>`;
+  const terFaceHTML = `<div class="story-char"><div class="story-char-face" style="background:#FFE8E8;overflow:hidden">${TER_SVG}</div><div style="font-family:Fredoka One,cursive;font-size:12px;color:var(--muted);margin-top:4px">Terezka</div></div>`;
+  let charsHTML = page.char==='mat' ? matFaceHTML : page.char==='ter' ? terFaceHTML : matFaceHTML+terFaceHTML;
+
+  const dots = pages.map((_,i) => {
+    const cls = i<storyPage?'done':i===storyPage?'active':'';
+    return `<div class="pdot ${cls}"></div>`;
+  }).join('');
+
+  const matTxt = page.char==='ter' ? 'Terezka vypráví...' : 'Poslouchej příběh!';
+  const terTxt = isLast ? 'Konec příběhu! 🎉' : 'Čti i česky níže!';
+  const navLeft = storyPage>0
+    ? `<button class="listen-nav-btn" onclick="storyBack()" style="flex:1">← Zpět</button>`
+    : `<button class="listen-nav-btn" onclick="goTopic()" style="flex:1">↩ Téma</button>`;
+  const navRight = isLast
+    ? `<button class="listen-nav-btn primary" style="flex:2" onclick="completeEx('story')">Hotovo! ⭐</button>`
+    : `<button class="listen-nav-btn primary" style="flex:2" onclick="storyNext()">Dál → (${storyPage+1}/${total})</button>`;
+
+  document.getElementById('storyContent').innerHTML =
+    mkCompanion(matTxt, terTxt) +
+    `<div class="progress-dots">${dots}</div>` +
+    `<div class="story-card" style="background:${page.bg||'#fff'}">
+      <div class="story-chars">${charsHTML}</div>
+      <div class="story-text">${highlighted}</div>
+      <div class="story-cz">${page.cz}</div>
+      <button class="play-story-btn" onclick="speakES('${escQ(page.es)}')">🔊 Přehrát španělsky</button>
+    </div>` +
+    `<div style="display:flex;gap:10px;margin-top:10px;">${navLeft}${navRight}</div>`;
+
+  setTimeout(() => speakES(page.es), 400);
+};
+
+const storyNext = () => { storyPage++; renderStoryPage(); window.scrollTo({top:0,behavior:'smooth'}); };
+const storyBack = () => { storyPage--; renderStoryPage(); window.scrollTo({top:0,behavior:'smooth'}); };
+
+// ── LISTEN ────────────────────────────────────────────────────────────────────
+const startListen = () => {
+  currentEx = 'listen'; listenIdx = 0; renderListenCard(); showScreen('screenListen');
+};
+
+const renderListenCard = () => {
+  const words = currentTopic.words;
+  const w = words[listenIdx];
+  const total = words.length;
+  document.getElementById('listenContent').innerHTML = mkCompanion('Poslouchej a opakuj! 🔊','Zvládneš to! 💪') +
+    `<div class="listen-progress-text">${listenIdx+1} / ${total}</div>
+    <div class="progress-dots">${words.map((_,i) => {
+      const cls = i<listenIdx?'done':i===listenIdx?'active':'';
+      return `<div class="pdot ${cls}"></div>`;
+    }).join('')}</div>
+    <div class="listen-card">
+      <span class="listen-emoji">${w.emoji}</span>
+      <div class="listen-word">${w.es}</div>
+      <div class="listen-cz">${w.cz}</div>
+      <div class="listen-btns">
+        <button class="listen-btn play" onclick="speakES('${escQ(w.es)}')">🔊 Přehrát</button>
+        <button class="listen-btn slow" onclick="speakES('${escQ(w.es)}',0.6)">🐢 Pomalu</button>
+      </div>
+    </div>
+    <div class="listen-nav">
+      ${listenIdx>0?`<button class="listen-nav-btn" onclick="listenPrev()">← Zpět</button>`:''}
+      ${listenIdx<total-1
+        ?`<button class="listen-nav-btn primary" onclick="listenNext()">Další →</button>`
+        :`<button class="listen-nav-btn primary" onclick="completeEx('listen')">Hotovo! ⭐</button>`}
+    </div>`;
+  setTimeout(() => speakES(w.es), 400);
+};
+
+const listenNext = () => { listenIdx++; renderListenCard(); };
+const listenPrev = () => { listenIdx--; renderListenCard(); };
+
+// ── MATCH ─────────────────────────────────────────────────────────────────────
+const startMatch = () => {
+  currentEx = 'match'; matchSelected = null; matchDone = 0;
+  const words = shuffle([...currentTopic.words]).slice(0, 5);
+  const emojis = shuffle(words.map(w => ({...w, type:'emoji'})));
+  const texts  = shuffle(words.map(w => ({...w, type:'word'})));
+  matchPairs = words;
+
+  const leftHTML = emojis.map(w =>
+    `<div class="match-item" id="emoji_${w.es}" data-val="${w.es}" data-type="emoji" onclick="matchTap(this)">
+      <span class="match-emoji">${w.emoji}</span>
+      <div style="font-size:11px;color:var(--muted);font-weight:700">${w.cz}</div>
+    </div>`).join('');
+  const rightHTML = texts.map(w =>
+    `<div class="match-item" id="word_${w.es}" data-val="${w.es}" data-type="word" onclick="matchTap(this)">
+      <span class="match-word">${w.es}</span>
+    </div>`).join('');
+
+  document.getElementById('matchContent').innerHTML =
+    mkCompanion('Spoj obrázek se slovem!','Klikni na správný pár!') +
+    `<div class="match-instruction">Spoj obrázek s anglickým slovem! 👆</div>
+    <div class="match-grid-wrap">
+      <div class="match-col">${leftHTML}</div>
+      <div class="match-col">${rightHTML}</div>
+    </div>
+    <div class="match-score" id="matchScore"></div>`;
+  showScreen('screenMatch');
+};
+
+const matchTap = (el) => {
+  if (el.classList.contains('matched') || el.classList.contains('correct')) return;
+  if (!matchSelected) {
+    document.querySelectorAll('.match-item.selected').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected'); matchSelected = el; return;
+  }
+  if (matchSelected.dataset.type === el.dataset.type) {
+    matchSelected.classList.remove('selected'); el.classList.add('selected'); matchSelected = el; return;
+  }
+  if (matchSelected.dataset.val === el.dataset.val) {
+    el.classList.add('correct','matched');
+    matchSelected.classList.remove('selected'); matchSelected.classList.add('correct','matched');
+    matchSelected = null; matchDone++;
+    soundOk(); speakES(el.dataset.val);
+    floatEmoji(currentTopic.words.find(w=>w.es===el.dataset.val)?.emoji||'⭐');
+    if (matchDone === Math.min(5, currentTopic.words.length)) {
+      launchConfetti(20);
+      document.getElementById('matchScore').innerHTML =
+        `<div style="color:var(--green)">🌟 Všechno správně!</div>
+        <div style="margin-top:12px;display:flex;gap:10px;">
+          <button class="listen-nav-btn" onclick="goTopic()" style="flex:1">← Zpět</button>
+          <button class="listen-nav-btn primary" style="flex:2" onclick="completeEx('match')">Hotovo! ⭐</button>
+        </div>`;
+    }
+  } else {
+    el.classList.add('wrong'); matchSelected.classList.add('wrong');
+    soundErr();
+    const prev = matchSelected;
+    setTimeout(() => { el.classList.remove('wrong','selected'); prev.classList.remove('wrong','selected'); matchSelected = null; }, 600);
+  }
+};
+
+// ── QUIZ ENGINE ───────────────────────────────────────────────────────────────
+let quizQueue=[], quizQIdx=0, quizCorrect=0, quizSndIdx=0, quizWrongIdx=0;
+const QUIZ_TOTAL = 20;
+
+const QZ_COMP = {
+  emojiToWord: ['Jak se řekne anglicky? 🎯','Klikni na správné slovo!'],
+  wordToEmoji: ['Klikni na správný obrázek! 👆','Najdi ten správný!'],
+  czToEn:      ['Přelož do angličtiny! 🇬🇧','Jak se to řekne?'],
+  enToCz:      ['Co to znamená česky? 🇨🇿','Překládej!'],
+  listenWord:  ['Které slovo slyšíš? 👂','Poslouchej dobře!'],
+  listenEmoji: ['Klikni na obrázek! 👂','Slyšíš to slovo?'],
+  trueOrFalse: ['Správně nebo špatně? 🤔','Sedí to dohromady?'],
+  oddOneOut:   ['Který sem nepatří? 🔍','Jedno je jinak!'],
+  reverseEmoji:['Najdi správný obrázek! 🇨🇿','Klikni na to!'],
+  firstLetter: ['Znáš tohle slovo? ✏️','Podívej na první písmenko!'],
+  quickPick:   ['Rychle! Klikni na... 👇','Tik tak! ⏱️'],
+  flashHide:   ['Zapamatuj si! 🧠','Budeš si pamatovat?']
+};
+
+const startQuiz = () => {
+  currentEx='quiz';
+  quizQueue=generateQuizQuestions(QUIZ_TOTAL);
+  quizQIdx=0; quizCorrect=0;
+  renderCurrentQ(); showScreen('screenQuiz');
+};
+
+const generateQuizQuestions = (n) => {
+  const w = currentTopic.words;
+  const allOther = APP_DATA.topics.filter(t=>t.id!==currentTopic.id).flatMap(t=>t.words);
+  const qs = [];
+  const wrong3 = (word) => shuffle(w.filter(x=>x.es!==word.es)).slice(0,3);
+
+  w.forEach(word => {
+    const wc = wrong3(word);
+    // 1 emoji→EN
+    qs.push({type:'emojiToWord', word, choices:shuffle([word,...wc]), correctVal:word.es});
+    // 2 EN→emoji
+    qs.push({type:'wordToEmoji', word, choices:shuffle([word,...wc]), correctVal:word.es});
+    // 3 CZ→EN
+    qs.push({type:'czToEs', word, choices:shuffle([word,...wc]), correctVal:word.es});
+    // 4 EN→CZ
+    qs.push({type:'esToCz', word, choices:shuffle([word,...wc]), correctVal:word.es});
+    // 5 listen→EN word
+    qs.push({type:'listenWord', word, choices:shuffle([word,...wc]), correctVal:word.es});
+    // 6 listen→emoji
+    qs.push({type:'listenEmoji', word, choices:shuffle([word,...wc]), correctVal:word.es});
+    // 7 true/false
+    const isTrue=Math.random()>.5;
+    const fakeW=isTrue?word:wc[Math.floor(Math.random()*wc.length)];
+    qs.push({type:'trueOrFalse', word, showWord:fakeW, isCorrect:isTrue, correctVal:isTrue?'yes':'no'});
+    // 8 odd one out
+    const intruder=shuffle(allOther)[0];
+    const three=shuffle(w.filter(x=>x.es!==word.es)).slice(0,3);
+    qs.push({type:'oddOneOut', word, intruder, items:shuffle([...three,intruder]), correctVal:intruder.es});
+    // 9 CZ→emoji
+    qs.push({type:'reverseEmoji', word, choices:shuffle([word,...wc]), correctVal:word.es});
+    // 10 emoji + first letter→EN
+    qs.push({type:'firstLetter', word, choices:shuffle([word,...wc]), correctVal:word.es});
+    // 11 quick pick (2 options)
+    qs.push({type:'quickPick', word, choices:shuffle([word,wc[0]]), correctVal:word.es});
+    // 12 flash then pick
+    qs.push({type:'flashHide', word, choices:shuffle([word,...wc]), correctVal:word.es});
+  });
+  return shuffle(qs).slice(0,n);
+};
+
+const renderCurrentQ = () => {
+  const q=quizQueue[quizQIdx];
+  const comp=QZ_COMP[q.type]||['Odpověz!','Dokážeš to!'];
+  const pct=Math.round(quizQIdx/quizQueue.length*100);
+  const header=mkCompanion(comp[0],comp[1])+
+    `<div class="qz-topbar">
+      <div class="qz-pbar"><div class="qz-pfill" style="width:${pct}%"></div></div>
+      <div class="qz-counter">${quizQIdx+1}/${quizQueue.length}</div>
+    </div>
+    <div class="qz-score">✅ ${quizCorrect} správně</div>`;
+  document.getElementById('quizContent').innerHTML=header+renderQType(q);
+  // Auto-play listen
+  if(q.type==='listenWord'||q.type==='listenEmoji') setTimeout(()=>speakES(q.word.es),500);
+  // Flash countdown
+  if(q.type==='flashHide'){
+    let cnt=2;
+    const tick=setInterval(()=>{
+      cnt--;
+      const el=document.getElementById('qzFC');
+      if(el) el.textContent=cnt>0?cnt:'❓';
+      if(cnt<=0){
+        clearInterval(tick);
+        const fe=document.getElementById('qzFE');
+        if(fe){fe.style.opacity='.1';fe.style.transform='scale(.5)';}
+        const fc=document.getElementById('qzFChoices');
+        if(fc) fc.style.display='grid';
+      }
+    },900);
+  }
+};
+
+const renderQType = (q) => {
+  const mkC=(val,label)=>
+    `<button class="qz-choice" data-val="${escQ(val)}"
+      onclick="pickChoice(this,'${escQ(val)}','${escQ(q.correctVal)}','${escQ(q.word?.emoji||'')}')">
+      ${label}</button>`;
+
+  switch(q.type){
+    case 'emojiToWord': return(
+      `<div class="qz-card"><span class="qz-type-badge">🎨 emoji → slovo</span>
+        <span class="qz-big-emoji">${q.word.emoji}</span>
+        <div class="qz-cz-label">${q.word.cz}</div></div>
+      <div class="qz-2x2">${q.choices.map(c=>mkC(c.es,`<span class="qz-word-btn">${c.es}</span>`)).join('')}</div>`);
+
+    case 'wordToEmoji': return(
+      `<div class="qz-card"><span class="qz-type-badge">🔤 slovo → emoji</span>
+        <div class="qz-big-word">${q.word.es}</div>
+        <div class="qz-cz-label">${q.word.cz}</div></div>
+      <div class="qz-2x2">${q.choices.map(c=>mkC(c.es,`<span class="qz-emoji-btn">${c.emoji}</span>`)).join('')}</div>`);
+
+    case 'czToEn': return(
+      `<div class="qz-card"><span class="qz-type-badge">🇨🇿 → 🇬🇧</span>
+        <div class="qz-big-word" style="color:var(--coral)">${q.word.cz}</div>
+        <div class="qz-cz-label">Jak se řekne anglicky?</div></div>
+      <div class="qz-2x2">${q.choices.map(c=>mkC(c.es,`<div class="qz-both-row"><span class="qz-both-emoji">${c.emoji}</span><span class="qz-both-word">${c.es}</span></div>`)).join('')}</div>`);
+
+    case 'enToCz': return(
+      `<div class="qz-card"><span class="qz-type-badge">🇬🇧 → 🇨🇿</span>
+        <span class="qz-big-emoji">${q.word.emoji}</span>
+        <div class="qz-big-word">${q.word.es}</div></div>
+      <div class="qz-2x2">${q.choices.map(c=>mkC(c.es,`<span style="font-size:18px">${c.cz}</span>`)).join('')}</div>`);
+
+    case 'listenWord': return(
+      `<div class="qz-card"><span class="qz-type-badge">👂 poslechni → slovo</span>
+        <span class="qz-listen-icon" onclick="speakES('${escQ(q.word.es)}')">🔊</span>
+        <button class="qz-listen-replay" onclick="speakES('${escQ(q.word.es)}')">↺ Přehrát znovu</button></div>
+      <div class="qz-2x2">${q.choices.map(c=>mkC(c.es,`<div class="qz-both-row"><span class="qz-both-emoji">${c.emoji}</span><span class="qz-both-word">${c.es}</span></div>`)).join('')}</div>`);
+
+    case 'listenEmoji': return(
+      `<div class="qz-card"><span class="qz-type-badge">👂 poslechni → obrázek</span>
+        <span class="qz-listen-icon" onclick="speakES('${escQ(q.word.es)}')">🔊</span>
+        <button class="qz-listen-replay" onclick="speakES('${escQ(q.word.es)}')">↺ Přehrát znovu</button></div>
+      <div class="qz-2x2">${q.choices.map(c=>mkC(c.es,`<span class="qz-emoji-btn">${c.emoji}</span><div style="font-size:11px;color:var(--muted);font-weight:700">${c.cz}</div>`)).join('')}</div>`);
+
+    case 'trueOrFalse':{
+      const mkTF=(val,label,cls)=>
+        `<button class="qz-tf-btn ${cls}" data-val="${val}"
+          onclick="pickChoice(this,'${val}','${q.correctVal}','${escQ(q.word?.emoji||'')}')">
+          ${label}<span class="qz-tf-label">${val==='yes'?'ANO':'NE'}</span></button>`;
+      return(
+        `<div class="qz-card"><span class="qz-type-badge">✅ pravda nebo lež?</span>
+          <div class="qz-tf-show">
+            <span class="qz-tf-show-emoji">${q.showWord.emoji}</span>
+            <span class="qz-tf-show-word">${q.showWord.es}</span>
+          </div>
+          <div class="qz-cz-label">Sedí obrázek a slovo dohromady?</div></div>
+        <div class="qz-tf-row">${mkTF('yes','✅','yes')}${mkTF('no','❌','no')}</div>`);
+    }
+
+    case 'oddOneOut': return(
+      `<div class="qz-card"><span class="qz-type-badge">🔍 který nepatří?</span>
+        <div class="qz-instruction">Jedno sem nepatří — vyber ho!</div></div>
+      <div class="qz-oot-grid">${q.items.map(it=>
+        `<div class="qz-oot-item" data-val="${escQ(it.es)}"
+          onclick="pickChoice(this,'${escQ(it.es)}','${escQ(q.correctVal)}','${escQ(it.emoji)}')">
+          <span class="qz-oot-emoji">${it.emoji}</span>
+          <div class="qz-oot-label">${it.es}</div></div>`
+      ).join('')}</div>`);
+
+    case 'reverseEmoji': return(
+      `<div class="qz-card"><span class="qz-type-badge">🇨🇿 česky → obrázek</span>
+        <div class="qz-big-word" style="color:var(--purple)">${q.word.cz}</div>
+        <div class="qz-cz-label">Klikni na správný obrázek</div></div>
+      <div class="qz-2x2">${q.choices.map(c=>mkC(c.es,`<span class="qz-emoji-btn">${c.emoji}</span>`)).join('')}</div>`);
+
+    case 'firstLetter':{
+      const fl=q.word.es[0].toUpperCase();
+      const hint=fl+' '+'_ '.repeat(q.word.es.length-1).trim();
+      return(
+        `<div class="qz-card"><span class="qz-type-badge">✏️ první písmenko</span>
+          <span class="qz-big-emoji">${q.word.emoji}</span>
+          <div class="qz-first-letter">${hint}</div></div>
+        <div class="qz-2x2">${q.choices.map(c=>mkC(c.es,`<div class="qz-both-row"><span class="qz-both-emoji">${c.emoji}</span><span class="qz-both-word">${c.es}</span></div>`)).join('')}</div>`);
+    }
+
+    case 'quickPick': return(
+      `<div class="qz-card"><span class="qz-type-badge">⚡ rychle!</span>
+        <div class="qz-instruction" style="font-size:21px">Klikni na: <strong style="color:var(--blue)">${q.word.es}</strong></div>
+        <div class="qz-cz-label">${q.word.cz}</div></div>
+      <div class="qz-2col">${q.choices.map(c=>
+        `<div class="qz-big2" data-val="${escQ(c.es)}"
+          onclick="pickChoice(this,'${escQ(c.es)}','${escQ(q.correctVal)}','${escQ(c.emoji)}')">
+          <span style="font-size:56px">${c.emoji}</span>
+          <div style="font-family:Fredoka One,cursive;font-size:16px;color:var(--dark);margin-top:6px">${c.es}</div>
+        </div>`
+      ).join('')}</div>`);
+
+    case 'flashHide': return(
+      `<div class="qz-card"><span class="qz-type-badge">🧠 zapamatuj si!</span>
+        <span class="qz-flash-emoji" id="qzFE">${q.word.emoji}</span>
+        <div class="qz-flash-count" id="qzFC">2</div></div>
+      <div class="qz-2x2" id="qzFChoices" style="display:none">
+        ${q.choices.map(c=>mkC(c.es,`<div class="qz-both-row"><span class="qz-both-emoji">${c.emoji}</span><span class="qz-both-word">${c.es}</span></div>`)).join('')}
+      </div>`);
+  }
+  return '';
+};
+
+const pickChoice = (el, chosen, correctVal, emoji) => {
+  document.querySelectorAll('.qz-choice,.qz-tf-btn,.qz-oot-item,.qz-big2').forEach(b=>{
+    b.disabled=true; b.onclick=null; b.style.pointerEvents='none';
+  });
+  const isRight = chosen===correctVal;
+  document.querySelectorAll('[data-val]').forEach(b=>{
+    if(b.dataset.val===correctVal) b.classList.add('correct');
+  });
+  if(isRight){
+    el.classList.add('correct');
+    playCorrectSound(); floatEmoji(emoji||'⭐'); quizCorrect++;
+    if(quizQueue[quizQIdx]?.word) speakES(quizQueue[quizQIdx].word.es);
+  } else {
+    el.classList.add('wrong'); playWrongSound();
+  }
+  setTimeout(()=>{
+    quizQIdx++;
+    if(quizQIdx<quizQueue.length) renderCurrentQ();
+    else showQuizResult();
+  }, isRight?900:1600);
+};
+
+const showQuizResult = () => {
+  const total=quizQueue.length, pct=quizCorrect/total;
+  const medal=pct===1?'🏆':pct>=.8?'🌟':pct>=.6?'⭐':'💪';
+  const msg=pct===1?'Naprosto perfektní! 🎉':pct>=.8?'Skoro perfektní! 🌟':pct>=.6?'Dobrá práce! 👍':'Zkus to znovu! 💪';
+  document.getElementById('quizContent').innerHTML=
+    mkCompanion(pct===1?'Výborně! 🏆':'Dobrá práce!',pct>=.8?'Neuvěřitelné! 🎉':'Příště to dáš!')+
+    `<div class="qz-result">
+      <span class="qz-result-emoji">${medal}</span>
+      <div class="qz-result-score">${quizCorrect} / ${total}</div>
+      <div style="font-family:'Fredoka One','Nunito','Segoe UI Rounded',system-ui,sans-serif;font-size:22px;color:var(--dark);margin-bottom:8px">${msg}</div>
+      <div class="qz-result-sub">Zvládl/a jsi ${quizCorrect} z ${total} otázek${pct===1?' — bez jediné chyby!':''}</div>
+      <div style="display:flex;gap:10px;">
+        <button class="comp-btn secondary" style="flex:1" onclick="startQuiz()">↺ Nový kvíz</button>
+        <button class="comp-btn primary" style="flex:2" onclick="completeEx('quiz')">Hotovo! ⭐</button>
+      </div>
+    </div>`;
+  launchConfetti(pct===1?50:pct>=.7?25:10);
+  if(pct===1) soundLvl();
+};
+
+// ── MEMORY ────────────────────────────────────────────────────────────────────
+let memCards = [], memFlipped = [], memMatched = 0, memLocked = false;
+
+const startMemory = () => {
+  currentEx = 'memory'; memMatched = 0; memFlipped = []; memLocked = false;
+  const words = shuffle([...currentTopic.words]).slice(0, 6);
+  memCards = shuffle([
+    ...words.map(w => ({id:w.es+'_e', val:w.es, type:'emoji', display:w.emoji})),
+    ...words.map(w => ({id:w.es+'_w', val:w.es, type:'word',  display:w.es}))
+  ]);
+  renderMemoryGrid(); showScreen('screenMemory');
+};
+
+const renderMemoryGrid = () => {
+  const cardsHTML = memCards.map((c,i) =>
+    `<div class="mem-card" id="mc_${i}" onclick="memTap(${i})">
+      <div class="mem-card-inner">
+        <div class="mem-card-front">❓</div>
+        <div class="mem-card-back">
+          ${c.type==='emoji'
+            ? `<span class="mem-emoji-big">${c.display}</span>`
+            : `<span class="mem-word-text">${c.display}</span>`}
+        </div>
+      </div>
+    </div>`
+  ).join('');
+
+  document.getElementById('memoryContent').innerHTML =
+    mkCompanion('Najdi dvojice! 🧩', 'Zapamatuj si kartičky!') +
+    `<div class="mem-score" id="memScore">Nalezeno: 0 / 6</div>
+    <div class="memory-grid">${cardsHTML}</div>
+    <div id="memNav"></div>`;
+};
+
+const memTap = (i) => {
+  if (memLocked) return;
+  const card = document.getElementById(`mc_${i}`);
+  if (!card || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  soundFlip(); card.classList.add('flipped'); memFlipped.push(i);
+  if (memFlipped.length < 2) return;
+  memLocked = true;
+  const [a, b] = memFlipped;
+  if (memCards[a].val === memCards[b].val && memCards[a].type !== memCards[b].type) {
+    setTimeout(() => {
+      document.getElementById(`mc_${a}`).classList.add('matched');
+      document.getElementById(`mc_${b}`).classList.add('matched');
+      memMatched++;
+      document.getElementById('memScore').textContent = `Nalezeno: ${memMatched} / 6`;
+      soundOk(); speakES(memCards[a].val);
+      floatEmoji(memCards[a].type==='emoji' ? memCards[a].display : memCards[b].display);
+      memFlipped = []; memLocked = false;
+      if (memMatched === 6) {
+        launchConfetti(35); soundLvl();
+        document.getElementById('memNav').innerHTML =
+          `<div style="display:flex;gap:10px;margin-top:8px;">
+            <button class="listen-nav-btn" onclick="startMemory()" style="flex:1">↺ Znovu</button>
+            <button class="listen-nav-btn primary" style="flex:2" onclick="completeEx('memory')">Hotovo! ⭐</button>
+          </div>`;
+      }
+    }, 400);
+  } else {
+    setTimeout(() => {
+      const ca = document.getElementById(`mc_${a}`);
+      const cb = document.getElementById(`mc_${b}`);
+      if(ca) { ca.classList.add('wrong-flash'); setTimeout(()=>ca.classList.remove('wrong-flash'),300); ca.classList.remove('flipped'); }
+      if(cb) { cb.classList.add('wrong-flash'); setTimeout(()=>cb.classList.remove('wrong-flash'),300); cb.classList.remove('flipped'); }
+      soundErr(); memFlipped = []; memLocked = false;
+    }, 900);
+  }
+};
+
+// ── RHYME ─────────────────────────────────────────────────────────────────────
+const startRhyme = () => {
+  currentEx = 'rhyme';
+  const rhyme = currentTopic.rhyme;
+  const linesHTML = rhyme.lines.map((line,i) => {
+    const czLine = rhyme.czLines ? `<div class="rhyme-cz-line">${rhyme.czLines[i]||''}</div>` : '';
+    return `<div class="rhyme-line-wrap" id="rline_${i}"><div class="rhyme-line">${line}</div>${czLine}</div>`;
+  }).join('');
+  document.getElementById('rhymeContent').innerHTML =
+    mkCompanion('Poslouchej říkanku! 📜', 'Opakuj po nás! 🎵') +
+    `<div class="rhyme-card">
+      <div class="rhyme-title">🎵 ${rhyme.title}</div>
+      <div class="rhyme-lines">${linesHTML}</div>
+      <button class="rhyme-play-btn play" id="rhymePlayBtn" onclick="playRhyme()">▶ Přehrát říkanku</button>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;" id="rhymeNav">
+      <button class="listen-nav-btn" onclick="goTopic()" style="flex:1">← Zpět</button>
+    </div>`;
+  showScreen('screenRhyme');
+  requestAnimationFrame(() => document.querySelectorAll('.rhyme-line-wrap').forEach(el => el.classList.add('visible')));
+};
+
+let rhymePlaying = false;
+const playRhyme = async () => {
+  if (rhymePlaying) return;
+  rhymePlaying = true;
+  const btn = document.getElementById('rhymePlayBtn');
+  if (btn) btn.textContent = '⏳ Přehrávám...';
+  const rhyme = currentTopic.rhyme;
+  rhyme.lines.forEach((_,i) => {
+    const el = document.getElementById(`rline_${i}`);
+    if (el) { el.classList.remove('visible'); setTimeout(() => el.classList.add('visible'), i*700); }
+  });
+  setTimeout(() => speakES(rhyme.lines.join('. '), 0.85), 200);
+  setTimeout(() => {
+    rhymePlaying = false;
+    if (btn) { btn.textContent = '↺ Přehrát znovu'; btn.className = 'rhyme-play-btn replay'; }
+    const nav = document.getElementById('rhymeNav');
+    if (nav) nav.innerHTML =
+      `<button class="listen-nav-btn" onclick="goTopic()" style="flex:1">← Zpět</button>
+      <button class="listen-nav-btn primary" style="flex:2" onclick="completeEx('rhyme')">Hotovo! ⭐</button>`;
+  }, rhyme.lines.length*600 + 2000);
+};
+
+// ── COMPLETE ──────────────────────────────────────────────────────────────────
+const completeEx = (exId) => {
+  if (!progress[currentTopic.id]) progress[currentTopic.id] = {};
+  progress[currentTopic.id][exId] = true;
+  saveProgress(); launchConfetti(28); soundLvl();
+  const allDone = EX_KEYS.every(k => progress[currentTopic.id][k]);
+  document.getElementById('doneContent').innerHTML =
+    mkCompanion(allDone?'Téma splněno! 🏆':'Výborně!', allDone?'Všechno hotovo! 🎉':'Skvělá práce!') +
+    `<div class="completion-card">
+      <span class="completion-emoji">${allDone?'🏆':'⭐'}</span>
+      <div class="completion-title">${allDone?'Téma splněno!':'Výborně!'}</div>
+      <div class="stars-row">${allDone?'⭐⭐⭐⭐⭐⭐':'⭐'}</div>
+      <div class="completion-sub">${allDone
+        ?`Zvládl/a jsi celé téma <strong>${currentTopic.title}</strong>! Matýsek a Terezka jsou na tebe pyšní! 🎉`
+        :`Dokončil/a jsi cvičení! Pojď zkusit další!`}</div>
+      <div class="completion-btns">
+        <button class="comp-btn primary" onclick="goTopic()">Zpět na téma</button>
+        <button class="comp-btn secondary" onclick="goHome()">Výběr témat</button>
+      </div>
+    </div>`;
+  showScreen('screenDone');
+  updateXP();
+};
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── FLASHCARD TRENÉR ──────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════════════════
+let flashState = null;
+
+
+// ── GENERÁLNÍ TRENÉR — všechna slovíčka ──────────────────────────────────────
+const startGeneralFlash = () => {
+  // Ulož aktuální téma a nahraď fake tématem se všemi slovíčky
+  const allWords = APP_DATA.topics.reduce((acc, topic) => {
+    topic.words.forEach(w => {
+      // Přidej název tématu jako kontext
+      acc.push({...w, topicTitle: topic.title, emoji: w.emoji || topic.emoji});
+    });
+    return acc;
+  }, []);
+
+  // Vytvoř dočasné "super téma"
+  const savedTopic = currentTopic;
+  currentTopic = {
+    id: '_general',
+    title: 'Generální trenér',
+    words: allWords,
+  };
+
+  // Spusť flashcard s callbackem na návrat
+  currentEx = 'flash';
+  let cards = [];
+  allWords.forEach(w => {
+    cards.push({word:w, dir:'esToCz'});
+    cards.push({word:w, dir:'czToEs'});
+  });
+  cards = shuffle(cards);
+
+  flashState = {
+    deck: cards,
+    queue: [...cards],
+    idx: 0,
+    correct: 0,
+    total: cards.length,
+    flipped: false,
+    isGeneral: true,
+    savedTopic,
+  };
+
+  renderFlash();
+  showScreen('screenFlash');
+};
+const startFlash = () => {
+  currentEx = 'flash';
+  const words = currentTopic.words;
+  // Vytvoř karty v obou směrech
+  let cards = [];
+  words.forEach(w => {
+    cards.push({word:w, dir:'esToCz'}); // španělsky → česky
+    cards.push({word:w, dir:'czToEs'}); // česky → španělsky
+  });
+  // Zamíchej
+  cards = shuffle(cards);
+  flashState = {
+    deck: cards,
+    queue: [...cards],
+    idx: 0,
+    correct: 0,
+    total: cards.length,
+    flipped: false,
+    retryBucket: [], // chybně zodpovězené
+    dir: 'both', // 'esToCz','czToEs','both'
+  };
+  renderFlash();
+  showScreen('screenFlash');
+};
+
+const renderFlash = () => {
+  if (!flashState) return;
+  const {queue, idx, correct, total, dir} = flashState;
+
+  // Pokud je fronta prázdná → hotovo
+  if (idx >= queue.length) {
+    renderFlashDone();
+    return;
+  }
+
+  const card = queue[idx];
+  const w = card.word;
+  const isEsFirst = card.dir === 'esToCz';
+
+  const frontWord = isEsFirst ? w.es : w.cz;
+  const backWord  = isEsFirst ? w.cz : w.es;
+  const frontSub  = isEsFirst ? 'Španělsky — co to znamená česky?' : 'Česky — jak se to řekne španělsky?';
+  const backSub   = isEsFirst ? `🇪🇸 ${w.es}` : `🇨🇿 ${w.cz}`;
+
+  const remaining = queue.length - idx;
+  const pct = Math.round((idx/queue.length)*100);
+
+  document.getElementById('flashContent').innerHTML =
+    mkCompanion('Procvičuj slovíčka! 🃏', 'Otočením odhalíš odpověď!') +
+    `<div class="flash-header">
+      <div class="flash-progress">📚 ${remaining} zbývá · ✅ ${correct}/${idx}</div>
+      <button class="listen-nav-btn" onclick="flashState.isGeneral ? goHome() : goTopic()">✕ Konec</button>
+    </div>
+    <div style="background:var(--border);border-radius:999px;height:6px;margin-bottom:12px">
+      <div style="background:var(--green);height:6px;border-radius:999px;width:${pct}%;transition:width .3s"></div>
+    </div>
+    <div class="flash-card-wrap">
+      <div class="flash-card" id="flashCard" onclick="flipCard()">
+        <div class="flash-front">
+          <span class="flash-emoji">${w.emoji}</span>
+          <div class="flash-word">${frontWord}</div>
+          <div class="flash-sub">${frontSub}</div>
+          <div class="flash-hint">👆 Klepni pro odpověď</div>
+        </div>
+        <div class="flash-back">
+          <span class="flash-emoji">${w.emoji}</span>
+          <div class="flash-word">${backWord}</div>
+          <div class="flash-sub">${backSub}</div>
+        </div>
+      </div>
+    </div>
+    <div class="flash-btns" id="flashBtns" style="display:none">
+      <button class="flash-btn-wrong" onclick="flashAnswer(false)">❌ Nevěděl/a jsem</button>
+      <button class="flash-btn-ok"    onclick="flashAnswer(true)">✅ Věděl/a jsem</button>
+    </div>
+    <div class="flash-stats">Karta ${idx+1} z ${queue.length}</div>`;
+  flashState.flipped = false;
+};
+
+const flipCard = () => {
+  if (!flashState || flashState.flipped) return;
+  const card = document.getElementById('flashCard');
+  if (card) card.classList.add('flipped');
+  const btns = document.getElementById('flashBtns');
+  if (btns) btns.style.display = 'grid';
+  flashState.flipped = true;
+  // Přehraj španělské slovo
+  const w = flashState.queue[flashState.idx].word;
+  setTimeout(() => speakES(w.es), 300);
+};
+
+const flashAnswer = (correct) => {
+  if (!flashState) return;
+  const card = flashState.queue[flashState.idx];
+  if (correct) {
+    flashState.correct++;
+  } else {
+    // Přidej zpět do fronty za 3–4 karty
+    const insertAt = Math.min(flashState.idx + 3 + Math.floor(Math.random()*2), flashState.queue.length);
+    flashState.queue.splice(insertAt, 0, {...card}); // přidej kopii
+  }
+  flashState.idx++;
+  renderFlash();
+};
+
+const renderFlashDone = () => {
+  const {correct, total, deck} = flashState;
+  const pct = Math.round((correct/total)*100);
+  const stars = pct >= 90 ? '⭐⭐⭐' : pct >= 60 ? '⭐⭐' : '⭐';
+  document.getElementById('flashContent').innerHTML =
+    `<div class="flash-done-card">
+      <div style="font-size:64px;margin-bottom:12px">🎉</div>
+      <div class="rhyme-title">Skvělá práce!</div>
+      <div style="font-size:40px;margin:12px 0">${stars}</div>
+      <div style="font-size:18px;font-weight:800;color:var(--dark);margin-bottom:8px">${correct} z ${total} správně</div>
+      <div style="font-size:14px;color:var(--muted);margin-bottom:20px">${pct} % úspěšnost</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      ${flashState.isGeneral
+        ? `<button class="listen-nav-btn" onclick="goHome()" style="flex:1">← Domů</button>
+           <button class="listen-nav-btn primary" onclick="startGeneralFlash()" style="flex:2">↺ Znovu</button>`
+        : `<button class="listen-nav-btn" onclick="goTopic()" style="flex:1">← Zpět na téma</button>
+           <button class="listen-nav-btn primary" onclick="startFlash()" style="flex:2">↺ Procvičit znovu</button>`
+      }
+    </div>`;
+  // Ulož jako splněné
+  completeEx('flash');
+};
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ══ PAYWALL ══════════════════════════════════════════════════
+const showPaywall = () => {
+  document.getElementById('paywallModal').classList.add('show');
+};
+const closePaywall = () => {
+  document.getElementById('paywallModal').classList.remove('show');
+};
+// Zavři kliknutím mimo kartu
+document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('paywallModal');
+  if (modal) modal.addEventListener('click', function(e){
+    if (e.target === this) closePaywall();
+  });
+});
+// ── SPEECH ────────────────────────────────────────────────────────────────────
+const speakES = (text, rate=1.0) => {
+  text = stripEmoji(text); if (!text.trim()) return;
+  const synth = window.speechSynthesis; if (!synth) return;
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'es-ES';
+  u.rate = rate < 0.8 ? 0.6 : 1.0;
+  u.pitch = 1.1;
+  // Počkej až se načtou hlasy (nutné na Androidu)
+  const doSpeak = () => {
+    const voices = synth.getVoices() || [];
+    const v = voices.find(v => v.lang === 'es-ES')
+           || voices.find(v => v.lang === 'es-MX')
+           || voices.find(v => v.lang === 'es-US')
+           || voices.find(v => v.lang.startsWith('es'));
+    if (v) u.voice = v;
+    synth.speak(u);
+  };
+  if (synth.getVoices().length > 0) {
+    doSpeak();
+  } else {
+    synth.addEventListener('voiceschanged', doSpeak, {once: true});
+    setTimeout(doSpeak, 500); // fallback timeout
+  }
+};
+
+// ── AUDIO ─────────────────────────────────────────────────────────────────────
+let actx = null;
+const getCtx = () => {
+  if (!actx) try { actx = new (window.AudioContext||window.webkitAudioContext)(); } catch(_){}
+  if (actx?.state==='suspended') actx.resume().catch(()=>{});
+  return actx;
+};
+const tone = (f,type,dur,vol=0.15,t0=0) => {
+  const c=getCtx(); if(!c) return;
+  const t=c.currentTime+t0;
+  try {
+    const o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type=type; o.frequency.value=f;
+    g.gain.setValueAtTime(vol,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.start(t); o.stop(t+dur);
+  } catch(_){}
+};
+const sweep = (f0,f1,dur,vol=0.14) => {
+  const c=getCtx(); if(!c) return;
+  const t=c.currentTime;
+  try {
+    const o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type='sine'; o.frequency.setValueAtTime(f0,t);
+    o.frequency.linearRampToValueAtTime(f1,t+dur);
+    g.gain.setValueAtTime(vol,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+dur+.05);
+    o.start(t); o.stop(t+dur+.1);
+  } catch(_){}
+};
+const noiseBurst = (dur=.08,vol=.15) => {
+  const c=getCtx(); if(!c) return;
+  try {
+    const buf=c.createBuffer(1,Math.floor(c.sampleRate*dur),c.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*.4));
+    const src=c.createBufferSource(); src.buffer=buf;
+    const g=c.createGain(); g.gain.value=vol;
+    src.connect(g); g.connect(c.destination); src.start(c.currentTime);
+  } catch(_){}
+};
+
+// 12 distinct correct-answer sounds — rotating
+const CORRECT_SND = [
+  ()=>{ tone(523,'sine',.10,.16,0); tone(659,'sine',.10,.16,.09); tone(784,'sine',.20,.16,.18); },           // 0 classic C-E-G
+  ()=>{ tone(659,'sine',.07,.14,0); tone(988,'sine',.07,.14,.07); tone(1319,'sine',.18,.14,.14); },          // 1 high bounce
+  ()=>{ tone(1047,'sine',.5,.10,0); tone(1568,'sine',.25,.06,.04); },                                        // 2 crystal bell
+  ()=>{ [523,659,784,1047].forEach((f,i)=>tone(f,'square',.05,.09,i*.06)); tone(1047,'square',.18,.1,.24);}, // 3 fanfare
+  ()=>{ [1047,1175,1319,1568,1760].forEach((f,i)=>tone(f,'sine',.07,.09,i*.035)); },                        // 4 sparkle arp
+  ()=>{ [523,659,784,1047].forEach((f,i)=>tone(f,'triangle',.13,.14,i*.09)); },                             // 5 xylophone
+  ()=>{ tone(1319,'square',.04,.10,0); tone(1760,'square',.10,.10,.04); },                                   // 6 8-bit coin
+  ()=>{ sweep(400,1200,.28,.12); },                                                                           // 7 whistle up
+  ()=>{ [392,784,1175].forEach((f,i)=>tone(f,'sine',.28,.07,i*.03)); tone(1568,'sine',.15,.04,.12); },      // 8 magic chord
+  ()=>{ sweep(150,900,.18,.15); },                                                                            // 9 boing
+  ()=>{ noiseBurst(.07,.18); tone(1047,'sine',.15,.10,.08); },                                               // 10 drum + ting
+  ()=>{ [262,330,392,523,659,784,1047].forEach((f,i)=>tone(f,'sine',.12,.15,i*.07)); },                    // 11 victory scale
+];
+// 3 wrong-answer sounds — rotating
+const WRONG_SND = [
+  ()=>{ tone(330,'sawtooth',.15,.12,0); tone(247,'sawtooth',.20,.10,.14); },
+  ()=>{ sweep(400,160,.25,.12); },
+  ()=>{ tone(220,'square',.10,.10,0); tone(185,'square',.12,.08,.10); },
+];
+
+let _sndOkIdx=0, _sndErrIdx=0;
+const playCorrectSound = () => { try{ CORRECT_SND[_sndOkIdx++ % 12](); }catch(_){} };
+const playWrongSound   = () => { try{ WRONG_SND[_sndErrIdx++ % 3](); }catch(_){} };
+
+// Aliases for other exercises (match, memory, rhyme…)
+const soundOk   = () => { tone(523,'sine',.1,.15,0); tone(659,'sine',.1,.15,.08); tone(784,'sine',.18,.15,.16); };
+const soundErr  = () => { tone(330,'sine',.15,.15,0); tone(248,'sine',.2,.12,.14); };
+const soundLvl  = () => { [262,330,392,523,659,784].forEach((f,i)=>tone(f,'sine',.15,.18,i*.08)); };
+const soundFlip = () => { tone(900,'sine',.04,.06,0); tone(1100,'sine',.03,.04,.03); };
+
+document.addEventListener('pointerdown',()=>{ if(actx?.state==='suspended') actx.resume().catch(()=>{}); },{passive:true});
+
+// ── CONFETTI ──────────────────────────────────────────────────────────────────
+const CF_COLORS = ['#FFD93D','#FF6B6B','#6BCB77','#4A9FE8','#C77DFF','#FF9F47'];
+const launchConfetti = (n=18) => {
+  for (let i=0; i<n; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'cf';
+      const dur = .8+Math.random()*1.2;
+      el.style.cssText = `left:${Math.random()*100}vw;top:-20px;background:${CF_COLORS[Math.floor(Math.random()*CF_COLORS.length)]};transform:rotateZ(${Math.random()*360}deg);animation-duration:${dur}s`;
+      document.body.appendChild(el);
+      const rm = () => { if(el.parentNode) el.remove(); };
+      el.addEventListener('animationend',rm,{once:true});
+      setTimeout(rm,(dur+.5)*1000);
+    }, i*50);
+  }
+};
+
+// ── FLOAT EMOJI ───────────────────────────────────────────────────────────────
+const floatEmoji = (emoji) => {
+  if (!emoji || emoji.length > 8) return;
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;font-size:52px;pointer-events:none;z-index:998;left:${20+Math.random()*60}vw;top:55%;animation:floatUp 1.1s ease forwards;`;
+  el.textContent = emoji;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+};
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+const shuffle = (arr) => {
+  const a = [...arr];
+  for (let i=a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+};
+const escQ = (s) => (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderHome();
+</script>
+
+<script>
+// ── PWA: Manifest inline ──────────────────────────────────────────────────────
+(function(){
+  const manifest = {
+    name: "Matýsek a Terezka učí španělštinu",
+    short_name: "Španělština",
+    description: "Španělština pro děti s Matýskem a Terezkou",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#FFF8F0",
+    theme_color: "#FFF8F0",
+    orientation: "portrait",
+    icons: [
+      {
+        src: "data:image/svg+xml," + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%23FFF8F0'/><text y='360' x='256' text-anchor='middle' font-size='320' font-family='Apple Color Emoji,Segoe UI Emoji'>🇪🇸</text></svg>`),
+        sizes: "512x512",
+        type: "image/svg+xml",
+        purpose: "any maskable"
+      }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
+  const url = URL.createObjectURL(blob);
+  document.getElementById('pwa-manifest').href = url;
+})();
+
+// ── PWA: Service Worker pro offline fungování ─────────────────────────────────
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'spanelstina-v1';
+    self.addEventListener('install', e => {
+      e.waitUntil(
+        caches.open(CACHE).then(c => c.addAll([self.location.pathname]))
+      );
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(caches.keys().then(keys =>
+        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      ));
+      self.clients.claim();
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(
+        caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+          return res;
+        }))
+      );
+    });
+  `;
+  const swBlob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
+
+// ── PWA: Tlačítko Instalovat ──────────────────────────────────────────────────
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'flex';
+});
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'none';
+  deferredPrompt = null;
+});
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+  }
+}
+</script>
+
+<div id="paywallModal">
+  <div class="pw-card">
+    <div class="pw-ico">🇪🇸</div>
+    <div class="pw-title">Odemkni všechna témata</div>
+    <div class="pw-free-badge">✅ Zvířata jsou zdarma</div>
+    <div class="pw-features">
+      <div class="pw-feat">🎨 Barvy &nbsp;🔢 Čísla &nbsp;🦴 Tělo</div>
+      <div class="pw-feat">👨‍👩‍👧 Rodina &nbsp;🍎 Jídlo &nbsp;👕 Oblečení</div>
+      <div class="pw-feat">🏠 Dům &nbsp;📚 Škola &nbsp;⛅ Počasí</div>
+      <div class="pw-feat">🚗 Doprava &nbsp;😊 Pocity</div>
+    </div>
+    <div class="pw-text">
+      Přístup ke všem 12 tématům,<br>
+      trenérům slovíček a frází,<br>
+      říkankám a příběhům.
+    </div>
+    <a href="https://fajndoucko.cz/predplatne" class="pw-btn" id="pwBtn">
+      🚀 Odemknout vše
+    </a>
+    <div class="pw-close" onclick="closePaywall()">Zpět na Zvířata</div>
+  </div>
+</div>
+
+</body>
+</html>
