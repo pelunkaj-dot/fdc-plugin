@@ -681,4 +681,639 @@ const MODULES = [
         phrases: [
           { nl: 'Twee ons kaas, alsjeblieft.', cs: 'Dvě stě gramů sýra, prosím.', pron: 'tvee ons kas, als-je-bleeft' },
           { nl: 'Een pond appels.', cs: 'Půl kila jablek.', pron: 'en pont ap-els' },
-          { nl: 'Mag ik even proeven?', cs: 'Mohu ochutnat?', pron: 'mach ik ee-ven
+          { nl: 'Mag ik even proeven?', cs: 'Mohu ochutnat?', pron: 'mach ik ee-ven proe-ven' },
+          { nl: 'Is dit vers?', cs: 'Je to čerstvé?', pron: 'is dit fers' },
+          { nl: 'Wanneer is dit over datum?', cs: 'Kdy je toto po datu?', pron: 'va-neer is dit o-ver da-tum' },
+          { nl: 'Heeft u iets goedkopers?', cs: 'Máte něco levnějšího?', pron: 'heft ü iets choed-ko-pers' },
+          { nl: 'Dat is te duur.', cs: 'To je příliš drahé.', pron: 'dat is te düür' },
+        ]
+      },
+      {
+        title: 'Reklamace a výměna',
+        ctx: 'Zboží je vadné nebo chcete vrátit',
+        phrases: [
+          { nl: 'Dit is kapot.', cs: 'Toto je rozbité.', pron: 'dit is ka-pot' },
+          { nl: 'Dit werkt niet.', cs: 'Toto nefunguje.', pron: 'dit verkt neet' },
+          { nl: 'Kan ik dit ruilen?', cs: 'Mohu to vyměnit?', pron: 'kan ik dit röü-len' },
+          { nl: 'Kan ik dit terugbrengen?', cs: 'Mohu to vrátit?', pron: 'kan ik dit te-ruch-breng-en' },
+          { nl: 'Ik heb de bon nog.', cs: 'Mám ještě účtenku.', pron: 'ik hep de bon noch' },
+          { nl: 'Ik wil mijn geld terug.', cs: 'Chci vrátit peníze.', pron: 'ik vil mejn chelt te-ruch' },
+          { nl: 'Waar is de klantenservice?', cs: 'Kde je zákaznický servis?', pron: 'var is de klan-ten-ser-vis' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'doprava',
+    icon: '🚲',
+    title: 'Doprava & orientace',
+    desc: '4 situace · 32 frází',
+    color: '#0F5132',
+    situations: [
+      {
+        title: 'Na vlakové stanici',
+        ctx: 'Kupujete jízdenku nebo se ptáte na vlak',
+        phrases: [
+          { nl: 'Een enkeltje naar Amsterdam.', cs: 'Jednosměrnou do Amsterdamu.', pron: 'en en-kelt-je nar am-ster-dam' },
+          { nl: 'Een retourtje naar Utrecht.', cs: 'Zpáteční do Utrechtu.', pron: 'en re-toer-tje nar üü-trecht' },
+          { nl: 'Welk perron?', cs: 'Které nástupiště?', pron: 'velk pe-ron' },
+          { nl: 'Hoe laat vertrekt de trein?', cs: 'V kolik odjíždí vlak?', pron: 'hoe lat ver-trekt de trejn' },
+          { nl: 'Is de trein vertraagd?', cs: 'Má vlak zpoždění?', pron: 'is de trejn ver-trach-t' },
+          { nl: 'Hoe lang duurt de reis?', cs: 'Jak dlouho trvá cesta?', pron: 'hoe lang düürt de rejs' },
+          { nl: 'Moet ik overstappen?', cs: 'Musím přestupovat?', pron: 'moet ik o-ver-stap-en' },
+          { nl: 'Waar stap ik over?', cs: 'Kde přestupuji?', pron: 'var stap ik o-ver' },
+        ]
+      },
+      {
+        title: 'Autobus a tram',
+        ctx: 'Cestujete městskou dopravou',
+        phrases: [
+          { nl: 'Welke bus gaat naar...?', cs: 'Který autobus jede do...?', pron: 'vel-ke bus chat nar' },
+          { nl: 'Halte [název]', cs: 'Zastávka [název]', pron: 'hal-te...' },
+          { nl: 'Is dit de goede richting?', cs: 'Jedu správným směrem?', pron: 'is dit de chude rich-ting' },
+          { nl: 'Kunt u zeggen wanneer ik moet uitstappen?', cs: 'Můžete říct, kdy mám vystoupit?', pron: 'kunt ü zech-en va-neer ik moet öüt-stap-en' },
+          { nl: 'Ik wil uitstappen.', cs: 'Chci vystoupit.', pron: 'ik vil öüt-stap-en' },
+          { nl: 'Een OV-chipkaart, alsjeblieft.', cs: 'OV kartu, prosím.', pron: 'en o-vee chip-kart, als-je-bleeft' },
+          { nl: 'Inchecken / Uitchecken', cs: 'Přihlásit se / Odhlásit se (čipem)', pron: 'in-che-ken / öüt-che-ken' },
+          { nl: 'De tram gaat elke tien minuten.', cs: 'Tram jede každých deset minut.', pron: 'de tram chat el-ke teen mi-nü-ten' },
+        ]
+      },
+      {
+        title: 'Orientace ve městě',
+        ctx: 'Ptáte se na cestu nebo hledáte místo',
+        phrases: [
+          { nl: 'Waar is...?', cs: 'Kde je...?', pron: 'var is' },
+          { nl: 'Hoe kom ik bij...?', cs: 'Jak se dostanu k...?', pron: 'hoe kom ik bej' },
+          { nl: 'Rechtdoor', cs: 'Rovně', pron: 'recht-dor' },
+          { nl: 'Linksaf / Rechtsaf', cs: 'Vlevo / Vpravo', pron: 'links-af / rechts-af' },
+          { nl: 'Aan de linkerkant / rechterkant', cs: 'Na levé / pravé straně', pron: 'an de lin-ker-kant / rech-ter-kant' },
+          { nl: 'Op de hoek', cs: 'Na rohu', pron: 'op de hoek' },
+          { nl: 'Hoe ver is het?', cs: 'Jak daleko je to?', pron: 'hoe ver is het' },
+          { nl: 'Ongeveer vijf minuten lopen.', cs: 'Přibližně pět minut chůze.', pron: 'on-che-veer fejf mi-nü-ten lo-pen' },
+        ]
+      },
+      {
+        title: 'Kolo a auto',
+        ctx: 'Holandsko — země kol a aut',
+        phrases: [
+          { nl: 'Waar kan ik een fiets huren?', cs: 'Kde si mohu půjčit kolo?', pron: 'var kan ik en feets hüü-ren' },
+          { nl: 'Waar is de fietsenstalling?', cs: 'Kde je úschovna kol?', pron: 'var is de feet-sen-stal-ing' },
+          { nl: 'Mijn band is lek.', cs: 'Mám píchlou pneumatiku.', pron: 'mejn band is lek' },
+          { nl: 'Waar kan ik parkeren?', cs: 'Kde mohu parkovat?', pron: 'var kan ik par-kee-ren' },
+          { nl: 'Betaald parkeren', cs: 'Placené parkování', pron: 'be-tald par-kee-ren' },
+          { nl: 'Een boete krijgen', cs: 'Dostat pokutu', pron: 'en boe-te krej-chen' },
+          { nl: 'Waar is het dichtstbijzijnde tankstation?', cs: 'Kde je nejbližší čerpací stanice?', pron: 'var is het dichts-bej-zejn-de tank-sta-sjon' },
+          { nl: 'Filerijden', cs: 'Stání v koloně', pron: 'fee-le-rej-den' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'prace',
+    icon: '💼',
+    title: 'V práci',
+    desc: '4 situace · 32 frází',
+    color: '#5B21B6',
+    situations: [
+      {
+        title: 'Nerozumím — zachraňte mě',
+        ctx: 'Nerozumíte nebo potřebujete zopakovat',
+        phrases: [
+          { nl: 'Ik begrijp het niet.', cs: 'Nerozumím.', pron: 'ik be-chrejp het neet' },
+          { nl: 'Kunt u dat herhalen?', cs: 'Můžete to zopakovat?', pron: 'kunt ü dat her-ha-len' },
+          { nl: 'Kunt u langzamer praten?', cs: 'Můžete mluvit pomaleji?', pron: 'kunt ü lang-za-mer pra-ten' },
+          { nl: 'Wat betekent...?', cs: 'Co znamená...?', pron: 'vat be-tee-kent' },
+          { nl: 'Hoe schrijf je dat?', cs: 'Jak se to píše?', pron: 'hoe schrejf je dat' },
+          { nl: 'Spreek je Engels?', cs: 'Mluvíš anglicky?', pron: 'spreek je eng-els' },
+          { nl: 'Ik heb een vraag.', cs: 'Mám otázku.', pron: 'ik hep en vraach' },
+          { nl: 'Begrijp ik het goed dat...?', cs: 'Chápu to správně, že...?', pron: 'be-chrejp ik het choed dat' },
+        ]
+      },
+      {
+        title: 'Každodenní pracovní komunikace',
+        ctx: 'Komunikace s kolegy v průběhu dne',
+        phrases: [
+          { nl: 'Wanneer is de deadline?', cs: 'Kdy je termín?', pron: 'va-neer is de dead-lajn' },
+          { nl: 'Ik stuur je een e-mail.', cs: 'Pošlu ti email.', pron: 'ik stüür je en ee-majl' },
+          { nl: 'Is dat oké?', cs: 'Je to v pořádku?', pron: 'is dat o-kee' },
+          { nl: 'Geen probleem.', cs: 'Žádný problém.', pron: 'chen pro-bleem' },
+          { nl: 'Ik ben zo terug.', cs: 'Hned se vrátím.', pron: 'ik ben zo te-ruch' },
+          { nl: 'Ik heb een vergadering.', cs: 'Mám schůzku.', pron: 'ik hep en ver-cha-de-ring' },
+          { nl: 'Heb je even tijd?', cs: 'Máš chvilku čas?', pron: 'hep je ee-ven tejt' },
+          { nl: 'Ik werk aan...', cs: 'Pracuji na...', pron: 'ik verk an' },
+        ]
+      },
+      {
+        title: 'Telefonování a online schůzky',
+        ctx: 'Hovoříte po telefonu nebo jste na videohovoru',
+        phrases: [
+          { nl: 'Met [jméno] van [firma].', cs: 'U telefonu [jméno] z [firma].', pron: 'met... van...' },
+          { nl: 'Ik bel terug.', cs: 'Zavolám zpět.', pron: 'ik bel te-ruch' },
+          { nl: 'Kunt u mij doorverbinden?', cs: 'Můžete mě přepojit?', pron: 'kunt ü mej dor-ver-bin-den' },
+          { nl: 'De lijn is slecht.', cs: 'Špatný signál.', pron: 'de lejn is slecht' },
+          { nl: 'Kunt u uw microfoon aanzetten?', cs: 'Můžete zapnout mikrofon?', pron: 'kunt ü üv mi-kro-fon an-ze-ten' },
+          { nl: 'U staat op mute.', cs: 'Jste na mutu.', pron: 'ü stat op mjuut' },
+          { nl: 'Ik kan u niet horen.', cs: 'Neslyším vás.', pron: 'ik kan ü neet ho-ren' },
+          { nl: 'Kunt u uw scherm delen?', cs: 'Můžete sdílet obrazovku?', pron: 'kunt ü üv scherm dee-len' },
+        ]
+      },
+      {
+        title: 'Dovolená a nemoc',
+        ctx: 'Hlásíte nepřítomnost nebo plánujete volno',
+        phrases: [
+          { nl: 'Ik ben ziek.', cs: 'Jsem nemocný/á.', pron: 'ik ben zeek' },
+          { nl: 'Ik meld me ziek.', cs: 'Hlásím nemoc.', pron: 'ik meld me zeek' },
+          { nl: 'Ik wil vakantie aanvragen.', cs: 'Chci požádat o dovolenou.', pron: 'ik vil va-kan-see an-vra-chen' },
+          { nl: 'Ik heb al verlof ingepland.', cs: 'Mám už schválenou dovolenou.', pron: 'ik hep al ver-lof in-che-plant' },
+          { nl: 'Hoeveel vakantiedagen heb ik nog?', cs: 'Kolik dnů dovolené mi zbývá?', pron: 'hoe-vel va-kan-see-da-chen hep ik noch' },
+          { nl: 'Ik werk thuis vandaag.', cs: 'Dnes pracuji z domu.', pron: 'ik verk tföüs van-dach' },
+          { nl: 'Ik ben out of office.', cs: 'Jsem mimo kancelář.', pron: 'ik ben aut of of-is' },
+          { nl: 'Mijn collega neemt het over.', cs: 'Kolega/kolegyně to převezme.', pron: 'mejn kol-le-cha neemt het o-ver' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'kolegove',
+    icon: '☕',
+    title: 'S kolegy & přáteli',
+    desc: '4 situace · 28 frází',
+    color: '#92400E',
+    situations: [
+      {
+        title: 'Oběd a kafe pauza',
+        ctx: 'Kolegové vás zvou na oběd nebo kafe',
+        phrases: [
+          { nl: 'Ga je mee lunchen?', cs: 'Jdeš s námi na oběd?', pron: 'cha je mee lun-chen' },
+          { nl: 'Wil je koffie?', cs: 'Chceš kávu?', pron: 'vil je ko-fee' },
+          { nl: 'Ja, graag!', cs: 'Ano, rád/ráda!', pron: 'ja, chrach' },
+          { nl: 'Nee, dank je.', cs: 'Ne, díky.', pron: 'nee, dank je' },
+          { nl: 'Lekker!', cs: 'Mňam! / Skvělé!', pron: 'le-ker' },
+          { nl: 'Ik trakteer.', cs: 'Já platím.', pron: 'ik trak-teer' },
+          { nl: 'We doen het samen.', cs: 'Rozdělíme si to.', pron: 've doen het sa-men' },
+        ]
+      },
+      {
+        title: 'Odkud jsi a jak žiješ',
+        ctx: 'Kolegové se vás ptají na váš původ a život',
+        phrases: [
+          { nl: 'Waar kom jij vandaan?', cs: 'Odkud pocházíš?', pron: 'var kom jej van-dan' },
+          { nl: 'Ik kom uit Tsjechië.', cs: 'Pocházím z Česka.', pron: 'ik kom öüt tsje-chi-e' },
+          { nl: 'Hoe lang woon je hier al?', cs: 'Jak dlouho tady už bydlíš?', pron: 'hoe lang von je hier al' },
+          { nl: 'Wat vind je van Nederland?', cs: 'Co si myslíš o Holandsku?', pron: 'vat fint je van nee-der-lant' },
+          { nl: 'Ik vind het hier geweldig.', cs: 'Tady se mi moc líbí.', pron: 'ik fint het hier che-vel-dich' },
+          { nl: 'Het wennen nog een beetje.', cs: 'Ještě si zvykám.', pron: 'het ven-en noch en bee-tje' },
+          { nl: 'Wat doe je in het weekend?', cs: 'Co děláš o víkendu?', pron: 'vat doe je in het vee-kend' },
+        ]
+      },
+      {
+        title: 'V hospodě a na večírku',
+        ctx: 'Kolegové vás zvou na after-work drink',
+        phrases: [
+          { nl: 'Ga je mee naar de kroeg?', cs: 'Půjdeš s námi do hospody?', pron: 'cha je mee nar de kroech' },
+          { nl: 'Een biertje?', cs: 'Pivečko?', pron: 'en beer-tje' },
+          { nl: 'Op jou! / Proost!', cs: 'Na tebe! / Na zdraví!', pron: 'op jou / proost' },
+          { nl: 'Ik drink niet.', cs: 'Nepiji alkohol.', pron: 'ik drink neet' },
+          { nl: 'Doe maar een spa rood.', cs: 'Dej mi radši minerálku.', pron: 'doe mar en spa rod' },
+          { nl: 'Wil jij er ook eentje?', cs: 'Chceš taky jedno?', pron: 'vil jej er ook een-tje' },
+          { nl: 'Ik moet vroeg op morgen.', cs: 'Musím zítra brzo vstávat.', pron: 'ik moet vroech op mor-chen' },
+        ]
+      },
+      {
+        title: 'Holandská kultura a zvyky',
+        ctx: 'Věci, které vás překvapí v Holandsku',
+        phrases: [
+          { nl: 'Doe maar gewoon.', cs: 'Chovej se normálně. (typicky holandské)', pron: 'doe mar che-von' },
+          { nl: 'Gaan we Dutch?', cs: 'Platíme každý za sebe?', pron: 'chan ve duch' },
+          { nl: 'Gezellig!', cs: 'Útulné! / Příjemné! (klíčové holandské slovo)', pron: 'che-zel-lich' },
+          { nl: 'Lekker bezig!', cs: 'Tak drž se! / Dobrá práce!', pron: 'le-ker bee-zich' },
+          { nl: 'Toch?', cs: 'Viďte? / Že jo?', pron: 'toch' },
+          { nl: 'Hè hè, eindelijk!', cs: 'Konečně! (úleva)', pron: 'he he, ejn-de-lek' },
+          { nl: 'Dat is typisch Nederlands.', cs: 'To je typicky holandské.', pron: 'dat is tee-pis nee-der-lants' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'bydleni',
+    icon: '🏠',
+    title: 'Bydlení & sousedé',
+    desc: '3 situace · 24 frází',
+    color: '#0369A1',
+    situations: [
+      {
+        title: 'Hledám byt',
+        ctx: 'Komunikace s majitelem nebo realitní kanceláří',
+        phrases: [
+          { nl: 'Ik zoek een woning.', cs: 'Hledám bydlení.', pron: 'ik zoek en vo-ning' },
+          { nl: 'Hoeveel is de huur per maand?', cs: 'Kolik je nájem za měsíc?', pron: 'hoe-vel is de hüür per mant' },
+          { nl: 'Is er een borgsom?', cs: 'Je tu záloha?', pron: 'is er en bor-chsom' },
+          { nl: 'Zijn huisdieren toegestaan?', cs: 'Jsou povolena domácí zvířata?', pron: 'zejn höüs-dee-ren toe-che-stan' },
+          { nl: 'Wanneer kan ik intrekken?', cs: 'Kdy se mohu nastěhovat?', pron: 'va-neer kan ik in-trek-en' },
+          { nl: 'Kan ik het contract zien?', cs: 'Mohu vidět smlouvu?', pron: 'kan ik het kon-trakt zeen' },
+          { nl: 'Is gas en licht inbegrepen?', cs: 'Je plyn a elektřina v ceně?', pron: 'is chas en licht in-be-chre-pen' },
+          { nl: 'Is er parkeerruimte?', cs: 'Je tu parkovací místo?', pron: 'is er par-keer-röüm-te' },
+        ]
+      },
+      {
+        title: 'Problémy v bytě',
+        ctx: 'Nahlašujete závadu nebo problém majiteli',
+        phrases: [
+          { nl: 'Er is een probleem.', cs: 'Je tu problém.', pron: 'er is en pro-bleem' },
+          { nl: 'De verwarming doet het niet.', cs: 'Topení nefunguje.', pron: 'de ver-var-ming doet het neet' },
+          { nl: 'Er is een lekkage.', cs: 'Je tu únik / zatékání.', pron: 'er is en le-ka-zje' },
+          { nl: 'De stroom is uitgevallen.', cs: 'Vypadl proud.', pron: 'de strom is öüt-che-val-en' },
+          { nl: 'Kunt u een loodgieter sturen?', cs: 'Můžete poslat instalatéra?', pron: 'kunt ü en lod-chee-ter stüü-ren' },
+          { nl: 'Wanneer kunt u langskomen?', cs: 'Kdy můžete přijít?', pron: 'va-neer kunt ü langs-ko-men' },
+          { nl: 'Het is dringend.', cs: 'Je to naléhavé.', pron: 'het is dring-ent' },
+          { nl: 'Ik betaal de huur op tijd.', cs: 'Platím nájem včas.', pron: 'ik be-tal de hüür op tejt' },
+        ]
+      },
+      {
+        title: 'Se sousedy',
+        ctx: 'Každodenní komunikace se sousedy',
+        phrases: [
+          { nl: 'Goedemorgen, buurman/buurvrouw.', cs: 'Dobré ráno, sousede/sousedko.', pron: 'chude-mor-chen, büür-man/büür-vrou' },
+          { nl: 'Kunt u wat stiller zijn?', cs: 'Můžete být trochu tišší?', pron: 'kunt ü vat stil-er zejn' },
+          { nl: 'Sorry voor het lawaai.', cs: 'Promiňte za hluk.', pron: 'so-ree vor het la-vaj' },
+          { nl: 'Ik geef een feestje.', cs: 'Dávám párty.', pron: 'ik cheyf en feest-je' },
+          { nl: 'Kunt u mijn pakketje aannemen?', cs: 'Můžete převzít moji zásilku?', pron: 'kunt ü mejn pak-et-je an-nee-men' },
+          { nl: 'De vuilnis gaat op dinsdag.', cs: 'Popelnice se vynáší v úterý.', pron: 'de vöül-nis chat op dins-dach' },
+          { nl: 'Is alles goed met u?', cs: 'Je vše v pořádku?', pron: 'is al-es choed met ü' },
+          { nl: 'Prettig kennis te maken.', cs: 'Rád/ráda vás poznávám.', pron: 'pret-tich ke-nis te ma-ken' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'zdravi',
+    icon: '🏥',
+    title: 'Zdraví & úřady',
+    desc: '3 situace · 24 frází',
+    color: '#BE123C',
+    situations: [
+      {
+        title: 'U lékaře',
+        ctx: 'Návštěva huisartsu (praktický lékař)',
+        phrases: [
+          { nl: 'Ik wil een afspraak maken.', cs: 'Chci si domluvit schůzku.', pron: 'ik vil en af-spraak ma-ken' },
+          { nl: 'Ik ben niet lekker.', cs: 'Necítím se dobře.', pron: 'ik ben neet le-ker' },
+          { nl: 'Ik heb pijn in mijn...', cs: 'Bolí mě...', pron: 'ik hep pejn in mejn' },
+          { nl: 'Ik heb koorts.', cs: 'Mám horečku.', pron: 'ik hep korts' },
+          { nl: 'Ik ben allergisch voor...', cs: 'Jsem alergický/á na...', pron: 'ik ben al-er-chis vor' },
+          { nl: 'Ik gebruik dit medicijn.', cs: 'Beru tento lék.', pron: 'ik che-brüük dit me-di-sejn' },
+          { nl: 'Kunt u een recept uitschrijven?', cs: 'Můžete vystavit recept?', pron: 'kunt ü en re-sept öüt-schrej-ven' },
+          { nl: 'Naar de apotheek gaan.', cs: 'Jít do lékárny.', pron: 'nar de a-po-teek chan' },
+        ]
+      },
+      {
+        title: 'Na úřadě',
+        ctx: 'Gemeente, IND, Belastingdienst',
+        phrases: [
+          { nl: 'Ik wil mij inschrijven.', cs: 'Chci se přihlásit k pobytu.', pron: 'ik vil mej in-schrej-ven' },
+          { nl: 'Ik heb een DigiD nodig.', cs: 'Potřebuji DigiD.', pron: 'ik hep en di-chi-dee no-dich' },
+          { nl: 'Mijn BSN-nummer is...', cs: 'Moje číslo BSN je...', pron: 'mejn bee-es-en nu-mer is' },
+          { nl: 'Kunt u dit formulier uitleggen?', cs: 'Můžete vysvětlit tento formulář?', pron: 'kunt ü dit for-mü-leer öüt-le-chen' },
+          { nl: 'Welke documenten heb ik nodig?', cs: 'Jaké dokumenty potřebuji?', pron: 'vel-ke do-kü-men-ten hep ik no-dich' },
+          { nl: 'Ik heb een tolk nodig.', cs: 'Potřebuji tlumočníka.', pron: 'ik hep en tolk no-dich' },
+          { nl: 'Hoelang duurt het?', cs: 'Jak dlouho to trvá?', pron: 'hoe-lang düürt het' },
+          { nl: 'Wanneer krijg ik antwoord?', cs: 'Kdy dostanu odpověď?', pron: 'va-neer krejch ik ant-vort' },
+        ]
+      },
+      {
+        title: 'Nouzové situace',
+        ctx: 'Záchranáři, policie, hasiči',
+        phrases: [
+          { nl: 'Bel 112!', cs: 'Volejte 112!', pron: 'bel en-tval-ef' },
+          { nl: 'Help!', cs: 'Pomoc!', pron: 'help' },
+          { nl: 'Er is een ongeluk.', cs: 'Stala se nehoda.', pron: 'er is en on-che-luk' },
+          { nl: 'Ik ben gewond.', cs: 'Jsem zraněný/á.', pron: 'ik ben che-vont' },
+          { nl: 'Bel een ambulance.', cs: 'Zavolejte záchranku.', pron: 'bel en am-bü-lan-se' },
+          { nl: 'Ik ben mijn paspoort kwijt.', cs: 'Ztratil/a jsem pas.', pron: 'ik ben mejn pas-port kvejt' },
+          { nl: 'Er is ingebroken.', cs: 'Byl tu vloupán.', pron: 'er is in-che-bro-ken' },
+          { nl: 'Ik heb aangifte gedaan.', cs: 'Podal/a jsem oznámení na policii.', pron: 'ik hep an-chif-te che-dan' },
+        ]
+      }
+    ]
+  }
+];
+
+// AUDIO
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function playCorrect() {
+  try {
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(523, t);
+    osc.frequency.setValueAtTime(659, t + 0.1);
+    osc.frequency.setValueAtTime(784, t + 0.2);
+    gain.gain.setValueAtTime(0.3, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    osc.start(t); osc.stop(t + 0.5);
+  } catch(e) {}
+}
+
+function playWrong() {
+  try {
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(300, t);
+    osc.frequency.setValueAtTime(220, t + 0.15);
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    osc.start(t); osc.stop(t + 0.4);
+  } catch(e) {}
+}
+
+function playTap() {
+  try {
+    const ctx = getAudioCtx();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, t);
+    gain.gain.setValueAtTime(0.1, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+    osc.start(t); osc.stop(t + 0.1);
+  } catch(e) {}
+}
+
+function speakDutch(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'nl-NL';
+  utt.rate = 0.85;
+  utt.pitch = 1;
+  const voices = window.speechSynthesis.getVoices();
+  const nlVoice = voices.find(v => v.lang.startsWith('nl'));
+  if (nlVoice) utt.voice = nlVoice;
+  window.speechSynthesis.speak(utt);
+}
+
+// Preload voices (needed on some browsers)
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// State
+let currentModuleIdx = null;
+let quizQuestions = [];
+let quizCurrent = 0;
+let quizScore = 0;
+let quizAnswered = false;
+let completedModules = JSON.parse(localStorage.getItem('fn_completed') || '[]');
+
+function saveCompleted() {
+  localStorage.setItem('fn_completed', JSON.stringify(completedModules));
+}
+
+// NAVIGATION
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function showHome() {
+  renderHome();
+  showScreen('home');
+}
+
+function showModule(idx) {
+  currentModuleIdx = idx;
+  const mod = MODULES[idx];
+  document.getElementById('module-title-header').textContent = mod.icon + ' ' + mod.title;
+  renderSituations(mod);
+  showScreen('module');
+}
+
+function backToModule() {
+  showModule(currentModuleIdx);
+}
+
+// RENDER HOME
+function renderHome() {
+  const grid = document.getElementById('modules-grid');
+  grid.innerHTML = '';
+  MODULES.forEach((mod, i) => {
+    const done = completedModules.includes(mod.id);
+    const card = document.createElement('div');
+    card.className = 'module-card' + (done ? ' done' : '');
+    card.onclick = () => showModule(i);
+    card.innerHTML = `
+      <div class="module-icon" style="background:${mod.color}22">${mod.icon}</div>
+      <div class="module-info">
+        <h3>${mod.title}</h3>
+        <p>${done ? '✅ Dokončeno' : mod.desc}</p>
+      </div>
+      <div class="module-arrow">${done ? '✓' : '›'}</div>
+    `;
+    grid.appendChild(card);
+  });
+  const pct = Math.round((completedModules.length / MODULES.length) * 100);
+  document.getElementById('home-progress').style.width = pct + '%';
+  document.getElementById('home-progress-label').textContent =
+    completedModules.length + ' z ' + MODULES.length + ' modulů dokončeno';
+}
+
+// RENDER SITUATIONS
+function renderSituations(mod) {
+  const list = document.getElementById('situations-list');
+  list.innerHTML = '';
+  mod.situations.forEach((sit, si) => {
+    const card = document.createElement('div');
+    card.className = 'situation-card';
+    if (si === 0) card.classList.add('open');
+
+    const header = document.createElement('div');
+    header.className = 'situation-header';
+    header.innerHTML = `
+      <div>
+        <div class="situation-title">${sit.title}</div>
+        <div class="situation-ctx">${sit.ctx}</div>
+      </div>
+      <div class="situation-toggle">⌄</div>
+    `;
+    header.onclick = () => {
+      card.classList.toggle('open');
+    };
+
+    const body = document.createElement('div');
+    body.className = 'situation-body';
+    sit.phrases.forEach(ph => {
+      const row = document.createElement('div');
+      row.className = 'phrase-row';
+      row.innerHTML = `
+        <div class="phrase-nl">${ph.nl} <span class="speak-icon">🔊</span></div>
+        <div class="phrase-cs">${ph.cs}</div>
+        <div class="phrase-pron">[ ${ph.pron} ]</div>
+      `;
+      // Speak Dutch + show pronunciation on tap
+      row.onclick = () => {
+        playTap();
+        speakDutch(ph.nl);
+        const pron = row.querySelector('.phrase-pron');
+        pron.style.display = pron.style.display === 'none' || !pron.style.display ? 'inline-block' : 'none';
+      };
+      // Hide pron by default
+      row.querySelector('.phrase-pron').style.display = 'none';
+      body.appendChild(row);
+    });
+
+    card.appendChild(header);
+    card.appendChild(body);
+    list.appendChild(card);
+  });
+}
+
+// QUIZ
+function startQuiz() {
+  const mod = MODULES[currentModuleIdx];
+  // collect all phrases
+  const allPhrases = [];
+  mod.situations.forEach(sit => {
+    sit.phrases.forEach(ph => {
+      allPhrases.push({ ...ph, sitTitle: sit.title });
+    });
+  });
+
+  // Shuffle
+  const shuffled = allPhrases.sort(() => Math.random() - 0.5);
+  quizQuestions = shuffled.slice(0, Math.min(10, shuffled.length));
+  quizCurrent = 0;
+  quizScore = 0;
+
+  document.getElementById('quiz-module-name').textContent = mod.icon + ' ' + mod.title;
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizQuestions[quizCurrent];
+  const total = quizQuestions.length;
+  quizAnswered = false;
+
+  document.getElementById('quiz-progress-text').textContent = (quizCurrent + 1) + '/' + total;
+  document.getElementById('quiz-bar').style.width = ((quizCurrent + 1) / total * 100) + '%';
+  document.getElementById('quiz-question').textContent = q.cs;
+  document.getElementById('quiz-context').textContent = q.sitTitle;
+  document.getElementById('quiz-feedback').className = 'quiz-feedback';
+  document.getElementById('quiz-feedback').innerHTML = '';
+  document.getElementById('next-btn').className = 'next-btn';
+
+  // Build options - correct + 3 random wrong from other phrases
+  const allPhrases = [];
+  MODULES[currentModuleIdx].situations.forEach(sit => {
+    sit.phrases.forEach(ph => allPhrases.push(ph));
+  });
+  const wrongs = allPhrases.filter(p => p.nl !== q.nl).sort(() => Math.random() - 0.5).slice(0, 3);
+  const options = [...wrongs, q].sort(() => Math.random() - 0.5);
+
+  const optContainer = document.getElementById('quiz-options');
+  optContainer.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = opt.nl;
+    btn.onclick = () => checkAnswer(btn, opt.nl === q.nl, q);
+    optContainer.appendChild(btn);
+  });
+}
+
+function checkAnswer(btn, isCorrect, q) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const fb = document.getElementById('quiz-feedback');
+  const nextBtn = document.getElementById('next-btn');
+
+  // Mark all buttons
+  document.querySelectorAll('.quiz-option').forEach(b => {
+    b.classList.add('disabled');
+    if (b.textContent === q.nl) b.classList.add('correct');
+  });
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    quizScore++;
+    playCorrect();
+    speakDutch(q.nl);
+    fb.className = 'quiz-feedback correct-fb show';
+    fb.innerHTML = '✅ Správně! <div class="correct-ans">Výslovnost: [' + q.pron + ']</div>';
+  } else {
+    btn.classList.add('wrong');
+    playWrong();
+    setTimeout(() => speakDutch(q.nl), 600);
+    fb.className = 'quiz-feedback wrong-fb show';
+    fb.innerHTML = '❌ Správně bylo: <b>' + q.nl + '</b><div class="correct-ans">Výslovnost: [' + q.pron + ']</div>';
+  }
+
+  nextBtn.className = 'next-btn show';
+  nextBtn.textContent = quizCurrent + 1 < quizQuestions.length ? 'Další →' : 'Výsledky';
+}
+
+function nextQuestion() {
+  quizCurrent++;
+  if (quizCurrent >= quizQuestions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  const total = quizQuestions.length;
+  const pct = quizScore / total;
+  const mod = MODULES[currentModuleIdx];
+
+  document.getElementById('result-score').innerHTML = quizScore + '<span>/' + total + '</span>';
+
+  let emoji, msg, sub;
+  if (pct >= 0.9) {
+    emoji = '🏆'; msg = 'Vynikající!';
+    sub = 'Perfektní výsledek! Tento modul zvládáš skvěle.';
+    if (!completedModules.includes(mod.id)) {
+      completedModules.push(mod.id);
+      saveCompleted();
+    }
+  } else if (pct >= 0.7) {
+    emoji = '🎉'; msg = 'Výborně!';
+    sub = 'Dobrý výsledek. Zkus to ještě jednou pro dokonalost.';
+  } else if (pct >= 0.5) {
+    emoji = '💪'; msg = 'Dobrý start!';
+    sub = 'Projdi si fráze znovu a pak to zkus ještě jednou.';
+  } else {
+    emoji = '📖'; msg = 'Procvičuj dál!';
+    sub = 'Vrať se k frázím a procvičuj. Přijde to!';
+  }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-sub').textContent = sub;
+
+  showScreen('result');
+}
+
+// INIT
+renderHome();
+</script>
+</body>
+</html>
