@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FajnDvůr — Ochutnávka znalostí</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2E8D0;--bg2:#E8D5A8;--parch:#F7EDD8;--parch2:#EDD9AA;
+  --ink:#2C1A08;--ink2:#4A2E10;--ink3:#6B4020;
+  --rust:#8B3A1A;--gold:#C8860A;--gold2:#E8A820;
+  --ocean:#2A5C7A;--land:#7A6040;
+  --text:#2C1A08;--muted:#7A5830;
+  --border:rgba(44,26,8,.18);
+  --correct:#2E5A1A;--wrong:#7A1A1A;--xp:#5A2A7A;
+  --shadow:0 4px 18px rgba(44,26,8,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+}
+/* Pergamenová textura + mapa na pozadí */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    /* Jemná textura pergamenu */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"),
+    /* Radiální vigneta — rohy tmavší */
+    radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(100,60,10,.18) 100%),
+    /* Barevný přechod — stará mapa */
+    linear-gradient(160deg,
+      #F5E8C0 0%,
+      #EDD9A0 25%,
+      #F0E2B8 50%,
+      #E8D298 75%,
+      #F2DFA8 100%
+    );
+}
+/* Dekorativní mapové prvky na pozadí — SVG obrysy */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    /* Kompasová růžice — střed */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='55' fill='none' stroke='%238B6A2A' stroke-width='0.8' opacity='0.2'/%3E%3Ccircle cx='60' cy='60' r='40' fill='none' stroke='%238B6A2A' stroke-width='0.6' opacity='0.15'/%3E%3Cline x1='60' y1='5' x2='60' y2='115' stroke='%238B6A2A' stroke-width='0.6' opacity='0.15'/%3E%3Cline x1='5' y1='60' x2='115' y2='60' stroke='%238B6A2A' stroke-width='0.6' opacity='0.15'/%3E%3Cline x1='22' y1='22' x2='98' y2='98' stroke='%238B6A2A' stroke-width='0.4' opacity='0.1'/%3E%3Cline x1='98' y1='22' x2='22' y2='98' stroke='%238B6A2A' stroke-width='0.4' opacity='0.1'/%3E%3Cpolygon points='60,8 65,52 60,60 55,52' fill='%238B3A1A' opacity='0.25'/%3E%3Cpolygon points='60,112 55,68 60,60 65,68' fill='%238B6A2A' opacity='0.2'/%3E%3Ctext x='60' y='3' text-anchor='middle' font-size='8' fill='%238B3A1A' opacity='0.3' font-family='serif'%3ES%3C/text%3E%3Ctext x='60' y='119' text-anchor='middle' font-size='8' fill='%238B6A2A' opacity='0.25' font-family='serif'%3EJ%3C/text%3E%3Ctext x='2' y='63' text-anchor='middle' font-size='8' fill='%238B6A2A' opacity='0.25' font-family='serif'%3EZ%3C/text%3E%3Ctext x='118' y='63' text-anchor='middle' font-size='8' fill='%238B6A2A' opacity='0.25' font-family='serif'%3EV%3C/text%3E%3C/svg%3E"),
+    /* Mřížka — zeměpisné souřadnice */
+    repeating-linear-gradient(0deg,   transparent, transparent 59px, rgba(139,106,42,.06) 60px),
+    repeating-linear-gradient(90deg,  transparent, transparent 59px, rgba(139,106,42,.06) 60px);
+  background-size: 120px 120px, 60px 60px, 60px 60px;
+  background-position: center center, 0 0, 0 0;
+}
+.wrap{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 16px 60px}
+.screen{display:none}.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes starPop{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes xpFloat{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}80%{transform:translate(-50%,-80%);opacity:1}100%{transform:translate(-50%,-120%) scale(.8);opacity:0}}
+@keyframes wrongShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes correctPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 6px rgba(52,211,153,.25)}}
+@keyframes slide{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
+
+/* HOME */
+.home-head{text-align:center;padding:36px 0 24px}
+.home-logo{font-family:'Cinzel',serif;font-size:3.8rem;letter-spacing:.08em;
+  background:linear-gradient(135deg,#4A2E10 0%,#8B3A1A 40%,#C8860A 70%,#4A2E10 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.home-ico{font-size:3rem;-webkit-text-fill-color:initial;vertical-align:middle;margin-right:8px}
+.home-sub{font-size:.82rem;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-top:6px}
+.home-desc{font-size:.95rem;color:var(--ink2);opacity:.85;margin:14px auto 0;max-width:400px;line-height:1.6;text-align:center;font-style:italic}
+.modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}
+.mod-card{border-radius:12px;padding:18px 14px;cursor:pointer;border:2px solid var(--border);
+  transition:all .22s;position:relative;overflow:hidden;
+  box-shadow:var(--shadow);
+  background:rgba(247,237,216,.85);}
+.mod-card::before{content:'';position:absolute;inset:3px;border:1px solid rgba(139,106,42,.2);
+  border-radius:9px;pointer-events:none;}
+.mod-card::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,240,180,.3) 0%,transparent 60%);
+  opacity:0;transition:opacity .22s;border-radius:12px}
+.mod-card:hover::after{opacity:1}
+.mod-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.4)}
+.mod-card:active{transform:scale(.97)}
+.mod-emoji{font-size:2.2rem;margin-bottom:8px;display:block}
+.mod-name{font-family:'Cinzel',serif;font-size:1.2rem;letter-spacing:.06em;line-height:1.2}
+.mod-sub{font-size:.68rem;opacity:.65;margin-top:3px;line-height:1.4}
+.mod-count{font-size:.62rem;font-weight:800;margin-top:6px;opacity:.55;letter-spacing:.05em;text-transform:uppercase}
+.mod-stars{display:flex;gap:2px;margin-top:6px}
+.mod-star{font-size:.75rem;opacity:.18}
+.mod-star.on{opacity:1}
+.mod-lock{position:absolute;top:10px;right:10px;font-size:.8rem;opacity:.4}
+.home-promo{background:rgba(200,134,10,.07);border:1.5px solid rgba(200,134,10,.2);
+  border-radius:14px;padding:14px 16px;text-align:center;margin-bottom:8px}
+.home-promo-title{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.08em;color:var(--gold)}
+.home-promo-sub{font-size:.75rem;color:var(--muted);margin-top:3px;line-height:1.4}
+
+/* QUIZ */
+.q-wrap{padding-top:16px;animation:fadeIn .3s ease}
+.q-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.q-module{display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:800;opacity:.7}
+.q-module-dot{width:8px;height:8px;border-radius:50%}
+.q-cnt{font-size:.82rem;color:var(--muted);font-weight:700}
+.q-back{background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;
+  font-size:.75rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s}
+.q-back:hover{border-color:rgba(255,255,255,.3);color:var(--text)}
+.prog-bar{height:5px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.q-card{background:rgba(247,237,216,.92);border:2px solid rgba(44,26,8,.15);border-radius:16px;
+  padding:24px;margin-bottom:14px;min-height:110px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;animation:slide .25s ease;
+  box-shadow:var(--shadow);}
+.q-badge{font-size:.65rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px;font-weight:700}
+.q-text{font-size:1.1rem;font-weight:800;line-height:1.5;color:var(--text)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.ans-btn{background:rgba(247,237,216,.9);border:1.5px solid rgba(44,26,8,.2);border-radius:10px;
+  padding:14px 12px;color:var(--ink);font-family:'Nunito',sans-serif;font-size:.88rem;
+  font-weight:700;cursor:pointer;transition:all .18s;text-align:center;line-height:1.35;
+  box-shadow:0 2px 6px rgba(44,26,8,.1);}
+.ans-btn:hover:not(:disabled){background:rgba(232,168,32,.15);border-color:var(--gold);color:var(--rust)}
+.ans-btn.correct{background:rgba(52,211,153,.18);border-color:var(--correct);color:var(--correct);animation:correctPulse .5s ease}
+.ans-btn.wrong{background:rgba(248,113,113,.14);border-color:var(--wrong);color:var(--wrong);animation:wrongShake .4s ease}
+.ans-btn.show-correct{background:rgba(52,211,153,.12);border-color:var(--correct);color:var(--correct)}
+.ans-btn:disabled{cursor:default}
+.fact-box{background:rgba(200,134,10,.1);border:1.5px solid rgba(139,58,26,.25);border-radius:12px;
+  padding:14px;margin-bottom:13px;display:none;animation:popIn .3s ease;}
+.fact-box.on{display:block}
+.fact-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.14em;color:var(--xp);font-weight:800;margin-bottom:5px}
+.fact-text{font-size:.86rem;line-height:1.6;color:var(--text);opacity:.9}
+.next-btn{width:100%;background:linear-gradient(135deg,#6B2A08,#8B3A1A);border:none;
+  border-radius:13px;padding:16px;color:#fff;font-family:'Cinzel',serif;font-size:1.3rem;
+  letter-spacing:.1em;cursor:pointer;display:none;transition:all .2s;box-shadow:0 4px 16px rgba(109,40,217,.35)}
+.next-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.next-btn.on{display:block;animation:popIn .3s ease}
+.xp-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:var(--rust);color:#fff;font-family:'Cinzel',serif;font-size:2rem;
+  padding:10px 28px;border-radius:999px;pointer-events:none;z-index:200;opacity:0;white-space:nowrap}
+.xp-popup.go{animation:xpFloat 1.7s ease forwards}
+
+/* RESULT */
+.res-wrap{padding-top:24px;animation:fadeIn .4s ease}
+.res-head{text-align:center;margin-bottom:20px}
+.res-title{font-family:'Cinzel',serif;font-size:2.8rem;letter-spacing:.05em;color:var(--gold)}
+.res-sub{color:var(--muted);font-size:.9rem;margin-top:4px}
+.res-stars{display:flex;justify-content:center;gap:14px;margin:18px 0}
+.res-star{font-size:3rem;opacity:.14;display:inline-block}
+.res-star.on{opacity:1;animation:starPop .5s cubic-bezier(.4,0,.2,1) forwards}
+.res-star:nth-child(2){animation-delay:.2s}.res-star:nth-child(3){animation-delay:.4s}
+.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:16px 0}
+.stat-c{background:rgba(247,237,216,.9);border:1.5px solid rgba(44,26,8,.15);border-radius:12px;padding:14px 9px;text-align:center;box-shadow:0 2px 8px rgba(44,26,8,.08)}
+.stat-v{font-family:'Cinzel',serif;font-size:1.8rem}
+.stat-l{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+.facts-review{margin:20px 0}
+.facts-t{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--xp);letter-spacing:.08em;margin-bottom:10px}
+.fact-item{background:rgba(247,237,216,.9);border-left:3px solid var(--rust);border-radius:0 9px 9px 0;
+  padding:10px 14px;margin-bottom:8px;font-size:.83rem;line-height:1.55;opacity:.9}
+.res-module-scores{margin:16px 0}
+.res-module-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card);
+  border-radius:10px;margin-bottom:6px;border:1px solid var(--border)}
+.res-module-emoji{font-size:1.4rem;width:28px;text-align:center}
+.res-module-name{font-size:.82rem;font-weight:800;flex:1}
+.res-module-score{font-size:.8rem;color:var(--muted);font-weight:700}
+.res-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}
+.btn-pri{background:linear-gradient(135deg,#6B2A08,#8B3A1A);border:none;border-radius:13px;
+  padding:15px;color:#fff;font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.08em;
+  cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(109,40,217,.3)}
+.btn-pri:hover{filter:brightness(1.1)}
+.btn-sec{background:rgba(247,237,216,.9);border:1.5px solid rgba(44,26,8,.2);border-radius:13px;
+  padding:15px;color:var(--text);font-family:'Cinzel',serif;font-size:1.1rem;
+  letter-spacing:.08em;cursor:pointer;transition:all .2s}
+.btn-sec:hover{border-color:rgba(255,255,255,.3)}
+.promo-box{background:rgba(200,134,10,.08);border:1.5px solid rgba(200,134,10,.3);
+  border-radius:14px;padding:20px;text-align:center;margin:16px 0}
+.promo-title{font-family:'Cinzel',serif;font-size:1.4rem;letter-spacing:.08em;color:var(--gold);margin-bottom:6px}
+.promo-text{font-size:.82rem;color:var(--muted);line-height:1.6}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--rust);border-radius:3px}
+@media(max-width:360px){.home-logo{font-size:3rem}.modules-grid{gap:8px}.answers{gap:7px}}
+</style>
+</head>
+<body>
+<div class="xp-popup" id="xpPopup"></div>
+<div class="wrap">
+
+<!-- HOME -->
+<div class="screen active" id="screenHome">
+  <div class="home-head" style="position:relative">
+    <div class="home-logo"><span class="home-ico">🏡</span>FajnDvůr</div>
+    <div class="home-sub" style="color:var(--muted);letter-spacing:.2em;text-transform:uppercase;font-size:.72rem;margin-top:4px">
+      ✦ Ochutnávka znalostí · 8 světů ✦
+    </div>
+    <div style="margin:10px auto;width:120px;height:1.5px;background:linear-gradient(90deg,transparent,var(--rust),transparent);opacity:.5"></div>
+    <div class="home-desc">Vyzkoušej co tě baví — každý modul má ochutnávku zdarma. Uvnitř čeká 10× více.</div>
+  </div>
+  <div class="modules-grid" id="modulesGrid"></div>
+  <div class="home-promo">
+    <div class="home-promo-title">🔓 Odemkni plný přístup</div>
+    <div class="home-promo-sub">Stovky otázek, odznaky, XP systém a nové moduly každý měsíc</div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="screenQuiz">
+  <div class="q-wrap">
+    <div class="q-topbar">
+      <div class="q-module"><div class="q-module-dot" id="qDot"></div><span id="qModName"></span></div>
+      <div class="q-cnt" id="qCnt"></div>
+      <button class="q-back" onclick="goHome()">← Domů</button>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="q-card">
+      <div class="q-badge" id="qBadge"></div>
+      <div class="q-text" id="qText"></div>
+    </div>
+    <div class="answers" id="answersDiv"></div>
+    <div class="fact-box" id="factBox">
+      <div class="fact-label">💡 Věděl/a jsi?</div>
+      <div class="fact-text" id="factTxt"></div>
+    </div>
+    <button class="next-btn" id="nextBtn" onclick="nextQ()">Další →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="screenResult">
+  <div class="res-wrap">
+    <div class="res-head">
+      <div class="res-title" id="resTitle"></div>
+      <div class="res-sub" id="resSub"></div>
+    </div>
+    <div class="res-stars"><span class="res-star">⭐</span><span class="res-star">⭐</span><span class="res-star">⭐</span></div>
+    <div class="res-stats">
+      <div class="stat-c"><div class="stat-v" id="stCorrect" style="color:var(--correct)">0</div><div class="stat-l">Správně</div></div>
+      <div class="stat-c"><div class="stat-v" id="stXP" style="color:var(--xp)">0</div><div class="stat-l">XP</div></div>
+      <div class="stat-c"><div class="stat-v" id="stStreak" style="color:var(--gold)">0</div><div class="stat-l">Max série</div></div>
+    </div>
+    <div class="facts-review">
+      <div class="facts-t">💡 Co jsi se dozvěděl/a</div>
+      <div id="factsList"></div>
+    </div>
+    <div class="promo-box">
+      <div class="promo-title">🚀 Chceš víc?</div>
+      <div class="promo-text">V plném modulu čeká 10× více otázek, odznaky, XP systém a tři stupně obtížnosti. Nové moduly přibývají každý měsíc.</div>
+    </div>
+    <div class="res-btns">
+      <button class="btn-pri" onclick="playAgain()">↺ Hrát znovu</button>
+      <button class="btn-sec" onclick="goHome()">← Domů</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- wrap -->
+
+<script>
+// ── MODULY A OTÁZKY ───────────────────────────────────────────────────────────
+const MODULES = [
+{
+  id:'dino', name:'FajnDino', sub:'Dinosauři', emoji:'🦕',
+  color:'#E8620A', bg:'rgba(232,98,10,.15)', border:'rgba(232,98,10,.3)',
+  qs:[
+    {q:'Jak dlouhý byl dospělý Tyrannosaurus Rex?',o:['Až 12 metrů','Přes 20 metrů','Asi 6 metrů','Přes 25 metrů'],a:0,f:'T-Rex měřil přes 12 metrů — délka kamionu. Byl 4 metry vysoký v bocích. Přesto jeho mozek byl velikosti banánu.'},
+    {q:'Jak se říká největší skupině dinosaurů, kteří chodili po čtyřech a měli dlouhé krky?',o:['Sauropodi','Teropodi','Ornithopodi','Ceratopsidi'],a:0,f:'Sauropodi (Brachiosaurus, Diplodocus, Argentinosaurus) jsou největší suchozemská zvířata, která kdy žila. Nejtěžší byl Argentinosaurus — přes 80 tun.'},
+    {q:'Proč jsou ptáci považováni za živé dinosaury?',o:['Jsou potomky teropodních dinosaurů','Vypadají jako miniaturní dinosauři','Sdílejí geny s plazy','Mají stejný způsob pohybu'],a:0,f:'Vědecký konsenzus je jasný: ptáci jsou skupinou dinosaurů — konkrétně teropodů. Peří, duté kosti a způsob dýchání to potvrzují. Kuře je vzdálený příbuzný tyranosaura.'},
+    {q:'Kdy dinosauři vyhynuli?',o:['Před 66 miliony let','Před 250 miliony let','Před 10 miliony let','Před 100 miliony let'],a:0,f:'Hromadné vymírání na konci křídy nastalo před 66 miliony let po dopadu asteroidu. Přežili jen ptáci — tedy jedna linie dinosaurů. Dnes žijeme s jejich potomky.'},
+    {q:'Jak se jmenoval nejrychlejší malý dinosaurus, který lovil ve smečkách?',o:['Velociraptor','Deinonychus','Compsognathus','Troodon'],a:0,f:'Velociraptor byl ve skutečnosti malý — asi jako krocan. Ve filmech Jurský park byl přibližně trojnásobně zvětšen. Byl ale skutečně inteligentní lovec s drápem jako srp.'},
+    {q:'Co dokazují zkamenělá vejce a hnízda dinosaurů?',o:['Starali se o mláďata podobně jako ptáci','Kladli vejce do vody','Mláďata se rodila živá','Hnízda stavěla pouze samice'],a:0,f:'Maiasaura (Dobrá matka ještěrka) pečovala o mláďata v hnízdě — první důkaz rodičovské péče u dinosaurů. Výzkum v Montaně v 70. letech změnil pohled na dinosaury jako na studené tupé plazy.'},
+    {q:'Kde bylo nalezeno nejvíce zkamenělin dinosaurů na světě?',o:['Čína, USA a Argentina','Jen v Africe','Pouze v Kanadě','Především v Antarktidě'],a:0,f:'Čína je světovým vůdcem v počtu nových druhů dinosaurů — každoročně se tam naleznou desítky nových druhů. USA (Montana, Wyoming) a Argentina (Patagonie) jsou dalšími klíčovými oblastmi.'},
+    {q:'Jak velký mozek měl Stegosaurus ve srovnání s tělem?',o:['Velikost vlašského ořechu při těle 5 tun','Stejný poměr jako u člověka','Větší než u T-Rexe','Stegosaurus mozek neměl'],a:0,f:'Stegosaurus o hmotnosti 5 tun měl mozek velký jako vlašský ořech — přibližně 80 gramů. Je to jeden z nejmenších poměrů mozku k tělu ze všech dinosaurů. Přesto přežil miliony let.'},
+    {q:'Co byl Pterodaktyl — dinosaurus nebo ne?',o:['Ne, byl to létající plaz — pterosaur','Ano, byl to létající dinosaurus','Byl to pták','Byl to mořský dinosaurus'],a:0,f:'Pterosauři nebyli dinosauři — byli to jejich příbuzní, samostatná skupina létajících plazů. Žili ve stejné době, ale vývojově jsou jiná větev. Největší, Quetzalcoatlus, měl rozpětí křídel jako malé letadlo — přes 10 metrů.'},
+    {q:'Jak vědci zjišťují, jak dinosauři vypadali?',o:['Z fosilií kostí, stop, vajec a zkamenělého peří','Pouze z kostí','Z DNA zachované v jantaru','Z obrazů v jeskyních'],a:0,f:'Paleontologové rekonstruují dinosaury z fosilií kostí (tvar svalů), zkamenělin peří (barva), stop (způsob chůze) a výkalů (strava). DNA se v jantaru nezachovala — Jurský park je sci-fi.'},
+  ]
+},
+{
+  id:'soustava', name:'FajnSoustava', sub:'Sluneční soustava', emoji:'🪐',
+  color:'#4A9EE8', bg:'rgba(74,158,232,.12)', border:'rgba(74,158,232,.28)',
+  qs:[
+    {q:'Která planeta má prstence viditelné pouhým dalekohledem?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,f:'Saturnovy prstence jsou z ledu a kamene a sahají až 282 000 km od planety. Přesto jsou tenké jen 20–200 metrů — proporčně tenčí než papír. Saturn je tak lehký, že by plaval na vodě.'},
+    {q:'Kolik planet má sluneční soustava?',o:['8','9','10','12'],a:0,f:'Od roku 2006, kdy bylo Pluto překlasifikováno na trpasličí planetu, je planet 8. Mnohé děti protestovaly — NASA dostala dopisy plné smutku kvůli vyhazovu Pluta.'},
+    {q:'Na které planetě je nejvyšší sopka a nejhlubší kaňon ve sluneční soustavě?',o:['Mars','Venuše','Merkur','Io'],a:0,f:'Olympus Mons na Marsu je 21 km vysoký — 2,5× výše než Everest. Valles Marineris je 4000 km dlouhý a 7 km hluboký — jako od Prahy na Ural.'},
+    {q:'Proč je Venuše žhavější než Merkur, přestože je dál od Slunce?',o:['Díky skleníkovému efektu CO₂ — teplota +465 °C','Má silnější magnetické pole','Je hustší než Merkur','Rotuje rychleji'],a:0,f:'Venuše má hustou atmosféru z CO₂ a oblaka kyseliny sírové, která udržují teplo jako přikrývka. Na Venuši vychází Slunce na západě — rotuje pozpátku.'},
+    {q:'Který Jupiterův měsíc má pod ledem oceán a možná život?',o:['Europa','Io','Ganymedes','Callisto'],a:0,f:'Europa má pod 10–30 km silnou ledovou kůrou tekutý oceán dvakrát větší než všechny pozemské oceány. Hydrotermální průduchy na dně mohou živit život podobný tomu v hlubinách Tichého oceánu.'},
+    {q:'Co je Velká rudá skvrna na Jupiteru?',o:['Bouře trvající přes 400 let','Sopka na povrchu','Pevninský útvar','Oblast bez atmosféry'],a:0,f:'Velká rudá skvrna je anticyklona větší než celá Země, která zuří na Jupiteru nepřetržitě přes 400 let. Postupně se ale zmenšuje — před 150 lety byla třikrát větší než dnes.'},
+    {q:'Která sonda jako první opustila sluneční soustavu?',o:['Voyager 1','Pioneer 10','New Horizons','Cassini'],a:0,f:'Voyager 1 byl vypuštěn v roce 1977 a v roce 2012 jako první lidský výtvor opustil heliosféru. Je nejdál od Země ze všech objektů, které člověk kdy vytvořil — přes 23 miliard km.'},
+    {q:'Z čeho se skládá Slunce?',o:['Převážně vodík a hélium','Kyslík a dusík','Pevné horniny a kovy','Oxid uhličitý a metan'],a:0,f:'Slunce je obrovský jaderný reaktor — každou sekundu přemění 600 milionů tun vodíku na hélium. Energie k nám doputuje za 8 minut. Slunce je uprostřed svého života — bude svítit ještě asi 5 miliard let.'},
+    {q:'Proč vidíme vždy jen jednu stranu Měsíce?',o:['Měsíc rotuje stejnou rychlostí, jakou obíhá Zemi','Měsíc nerotuje vůbec','Druhá strana je zakryta stínem','Náhoda'],a:0,f:'Tento jev se nazývá vázaná rotace. Gravitační příliv Země zpomalil rotaci Měsíce přesně na dobu jeho oběhu. Odvrácená strana je normálně osvětlená — je jen jiná, ne temná.'},
+    {q:'Jak vznikl náš Měsíc?',o:['Srážkou Země s protoplanetou Theia','Byl zachycen gravitací','Vznikl ze stejného mračna jako Země','Odštěpil se od Slunce'],a:0,f:'Před 4,5 miliardami let protoZemě srazila s planetou velikosti Marsu — Theia. Trosky vystřelené na oběžnou dráhu se spojily v Měsíc. Teorie je podpořena složením hornin přivezených misemi Apollo.'},
+  ]
+},
+{
+  id:'vesmir', name:'FajnVesmír', sub:'Galaxie a černé díry', emoji:'🌌',
+  color:'#A855F7', bg:'rgba(168,85,247,.12)', border:'rgba(168,85,247,.28)',
+  qs:[
+    {q:'Co je horizont událostí černé díry?',o:['Hranice, za níž ani světlo neunikne','Povrch černé díry','Oblast záření kolem díry','Hranice sluneční soustavy'],a:0,f:'Horizont událostí je bod bez návratu. Pozorovatel padající do černé díry horizont nepocítí — ale pro vzdáleného pozorovatele se zdá, že se čas zastavil. GPS satelity musí kompenzovat gravitační dilataci času.'},
+    {q:'Jak starý je vesmír?',o:['13,8 miliard let','4,6 miliardy let','100 miliard let','1 bilion let'],a:0,f:'Stáří vesmíru bylo vypočítáno z expanzní rychlosti a kosmického mikrovlnného záření. Toto záření — záblesk z doby 380 000 let po Velkém třesku — pozorujeme dodnes.'},
+    {q:'Co tvoří 95 % vesmíru?',o:['Temná hmota a temná energie','Vodík a hélium','Černé díry','Mezihvězdný prach'],a:0,f:'Šokující: vše, co vidíme — hvězdy, galaxie, planety, my — tvoří pouhých 5 % vesmíru. 27 % je temná hmota, 68 % temná energie. Co přesně jsou, stále nevíme.'},
+    {q:'Proč je noční obloha tmavá, přestože je plná hvězd?',o:['Vesmír má konečný věk — světlo nedorazilo ze všech hvězd','Hvězdy svítí jen přes den','Atmosféra pohlcuje světlo','Hvězdy jsou příliš malé'],a:0,f:'Toto je Olbersův paradox. Temné nebe je důkazem, že vesmír má konečný věk. Pokud by byl nekonečný a věčný, obloha by svítila jasně jako povrch hvězdy.'},
+    {q:'Jak daleko je nejbližší hvězda (kromě Slunce)?',o:['4,24 světelného roku — Proxima Centauri','1 světelný rok','100 světelných let','10 světelných let'],a:0,f:'Proxima Centauri je 4,24 světelného roku = asi 40 bilionů km. Raketa cestující rychlostí 40 000 km/h by tam doletěla za 115 000 let. I světlo potřebuje přes 4 roky.'},
+    {q:'Kdy LIGO poprvé zachytilo gravitační vlny?',o:['2015 — ze srážky dvou černých děr','2012 — z výbuchu supernovy','2019 — z fotografování černé díry','2001 — první detekce záření CMB'],a:0,f:'14. září 2015 LIGO zachytil gravitační vlny ze srážky dvou černých děr 1,3 miliardy světelných let daleko. Einstein to předpověděl roku 1916, ale sám nevěřil, že budou detekovány. Nobelova cena 2017.'},
+    {q:'Co je Mléčná dráha?',o:['Spirální galaxie, v níž leží naše Sluneční soustava','Mlhovina mezi hvězdami','Skupina galaxií kolem nás','Pruh hvězd ve vesmíru bez struktury'],a:0,f:'Mléčná dráha je spirální galaxie s průměrem přibližně 100 000 světelných let. Náš sluneční systém leží v jednom z menších spirálních ramen, asi 26 000 světelných let od středu.'},
+    {q:'Jak se nazývá záhadná síla, která urychluje expanzi vesmíru?',o:['Temná energie','Temná hmota','Antigravitace','Kosmická inflace'],a:0,f:'Temná energie byla objevena v roce 1998, kdy vědci zjistili, že rozpínání vesmíru se zrychluje. Je nejhojněji zastoupenou složkou vesmíru (68 %), ale nevíme, co to je. Nobelova cena 2011.'},
+    {q:'Která galaxie se za 4,5 miliardy let srazí s Mléčnou dráhou?',o:['Andromeda','Triangulum','Magellanovy oblaky','Centaurus A'],a:0,f:'Andromeda (M31) letí k nám rychlostí 110 km/s. Srážka nezahubí hvězdy — galaxie jsou příliš prázdné. Vznikne nová eliptická galaxie — astronomové ji neoficiálně přezdívají Milkomeda.'},
+    {q:'Co je supernova?',o:['Exploze obrovské hvězdy na konci jejího života','Srážka dvou planet','Výbuch na Slunci','Nová planeta'],a:0,f:'Supernova je nejnásilnější jev ve vesmíru po Velkém třesku. Na okamžik svítí jasněji než celá galaxie. Všechny těžké prvky — zlato, uran, železo v tvé krvi — vznikly v supernově.'},
+  ]
+},
+{
+  id:'historie', name:'FajnHistorie', sub:'Světové dějiny', emoji:'🏛️',
+  color:'#C8860A', bg:'rgba(200,134,10,.12)', border:'rgba(200,134,10,.28)',
+  qs:[
+    {q:'Kdo byl Alexander Makedonský?',o:['Makedonský král, který dobyl říši od Řecka po Indii','Athénský filosof','Římský císař','Perský vojevůdce'],a:0,f:'Alexandr Makedonský (356–323 př. n. l.) vytvořil za pouhých třináct let největší říši své doby. Zemřel ve dvaatřiceti letech v Babylóně za dosud nevyjasněných okolností.'},
+    {q:'Co byla Magna Carta a kdy vznikla?',o:['Anglická Velká listina svobod z roku 1215','Francouzská ústava z roku 1789','Německá zlatá bula z roku 1356','Vatikánský mírový dokument'],a:0,f:'Anglický král Jan Bezzemek byl donucen podepsat Magna Cartu v roce 1215. Listina omezila královskou moc a zaručila šlechtě jistá práva. Je považována za jeden ze základních kamenů parlamentní demokracie.'},
+    {q:'Co vedlo k upálení Jana Husa?',o:['Byl odsouzen kostnickým koncilem pro herezi a upálen 6. července 1415','Byl popraven v Praze za vzpouru','Zemřel přirozenou smrtí v Kostnici','Byl popraven po první pražské defenestraci'],a:0,f:'Jan Hus přišel na kostnický koncil roku 1414 s císařským glejtem bezpečnosti. Přesto byl uvězněn, souzen a upálen. Jeho smrt vyvolala husitské hnutí. 6. červenec je dnes státním svátkem.'},
+    {q:'Co byla průmyslová revoluce a kde začala?',o:['Přechod od ruční výroby ke strojové; začala v Británii v 2. pol. 18. stol.','Zemědělská transformace ve Francii','Obchodní expanze Holandska','Technologická revoluce v USA'],a:0,f:'Vynález parního stroje (James Watt, 1769) a mechanického tkalcovského stavu odstartoval přesun výroby z domácností do továren. Vzniklo dělnictvo jako nová společenská třída.'},
+    {q:'Kdy se odehrála bitva u Stalingradu a proč je klíčová?',o:['1942–1943; zlomový bod 2. světové války na východní frontě','1941; první německá porážka','1944; spolu s vyloděním v Normandii','1943; po ní Německo kapitulovalo'],a:0,f:'V bitvě u Stalingradu zahynulo na obou stranách přes milion vojáků. Kapitulace německé 6. armády v únoru 1943 signalizovala, že Wehrmacht není neporazitelný. Iniciativa přešla na sovětskou stranu.'},
+    {q:'Co byl holokaust?',o:['Systematické vyvražďování Židů a dalších skupin nacistickým Německem','Nacistické bombardování Londýna','Nucené práce válečných zajatců','Vyhnání Němců po válce'],a:0,f:'Nacistický režim systematicky zavraždil šest milionů Židů a miliony dalších lidí. Průmyslové vraždění v táborech jako Osvětim-Březinka je bezprecedentním zločinem v dějinách.'},
+    {q:'Co byla Mnichovská dohoda?',o:['Dohoda z roku 1938 nutící ČSR postoupit Sudety Německu','Smlouva o přátelství ČSR a Německa','Mezinárodní záruka hranic ČSR','Tajná dohoda Beneše s Hitlerem'],a:0,f:'Mnichovská dohoda z 29.–30. září 1938 byla podepsána bez účasti ČSR. Británie a Francie obětovaly Sudety Hitlerovi výměnou za slib míru. Slovo Mnichov se v češtině stalo symbolem zrady.'},
+    {q:'Kde sídlí Evropský parlament?',o:['Ve Štrasburku (plenární zasedání) a Bruselu (výbory)','Pouze v Bruselu','Pouze ve Štrasburku','V Haagu'],a:0,f:'Evropský parlament má tři sídla — historický kompromis. Plenární zasedání jsou ve Štrasburku, výbory v Bruselu, sekretariát v Lucemburku. Tento rozptyl stojí ročně přibližně 200 milionů eur navíc.'},
+    {q:'Kdo byl Napoleon Bonaparte?',o:['Francouzský vojevůdce a císař, dobyvatel velké části Evropy','Francouzský revolucionář','Španělský král','Britský admirál'],a:0,f:'Napoleon (1769–1821) reformoval právo (Napoleonský zákoník), vzdělávání i správu. Porážka u Waterloo roku 1815 ukončila jeho panování. Zemřel v exilu na ostrově Svatá Helena.'},
+    {q:'Co byla Hedvábná stezka?',o:['Síť obchodních cest propojující Čínu se Středomořím','Námořní trasa kolem Afriky','Karavanní cesta přes Saharu','Obchodní síť Vikingů'],a:0,f:'Hedvábná stezka (2. stol. př. n. l. – 15. stol.) nebyla jediná cesta, ale síť tras. Přepravovalo se po ní hedvábí, koření, porcelán, papír, střelný prach — ale i myšlenky, náboženství a nemoci.'},
+  ]
+},
+{
+  id:'priroda', name:'FajnPříroda', sub:'Živočichové a ekosystémy', emoji:'🌿',
+  color:'#2E7D32', bg:'rgba(46,125,50,.12)', border:'rgba(46,125,50,.28)',
+  qs:[
+    {q:'Proč má zebra pruhy?',o:['Pruhy matou přilétající mouchy, zejména mouchu tse-tse','Kamufláž v trávě','Rozpoznávání uvnitř stáda','Termoregulace'],a:0,f:'Experimenty ukázaly, že pruhy zebry matou hmyz. Mouchy mají potíže přistát na pruhovaném povrchu. Každá zebra má přitom unikátní vzor pruhů jako otisk prstu.'},
+    {q:'Které zvíře žije nejdéle ze všech obratlovců?',o:['Grónský žralok','Sloní želva','Kareta velká','Velryba bowheadová'],a:0,f:'Grónský žralok pohlavně dospívá až ve 150 letech. Jeden jedinec byl odhadnut na 392 ± 120 let. Chladné arktické vody zpomalují jeho metabolismus na minimum.'},
+    {q:'Co je to bioluminiscence?',o:['Schopnost živočichů produkovat vlastní světlo chemickou reakcí','Odraz slunečního světla od těla ryby','Záře způsobená radioaktivitou','Fluorescence pod UV zářením'],a:0,f:'Bioluminiscenci využívá přibližně 75 % hlubinných mořských živočichů. Světlušky, houby i bakterie také září. Chemická reakce probíhá bez tepla — jedná se o tzv. studené světlo.'},
+    {q:'Proč jsou včely nepostradatelné pro lidstvo?',o:['Opylují asi třetinu veškerých zemědělských plodin','Produkují med jako základní potravinu','Loví škodlivý hmyz','Tvoří vosk nezbytný pro průmysl'],a:0,f:'Včely a další opylovači zajišťují reprodukci přibližně 75 % kvetoucích rostlin a třetiny zemědělských plodin. Bez nich by neexistovaly mandle, jablka, avokádo ani káva.'},
+    {q:'Jak se navigují tažní motýli monarcha na vzdálenosti tisíců kilometrů?',o:['Kombinací slunečního kompasu a zemského magnetického pole','Vůní cílové oblasti','Geneticky zakódovanou mapou','Feromony předchozí generace'],a:0,f:'Monarcha letí každoročně z Kanady do Mexika — přes 4 500 km. Každý jedinec podnikne cestu jen jednou; na cestě zpět se vystřídají tři až čtyři generace. Přesto dorazí na přesně stejné stromy.'},
+    {q:'Kde se nachází největší přírodní jezero v Čechách?',o:['Černé jezero na Šumavě','Máchovo jezero','Rožmberk','Lipno'],a:0,f:'Černé jezero na Šumavě je největším přírodním jezerem v Čechách s plochou asi 18,4 ha. Je karového původu — vyhloubil jej tající ledovec. Má tmavé zbarvení od huminových látek.'},
+    {q:'Jak rostliny komunikují navzájem?',o:['Chemickými látkami vzduchem i kořenovými sítěmi (mykorhizní sítě)','Nebylo prokázáno, že komunikují','Elektrickými impulzy kořenů','Mechanickým dotykem listů'],a:0,f:'Stromy v lese jsou propojeny mykorhizními sítěmi hub — tzv. wood wide web. Přes tyto sítě sdílejí živiny, předávají si varovné signály o škůdcích. Velké stromy podporují semenáčky svých potomků.'},
+    {q:'Co je fotosyntéza?',o:['Přeměna slunečního světla, vody a CO₂ na cukry a kyslík','Příjem vody kořeny','Dýchání rostlin v noci','Rozklad organické hmoty v půdě'],a:0,f:'Fotosyntéza je základ veškerého života na Zemi. Před vznikem fotosyntetizujících organismů neobsahovala atmosféra téměř žádný volný kyslík — celý kyslík v ovzduší vyrobily živé organismy.'},
+    {q:'Jak funguje potravní řetězec?',o:['Tok energie od producentů přes konzumenty k rozkladačům','Koloběh vody v přírodě','Sled rozmnožovacích strategií','Závislost druhů na světle'],a:0,f:'V každém článku potravního řetězce se ztratí přibližně 90 % energie — platí pravidlo 10 %. Proto je na Zemi méně lvů než antilop a méně antilop než trávy.'},
+    {q:'Proč jsou žížaly nepostradatelné pro půdu?',o:['Prokypřují a provzdušňují půdu, urychlují rozklad organické hmoty','Produkují živiny biosyntézou','Chrání kořeny před houbami','Regulují vlhkost půdy'],a:0,f:'Charles Darwin věnoval žížalám celou knihu. Na každém hektaru zdravé půdy žije až 1–2 miliony žížal, které ročně přesunou přes 10 tun zeminy. Bez nich by byla většina zemědělské půdy neplodná.'},
+  ]
+},
+{
+  id:'cesko', name:'FajnČesko', sub:'České dějiny', emoji:'🏰',
+  color:'#0D2B6B', bg:'rgba(13,43,107,.15)', border:'rgba(13,43,107,.3)',
+  qs:[
+    {q:'Kdy byl sv. Václav zavražděn a kdo ho nechal zabít?',o:['Roku 935; Boleslav I., jeho vlastní bratr','Němečtí rytíři','Pohanský lid','Moravané'],a:0,f:'Boleslav I. dal 28. září 935 zavraždit svého bratra Václava u Staré Boleslavi. Václav byl záhy uctíván jako světec a zemský patron. 28. září je dnes státním svátkem České republiky.'},
+    {q:'Co je Karlova univerzita a proč je historicky významná?',o:['Nejstarší univerzita ve střední Evropě, 1348','Nejstarší na světě, 1088','Druhá nejstarší, 1400','Součást příprav na korunovaci Karla IV.'],a:0,f:'Karlova univerzita byla založena roku 1348. Je nejstarší ve střední Evropě. Jan Hus byl jejím rektorem a magistrem. Dnes je součástí Bolognského procesu a má přes 50 000 studentů.'},
+    {q:'Co se stalo v bitvě na Bílé hoře roku 1620?',o:['Porážka stavovského povstání; začala rekatolizace a ztráta české samostatnosti','Vítězství protestantských stavů','Začátek třicetileté války','Polní střet husitů'],a:0,f:'Bitva trvala asi dvě hodiny a skončila úplnou porážkou. 27 předáků bylo 21. června 1621 popraveno na Staroměstském náměstí. Pro českou kulturu to byla traumatická událost, znamenala počátek "doby temna".'},
+    {q:'Kdy vzniklo Československo?',o:['28. října 1918 vyhlášením nezávislosti v Praze','1. ledna 1919 mírovou smlouvou','28. října 1917 revolucí','14. listopadu 1918'],a:0,f:'Vznik Československa 28. října 1918 byl výsledkem práce zahraničního odboje (Masaryk, Beneš, Štefánik) i domácích politiků. Byl to jeden z mála případů, kdy nový stát vznikl pokojně.'},
+    {q:'Co byla Mnichovská dohoda pro Československo?',o:['Zrada spojenců — ČSR musela postoupit Sudety bez boje','Smlouva o přátelství s Německem','Mezinárodní záruka hranic','Vítězství diplomacie'],a:0,f:'Mnichovská dohoda z roku 1938 byla podepsána bez účasti ČSR. Prezident Beneš kapituloval, protože bez Francie a Británie byl boj nemožný. Slovo Mnichov se v češtině stalo symbolem zrady.'},
+    {q:'Co bylo Pražské jaro roku 1968?',o:['Reformní politika Dubčeka, potlačená sovětskou invazí v srpnu 1968','Studentské povstání','Rok, kdy komunisté schválili svobodné volby','První návštěva západního prezidenta'],a:0,f:'Pražské jaro znamenalo pokus reformovat komunismus se socialistickou tváří. Dubčekova vláda uvolnila cenzuru. Dne 21. srpna 1968 vstoupila vojska pěti zemí Varšavské smlouvy a reformy potlačila.'},
+    {q:'Jak začala sametová revoluce?',o:['17. listopadu 1989 policejním zásahem na Národní třídě v Praze','4. listopadu 1989 demonstracemi na Václavském náměstí','9. listopadu 1989 pádem Berlínské zdi','1. listopadu 1989 stávkou televize'],a:0,f:'Studentská demonstrace 17. listopadu 1989 přerostla v pochod centrem Prahy. Na Národní třídě ji pořádková policie brutálně rozehnala. Zásah vyvolal vlnu odporu a masové demonstrace.'},
+    {q:'Kdo byl Jan Palach?',o:['Student, který se roku 1969 upálil na protest proti pasivitě po sovětské invazi','Dělník, který protestoval roku 1948','Slovenský student protestující roku 1968','Student práv, jenž zahynul při demonstracích'],a:0,f:'Jan Palach zemřel 19. ledna 1969, tři dny po svém činu. Bylo mu 21 let. V dopise napsal, že chce probudit svědomí národa. 16. leden je Dnem Jana Palacha.'},
+    {q:'Kdy Česká republika vstoupila do EU a NATO?',o:['NATO 1999, EU 2004','NATO a EU zároveň 2004','NATO 2004, EU 1999','NATO 1997, EU 2002'],a:0,f:'ČR byla přijata do NATO 12. března 1999 — společně s Polskem a Maďarskem. Do EU vstoupila 1. května 2004 jako součást největšího rozšíření unie, kdy přistoupilo celkem deset zemí.'},
+    {q:'Kdo byl Tomáš Garrigue Masaryk?',o:['Filosof, politik a první prezident Československa','Předseda vlády první republiky','Slovenský spoluzakladatel ČSR','Vojenský velitel legií'],a:0,f:'T. G. Masaryk (1850–1937) byl profesorem filosofie, poslancem a neúnavným bojovníkem za pravdu. Za 1. světové války vedl zahraniční odboj. Jako prezident byl symbolem demokracie — Tatíček Masaryk.'},
+  ]
+},
+{
+  id:'zemepis', name:'FajnZeměpis', sub:'Zeměpis Česka', emoji:'🗺️',
+  color:'#1B5E20', bg:'rgba(27,94,32,.13)', border:'rgba(27,94,32,.28)',
+  qs:[
+    {q:'Jaký je nejvyšší vrchol České republiky?',o:['Sněžka','Lysá hora','Praděd','Šerák'],a:0,f:'Sněžka dosahuje výšky 1602 m n. m. a leží na hranici s Polskem v Krkonoších. Na vrcholu stojí dvě budovy — česká a polská. Na vrchol vede lanovka z Pece pod Sněžkou.'},
+    {q:'Kde pramení řeka Vltava?',o:['Na Šumavě, na Černé hoře u Kvildy','Na Šumavě u Lipna','V Novohradských horách','Na Českomoravské vrchovině'],a:0,f:'Vltava má dva zdrojové potoky — Teplou a Studenou Vltavu — které se spojují u Šeberova na Šumavě. Vltava měří přibližně 430 km a je nejdelší řekou zcela na území ČR.'},
+    {q:'Která přehrada je největší vodní nádrží v České republice?',o:['Lipno','Orlík','Nechranice','Vír'],a:0,f:'Lipno na Šumavě má rozlohu hladiny přibližně 48,7 km² a je největší vodní nádrží v ČR. Orlík je hlubší a zadržuje větší objem vody, ale Lipno je plošně největší.'},
+    {q:'Se kterými státy sousedí Česká republika?',o:['Německo, Polsko, Slovensko, Rakousko','Německo, Polsko, Maďarsko, Slovensko','Německo, Francie, Polsko, Slovensko','Německo, Polsko, Slovensko, Maďarsko, Rakousko'],a:0,f:'ČR má čtyři sousedy. Nejdelší hranice je s Německem (asi 811 km), nejkratší se Slovenskem (asi 252 km). ČR je vnitrozemský stát bez přístupu k moři.'},
+    {q:'Kolik národních parků má Česká republika?',o:['4','3','5','2'],a:0,f:'ČR má čtyři národní parky: Krkonošský (KRNAP, 1963), Šumava (1991), Podyjí (1991) a České Švýcarsko (2000). KRNAP byl prvním národním parkem v zemi.'},
+    {q:'Kde se nachází propast Macocha a jak je hluboká?',o:['V Moravském krasu; hluboká 138 metrů','Na Šumavě; hluboká 86 metrů','V Jeseníkách; hluboká 214 metrů','V Českém Švýcarsku; hluboká 59 metrů'],a:0,f:'Propast Macocha je nejhlubším skalním propadem v Čechách a na Moravě. Punkevní jeskyně jsou napojeny na říčku Punkvu, po níž jezdí turisté lodičkami.'},
+    {q:'Které město je druhé největší v České republice?',o:['Brno','Ostrava','Plzeň','Olomouc'],a:0,f:'Brno má přibližně 400 000 obyvatel a je metropolí Moravy. Sídlí zde Ústavní soud a Nejvyšší správní soud. Říká se mu hlavní město Moravy.'},
+    {q:'Kde se nachází trojmezí ČR, Polska a Slovenska?',o:['Na Trojmezném vrchu v Beskydech u Javorníku','Na Sněžce v Krkonoších','Na Králickém Sněžníku','Na Lysé hoře v Beskydech'],a:0,f:'Trojmezí leží na Trojmezném vrchu (793 m) v Beskydech. Je to přirozená přírodní a geopolitická křižovatka tří národů a tří pohoří (Beskydy, Malá Fatra, Javorníky).'},
+    {q:'Jaká je rozloha České republiky?',o:['Přibližně 78 900 km²','Přibližně 52 800 km²','Přibližně 100 000 km²','Přibližně 65 000 km²'],a:0,f:'Česká republika má rozlohu 78 867 km² — přibližně stejně velká jako Irsko nebo Šrí Lanka. Svou rozlohou je jedním ze středně velkých evropských států.'},
+    {q:'Které krajské město leží nejblíže středu České republiky?',o:['Jihlava','Brno','Pardubice','Havlíčkův Brod'],a:0,f:'Jihlava leží přibližně uprostřed České republiky a je tradičně považována za pomyslný střed. Leží přímo na zemské hranici Čech a Moravy a je krajským městem Kraje Vysočina.'},
+  ]
+},
+{
+  id:'evropa', name:'FajnEvropa', sub:'Zeměpis Evropy', emoji:'🌍',
+  color:'#1A3A8F', bg:'rgba(26,58,143,.13)', border:'rgba(26,58,143,.28)',
+  qs:[
+    {q:'Kolika státy protéká řeka Dunaj?',o:['10 státy','8 státy','6 státy','12 státy'],a:0,f:'Dunaj protéká 10 státy — Německem, Rakouskem, Slovenskem, Maďarskem, Chorvatskem, Srbskem, Bulharskem, Rumunskem, Moldavskem a Ukrajinou. Je to nejinternacionálnější řeka světa.'},
+    {q:'Jaké je hlavní město Švýcarska?',o:['Bern','Ženeva','Curych','Basilej'],a:0,f:'Bern je sídlem spolkové vlády Švýcarska, ale není největším ani nejznámějším švýcarským městem — tím jsou Curych a Ženeva. Curych je největší, Ženeva sídlem mezinárodních organizací.'},
+    {q:'Který je nejvyšší vrchol Alp?',o:['Mont Blanc','Matterhorn','Dufourspitze','Elbrus'],a:0,f:'Mont Blanc (4 808 m) na hranici Francie a Itálie je nejvyšším vrcholem Alp. Elbrus (5 642 m) na Kavkaze je vyšší, ale zda Kavkaz patří do Evropy, je geografická diskuse.'},
+    {q:'Co je Lamanšský průplav a jak je v nejužším místě široký?',o:['Průliv oddělující Velkou Británii od Francie; v nejužším místě 34 km','Průliv oddělující Irsko od Anglie','Mořský průliv u Dánska','Fjord u Norska'],a:0,f:'Lamanšský průplav je nejrušnějším námořním průlivem světa. Podvodní tunel Eurotunnel pod ním byl otevřen roku 1994 a spojuje Folkestone v Anglii s Coquelles u Calais.'},
+    {q:'Kde leží delta Dunaje a proč je výjimečná?',o:['Na pobřeží Rumunska; největší mokřad v Evropě, UNESCO','U ústí Dunaje v Bulharsku','Na hranici Rumunska a Moldavska','U Bělehradu'],a:0,f:'Delta Dunaje je největší a nejzachovalejší deltou v Evropě s rozlohou přes 5 000 km². Je domovem přibližně 300 druhů ptáků. Žijí tu pelikáni bílí a různé druhy orlů.'},
+    {q:'Který je nejmenší stát Evropy?',o:['Vatikán','Monako','San Marino','Lichtenštejnsko'],a:0,f:'Vatikán má rozlohu pouhých 0,44 km² a je nejmenším státem světa. Leží uvnitř Říma. Monako je druhé nejmenší — 2,02 km². San Marino je nejstarší republika světa — od roku 301.'},
+    {q:'Kdy a kde byla podepsána zakladatelská smlouva EU?',o:['1957 v Římě','1951 v Paříži','1993 v Maastrichtu','1957 v Bruselu'],a:0,f:'Římské smlouvy podepsalo 25. března 1957 šest států: Francie, Německo, Itálie, Belgie, Nizozemsko a Lucembursko. Maastrichtská smlouva z roku 1993 přejmenovala společenství na Evropskou unii.'},
+    {q:'Kde leží Bělověžský prales a proč je výjimečný?',o:['Na hranici Polska a Běloruska; poslední původní nížinný prales Evropy','V Rumunsku; největší les v Karpatech','Ve Skandinávii; tajga mírného pásu','Na Slovensku; domov posledních medvědů'],a:0,f:'Bělověžský prales je posledním zbytkem původního nížinného pralesa, který pokrýval velkou část Evropy. Žijí zde poslední volně žijící zubři evropští. Je zapsán na seznam UNESCO.'},
+    {q:'Kde se setkávají hranice ČR, Polska a Německa?',o:['Na Trojmezní hoře v Jizerských horách u Žitavy','Na Sněžce v Krkonoších','Na Smrku v Jizerských horách','V Liberci'],a:0,f:'Trojmezí ČR–Polsko–Německo leží na Trojmezní hoře (362 m) v Jizerských horách u řeky Nisy. Přímo u trojmezí leží Žitava (Zittau) — německé město, jehož náměstí sousedí s českou a polskou hranicí.'},
+    {q:'Co je Schengenský prostor?',o:['Oblast bez kontrol na vnitřních hranicích; zahrnuje i nečleny EU','Pouze státy eurozóny','Celé území EU','Obranné seskupení zemí EU'],a:0,f:'Schengenská dohoda byla podepsána roku 1985 v lucemburském Schengenu. Dnes zahrnuje 29 zemí — i Norsko, Island, Švýcarsko a Lichtenštejnsko, které nejsou členy EU.'},
+  ]
+},
+];
+
+// ── STAV ─────────────────────────────────────────────────────────────────────
+let CUR = null; // aktuální modul
+let SES = {};   // session stav
+let ST  = loadST();
+
+function loadST(){
+  try{return JSON.parse(localStorage.getItem('fajndvur1')||'{}');}
+  catch(e){return {};}
+}
+function saveST(){localStorage.setItem('fajndvur1',JSON.stringify(ST));}
+
+// ── AUDIO ─────────────────────────────────────────────────────────────────────
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t,d,v=.22){try{const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.start();o.stop(ac.currentTime+d);}catch(e){}}
+function sndOk(){tone(659,'sine',.1);setTimeout(()=>tone(784,'sine',.12),70);setTimeout(()=>tone(988,'sine',.16),140);}
+function sndWrong(){tone(200,'sawtooth',.14);setTimeout(()=>tone(160,'sawtooth',.16),90);}
+function sndFinish(){[523,659,784,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.16,.22),i*70));}
+
+function showXP(xp){
+  const el=document.getElementById('xpPopup');
+  el.textContent=`+${xp} XP`;
+  el.className='xp-popup go';
+  setTimeout(()=>el.className='xp-popup',1700);
+}
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+function renderHome(){
+  const grid=document.getElementById('modulesGrid');
+  grid.innerHTML=MODULES.map(m=>{
+    const best=ST[m.id]||0;
+    const stars=[1,2,3].map(s=>`<span class="mod-star ${s<=best?'on':''}">${s<=best?'⭐':'☆'}</span>`).join('');
+    return `<div class="mod-card" onclick="startModule('${m.id}')"
+      style="background:${m.bg};border-color:${m.border}">
+      <span class="mod-emoji">${m.emoji}</span>
+      <div class="mod-name" style="color:${m.color}">${m.name}</div>
+      <div class="mod-sub">${m.sub}</div>
+      <div class="mod-count">10 otázek · ochutnávka</div>
+      <div class="mod-stars">${stars}</div>
+    </div>`;
+  }).join('');
+  show('screenHome');
+}
+
+// ── START MODULE ──────────────────────────────────────────────────────────────
+function startModule(id){
+  getAC();
+  CUR=MODULES.find(m=>m.id===id);
+  const pool=[...CUR.qs].sort(()=>Math.random()-.5);
+  SES={qs:pool,idx:0,ok:0,streak:0,ms:0,xp:0,answered:false,facts:[]};
+  show('screenQuiz');
+  renderQ();
+}
+
+// ── RENDER QUESTION ───────────────────────────────────────────────────────────
+function renderQ(){
+  const q=SES.qs[SES.idx],tot=SES.qs.length;
+  SES.answered=false;
+
+  document.getElementById('qDot').style.background=CUR.color;
+  document.getElementById('qModName').textContent=CUR.emoji+' '+CUR.name;
+  document.getElementById('qCnt').textContent=`${SES.idx+1} / ${tot}`;
+  document.getElementById('progFill').style.width=`${(SES.idx/tot)*100}%`;
+  document.getElementById('progFill').style.background=`linear-gradient(90deg,${CUR.color},${CUR.color}aa)`;
+  document.getElementById('qBadge').textContent='💡 Otázka z '+CUR.sub;
+  document.getElementById('qText').textContent=q.q;
+
+  const shuffled=[...Array(q.o.length).keys()].sort(()=>Math.random()-.5);
+  q._newA=shuffled.indexOf(q.a);
+
+  const adiv=document.getElementById('answersDiv');
+  adiv.innerHTML=shuffled.map((orig,i)=>
+    `<button class="ans-btn" onclick="checkAns(${i})">${q.o[orig]}</button>`
+  ).join('');
+
+  document.getElementById('factBox').className='fact-box';
+  document.getElementById('nextBtn').className='next-btn';
+}
+
+// ── CHECK ANSWER ──────────────────────────────────────────────────────────────
+function checkAns(idx){
+  if(SES.answered)return;
+  SES.answered=true;
+  const q=SES.qs[SES.idx],btns=document.querySelectorAll('.ans-btn'),ok=idx===q._newA;
+  btns.forEach(b=>b.disabled=true);
+  btns[q._newA].classList.add('show-correct');
+
+  if(ok){
+    btns[idx].classList.add('correct');
+    SES.streak++;SES.ms=Math.max(SES.ms,SES.streak);SES.ok++;
+    const xp=SES.streak>=5?18:SES.streak>=3?14:10;
+    SES.xp+=xp;sndOk();showXP(xp);
+    if(q.f)SES.facts.push(q.f);
+  }else{
+    btns[idx].classList.add('wrong');
+    SES.streak=0;sndWrong();
+  }
+
+  if(q.f){
+    document.getElementById('factTxt').textContent=q.f;
+    document.getElementById('factBox').className='fact-box on';
+  }
+  document.getElementById('nextBtn').className='next-btn on';
+}
+
+// ── NEXT ──────────────────────────────────────────────────────────────────────
+function nextQ(){
+  SES.idx++;
+  if(SES.idx>=SES.qs.length)showResult();
+  else renderQ();
+}
+
+// ── RESULT ────────────────────────────────────────────────────────────────────
+function showResult(){
+  sndFinish();
+  const tot=SES.qs.length,pct=SES.ok/tot,stars=pct>=.9?3:pct>=.6?2:1;
+  const prev=ST[CUR.id]||0;
+  if(stars>prev){ST[CUR.id]=stars;saveST();}
+
+  const t={
+    3:['Výborně!','Perfektní!','Skvělé!','Génius!'],
+    2:['Dobrá práce!','Solidní!','Téměř perfektní!','Šikovný/á!'],
+    1:['Dobrý začátek!','Zkus znovu!','Učíš se!','Dáš to lépe!']
+  };
+  document.getElementById('resTitle').textContent=t[stars][Math.floor(Math.random()*4)];
+  document.getElementById('resSub').textContent=`${CUR.emoji} ${CUR.name} · ${SES.ok} z ${tot} správně`;
+
+  document.querySelectorAll('.res-star').forEach((s,i)=>{
+    s.className='res-star';
+    if(i<stars)setTimeout(()=>s.className='res-star on',i*200+100);
+  });
+
+  document.getElementById('stCorrect').textContent=`${SES.ok}/${tot}`;
+  document.getElementById('stXP').textContent=SES.xp;
+  document.getElementById('stStreak').textContent=SES.ms;
+
+  const fl=document.getElementById('factsList');
+  const facts=SES.facts.slice(0,4);
+  fl.innerHTML=facts.length>0
+    ?facts.map(f=>`<div class="fact-item">${f}</div>`).join('')
+    :'<div class="fact-item" style="opacity:.5">Odpovídej správně a dozvíš se zajímavosti!</div>';
+
+  show('screenResult');
+}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){renderHome();}
+function playAgain(){startModule(CUR.id);}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderHome();
+</script>
+</body>
+</html>
