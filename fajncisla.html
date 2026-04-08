@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>FajnČísla — Zlomky · Desetinná čísla · Procenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── DARK THEME (výchozí) ── */
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#21262d; --border:#30363d;
+  --text:#f0f6fc; --text2:#8b949e; --text3:#3d444d;
+  --correct:#3fb950; --wrong:#f85149; --warn:#d29922;
+  --c-z:#818cf8; --c-d:#fbbf24; --c-p:#34d399; --c-b:#fb7185;
+  --active:var(--c-z);
+  --header-bg:rgba(13,17,23,.94);
+  --feedback-bg:rgba(13,17,23,.97);
+  --logo-gradient:linear-gradient(135deg,var(--c-z) 0%,var(--c-d) 50%,var(--c-p) 100%);
+}
+/* ── LIGHT THEME ── */
+[data-theme="light"] {
+  --bg:#f0f4f8; --surface:#ffffff; --surface2:#e9eef4; --border:#d0d7de;
+  --text:#0d1117; --text2:#57606a; --text3:#b0bec5;
+  --correct:#1a7f37; --wrong:#cf222e; --warn:#9a6700;
+  --c-z:#4f46e5; --c-d:#b45309; --c-p:#047857; --c-b:#be185d;
+  --header-bg:rgba(240,244,248,.95);
+  --feedback-bg:rgba(255,255,255,.97);
+  --logo-gradient:linear-gradient(135deg,#4f46e5 0%,#b45309 50%,#047857 100%);
+}
+/* ── COLORFUL THEME ── */
+[data-theme="colorful"] {
+  --bg:#100b2e; --surface:rgba(255,255,255,.1); --surface2:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.18); --text:#ffffff; --text2:rgba(255,255,255,.72);
+  --text3:rgba(255,255,255,.25);
+  --correct:#22c55e; --wrong:#f87171; --warn:#fbbf24;
+  --c-z:#a78bfa; --c-d:#fcd34d; --c-p:#6ee7b7; --c-b:#f9a8d4;
+  --header-bg:rgba(10,5,40,.88);
+  --feedback-bg:rgba(16,11,46,.97);
+  --logo-gradient:linear-gradient(135deg,#a78bfa,#f9a8d4,#fcd34d,#6ee7b7);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+body{
+  color:var(--text);font-family:'DM Sans',sans-serif;
+  min-height:100svh;overflow-x:hidden;
+  transition:background .35s,color .35s;
+}
+[data-theme="dark"] body   { background:var(--bg); }
+[data-theme="light"] body  { background:var(--bg); }
+[data-theme="colorful"] body {
+  background:radial-gradient(ellipse at 20% 20%,#3d1a7a 0%,#100b2e 40%),
+             radial-gradient(ellipse at 80% 80%,#1a3a4a 0%,transparent 60%);
+  background-color:#100b2e;
+}
+/* floating math symbols for colorful */
+[data-theme="colorful"] body::before {
+  content:'½ % ÷ × ∞';
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:22vw;
+  color:rgba(255,255,255,.025);display:flex;align-items:center;justify-content:center;
+  letter-spacing:.2em;overflow:hidden;
+}
+
+.screen{display:none;min-height:100svh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ── HEADER ── */
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  background:var(--header-bg);backdrop-filter:blur(14px);
+  position:sticky;top:0;z-index:20;transition:background .35s,border-color .35s;
+}
+.app-logo{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;
+  background:var(--logo-gradient);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hdr-right{display:flex;gap:8px;align-items:center}
+.badge{
+  background:var(--surface2);border:1px solid var(--border);border-radius:20px;
+  padding:4px 12px;display:flex;align-items:center;gap:5px;
+  font-size:.85rem;font-weight:600;transition:background .35s,border-color .35s;
+}
+.badge-fire{color:var(--c-d)} .badge-xp{color:var(--c-z)}
+
+/* Theme toggle */
+.theme-btn{
+  background:var(--surface2);border:1px solid var(--border);border-radius:50%;
+  width:36px;height:36px;cursor:pointer;font-size:1.05rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .25s,background .35s,border-color .35s;flex-shrink:0;
+}
+.theme-btn:hover{transform:rotate(20deg) scale(1.15)}
+.theme-btn:active{transform:scale(.9)}
+
+/* ── HOME ── */
+.home-hero{padding:30px 20px 16px;text-align:center;position:relative;z-index:1}
+.home-title{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(1.9rem,6vw,2.8rem);line-height:1.1;margin-bottom:10px;
+}
+.home-sub{color:var(--text2);font-size:.9rem;max-width:300px;margin:0 auto}
+.worlds-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  padding:8px 16px 40px;max-width:480px;margin:0 auto;width:100%;
+  position:relative;z-index:1;
+}
+.world-card{
+  border-radius:18px;padding:20px 14px 42px;cursor:pointer;
+  border:1px solid transparent;transition:transform .15s,border-color .2s,box-shadow .2s,background .35s;
+  position:relative;overflow:hidden;background:var(--surface);
+}
+.world-card::before{
+  content:'';position:absolute;inset:0;background:var(--wc);
+  opacity:.06;pointer-events:none;
+}
+.world-card:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(0,0,0,.45)}
+.world-card:active{transform:scale(.97)}
+.world-card.locked{opacity:.4;cursor:not-allowed}
+.world-card.locked:hover{transform:none;box-shadow:none}
+.wc-icon{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.9rem;
+  color:var(--wc);display:block;margin-bottom:8px;line-height:1;
+}
+.wc-name{font-weight:700;font-size:.85rem;margin-bottom:4px}
+.wc-stars{font-size:.72rem;color:var(--text2);letter-spacing:1px;display:block}
+.wc-mascot{position:absolute;right:6px;bottom:6px;width:58px;height:58px;opacity:.8}
+.wc-lock{position:absolute;top:10px;right:10px;font-size:.9rem;opacity:.7}
+.wz{--wc:var(--c-z);border-color:rgba(129,140,248,.18)}
+.wd{--wc:var(--c-d);border-color:rgba(251,191,36,.18)}
+.wp{--wc:var(--c-p);border-color:rgba(52,211,153,.18)}
+.wb{--wc:var(--c-b);border-color:rgba(251,113,133,.18)}
+.wz:not(.locked):hover{border-color:rgba(129,140,248,.6)}
+.wd:not(.locked):hover{border-color:rgba(251,191,36,.6)}
+.wp:not(.locked):hover{border-color:rgba(52,211,153,.6)}
+.wb:not(.locked):hover{border-color:rgba(251,113,133,.6)}
+
+/* ── SCREEN HEADER ── */
+.screen-hdr{
+  display:flex;align-items:center;gap:12px;padding:14px 18px;
+  border-bottom:1px solid var(--border);position:sticky;top:0;
+  background:var(--header-bg);backdrop-filter:blur(12px);z-index:10;
+  transition:background .35s,border-color .35s;
+}
+.back-btn{
+  background:none;border:none;color:var(--text2);font-size:1.4rem;
+  cursor:pointer;padding:4px 6px;border-radius:8px;transition:color .15s;line-height:1;
+}
+.back-btn:hover{color:var(--text)}
+.scr-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;flex:1}
+
+/* ── LEVELS ── */
+.levels-wrap{
+  padding:20px 16px;max-width:480px;margin:0 auto;width:100%;
+  display:flex;flex-direction:column;gap:10px;
+}
+.level-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:17px 18px;cursor:pointer;
+  transition:border-color .15s,transform .12s,background .35s;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.level-card:hover{border-color:var(--active);transform:translateX(4px)}
+.level-card:active{transform:scale(.98)}
+.lc-left{flex:1}
+.lc-name{font-weight:700;font-size:1rem;color:var(--active);margin-bottom:3px}
+.lc-desc{font-size:.78rem;color:var(--text2);line-height:1.4}
+.lc-stars{font-size:1rem;flex-shrink:0}
+.star-f{color:var(--c-d)} .star-e{color:var(--text3)}
+
+/* ── EXERCISE TOPBAR ── */
+.ex-topbar{
+  padding:10px 16px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border);position:sticky;top:0;
+  background:var(--header-bg);backdrop-filter:blur(8px);z-index:10;
+  transition:background .35s,border-color .35s;
+}
+.prog-bar{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--active);border-radius:3px;transition:width .35s ease}
+.ex-count{font-size:.78rem;color:var(--text2);white-space:nowrap}
+
+/* ── EXERCISE BODY ── */
+.ex-body{
+  flex:1;display:flex;flex-direction:column;padding:24px 18px 130px;
+  max-width:520px;margin:0 auto;width:100%;overflow-y:auto;gap:0;
+  position:relative;z-index:1;
+}
+.q-area{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;margin-bottom:28px;
+}
+.ex-mascot{
+  width:64px;height:64px;margin:0 auto 14px;
+  transition:transform .3s;flex-shrink:0;
+}
+.ex-mascot.bounce{animation:aBounce .5s cubic-bezier(.34,1.56,.64,1)}
+.ex-mascot.shake{animation:aShake .4s ease}
+.ex-mascot.celebrate{animation:aCelebrate .6s ease}
+@keyframes aBounce{
+  0%,100%{transform:scale(1) translateY(0) rotate(0deg)}
+  35%{transform:scale(1.28) translateY(-8px) rotate(-5deg)}
+  65%{transform:scale(.94) translateY(3px) rotate(3deg)}
+}
+@keyframes aShake{
+  0%,100%{transform:translateX(0) rotate(0deg)}
+  20%,60%{transform:translateX(-8px) rotate(-2deg)}
+  40%,80%{transform:translateX(8px) rotate(2deg)}
+}
+@keyframes aCelebrate{
+  0%{transform:scale(1)}
+  25%{transform:scale(1.3) rotate(-8deg)}
+  50%{transform:scale(1.2) rotate(8deg)}
+  75%{transform:scale(1.1) rotate(-3deg)}
+  100%{transform:scale(1)}
+}
+.q-text{font-size:.88rem;color:var(--text2);margin-bottom:12px;line-height:1.5;max-width:400px}
+.q-math{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:clamp(1.6rem,5.5vw,2.5rem);line-height:1.7;color:var(--text);
+}
+
+/* ── FRACTION DISPLAY ── */
+.frac{
+  display:inline-flex;flex-direction:column;align-items:center;
+  vertical-align:middle;margin:0 2px;font-size:.82em;line-height:1.1;
+  font-family:'Syne',sans-serif;font-weight:700;
+}
+.fn{padding:0 5px 3px;border-bottom:2.5px solid currentColor;min-width:20px;text-align:center}
+.fd{padding:3px 5px 0;min-width:20px;text-align:center}
+
+/* ── ANSWER AREA ── */
+.answer-area{margin-top:auto}
+
+/* Choice buttons */
+.choices-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice-btn{
+  background:var(--surface);border:2px solid var(--border);border-radius:14px;
+  padding:14px 8px;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;
+  font-size:clamp(1.1rem,4vw,1.65rem);cursor:pointer;
+  transition:border-color .13s,background .13s,transform .1s;
+  display:flex;align-items:center;justify-content:center;min-height:72px;word-break:break-all;
+}
+.choice-btn:hover{border-color:var(--active);background:var(--surface2)}
+.choice-btn:active{transform:scale(.95)}
+.choice-btn.correct{
+  border-color:var(--correct)!important;background:rgba(63,185,80,.14)!important;
+  color:var(--correct)!important;animation:correctPulse .4s ease;
+}
+.choice-btn.wrong{border-color:var(--wrong)!important;background:rgba(248,81,73,.12)!important;color:var(--wrong)!important}
+.choice-btn.reveal{border-color:var(--correct)!important;background:rgba(63,185,80,.07)!important}
+@keyframes correctPulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+/* Comparison */
+.cmp-grid{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cmp-btn{
+  background:var(--surface);border:2px solid var(--border);border-radius:50%;
+  width:80px;height:80px;color:var(--text);font-family:'Syne',sans-serif;font-size:1.8rem;
+  font-weight:800;cursor:pointer;
+  transition:border-color .13s,background .13s,transform .1s;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.cmp-btn:hover{border-color:var(--active);background:var(--surface2)}
+.cmp-btn:active{transform:scale(.93)}
+.cmp-btn.correct{border-color:var(--correct)!important;background:rgba(63,185,80,.14)!important;color:var(--correct)!important}
+.cmp-btn.wrong{border-color:var(--wrong)!important;background:rgba(248,81,73,.12)!important;color:var(--wrong)!important}
+.cmp-btn.reveal{border-color:var(--correct)!important;background:rgba(63,185,80,.07)!important}
+
+/* Fraction input */
+.frac-input-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.frac-input-widget{display:flex;flex-direction:column;align-items:center;gap:0}
+.frac-input-widget input{
+  width:90px;text-align:center;background:var(--surface);
+  border:2px solid var(--border);border-radius:10px;color:var(--text);
+  font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;padding:10px 6px;
+  outline:none;transition:border-color .13s,background .35s;
+  -moz-appearance:textfield;appearance:textfield;
+}
+.frac-input-widget input::-webkit-inner-spin-button,
+.frac-input-widget input::-webkit-outer-spin-button{-webkit-appearance:none}
+.frac-input-widget input:focus{border-color:var(--active);box-shadow:0 0 0 3px rgba(var(--active-rgb,129,140,248),.15)}
+.frac-bar-line{width:100px;height:3px;background:var(--text2);margin:6px 0;border-radius:2px}
+.input-hint{font-size:.73rem;color:var(--text3);text-align:center}
+
+/* Number input */
+.num-input-widget input{
+  width:160px;text-align:center;background:var(--surface);
+  border:2px solid var(--border);border-radius:12px;color:var(--text);
+  font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;padding:13px 10px;
+  outline:none;transition:border-color .13s,background .35s;
+  -moz-appearance:textfield;appearance:textfield;
+}
+.num-input-widget input::-webkit-inner-spin-button,
+.num-input-widget input::-webkit-outer-spin-button{-webkit-appearance:none}
+.num-input-widget input:focus{border-color:var(--active)}
+.num-input-widget{display:flex;justify-content:center}
+
+/* Submit */
+.submit-row{display:flex;gap:10px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+.btn-submit{
+  background:var(--active);color:#fff;border:none;border-radius:11px;
+  padding:12px 30px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;
+  cursor:pointer;transition:opacity .13s,transform .1s;
+}
+.btn-submit:hover{opacity:.88}
+.btn-submit:active{transform:scale(.97)}
+
+/* ── FEEDBACK BAR ── */
+.feedback-bar{
+  position:fixed;bottom:0;left:0;right:0;padding:16px 18px;
+  padding-bottom:max(20px,env(safe-area-inset-bottom));
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  transform:translateY(100%);transition:transform .22s ease;z-index:100;
+  border-top:2px solid transparent;backdrop-filter:blur(14px);
+}
+.feedback-bar.show{transform:translateY(0)}
+.feedback-bar.fb-correct{background:var(--feedback-bg);border-color:var(--correct)}
+.feedback-bar.fb-wrong{background:var(--feedback-bg);border-color:var(--wrong)}
+.fb-label{font-weight:700;font-size:.98rem;margin-bottom:2px}
+.fb-sub{font-size:.78rem;color:var(--text2);line-height:1.5}
+.fb-correct .fb-label{color:var(--correct)}
+.fb-wrong .fb-label{color:var(--wrong)}
+.btn-next{
+  background:none;border:1.5px solid var(--border);border-radius:10px;
+  color:var(--text);padding:10px 22px;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:600;cursor:pointer;transition:border-color .13s;
+  white-space:nowrap;flex-shrink:0;
+}
+.btn-next:hover{border-color:var(--text)}
+.btn-retry-ans{
+  background:var(--surface2);border:1.5px solid var(--warn);border-radius:10px;
+  color:var(--warn);padding:10px 18px;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:600;cursor:pointer;
+  transition:background .13s,border-color .13s;white-space:nowrap;flex-shrink:0;
+}
+.btn-retry-ans:hover{background:rgba(210,153,34,.12)}
+
+/* ── RESULT SCREEN ── */
+.result-body{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 20px;text-align:center;
+  gap:0;position:relative;z-index:1;
+}
+.res-mascot{width:88px;height:88px;margin-bottom:14px}
+.res-stars{
+  font-size:2.4rem;letter-spacing:5px;margin-bottom:6px;
+  display:flex;gap:6px;justify-content:center;
+}
+.res-star{
+  display:inline-block;color:var(--text3);
+  transition:transform .3s,color .3s;
+}
+.res-star.earned{
+  color:var(--c-d);
+  animation:starPop .5s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes starPop{
+  0%{transform:scale(0) rotate(-30deg)}
+  60%{transform:scale(1.4) rotate(10deg)}
+  100%{transform:scale(1) rotate(0deg)}
+}
+.res-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.85rem;margin-bottom:6px;
+}
+.res-score{color:var(--text2);margin-bottom:18px;font-size:.92rem}
+.res-xp-box{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:12px 30px;margin-bottom:22px;font-size:.95rem;
+  transition:background .35s,border-color .35s;
+}
+.res-xp-box span{color:var(--c-d);font-weight:700;font-size:1.2rem}
+.res-actions{display:flex;flex-direction:column;gap:9px;width:100%;max-width:270px}
+.btn-primary{
+  background:var(--active);color:#fff;border:none;border-radius:11px;
+  padding:15px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;
+  cursor:pointer;transition:opacity .13s;width:100%;
+}
+.btn-primary:hover{opacity:.88}
+.btn-secondary{
+  background:none;border:1px solid var(--border);border-radius:11px;
+  padding:13px;color:var(--text2);font-family:'DM Sans',sans-serif;
+  font-size:.9rem;cursor:pointer;
+  transition:border-color .13s,color .13s,background .35s;width:100%;
+}
+.btn-secondary:hover{border-color:var(--text);color:var(--text)}
+
+/* ── GAME EFFECTS ── */
+/* Confetti */
+.cfp{
+  position:fixed;pointer-events:none;z-index:9999;
+  animation:cfFall linear forwards;
+}
+@keyframes cfFall{
+  0%  {opacity:1;transform:translate(0,0) rotate(0deg) scale(1)}
+  100%{opacity:0;transform:translate(var(--cx),var(--cy)) rotate(var(--cr)) scale(.2)}
+}
+
+/* XP burst */
+.xp-burst{
+  position:fixed;pointer-events:none;z-index:9999;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;
+  color:var(--c-d);text-shadow:0 0 12px rgba(251,191,36,.5);
+  animation:xpFly .9s ease-out forwards;
+}
+@keyframes xpFly{
+  0%  {opacity:0;transform:translateY(0) scale(.6)}
+  20% {opacity:1;transform:translateY(-10px) scale(1.2)}
+  70% {opacity:1;transform:translateY(-55px) scale(1)}
+  100%{opacity:0;transform:translateY(-90px) scale(.8)}
+}
+
+/* Streak toast */
+.streak-toast{
+  position:fixed;top:76px;left:50%;transform:translateX(-50%) scale(0);
+  background:var(--c-d);color:#1a1500;
+  border-radius:40px;padding:10px 26px;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;
+  z-index:9998;white-space:nowrap;
+  animation:toastPop .4s cubic-bezier(.34,1.56,.64,1) forwards,
+            toastFade .3s ease .9s forwards;
+  box-shadow:0 4px 24px rgba(0,0,0,.4);
+}
+@keyframes toastPop{
+  from{transform:translateX(-50%) scale(0) translateY(8px)}
+  to{transform:translateX(-50%) scale(1) translateY(0)}
+}
+@keyframes toastFade{from{opacity:1}to{opacity:0;pointer-events:none}}
+
+/* Answer flash */
+.ans-correct-flash{animation:correctZone .4s ease}
+@keyframes correctZone{
+  0%,100%{background:transparent}
+  50%{background:rgba(63,185,80,.08)}
+}
+
+/* ── DEMO MODAL ── */
+.demo-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.demo-overlay.show{opacity:1;pointer-events:all}
+.demo-modal{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);
+  z-index:201;width:min(400px,92vw);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:28px 24px;text-align:center;
+  box-shadow:0 24px 60px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;
+}
+.demo-modal.show{opacity:1;pointer-events:all;transform:translate(-50%,-50%) scale(1)}
+.demo-modal-icon{
+  font-size:2.8rem;margin-bottom:12px;
+  animation:iconPulse 1.2s ease infinite;display:inline-block;
+}
+@keyframes iconPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.demo-modal-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;
+  margin-bottom:10px;color:var(--text);
+}
+.demo-modal-sub{
+  font-size:.88rem;color:var(--text2);line-height:1.6;margin-bottom:20px;
+}
+.demo-modal-sub strong{color:var(--text)}
+.demo-modal-remaining{
+  font-size:.84rem;color:var(--warn);margin-bottom:16px;font-weight:600;
+}
+.demo-modal-actions{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.demo-btn-primary{
+  display:block;background:var(--active);color:#fff;
+  border:none;border-radius:11px;padding:14px;
+  font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;
+  cursor:pointer;text-decoration:none;transition:opacity .13s;
+}
+.demo-btn-primary:hover{opacity:.88}
+.demo-btn-secondary{
+  background:none;border:1px solid var(--border);border-radius:11px;
+  padding:12px;color:var(--text2);font-family:'DM Sans',sans-serif;
+  font-size:.88rem;cursor:pointer;transition:border-color .13s,color .13s;
+}
+.demo-btn-secondary:hover{border-color:var(--text);color:var(--text)}
+.demo-modal-note{font-size:.75rem;color:var(--text3)}
+/* demo progress bar on home */
+.demo-bar-wrap{
+  margin:0 16px 20px;max-width:480px;margin-left:auto;margin-right:auto;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:12px 16px;display:flex;align-items:center;gap:12px;
+}
+.demo-bar-label{font-size:.78rem;color:var(--text2);white-space:nowrap}
+.demo-bar-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.demo-bar-fill{height:100%;background:var(--active);border-radius:3px;transition:width .4s ease}
+.demo-bar-count{font-size:.78rem;color:var(--text2);white-space:nowrap;font-weight:600}
+
+@keyframes solutionIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* BG DECO */
+.bg-deco{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.bg-deco span{
+  position:absolute;font-family:'Syne',sans-serif;font-weight:800;
+  opacity:.022;color:#fff;user-select:none;line-height:1;
+}
+[data-theme="light"] .bg-deco span{opacity:.04;color:#000}
+[data-theme="colorful"] .bg-deco span{opacity:.035;color:#fff}
+</style>
+</head>
+<body>
+
+<div class="bg-deco" aria-hidden="true">
+  <span style="font-size:22vw;top:-6%;left:-4%">½</span>
+  <span style="font-size:16vw;top:32%;right:-3%">%</span>
+  <span style="font-size:11vw;bottom:8%;left:6%">0,5</span>
+  <span style="font-size:9vw;top:58%;left:38%">÷</span>
+  <span style="font-size:14vw;bottom:-5%;right:4%">∞</span>
+</div>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="app-header">
+    <div class="app-logo">FajnČísla</div>
+    <div class="hdr-right">
+      <button class="theme-btn" id="theme-btn" onclick="cycleTheme()" title="Přepnout téma">🌙</button>
+      <div class="badge"><span class="badge-fire">🔥</span><span id="hdr-streak">0</span></div>
+      <div class="badge"><span class="badge-xp">⚡</span><span id="hdr-xp">0</span></div>
+    </div>
+  </div>
+  <div class="home-hero">
+    <div class="home-title">Vyber svět</div>
+    <div class="home-sub">Zlomky · desetinná čísla · procenta — nekonečné procvičování</div>
+  </div>
+  <div class="worlds-grid" id="worlds-grid"></div>
+  <div class="demo-bar-wrap" id="demo-bar-wrap">
+    <span class="demo-bar-label">Demo dnes:</span>
+    <div class="demo-bar-track"><div class="demo-bar-fill" id="demo-bar-fill" style="width:0%"></div></div>
+    <span class="demo-bar-count" id="demo-bar-count">15 zbývá</span>
+    <button onclick="showDemoModal(true)" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:.8rem;padding:2px 4px">?</button>
+  </div>
+</div>
+
+<!-- LEVELS -->
+<div id="screen-levels" class="screen">
+  <div class="screen-hdr">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div class="scr-title" id="lvl-title"></div>
+  </div>
+  <div class="levels-wrap" id="levels-wrap"></div>
+</div>
+
+<!-- EXERCISE -->
+<div id="screen-exercise" class="screen">
+  <div class="ex-topbar">
+    <button class="back-btn" onclick="exitExercise()">←</button>
+    <div class="prog-bar"><div class="prog-fill" id="ex-prog"></div></div>
+    <div class="ex-count" id="ex-count">1/12</div>
+    <div class="badge"><span class="badge-xp">⚡</span><span id="ex-xp-badge">0</span></div>
+  </div>
+  <div class="ex-body">
+    <div class="q-area">
+      <div class="ex-mascot" id="ex-mascot"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-math" id="q-math"></div>
+    </div>
+    <div class="answer-area" id="answer-area"></div>
+  </div>
+  <div class="feedback-bar" id="feedback-bar">
+    <div>
+      <div class="fb-label" id="fb-label">Výborně!</div>
+      <div class="fb-sub" id="fb-sub"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <button class="btn-retry-ans" id="btn-retry-ans" onclick="retryAnswer()" style="display:none">Opravit ✏️</button>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Další →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="screen-hdr">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div class="scr-title">Výsledek</div>
+  </div>
+  <div class="result-body">
+    <div class="res-mascot" id="res-mascot"></div>
+    <div class="res-stars" id="res-stars">
+      <span class="res-star" id="rs0">★</span>
+      <span class="res-star" id="rs1">★</span>
+      <span class="res-star" id="rs2">★</span>
+    </div>
+    <div class="res-title" id="res-title">Perfektní!</div>
+    <div class="res-score" id="res-score">12/12 správně</div>
+    <div class="res-xp-box">Získáno <span id="res-xp">+150</span> XP</div>
+    <div class="res-actions">
+      <button class="btn-primary" id="btn-retry" onclick="retryLevel()">Hrát znovu</button>
+      <button class="btn-secondary" onclick="backToLevels()">← Zpět na úrovně</button>
+      <button class="btn-secondary" onclick="showHome()">← Výběr světa</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+// ── MATH HELPERS ──
+const gcd = (a,b) => { a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1; };
+const lcm = (a,b) => Math.abs(a*b)/gcd(a,b);
+const simplify = (n,d) => { const g=gcd(Math.abs(n),Math.abs(d)); return [Math.round(n/g),Math.round(d/g)]; };
+const ri = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const rFrom = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = arr => [...arr].sort(()=>Math.random()-.5);
+const R = (n,p=4) => Math.round(n*10**p)/10**p;
+const numEq = (a,b) => Math.abs(Number(a)-Number(b))<0.0015;
+const parseCz = s => parseFloat(String(s).replace(',','.').trim());
+const toCz = n => {
+  if(!isFinite(n))return '?';
+  if(Number.isInteger(n))return String(n);
+  const s=R(n,4).toString().replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');
+  return s.replace('.',',');
+};
+
+function randSimplFrac(maxDen=10){
+  for(let i=0;i<200;i++){const d=ri(2,maxDen),n=ri(1,d-1);if(gcd(n,d)===1)return[n,d];}
+  return[1,2];
+}
+
+// ── DISPLAY HELPERS ──
+const frac = (n,d) => `<span class="frac"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+const mixedFrac = (w,n,d) => n===0?`<span>${w}</span>`:`<span>${w}&thinsp;</span>${frac(n,d)}`;
+
+function fracChoices([cn,cd],count=4){
+  const pairs=[[cn,cd]];
+  const cands=[[cn+1,cd],[cn-1,cd],[cn,cd+1],[cn,cd-1],[cn+1,cd+1],[cn-1,cd+1],[cn+2,cd],[cn,cd+2],[cn+1,cd-1],[cn-1,cd-1]]
+    .filter(([n,d])=>n>0&&d>1&&gcd(n,d)===1&&!(n===cn&&d===cd));
+  const seen=new Set([`${cn}/${cd}`]);
+  for(const p of shuffle(cands)){
+    const k=`${p[0]}/${p[1]}`;
+    if(!seen.has(k)){seen.add(k);pairs.push(p);}
+    if(pairs.length>=count)break;
+  }
+  return shuffle(pairs.slice(0,count));
+}
+
+// ══════════════════════════════════════════════════
+// GENERATORS — ZLOMKY
+// ══════════════════════════════════════════════════
+function zl_porovnani(){
+  let a,b;
+  do{a=randSimplFrac(8);b=randSimplFrac(8);}while(a[0]*b[1]===b[0]*a[1]);
+  const cmp=a[0]*b[1]>b[0]*a[1]?'>':'<';
+  return{qText:'Vyber správné znaménko:',qMath:`${frac(...a)}&ensp;○&ensp;${frac(...b)}`,type:'cmp',answer:cmp};
+}
+function zl_zkraceni(){
+  const[n,d]=randSimplFrac(8),k=ri(2,5);
+  return{qText:'Zjednoduš na základní tvar:',qMath:frac(n*k,d*k),type:'frac-input',
+    answer:[n,d],checkFn:inp=>{if(!inp||inp[1]===0)return false;const[sn,sd]=simplify(inp[0],inp[1]);return sn===n&&sd===d;},
+    hint:`Vyděl čitatele i jmenovatele číslem ${k}`};
+}
+function zl_rozsirovani(){
+  const[n,d]=randSimplFrac(8),k=ri(2,5);
+  return{qText:'Doplň chybějící čitatele (rozšíření zlomku):',qMath:`${frac(n,d)}&ensp;=&ensp;${frac('?',d*k)}`,
+    type:'num-input',answer:n*k,checkFn:v=>numEq(v,n*k),hint:`Jmenovatel se vynásobil ${k}×, čitatel taky`};
+}
+function zl_nejvetsi(){
+  const d=ri(5,10),seen=new Set(),nums=[];
+  while(nums.length<4){const n=ri(1,d-1);if(!seen.has(n)){seen.add(n);nums.push(n);}}
+  const max=Math.max(...nums);
+  return{qText:'Který zlomek je největší?',qMath:'',type:'choice',answer:`${max}/${d}`,
+    options:shuffle(nums).map(n=>({html:frac(n,d),val:`${n}/${d}`}))};
+}
+function zl_nejmensi(){
+  const d=ri(5,10),seen=new Set(),nums=[];
+  while(nums.length<4){const n=ri(1,d-1);if(!seen.has(n)){seen.add(n);nums.push(n);}}
+  const min=Math.min(...nums);
+  return{qText:'Který zlomek je nejmenší?',qMath:'',type:'choice',answer:`${min}/${d}`,
+    options:shuffle(nums).map(n=>({html:frac(n,d),val:`${n}/${d}`}))};
+}
+function zl_kteryRoven(){
+  // which fraction equals the given one (equivalent fractions)
+  const[n,d]=randSimplFrac(6),k=ri(2,4);
+  const eq=[n*k,d*k];
+  const wrongs=[[n*k+1,d*k],[n*k,d*k+1],[n*k-1,d*k]].filter(([a,b])=>a>0&&b>1);
+  const opts=shuffle([[...eq],...wrongs.slice(0,3)]);
+  return{qText:'Který zlomek se rovná:',qMath:frac(n,d),type:'choice',answer:`${eq[0]}/${eq[1]}`,
+    options:opts.map(([a,b])=>({html:frac(a,b),val:`${a}/${b}`}))};
+}
+function zl_scitaniStejna(){
+  const d=ri(3,12),n1=ri(1,d-1),n2=ri(1,d-1);
+  const[rn,rd]=simplify(n1+n2,d);
+  return rd===1
+    ?{qText:'Vypočítej:',qMath:`${frac(n1,d)} + ${frac(n2,d)} =`,type:'num-input',answer:rn,checkFn:v=>numEq(v,rn)}
+    :{qText:'Vypočítej a zjednoduš:',qMath:`${frac(n1,d)} + ${frac(n2,d)} =`,type:'frac-input',answer:[rn,rd],
+      checkFn:inp=>{if(!inp||inp[1]===0)return false;const[sn,sd]=simplify(inp[0],inp[1]);return sn===rn&&sd===rd;}};
+}
+function zl_odcitaniStejna(){
+  const d=ri(3,12),n2=ri(1,d-2),n1=ri(n2+1,d-1);
+  const[rn,rd]=simplify(n1-n2,d);
+  return rd===1
+    ?{qText:'Vypočítej:',qMath:`${frac(n1,d)} − ${frac(n2,d)} =`,type:'num-input',answer:rn,checkFn:v=>numEq(v,rn)}
+    :{qText:'Vypočítej a zjednoduš:',qMath:`${frac(n1,d)} − ${frac(n2,d)} =`,type:'frac-input',answer:[rn,rd],
+      checkFn:inp=>{if(!inp||inp[1]===0)return false;const[sn,sd]=simplify(inp[0],inp[1]);return sn===rn&&sd===rd;}};
+}
+function zl_celeMinus(){
+  // whole minus fraction: 3 - 2/5
+  const w=ri(2,6),[n,d]=randSimplFrac(8);
+  const rn=w*d-n,[sn,sd]=simplify(rn,d);
+  return sd===1
+    ?{qText:'Vypočítej:',qMath:`${w} − ${frac(n,d)} =`,type:'num-input',answer:sn,checkFn:v=>numEq(v,sn)}
+    :{qText:'Vypočítej a zjednoduš:',qMath:`${w} − ${frac(n,d)} =`,type:'frac-input',answer:[sn,sd],
+      checkFn:inp=>{if(!inp||inp[1]===0)return false;const[a,b]=simplify(inp[0],inp[1]);return a===sn&&b===sd;},
+      hint:`${w} = ${frac(w*d,d)}, pak odečti čitatele`};
+}
+function zl_celeKrat(){
+  // whole × fraction: 4 × 3/8
+  const w=ri(2,6),[n,d]=randSimplFrac(8);
+  const[sn,sd]=simplify(w*n,d);
+  return sd===1
+    ?{qText:'Vynásob:',qMath:`${w} × ${frac(n,d)} =`,type:'num-input',answer:sn,checkFn:v=>numEq(v,sn)}
+    :{qText:'Vynásob a zjednoduš:',qMath:`${w} × ${frac(n,d)} =`,type:'frac-input',answer:[sn,sd],
+      checkFn:inp=>{if(!inp||inp[1]===0)return false;const[a,b]=simplify(inp[0],inp[1]);return a===sn&&b===sd;},
+      hint:`Vynásob jen čitatele`};
+}
+function zl_smisenaToZlomek(){
+  const w=ri(1,5),[n,d]=randSimplFrac(8),rn=w*d+n;
+  return{qText:'Převeď smíšené číslo na nepravý zlomek:',qMath:mixedFrac(w,n,d),type:'frac-input',
+    answer:[rn,d],checkFn:inp=>{if(!inp||inp[1]===0)return false;return inp[0]*d===rn*inp[1];},
+    hint:`${w} × ${d} + ${n} = ${rn}`};
+}
+function zl_zlomekToSmisena(){
+  const d=ri(2,8),w=ri(1,4),[n]=randSimplFrac(d-1),impN=w*d+n;
+  const correct=`${w}_${n}_${d}`;
+  const opts=shuffle([correct,`${w+1}_${n}_${d}`,`${w}_${n+1}_${d}`,`${Math.max(1,w-1)}_${n}_${d}`].slice(0,4));
+  return{qText:'Převeď nepravý zlomek na smíšené číslo:',qMath:frac(impN,d),type:'choice',answer:correct,
+    options:opts.map(o=>{const[ow,on,od]=o.split('_').map(Number);return{html:mixedFrac(ow,on,od),val:o};})};
+}
+function zl_scitaniRuzna(){
+  let[n1,d1]=randSimplFrac(8),[n2,d2]=randSimplFrac(8);
+  while(d1===d2)[n2,d2]=randSimplFrac(8);
+  const ld=lcm(d1,d2),rn=n1*(ld/d1)+n2*(ld/d2),[sn,sd]=simplify(rn,ld);
+  return sd===1
+    ?{qText:'Vypočítej (najdi společného jmenovatele):',qMath:`${frac(n1,d1)} + ${frac(n2,d2)} =`,type:'num-input',answer:sn,checkFn:v=>numEq(v,sn),hint:`Společný jmenovatel: ${ld}`}
+    :{qText:'Vypočítej a zjednoduš:',qMath:`${frac(n1,d1)} + ${frac(n2,d2)} =`,type:'frac-input',answer:[sn,sd],
+      checkFn:inp=>{if(!inp||inp[1]===0)return false;const[isn,isd]=simplify(inp[0],inp[1]);return isn===sn&&isd===sd;},hint:`Společný jmenovatel: ${ld}`};
+}
+function zl_odcitaniRuzna(){
+  for(let t=0;t<50;t++){
+    let[n1,d1]=randSimplFrac(8),[n2,d2]=randSimplFrac(8);
+    while(d1===d2)[n2,d2]=randSimplFrac(8);
+    const ld=lcm(d1,d2),rn=n1*(ld/d1)-n2*(ld/d2);
+    if(rn<=0)continue;
+    const[sn,sd]=simplify(rn,ld);
+    return sd===1
+      ?{qText:'Vypočítej (najdi společného jmenovatele):',qMath:`${frac(n1,d1)} − ${frac(n2,d2)} =`,type:'num-input',answer:sn,checkFn:v=>numEq(v,sn),hint:`Společný jmenovatel: ${ld}`}
+      :{qText:'Vypočítej a zjednoduš:',qMath:`${frac(n1,d1)} − ${frac(n2,d2)} =`,type:'frac-input',answer:[sn,sd],
+        checkFn:inp=>{if(!inp||inp[1]===0)return false;const[isn,isd]=simplify(inp[0],inp[1]);return isn===sn&&isd===sd;},hint:`Společný jmenovatel: ${ld}`};
+  }
+  return zl_scitaniRuzna();
+}
+function zl_nasobeni(){
+  const[n1,d1]=randSimplFrac(7),[n2,d2]=randSimplFrac(7),[rn,rd]=simplify(n1*n2,d1*d2);
+  return rd===1
+    ?{qText:'Vynásob zlomky:',qMath:`${frac(n1,d1)} × ${frac(n2,d2)} =`,type:'num-input',answer:rn,checkFn:v=>numEq(v,rn)}
+    :{qText:'Vynásob zlomky a zjednoduš:',qMath:`${frac(n1,d1)} × ${frac(n2,d2)} =`,type:'frac-input',answer:[rn,rd],
+      checkFn:inp=>{if(!inp||inp[1]===0)return false;const[isn,isd]=simplify(inp[0],inp[1]);return isn===rn&&isd===rd;},
+      hint:`Čitatele spolu, jmenovatele spolu`};
+}
+function zl_deleni(){
+  const[n1,d1]=randSimplFrac(7),[n2,d2]=randSimplFrac(7),[rn,rd]=simplify(n1*d2,d1*n2);
+  return rd===1
+    ?{qText:'Vyděl zlomky:',qMath:`${frac(n1,d1)} ÷ ${frac(n2,d2)} =`,type:'num-input',answer:rn,checkFn:v=>numEq(v,rn)}
+    :{qText:'Vyděl zlomky a zjednoduš:',qMath:`${frac(n1,d1)} ÷ ${frac(n2,d2)} =`,type:'frac-input',answer:[rn,rd],
+      checkFn:inp=>{if(!inp||inp[1]===0)return false;const[isn,isd]=simplify(inp[0],inp[1]);return isn===rn&&isd===rd;},
+      hint:`Dělení = násobení převrácenou hodnotou: × ${frac(d2,n2)}`};
+}
+
+// ══════════════════════════════════════════════════
+// GENERATORS — DESETINNÁ ČÍSLA
+// ══════════════════════════════════════════════════
+function dc_porovnani(){
+  let a,b;do{a=R(ri(1,9)+ri(0,9)/10,1);b=R(ri(1,9)+ri(0,9)/10,1);}while(a===b);
+  return{qText:'Vyber správné znaménko:',qMath:`${toCz(a)}&ensp;○&ensp;${toCz(b)}`,type:'cmp',answer:a>b?'>':'<'};
+}
+function dc_zaokrCele(){
+  const n=R(ri(1,99)+ri(1,9)/10,1),ans=Math.round(n);
+  return{qText:'Zaokrouhli na celé číslo:',qMath:toCz(n),type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function dc_zaokrDes(){
+  const n=R(ri(1,9)+ri(10,99)/100,2),ans=R(Math.round(n*10)/10,1);
+  return{qText:'Zaokrouhli na 1 desetinné místo:',qMath:toCz(n),type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function dc_zaokrDva(){
+  const n=R(ri(1,9)+ri(100,999)/1000,3),ans=R(Math.round(n*100)/100,2);
+  return{qText:'Zaokrouhli na 2 desetinná místa:',qMath:toCz(n),type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),
+    hint:'Sleduj třetí desetinné místo'};
+}
+function dc_ktery(){
+  const base=ri(1,9),pool=[.1,.2,.3,.4,.5,.6,.7,.8,.9];
+  const decs=shuffle(pool).slice(0,4),nums=decs.map(d=>R(base+d,1));
+  const isMin=Math.random()<.5,target=isMin?Math.min(...nums):Math.max(...nums);
+  return{qText:`Které číslo je ${isMin?'nejmenší':'největší'}?`,qMath:'',type:'choice',
+    answer:toCz(target),options:shuffle(nums).map(v=>({html:toCz(v),val:toCz(v)}))};
+}
+function dc_scitani(){
+  const a=R(ri(1,9)+ri(1,9)/10,1),b=R(ri(1,9)+ri(1,9)/10,1),ans=R(a+b,2);
+  return{qText:'Vypočítej:',qMath:`${toCz(a)} + ${toCz(b)} =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function dc_odcitani(){
+  let a,b;do{a=R(ri(2,15)+ri(1,9)/10,1);b=R(ri(1,8)+ri(0,9)/10,1);}while(a<=b);
+  const ans=R(a-b,2);
+  return{qText:'Vypočítej:',qMath:`${toCz(a)} − ${toCz(b)} =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function dc_nasobeni10(){
+  const base=R(ri(1,9)+ri(1,9)/10,1),factor=rFrom([10,100,1000]),ans=R(base*factor,0);
+  return{qText:'Vypočítej:',qMath:`${toCz(base)} × ${factor} =`,type:'num-input',answer:ans,
+    checkFn:v=>numEq(v,ans),hint:'Násobení 10 → posuň čárku o 1 místo doprava'};
+}
+function dc_deleni10(){
+  const ans=R(ri(1,9)+ri(1,9)/10,1),factor=rFrom([10,100]),base=R(ans*factor,0);
+  return{qText:'Vypočítej:',qMath:`${toCz(base)} ÷ ${factor} =`,type:'num-input',answer:ans,
+    checkFn:v=>numEq(v,ans),hint:'Dělení 10 → posuň čárku o 1 místo doleva'};
+}
+function dc_nasobeniDes(){
+  const a=R(ri(1,9)+ri(1,9)/10,1),b=R(ri(1,5)+ri(1,4)/10,1),ans=R(a*b,3);
+  return{qText:'Vypočítej:',qMath:`${toCz(a)} × ${toCz(b)} =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function dc_deleniDes(){
+  const b=R(ri(2,5)+ri(1,4)/10,1),ans=ri(1,5),a=R(ans*b,2);
+  return{qText:'Vypočítej:',qMath:`${toCz(a)} ÷ ${toCz(b)} =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function dc_prevodyDelky(){
+  const convs=[{f:'km',t:'m',k:1000},{f:'m',t:'cm',k:100},{f:'cm',t:'mm',k:10},{f:'m',t:'mm',k:1000}];
+  const c=rFrom(convs),base=R(ri(1,9)+ri(0,9)/10,1),ans=R(base*c.k,2);
+  return{qText:`Převeď na ${c.t}:`,qMath:`${toCz(base)} ${c.f} = ? ${c.t}`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function dc_prevodyHmot(){
+  const convs=[{f:'t',t:'kg',k:1000},{f:'kg',t:'g',k:1000}];
+  const c=rFrom(convs),base=R(ri(1,9)+ri(0,9)/10,1),ans=R(base*c.k,2);
+  return{qText:`Převeď na ${c.t}:`,qMath:`${toCz(base)} ${c.f} = ? ${c.t}`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function dc_prevodyObjem(){
+  const convs=[{f:'l',t:'dl',k:10},{f:'l',t:'ml',k:1000},{f:'dl',t:'ml',k:100}];
+  const c=rFrom(convs),base=R(ri(1,9)+ri(0,9)/10,1),ans=R(base*c.k,2);
+  return{qText:`Převeď na ${c.t}:`,qMath:`${toCz(base)} ${c.f} = ? ${c.t}`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+
+// ══════════════════════════════════════════════════
+// GENERATORS — PROCENTA
+// ══════════════════════════════════════════════════
+function pr_ze100(){
+  const pct=rFrom([10,20,25,30,40,50,60,70,75,80,90]);
+  return{qText:`Kolik je ${pct} % ze čísla 100?`,qMath:`${pct} % ze 100 =`,type:'num-input',answer:pct,checkFn:v=>numEq(v,pct)};
+}
+function pr_easy(){
+  const n=rFrom([20,40,60,80,100,120,150,200,250,300,400,500]),pct=rFrom([10,25,50]);
+  const ans=R(n*pct/100,4),h=pct===10?'Vyděl 10':pct===25?'Vyděl 4':'Vyděl 2';
+  return{qText:`Vypočítej ${pct} % z čísla:`,qMath:`${pct} % z ${n} =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),hint:h};
+}
+function pr_kDes(){
+  if(Math.random()<.5){
+    const pct=rFrom([5,10,15,20,25,30,40,50,60,75,80,100]),ans=R(pct/100,4);
+    return{qText:'Převeď procenta na desetinné číslo:',qMath:`${pct} % =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),hint:'Vyděl 100 (posuň čárku o 2 místa doleva)'};
+  }else{
+    const dec=rFrom([0.05,0.1,0.15,0.2,0.25,0.3,0.4,0.5,0.6,0.75,0.8,1]),ans=R(dec*100,0);
+    return{qText:'Převeď desetinné číslo na procenta:',qMath:`${toCz(dec)} = ? %`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),hint:'Vynásob 100 (posuň čárku o 2 místa doprava)'};
+  }
+}
+function pr_kolikProc(){
+  const pairs=[[1,2],[1,4],[1,5],[1,10],[2,5],[3,4],[3,5],[3,10],[4,5],[7,10],[9,10],[1,20],[3,20]];
+  const[p,t]=rFrom(pairs),ans=R(p*100/t,0);
+  return{qText:`Kolik procent je ${p} z ${t}?`,qMath:`${p} z ${t} = ? %`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function pr_zCisla(){
+  const n=rFrom([20,30,40,50,60,80,100,120,150,200,240,300,400,500]);
+  const pct=rFrom([5,10,15,20,25,30,40,60,70,80]);
+  const ans=R(n*pct/100,4);
+  return{qText:'Vypočítej:',qMath:`${pct} % z ${n} =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function pr_kolik(){
+  const total=rFrom([50,80,100,120,150,160,200,250,400,500]);
+  const pct=rFrom([5,10,15,20,25,30,40,50,60,75,80]);
+  const part=R(total*pct/100,2);
+  return{qText:`Kolik procent je ${toCz(part)} z ${total}?`,qMath:`${toCz(part)} z ${total} = ? %`,type:'num-input',answer:pct,checkFn:v=>numEq(v,pct)};
+}
+function pr_zdrazeni(){
+  const price=rFrom([100,120,150,200,240,300,400,500,600,800,1000]);
+  const pct=rFrom([5,10,15,20,25,30]);
+  const inc=R(price*pct/100,2),ans=R(price+inc,2);
+  return{qText:`Cena vzrostla o ${pct} %. Nová cena?`,qMath:`${price} Kč + ${pct} % =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),hint:`Nárůst = ${toCz(inc)} Kč`};
+}
+function pr_slevy(){
+  const price=rFrom([100,120,150,200,240,300,400,500,600,800,1000]);
+  const pct=rFrom([5,10,15,20,25,30,40,50]);
+  const disc=R(price*pct/100,2),ans=R(price-disc,2);
+  return{qText:`Sleva ${pct} %. Cena po slevě?`,qMath:`${price} Kč − ${pct} % =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),hint:`Sleva = ${toCz(disc)} Kč`};
+}
+function pr_dph(){
+  const base=rFrom([100,200,300,400,500,600,800,1000,1200]);
+  const dph=rFrom([10,15,21]),ans=R(base*(1+dph/100),2);
+  return{qText:`Cena bez DPH: ${base} Kč. Cena s DPH ${dph} %?`,qMath:`${base} Kč + DPH ${dph} % =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),hint:`Koeficient: ${toCz(1+dph/100)}`};
+}
+function pr_puvodniCena(){
+  const pct=rFrom([10,20,25,50]);
+  const orig=rFrom([100,120,150,160,200,240,250,300,400,500]);
+  const after=R(orig*(1-pct/100),2);
+  if(!Number.isInteger(after))return pr_puvodniCena();
+  const coeff=R(1-pct/100,4);
+  return{qText:`Po slevě ${pct} % stojí produkt ${after} Kč. Původní cena?`,
+    qMath:`po slevě ${after} Kč (−${pct} %) → původní = ?`,type:'num-input',answer:orig,checkFn:v=>numEq(v,orig),
+    hint:`${after} ÷ ${toCz(coeff)} = ${orig}`};
+}
+function pr_slozena(){
+  const price=rFrom([100,200,300,400,500]);
+  const pct1=rFrom([10,20,30]),pct2=rFrom([5,10,15]);
+  const a1=R(price*(1-pct1/100),2),ans=R(a1*(1-pct2/100),2);
+  const w1=R(price*(1-(pct1+pct2)/100),2),w2=R(a1*(1+pct2/100),2);
+  const opts=[...new Set([toCz(ans),toCz(w1),toCz(w2)])].slice(0,4);
+  while(opts.length<4)opts.push(toCz(R(ans*rFrom([0.9,0.95,1.05,1.1]),0)));
+  return{qText:`${price} Kč — nejdřív sleva ${pct1} %, pak další ${pct2} %. Výsledná cena?`,
+    qMath:`${price} → −${pct1} % → −${pct2} % =`,type:'choice',answer:toCz(ans),
+    options:shuffle(opts.slice(0,4)).map(v=>({html:`${v} Kč`,val:v}))};
+}
+function pr_urok(){
+  const capital=rFrom([1000,2000,5000,10000]),rate=rFrom([2,3,4,5]),years=ri(1,3);
+  const interest=R(capital*rate/100*years,2),ans=R(capital+interest,2);
+  const yr=years===1?'rok':years<=4?'roky':'let';
+  return{qText:`Vkládáš ${capital} Kč na ${years} ${yr} při ${rate} % p.a. Kolik budeš mít?`,
+    qMath:`${capital} Kč × ${rate} % × ${years} ${yr}`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),
+    hint:`Úrok = ${capital} × ${toCz(rate/100)} × ${years} = ${toCz(interest)} Kč`};
+}
+function pr_navyseniO(){
+  // by what % did value change?
+  const orig=rFrom([100,120,150,200,250,300,400,500]);
+  const pct=rFrom([5,10,15,20,25,30,40,50]);
+  const isIncrease=Math.random()<.5;
+  const newVal=isIncrease?R(orig*(1+pct/100),2):R(orig*(1-pct/100),2);
+  if(!Number.isInteger(newVal))return pr_navyseniO();
+  const verb=isIncrease?'zvýšila z':'snížila z';
+  return{qText:`Cena se ${verb} ${orig} Kč na ${newVal} Kč. O kolik procent?`,
+    qMath:`${orig} Kč → ${newVal} Kč = ? %`,type:'num-input',answer:pct,checkFn:v=>numEq(v,pct),
+    hint:`Rozdíl = ${Math.abs(newVal-orig)} Kč, základ = ${orig} Kč`};
+}
+
+// ── GENERATORS — BONUS PŘEVODY ──
+function bv_zlomekDes(){
+  const pairs=[[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,8],[3,8],[5,8],[1,10],[3,10],[7,10],[1,20],[3,20]];
+  const[n,d]=rFrom(pairs),ans=R(n/d,6);
+  return{qText:'Převeď zlomek na desetinné číslo:',qMath:`${frac(n,d)} =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function bv_desZlomek(){
+  const pairs=[[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,8],[3,8],[5,8],[7,8],[1,10],[3,10],[7,10],[9,10]];
+  const[n,d]=rFrom(pairs);
+  const choices=fracChoices([n,d],4);
+  return{qText:'Převeď desetinné číslo na zlomek (základní tvar):',qMath:`${toCz(R(n/d,4))} =`,type:'choice',
+    answer:`${n}/${d}`,options:choices.map(([cn,cd])=>({html:frac(cn,cd),val:`${cn}/${cd}`}))};
+}
+function bv_procDes(){
+  const pct=rFrom([5,10,12.5,15,20,25,30,40,50,60,75,80,90,100]);
+  const ans=R(pct/100,6);
+  return{qText:'Převeď procenta na desetinné číslo:',qMath:`${toCz(pct)} % =`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans),hint:'Vyděl 100'};
+}
+function bv_zlomekProc(){
+  const pairs=[[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,10],[3,10],[7,10],[1,8],[3,8],[5,8]];
+  const[n,d]=rFrom(pairs),ans=R(n/d*100,4);
+  return{qText:'Převeď zlomek na procenta:',qMath:`${frac(n,d)} = ? %`,type:'num-input',answer:ans,checkFn:v=>numEq(v,ans)};
+}
+function bv_mix(){return rFrom([bv_zlomekDes,bv_desZlomek,bv_procDes,bv_zlomekProc])();}
+
+// ══════════════════════════════════════════════════
+// WORLDS CONFIG
+// ══════════════════════════════════════════════════
+const WORLDS = {
+  zlomky:{
+    name:'Zlomky',icon:'½',cls:'wz',cVar:'--c-z',mascot:'zlomkar',
+    levels:{
+      lehka:  {name:'Lehká',  desc:'Porovnání, zkracování, rozšiřování, největší/nejmenší',xpPer:8,  gen:[zl_porovnani,zl_zkraceni,zl_rozsirovani,zl_nejvetsi,zl_nejmensi,zl_kteryRoven]},
+      stredni:{name:'Střední',desc:'Sčítání, odčítání, celé ± zlomek, smíšená čísla',       xpPer:12, gen:[zl_scitaniStejna,zl_odcitaniStejna,zl_celeMinus,zl_celeKrat,zl_smisenaToZlomek,zl_zlomekToSmisena]},
+      tezka:  {name:'Těžká',  desc:'Různé jmenovatele, násobení, dělení',                   xpPer:18, gen:[zl_scitaniRuzna,zl_odcitaniRuzna,zl_nasobeni,zl_deleni]}
+    }
+  },
+  deci:{
+    name:'Desetinná čísla',icon:'0,5',cls:'wd',cVar:'--c-d',mascot:'deci',
+    levels:{
+      lehka:  {name:'Lehká',  desc:'Porovnání, zaokrouhlování na 1 a 2 des. místa',        xpPer:8,  gen:[dc_porovnani,dc_zaokrCele,dc_zaokrDes,dc_zaokrDva,dc_ktery]},
+      stredni:{name:'Střední',desc:'Sčítání, odčítání, násobení a dělení ×10',              xpPer:12, gen:[dc_scitani,dc_odcitani,dc_nasobeni10,dc_deleni10]},
+      tezka:  {name:'Těžká',  desc:'Násobení a dělení des. čísel, převody délek, hmot, obj.',xpPer:18, gen:[dc_nasobeniDes,dc_deleniDes,dc_prevodyDelky,dc_prevodyHmot,dc_prevodyObjem]}
+    }
+  },
+  proc:{
+    name:'Procenta',icon:'%',cls:'wp',cVar:'--c-p',mascot:'procko',
+    levels:{
+      lehka:  {name:'Lehká',  desc:'Co je procento, 10 %, 25 %, 50 %, převody',            xpPer:8,  gen:[pr_ze100,pr_easy,pr_kDes,pr_kolikProc]},
+      stredni:{name:'Střední',desc:'% z čísla, kolik %, zdražení, sleva, změna %',          xpPer:12, gen:[pr_zCisla,pr_kolik,pr_zdrazeni,pr_slevy,pr_navyseniO]},
+      tezka:  {name:'Těžká',  desc:'DPH, původní cena, složené slevy, úroky',              xpPer:18, gen:[pr_dph,pr_puvodniCena,pr_slozena,pr_urok]}
+    }
+  },
+  bonus:{
+    name:'Převody',icon:'∞',cls:'wb',cVar:'--c-b',mascot:'nexus',isBonus:true,
+    levels:{
+      lehka:  {name:'Základní',    desc:'Zlomek ↔ desetinné ↔ procento',        xpPer:12, gen:[bv_zlomekDes,bv_desZlomek,bv_procDes,bv_zlomekProc]},
+      stredni:{name:'Pokročilé',   desc:'Rychlé převody — náhodné kombinace',   xpPer:15, gen:[bv_mix,bv_mix,bv_mix,bv_mix]},
+      tezka:  {name:'Mistr převodů',desc:'Bez nápovědy, bez slitování',         xpPer:20, gen:[bv_zlomekDes,bv_desZlomek,bv_procDes,bv_zlomekProc]}
+    }
+  }
+};
+
+// ── MASCOTS ──
+const MASCOTS = {
+  zlomkar:`<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="40,4 26,36 54,36" fill="#818cf8"/>
+    <rect x="22" y="34" width="36" height="7" rx="3.5" fill="#6366f1"/>
+    <text x="40" y="30" font-size="8.5" fill="#fbbf24" text-anchor="middle">★</text>
+    <circle cx="40" cy="53" r="16" fill="#fde68a"/>
+    <circle cx="35" cy="50" r="2.5" fill="#312e81"/><circle cx="45" cy="50" r="2.5" fill="#312e81"/>
+    <ellipse cx="35.5" cy="49.3" rx="1" ry=".6" fill="#fff" opacity=".7"/>
+    <ellipse cx="45.5" cy="49.3" rx="1" ry=".6" fill="#fff" opacity=".7"/>
+    <path d="M34,59 Q40,65 46,59" stroke="#c4b5fd" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <line x1="31" y1="68" x2="29" y2="78" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round"/>
+    <line x1="40" y1="69" x2="40" y2="78" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round"/>
+    <line x1="49" y1="68" x2="51" y2="78" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round"/>
+    <path d="M29,69 Q40,75 51,69" stroke="#4f46e5" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <text x="40" y="75.5" font-size="7" fill="#c7d2fe" text-anchor="middle" font-weight="bold">½</text>
+  </svg>`,
+  deci:`<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="14" width="44" height="40" rx="8" fill="#374151"/>
+    <rect x="21" y="17" width="38" height="34" rx="6" fill="#111827"/>
+    <line x1="40" y1="4" x2="40" y2="14" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="40" cy="3" r="3.5" fill="#fbbf24"/>
+    <circle cx="53" cy="28" r="6" fill="#fbbf24"/><circle cx="53" cy="28" r="2.5" fill="#111827"/>
+    <rect x="25" y="23" width="18" height="12" rx="3" fill="#065f46"/>
+    <text x="34" y="33" font-size="8" fill="#6ee7b7" text-anchor="middle" font-weight="bold">0,5</text>
+    <rect x="26" y="40" width="6" height="4" rx="1.5" fill="#10b981"/>
+    <rect x="34" y="40" width="6" height="4" rx="1.5" fill="#f59e0b"/>
+    <rect x="42" y="40" width="6" height="4" rx="1.5" fill="#f87171"/>
+    <rect x="28" y="56" width="24" height="20" rx="7" fill="#374151"/>
+    <rect x="12" y="52" width="16" height="8" rx="4" fill="#374151"/>
+    <rect x="52" y="52" width="16" height="8" rx="4" fill="#374151"/>
+    <circle cx="36" cy="64" r="2.5" fill="#fbbf24"/><circle cx="44" cy="64" r="2.5" fill="#10b981"/>
+    <ellipse cx="36.7" cy="63.2" rx=".9" ry=".6" fill="#fff" opacity=".7"/>
+    <ellipse cx="44.7" cy="63.2" rx=".9" ry=".6" fill="#fff" opacity=".7"/>
+    <path d="M33,70 Q40,75 47,70" stroke="#6ee7b7" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  procko:`<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="40" cy="64" rx="20" ry="13" fill="#064e3b"/>
+    <ellipse cx="23" cy="59" rx="6" ry="3.5" fill="#064e3b" transform="rotate(-18,23,59)"/>
+    <ellipse cx="57" cy="59" rx="6" ry="3.5" fill="#064e3b" transform="rotate(18,57,59)"/>
+    <rect x="33" y="44" width="14" height="16" rx="5" fill="#065f46"/>
+    <ellipse cx="40" cy="34" rx="20" ry="15" fill="#059669"/>
+    <ellipse cx="40" cy="41" rx="11" ry="5.5" fill="#047857"/>
+    <circle cx="36" cy="40" r="1.8" fill="#064e3b"/><circle cx="44" cy="40" r="1.8" fill="#064e3b"/>
+    <circle cx="32" cy="27" r="6" fill="#d1fae5"/><circle cx="32" cy="27" r="2.8" fill="#064e3b"/>
+    <ellipse cx="32.8" cy="26.3" rx="1" ry=".7" fill="#fff" opacity=".7"/>
+    <circle cx="48" cy="27" r="6" fill="#d1fae5"/>
+    <text x="48" y="30.5" font-size="7" fill="#064e3b" text-anchor="middle" font-weight="900">%</text>
+    <polygon points="38,45 42,45 42,55 40,58 38,55" fill="#f87171"/>
+    <rect x="30" y="41" width="5" height="5" rx="1.5" fill="#f0f9ff"/>
+    <rect x="37.5" y="41" width="5" height="5" rx="1.5" fill="#f0f9ff"/>
+    <rect x="45" y="41" width="5" height="5" rx="1.5" fill="#f0f9ff"/>
+  </svg>`,
+  nexus:`<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="40" cy="40" r="36" fill="rgba(251,113,133,.07)"/>
+    <circle cx="40" cy="40" r="34" stroke="rgba(251,113,133,.15)" stroke-width="1.5" fill="none"/>
+    <path d="M21,52 L13,79 L40,65 L67,79 L59,52 Z" fill="#9f1239"/>
+    <ellipse cx="40" cy="58" rx="14" ry="13" fill="#881337"/>
+    <polygon points="45,48 35,60 42,58 37,70 50,56 42,58" fill="#fbbf24"/>
+    <circle cx="40" cy="30" r="15" fill="#fda4af"/>
+    <path d="M25,31 Q40,21 55,31 L55,38 Q40,41 25,38 Z" fill="#9f1239"/>
+    <ellipse cx="34" cy="33" rx="3.5" ry="2.8" fill="#fbbf24"/>
+    <ellipse cx="46" cy="33" rx="3.5" ry="2.8" fill="#fbbf24"/>
+    <ellipse cx="34.8" cy="32.2" rx="1.1" ry=".8" fill="#fff" opacity=".7"/>
+    <ellipse cx="46.8" cy="32.2" rx="1.1" ry=".8" fill="#fff" opacity=".7"/>
+    <text x="10" y="18" font-size="10" fill="#fbbf24" opacity=".85">★</text>
+    <text x="63" y="20" font-size="7" fill="#fb7185" opacity=".8">✦</text>
+  </svg>`
+};
+</script>
+<script>
+"use strict";
+
+// ── GAME STATE ──
+// ── FULL MODE — předáno z WordPressu přes ?mode=full ──
+const FULL_MODE = new URLSearchParams(location.search).get('mode') === 'full';
+
+const DEMO_LIMIT = 15;
+const FREE_WORLDS = ['bonus']; // FajnDvůr vždy zdarma
+let ST = {xp:0,streak:0,progress:{},demoUsed:0,demoDate:''};
+
+function todayStr(){
+  const d=new Date();
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+function loadST(){
+  try{
+    const s=localStorage.getItem('fajncisla_v2');
+    if(s)ST={...ST,...JSON.parse(s)};
+  }catch(e){}
+  // Denní reset (jen v demo módu)
+  if(!FULL_MODE){
+    const today=todayStr();
+    if(ST.demoDate!==today){
+      ST.demoUsed=0;
+      ST.demoDate=today;
+      saveST();
+    }
+  }
+}
+function saveST(){try{localStorage.setItem('fajncisla_v2',JSON.stringify(ST));}catch(e){}}
+
+function demoRemaining(){if(FULL_MODE)return 999;return Math.max(0,DEMO_LIMIT-ST.demoUsed);}
+function isDemoExhausted(){if(FULL_MODE)return false;return ST.demoUsed>=DEMO_LIMIT;}
+function isFreeWorld(wid){if(FULL_MODE)return true;return FREE_WORLDS.includes(wid);}
+const getStars=(wid,lid)=>ST.progress?.[wid]?.[lid]?.stars??0;
+function setStars(wid,lid,stars){
+  if(!ST.progress[wid])ST.progress[wid]={};
+  const cur=ST.progress[wid][lid]?.stars??0;
+  ST.progress[wid][lid]={stars:Math.max(cur,stars)};
+  saveST();
+}
+const worldUnlocked=()=>true;
+
+// ── THEME ──
+const THEMES=['dark','light','colorful'];
+const THEME_ICONS={dark:'🌙',light:'☀️',colorful:'🌈'};
+let _themeIdx=0;
+function cycleTheme(){
+  _themeIdx=(_themeIdx+1)%THEMES.length;
+  applyTheme(THEMES[_themeIdx]);
+  try{localStorage.setItem('fajncisla_theme',THEMES[_themeIdx]);}catch(e){}
+}
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  const btn=document.getElementById('theme-btn');
+  if(btn)btn.textContent=THEME_ICONS[t]||'🌙';
+  _themeIdx=THEMES.indexOf(t);
+}
+function loadTheme(){
+  try{
+    const saved=localStorage.getItem('fajncisla_theme');
+    if(saved&&THEMES.includes(saved)){applyTheme(saved);return;}
+  }catch(e){}
+  applyTheme('dark');
+}
+
+// ── AUDIO ──
+let actx=null;
+function getCtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();return actx;}
+function beep(freq,type,dur,gain=0.22){
+  try{const c=getCtx(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type=type;o.frequency.value=freq;
+    g.gain.setValueAtTime(gain,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dur);
+    o.start();o.stop(c.currentTime+dur);}catch(e){}
+}
+const sndCorrect=()=>{beep(523,'sine',.1);setTimeout(()=>beep(659,'sine',.1),80);setTimeout(()=>beep(784,'sine',.15),160);};
+const sndWrong=()=>{beep(220,'sawtooth',.18);setTimeout(()=>beep(196,'sawtooth',.18),110);};
+const sndStreak=()=>{[784,880,988,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.12,.28),i*70));};
+const sndComplete=()=>{[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.22,.3),i*110));};
+
+// ── GAME EFFECTS ──
+function spawnConfetti(){
+  const colors=['#818cf8','#fbbf24','#34d399','#fb7185','#f472b6','#60a5fa','#a78bfa','#86efac'];
+  const mascEl=document.getElementById('ex-mascot');
+  const r=mascEl?mascEl.getBoundingClientRect():{left:window.innerWidth/2,top:200,width:64,height:64};
+  const ox=r.left+r.width/2,oy=r.top+r.height/2;
+  for(let i=0;i<28;i++){
+    const el=document.createElement('div');
+    el.className='cfp';
+    const size=ri(5,13),isCircle=Math.random()>.4;
+    const angle=Math.random()*Math.PI*2,dist=80+Math.random()*140;
+    const cx=Math.cos(angle)*dist*(0.6+Math.random()*.8)+'px';
+    const cy=(Math.sin(angle)*dist-60-Math.random()*80)+'px';
+    const cr=(Math.random()*720-360)+'deg';
+    const dur=(0.55+Math.random()*.65)+'s';
+    el.style.cssText=`
+      left:${ox}px;top:${oy}px;
+      width:${size}px;height:${isCircle?size:Math.round(size*.7)}px;
+      border-radius:${isCircle?'50%':'2px'};
+      background:${colors[i%colors.length]};
+      --cx:${cx};--cy:${cy};--cr:${cr};
+      animation-duration:${dur};
+      animation-delay:${(i*.012)+'s'};
+    `;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),1200);
+  }
+}
+
+function spawnXpBurst(xp){
+  const badge=document.getElementById('ex-xp-badge');
+  const r=badge?badge.getBoundingClientRect():{left:window.innerWidth-80,top:60};
+  const el=document.createElement('div');
+  el.className='xp-burst';
+  el.textContent=`+${xp}`;
+  el.style.cssText=`left:${r.left-10}px;top:${r.top}px;`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),950);
+}
+
+function showStreakToast(streak){
+  const msgs={3:'🔥 Série 3!',5:'🔥🔥 Série 5!',10:'🔥🔥🔥 Série 10!'};
+  const msg=msgs[streak]||(streak>10&&streak%10===0?`🔥 Série ${streak}!`:null);
+  if(!msg)return;
+  const el=document.createElement('div');
+  el.className='streak-toast';
+  el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1400);
+}
+
+function spawnResultConfetti(){
+  const colors=['#818cf8','#fbbf24','#34d399','#fb7185','#f472b6','#60a5fa'];
+  for(let i=0;i<50;i++){
+    const el=document.createElement('div');
+    el.className='cfp';
+    const size=ri(6,14);
+    const ox=Math.random()*window.innerWidth;
+    const oy=-20;
+    const cx=(Math.random()-0.5)*200+'px';
+    const cy=(200+Math.random()*400)+'px';
+    const cr=(Math.random()*720-360)+'deg';
+    const dur=(0.8+Math.random()*1.2)+'s';
+    el.style.cssText=`
+      left:${ox}px;top:${oy}px;
+      width:${size}px;height:${ri(4,10)}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      background:${colors[i%colors.length]};
+      --cx:${cx};--cy:${cy};--cr:${cr};
+      animation-duration:${dur};
+      animation-delay:${(i*.025)+'s'};
+    `;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2200);
+  }
+}
+
+// ── SESSION ──
+let SEL={worldId:null,levelId:null};
+let SES=null;
+const QUESTIONS_PER_SESSION=12;
+
+function buildSession(wid,lid){
+  const level=WORLDS[wid].levels[lid];
+  const gens=level.gen,exs=[];
+  let pool=[];
+  while(exs.length<QUESTIONS_PER_SESSION){
+    if(pool.length===0)pool=shuffle(gens);
+    const gen=pool.shift();
+    let ex=null,tries=0;
+    while(!ex&&tries++<20){try{ex=gen();}catch(e){}}
+    if(ex)exs.push(ex);
+  }
+  return exs;
+}
+
+function startSession(wid,lid){
+  // Demo check — free worlds always allowed
+  if(!isFreeWorld(wid) && isDemoExhausted()){
+    showDemoModal(false);
+    return;
+  }
+  SEL={worldId:wid,levelId:lid};
+  const world=WORLDS[wid];
+  document.documentElement.style.setProperty('--active',`var(${world.cVar})`);
+  SES={worldId:wid,levelId:lid,exs:buildSession(wid,lid),cur:0,correct:0,xpGained:0,answered:false,attempts:0};
+  showScreen('screen-exercise');
+  renderQuestion();
+}
+
+// ── RENDER QUESTION ──
+function renderQuestion(){
+  const ex=SES.exs[SES.cur];
+  const total=SES.exs.length;
+  SES.answered=false;
+  SES.attempts=0;
+
+  document.getElementById('ex-prog').style.width=`${(SES.cur/total)*100}%`;
+  document.getElementById('ex-count').textContent=`${SES.cur+1}/${total}`;
+  document.getElementById('ex-xp-badge').textContent=ST.xp;
+
+  const mascEl=document.getElementById('ex-mascot');
+  mascEl.innerHTML=MASCOTS[WORLDS[SES.worldId].mascot]||'';
+  mascEl.className='ex-mascot';
+
+  document.getElementById('q-text').innerHTML=ex.qText||'';
+  document.getElementById('q-math').innerHTML=ex.qMath||'';
+
+  const area=document.getElementById('answer-area');
+  area.innerHTML='';
+  hideFeedback();
+
+  if(ex.type==='choice')renderChoices(area,ex);
+  else if(ex.type==='cmp')renderCmp(area,ex);
+  else if(ex.type==='frac-input')renderFracInput(area,ex);
+  else if(ex.type==='num-input')renderNumInput(area,ex);
+}
+
+function renderChoices(area,ex){
+  const g=document.createElement('div');
+  g.className='choices-grid';
+  (ex.options||[]).forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';btn.innerHTML=opt.html;btn.dataset.val=opt.val;
+    btn.addEventListener('click',()=>answerChoice(btn,opt.val,ex.answer,g));
+    g.appendChild(btn);
+  });
+  area.appendChild(g);
+}
+
+function renderCmp(area,ex){
+  const g=document.createElement('div');
+  g.className='cmp-grid';
+  ['<','=','>'].forEach(sym=>{
+    const btn=document.createElement('button');
+    btn.className='cmp-btn';btn.textContent=sym;
+    btn.addEventListener('click',()=>answerChoice(btn,sym,ex.answer,g));
+    g.appendChild(btn);
+  });
+  area.appendChild(g);
+}
+
+function renderFracInput(area,ex){
+  const wrap=document.createElement('div');
+  wrap.innerHTML=`
+    <div class="frac-input-wrap">
+      <div class="frac-input-widget">
+        <input type="text" id="fi-n" placeholder="?" inputmode="numeric" autocomplete="off" enterkeyhint="next">
+        <div class="frac-bar-line"></div>
+        <input type="text" id="fi-d" placeholder="?" inputmode="numeric" autocomplete="off" enterkeyhint="done">
+      </div>
+      <div class="input-hint">Čitatel nahoře · jmenovatel dole · Enter přepíná</div>
+      <div class="submit-row">
+        <button class="btn-submit" id="btn-frac-ok">Potvrdit</button>
+      </div>
+    </div>`;
+  area.appendChild(wrap);
+
+  const fiN=document.getElementById('fi-n');
+  const fiD=document.getElementById('fi-d');
+  const ok=document.getElementById('btn-frac-ok');
+
+  const cleanInt=v=>{const s=String(v).trim().replace(/\s+/g,'');if(!/^-?\d+$/.test(s))return null;return parseInt(s,10);};
+  const goToD=()=>{fiD.focus();if(typeof fiD.select==='function')fiD.select();};
+  const goToN=()=>{fiN.focus();if(typeof fiN.select==='function')fiN.select();};
+
+  const submit=()=>{
+    if(SES.answered)return;
+    const n=cleanInt(fiN.value);
+    const d=cleanInt(fiD.value);
+    if(n===null){goToN();return;}
+    if(d===null||d===0){goToD();return;}
+    const checkFn=ex.checkFn||(inp=>inp[0]===ex.answer[0]&&inp[1]===ex.answer[1]);
+    const isOk=checkFn([n,d]);
+    const correctText=ex.answer?frac(ex.answer[0],ex.answer[1]):'';
+    processAnswer(isOk,correctText,ex.hint);
+  };
+
+  ok.addEventListener('click',submit);
+  fiN.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key==='NumpadEnter'){e.preventDefault();goToD();}
+    if(e.key==='/'||e.key===':'||e.key===';'||e.key==='ArrowDown'){e.preventDefault();goToD();}
+  });
+  fiD.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key==='NumpadEnter'){e.preventDefault();
+      if(!SES.answered)submit();}
+    if(e.key==='ArrowUp'){e.preventDefault();goToN();}
+  });
+  setTimeout(()=>fiN.focus(),50);
+}
+
+function renderNumInput(area,ex){
+  const wrap=document.createElement('div');
+  wrap.innerHTML=`
+    <div>
+      <div class="num-input-widget">
+        <input type="text" id="ni-v" placeholder="?" inputmode="decimal" autocomplete="off">
+      </div>
+      <div class="input-hint" style="text-align:center;margin-top:8px">Desetinná čárka nebo tečka · Enter = potvrdit</div>
+      <div class="submit-row" style="margin-top:12px">
+        <button class="btn-submit" id="btn-num-ok">Potvrdit</button>
+      </div>
+    </div>`;
+  area.appendChild(wrap);
+  const inp=document.getElementById('ni-v');
+  const ok=document.getElementById('btn-num-ok');
+  const sub=()=>{
+    if(SES.answered)return;
+    const raw=inp.value.trim();if(!raw)return;
+    const val=parseCz(raw);if(isNaN(val)){inp.select();return;}
+    const checkFn=ex.checkFn||(v=>numEq(v,ex.answer));
+    const isOk=checkFn(val);
+    processAnswer(isOk,toCz(ex.answer),ex.hint);
+  };
+  ok.addEventListener('click',sub);
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      if(!SES.answered)sub();
+    }
+  });
+  setTimeout(()=>inp.focus(),50);
+}
+
+// ── ANSWER PROCESSING ──
+function answerChoice(btn,val,correct,container){
+  if(SES.answered)return;
+  const isOk=String(val)===String(correct);
+  container.querySelectorAll('button').forEach(b=>{
+    const bv=b.dataset.val??b.textContent;
+    if(String(bv)===String(correct))b.classList.add(isOk?'correct':'reveal');
+  });
+  if(!isOk)btn.classList.add('wrong');
+  processAnswer(isOk,null,SES.exs[SES.cur].hint);
+}
+
+function processAnswer(isOk,correctText,hint){
+  if(SES.answered)return;
+  SES.answered=true;
+
+  const mascEl=document.getElementById('ex-mascot');
+  const ex=SES.exs[SES.cur];
+
+  if(isOk){
+    SES.correct++;
+    const baseXp=WORLDS[SES.worldId].levels[SES.levelId].xpPer;
+    const xp=SES.attempts===0?baseXp:SES.attempts===1?Math.max(1,Math.round(baseXp*2/3)):Math.max(1,Math.round(baseXp/3));
+    SES.xpGained+=xp;ST.xp+=xp;ST.streak++;saveST();
+    mascEl.classList.add('bounce');
+    sndCorrect();
+    setTimeout(()=>spawnConfetti(),80);
+    setTimeout(()=>spawnXpBurst(xp),120);
+    showStreakToast(ST.streak);
+    if(ST.streak===3||ST.streak===5||ST.streak%10===0)sndStreak();
+    removeSolutionBox();
+    showFeedbackOK();
+  }else{
+    SES.attempts++;
+    ST.streak=0;saveST();
+    mascEl.classList.add('shake');
+    sndWrong();
+
+    const isInput=ex.type==='frac-input'||ex.type==='num-input';
+
+    if(!isInput||SES.attempts>=2){
+      // Výběrové otázky: hned ukaž řešení
+      // Vstupní otázky 2.+: ukaž řešení, nabídni opravit (pokud attempts==2) nebo jen Další
+      showSolutionBox(correctText,hint);
+      if(!isInput||SES.attempts>=3){
+        showFeedbackWrong(false); // jen Další
+      }else{
+        showFeedbackWrong(true);  // Opravit + Přeskočit
+      }
+    }else{
+      // Vstupní otázky 1. pokus: jen "zkus znovu"
+      showFeedbackRetry();
+    }
+  }
+  document.getElementById('ex-xp-badge').textContent=ST.xp;
+  document.getElementById('hdr-xp').textContent=ST.xp;
+  document.getElementById('hdr-streak').textContent=ST.streak;
+}
+
+// ── FEEDBACK BAR ──
+const CORRECT_MSGS=['Výborně! 🎉','Přesně tak! ✓','Správně!','Perfektní!','Bomba! 💥','Jasně! 🌟','Tak jo! 🎯'];
+let _enterNext=null;
+
+function _setEnter(fn){
+  if(_enterNext){document.removeEventListener('keydown',_enterNext);_enterNext=null;}
+  // Delay aby Enter ze submitu nespustil okamžitě tento handler
+  setTimeout(()=>{
+    _enterNext=e=>{
+      if(e.key==='Enter'||e.key==='NumpadEnter'){e.preventDefault();fn();}
+    };
+    document.addEventListener('keydown',_enterNext);
+  },150);
+}
+
+function showFeedbackOK(){
+  const bar=document.getElementById('feedback-bar');
+  bar.className='feedback-bar show fb-correct';
+  document.getElementById('fb-label').textContent=rFrom(CORRECT_MSGS);
+  document.getElementById('fb-sub').innerHTML='';
+  document.getElementById('btn-retry-ans').style.display='none';
+  const nb=document.getElementById('btn-next');
+  nb.style.display='';nb.textContent='Další →';
+  _setEnter(nextQuestion);
+  setTimeout(()=>nb.focus(),0);
+}
+
+function showFeedbackRetry(){
+  // 1. špatná odpověď — jen "zkus znovu", žádná nápověda
+  const bar=document.getElementById('feedback-bar');
+  bar.className='feedback-bar show fb-wrong';
+  document.getElementById('fb-label').textContent='Zkus to znovu! 💪';
+  document.getElementById('fb-sub').innerHTML='';
+  const rb=document.getElementById('btn-retry-ans');
+  rb.style.display='';
+  document.getElementById('btn-next').style.display='none';
+  _setEnter(retryAnswer);
+  setTimeout(()=>rb.focus(),0);
+}
+
+function showFeedbackWrong(canRetry){
+  // 2.+ špatná odpověď — solution box je viditelný
+  const bar=document.getElementById('feedback-bar');
+  bar.className='feedback-bar show fb-wrong';
+  document.getElementById('fb-label').textContent=canRetry?'Podívej se na řešení výše a zkus znovu 💡':'Prohlédni si správné řešení výše ↑';
+  document.getElementById('fb-sub').innerHTML='';
+  const rb=document.getElementById('btn-retry-ans');
+  const nb=document.getElementById('btn-next');
+  if(canRetry){
+    rb.style.display='';
+    nb.style.display='';nb.textContent='Přeskočit →';
+    _setEnter(retryAnswer);
+    setTimeout(()=>rb.focus(),0);
+  }else{
+    rb.style.display='none';
+    nb.style.display='';nb.textContent='Další →';
+    _setEnter(nextQuestion);
+    setTimeout(()=>nb.focus(),0);
+  }
+}
+
+function hideFeedback(){
+  document.getElementById('feedback-bar').className='feedback-bar';
+  if(_enterNext){document.removeEventListener('keydown',_enterNext);_enterNext=null;}
+}
+
+function retryAnswer(){
+  hideFeedback();
+  SES.answered=false;
+  removeSolutionBox();
+  const fiN=document.getElementById('fi-n');
+  const fiD=document.getElementById('fi-d');
+  const niV=document.getElementById('ni-v');
+  if(fiN){fiN.value='';fiD.value='';fiN.focus();}
+  if(niV){niV.value='';niV.focus();}
+}
+
+function removeSolutionBox(){
+  const sb=document.getElementById('solution-reveal');
+  if(sb)sb.remove();
+}
+
+function showSolutionBox(correctText,hint){
+  const area=document.getElementById('answer-area');
+  if(!area)return;
+  removeSolutionBox();
+  const box=document.createElement('div');
+  box.id='solution-reveal';
+  box.style.cssText=
+    'margin-top:16px;padding:16px 18px;border-radius:14px;'+
+    'background:rgba(248,81,73,.09);border:1.5px solid rgba(248,81,73,.35);'+
+    'animation:solutionIn .3s ease;';
+  let html='<div style="font-size:.7rem;color:var(--wrong);font-weight:700;'+
+    'margin-bottom:10px;letter-spacing:.6px;text-transform:uppercase">✗ Správná odpověď</div>';
+  if(correctText){
+    html+=`<div style="font-size:1.8rem;font-family:'Syne',sans-serif;font-weight:700;`+
+      `color:var(--text);line-height:1.3;margin-bottom:${hint?'12px':'0'}">${correctText}</div>`;
+  }
+  if(hint){
+    html+=`<div style="margin-top:8px;padding:10px 12px;border-radius:8px;`+
+      `background:rgba(255,255,255,.05);font-size:.84rem;color:var(--text2);line-height:1.6">`+
+      `💡 <strong>Nápověda:</strong> ${hint}</div>`;
+  }
+  box.innerHTML=html;
+  area.appendChild(box);
+  setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+// ── NAVIGATION ──
+function nextQuestion(){
+  SES.cur++;
+  const sb=document.getElementById('solution-reveal');
+  if(sb)sb.remove();
+  // Počítáme zodpovězené příklady pro demo (non-free worlds)
+  if(!isFreeWorld(SES.worldId)){
+    ST.demoUsed++;
+    saveST();
+    updateDemoBar();
+    // Upozornění při posledních 3 příkladech
+    if(demoRemaining()===3)showDemoToast();
+    // Limit vyčerpán uprostřed session — nech dokončit current set, pak zastavit
+    if(isDemoExhausted() && SES.cur < SES.exs.length){
+      hideFeedback();
+      finishSession();
+      return;
+    }
+  }
+  if(SES.cur>=SES.exs.length)finishSession();
+  else{hideFeedback();renderQuestion();}
+}
+function exitExercise(){hideFeedback();showLevels(SEL.worldId);}
+function retryLevel(){startSession(SEL.worldId,SEL.levelId);}
+function backToLevels(){showLevels(SEL.worldId);}
+
+// ── FINISH SESSION ──
+function finishSession(){
+  const total=SES.exs.length,correct=SES.correct,ratio=correct/total;
+  const stars=ratio>=0.92?3:ratio>=0.7?2:ratio>=0.5?1:0;
+  setStars(SES.worldId,SES.levelId,stars);
+  sndComplete();
+  if(stars>=2)setTimeout(()=>spawnResultConfetti(),300);
+
+  document.getElementById('res-mascot').innerHTML=MASCOTS[WORLDS[SES.worldId].mascot]||'';
+
+  ['rs0','rs1','rs2'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className='res-star';
+    if(i<stars)setTimeout(()=>el.classList.add('earned'),400+i*200);
+  });
+
+  const titles=['Nevzdávej se!','Dobrý začátek!','Dobře!','Perfektní!'];
+  document.getElementById('res-title').textContent=titles[stars];
+  document.getElementById('res-score').textContent=`${correct} / ${total} správně`;
+  document.getElementById('res-xp').textContent=`+${SES.xpGained}`;
+  showScreen('screen-result');
+}
+
+// ── SCREEN NAVIGATION ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function showHome(){
+  document.documentElement.style.setProperty('--active','var(--c-z)');
+  renderHome();showScreen('screen-home');
+}
+function showLevels(wid){
+  SEL.worldId=wid;
+  const world=WORLDS[wid];
+  document.documentElement.style.setProperty('--active',`var(${world.cVar})`);
+  document.getElementById('lvl-title').textContent=world.name;
+  const wrap=document.getElementById('levels-wrap');
+  wrap.innerHTML='';
+  Object.entries(world.levels).forEach(([lid,level])=>{
+    const stars=getStars(wid,lid);
+    const card=document.createElement('div');
+    card.className='level-card';
+    const starStr='★'.repeat(stars)+'☆'.repeat(3-stars);
+    card.innerHTML=`
+      <div class="lc-left">
+        <div class="lc-name">${level.name}</div>
+        <div class="lc-desc">${level.desc}</div>
+      </div>
+      <div class="lc-stars">${starStr}</div>`;
+    card.addEventListener('click',()=>startSession(wid,lid));
+    wrap.appendChild(card);
+  });
+  showScreen('screen-levels');
+}
+
+// ── RENDER HOME ──
+function renderHome(){
+  document.getElementById('hdr-xp').textContent=ST.xp;
+  document.getElementById('hdr-streak').textContent=ST.streak;
+  // Demo bar jen v demo módu
+  const demoBarWrap=document.getElementById('demo-bar-wrap');
+  if(demoBarWrap)demoBarWrap.style.display=FULL_MODE?'none':'';
+  if(!FULL_MODE)updateDemoBar();
+  const grid=document.getElementById('worlds-grid');
+  grid.innerHTML='';
+  Object.entries(WORLDS).forEach(([wid,world])=>{
+    const unlocked=worldUnlocked(wid);
+    const card=document.createElement('div');
+    card.className=`world-card ${world.cls}`;
+    const totalStars=Object.keys(world.levels).reduce((sum,lid)=>sum+getStars(wid,lid),0);
+    const maxStars=Object.keys(world.levels).length*3;
+    const starsStr=totalStars>0?`★ ${totalStars}/${maxStars}`:'Nezačato';
+    card.innerHTML=`
+      <span class="wc-icon">${world.icon}</span>
+      <div class="wc-name">${world.name}</div>
+      <span class="wc-stars">${starsStr}</span>
+      <div class="wc-mascot">${MASCOTS[world.mascot]||''}</div>
+      ${!unlocked?'<span class="wc-lock">🔒</span>':''}`;
+    if(unlocked)card.addEventListener('click',()=>showLevels(wid));
+    grid.appendChild(card);
+  });
+}
+
+// ── DEMO MODAL ──
+function showDemoModal(showRemaining=false){
+  const overlay=document.getElementById('demo-overlay');
+  const modal=document.getElementById('demo-modal');
+  const usedEl=document.getElementById('demo-used-count');
+  const remWrap=document.getElementById('demo-remaining-wrap');
+  const remEl=document.getElementById('demo-remaining');
+  if(usedEl)usedEl.textContent=ST.demoUsed;
+  if(showRemaining && demoRemaining()>0){
+    if(remWrap)remWrap.style.display='';
+    if(remEl)remEl.textContent=demoRemaining();
+  } else {
+    if(remWrap)remWrap.style.display='none';
+  }
+  if(overlay)overlay.classList.add('show');
+  if(modal)modal.classList.add('show');
+}
+function closeDemoModal(){
+  document.getElementById('demo-overlay')?.classList.remove('show');
+  document.getElementById('demo-modal')?.classList.remove('show');
+}
+function showDemoToast(){
+  const existing=document.getElementById('demo-toast');
+  if(existing)existing.remove();
+  const el=document.createElement('div');
+  el.id='demo-toast';
+  el.style.cssText=`position:fixed;top:76px;left:50%;transform:translateX(-50%) scale(0);
+    background:var(--warn);color:#1a1000;border-radius:40px;padding:10px 22px;
+    font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;z-index:9998;
+    white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,.4);
+    animation:toastPop .4s cubic-bezier(.34,1.56,.64,1) forwards,
+              toastFade .3s ease 1.8s forwards;`;
+  el.textContent=`Zbývají ${demoRemaining()} příklady zdarma`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2400);
+}
+function updateDemoBar(){
+  const fill=document.getElementById('demo-bar-fill');
+  const count=document.getElementById('demo-bar-count');
+  if(fill)fill.style.width=`${Math.min(100,(ST.demoUsed/DEMO_LIMIT)*100)}%`;
+  if(count)count.textContent=`${demoRemaining()} zbývá`;
+}
+
+// ── INIT ──
+loadST();
+loadTheme();
+renderHome();
+</script>
+
+
+<!-- DEMO MODAL -->
+<div class="demo-overlay" id="demo-overlay"></div>
+<div class="demo-modal" id="demo-modal">
+  <div class="demo-modal-icon">⚡</div>
+  <div class="demo-modal-title">Demo na dnes vyčerpáno</div>
+  <div class="demo-modal-sub">Dnes jsi procvičil/a <strong id="demo-used-count">15</strong> příkladů zdarma. Zítra se limit obnoví — nebo pokračuj hned s plným přístupem.</div>
+  <div class="demo-modal-remaining" id="demo-remaining-wrap" style="display:none">
+    Zbývá ti dnes ještě <strong id="demo-remaining">0</strong> příkladů zdarma.
+  </div>
+  <div class="demo-modal-actions">
+    <a href="/predplatne" class="demo-btn-primary">Získat plný přístup →</a>
+    <button class="demo-btn-secondary" onclick="closeDemoModal()">Zavřít</button>
+  </div>
+  <div class="demo-modal-note">FajnDvůr je vždy zdarma a bez limitu.</div>
+</div>
+
+</body>
+</html>
