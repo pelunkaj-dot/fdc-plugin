@@ -1,0 +1,2639 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FajnCvičebna – skládání vět</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#ffffff; --text:#111827; --muted:#6b7280;
+      --border:#e6e8f0; --dash:#cfd6f3;
+      --primary:#2563eb; --primary2:#1d4ed8;
+      --good:#1a7f37; --warn:#b26a00; --bad:#c21c1c;
+      --shadow: 0 10px 24px rgba(0,0,0,.08);
+      --shadow2: 0 4px 14px rgba(0,0,0,.07);
+      --mode-comm:#2563eb; --mode-school:#16a34a;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    *{ box-sizing:border-box; }
+    body{ margin:0; color:var(--text); background:var(--bg); position:relative; overflow-x:hidden; }
+
+    /* MODE THEMING */
+    body.mode-comm { --primary:var(--mode-comm); --primary2:#1d4ed8; }
+    body.mode-school { --primary:var(--mode-school); --primary2:#15803d; }
+
+    .bg-flag{
+      position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.12;
+      background-size: 900px 520px; background-repeat:repeat; background-position:center;
+      filter: saturate(1.2) contrast(1.15) blur(0.5px); transform:scale(1.02);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='520' viewBox='0 0 900 520'%3E%3Crect width='900' height='520' fill='%23001247'/%3E%3Cpath d='M0 0 L900 520 M900 0 L0 520' stroke='%23ffffff' stroke-width='120'/%3E%3Cpath d='M0 0 L900 520 M900 0 L0 520' stroke='%23cf142b' stroke-width='60'/%3E%3Crect x='0' y='200' width='900' height='120' fill='%23ffffff'/%3E%3Crect x='0' y='230' width='900' height='60' fill='%23cf142b'/%3E%3Crect x='390' y='0' width='120' height='520' fill='%23ffffff'/%3E%3Crect x='420' y='0' width='60' height='520' fill='%23cf142b'/%3E%3C/svg%3E");
+    }
+
+    .wrap{ max-width:1200px; margin:0 auto; padding:18px; position:relative; z-index:1; }
+    h1{ margin:0 0 8px; font-size:20px; }
+    .topHint{
+      margin:0 0 14px; color:var(--muted); background:rgba(255,255,255,.88);
+      border:1px solid var(--border); border-radius:14px; padding:12px 14px;
+      box-shadow:0 6px 18px rgba(0,0,0,.05); backdrop-filter:blur(5px);
+      line-height:1.35; font-weight:800;
+    }
+
+    .panelGrid{ display:grid; grid-template-columns:1fr; gap:14px; }
+    @media (min-width:980px){ .panelGrid{ grid-template-columns:460px 1fr; align-items:start; } }
+
+    .card{
+      background:rgba(255,255,255,.93); border:1px solid var(--border);
+      border-radius:16px; padding:14px; box-shadow:var(--shadow); backdrop-filter:blur(7px);
+    }
+    .sectionTitle{ font-weight:900; margin:0 0 10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .pill{ font-size:12px; font-weight:900; border:1px solid var(--border); background:#f3f4f8; border-radius:999px; padding:4px 10px; color:#111827; }
+
+    label{ font-weight:900; font-size:13px; display:block; margin:0 0 6px; }
+    textarea, input[type="text"]{
+      width:100%; border:1px solid #d7daea; border-radius:14px; padding:10px 12px;
+      font-weight:800; outline:none; box-shadow:0 3px 10px rgba(0,0,0,.05); background:white;
+    }
+    textarea{ min-height:84px; resize:vertical; font-weight:750; }
+    select{ width:100%; border:1px solid #d7daea; border-radius:14px; padding:10px 12px; font-weight:900; background:white; box-shadow:0 3px 10px rgba(0,0,0,.05); }
+    .row2{ display:grid; grid-template-columns:1fr; gap:10px; }
+    @media (min-width:520px){ .row2{ grid-template-columns:1fr 1fr; } }
+
+    button{
+      border:1px solid #d7daea; background:white; padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:900; color:#0f172a; box-shadow:0 3px 10px rgba(0,0,0,.06);
+      transition:transform .06s ease, background .12s ease, box-shadow .12s ease;
+    }
+    button:hover{ background:#f1f3fb; }
+    button:active{ transform:scale(.99); }
+    button.primary{ background:var(--primary); color:white; border-color:var(--primary); }
+    button.primary:hover{ background:var(--primary2); }
+    button.warn{ background:#fff7ed; border-color:#fed7aa; }
+    button.danger{ background:#fff1f2; border-color:#fecdd3; }
+    button.ghost{ background:#f3f4ff; border-color:#dbe1ff; }
+    .btnRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .tiny{ font-size:12px; color:var(--muted); font-weight:800; }
+    .hr{ height:1px; background:var(--border); margin:12px 0; }
+
+    .note{
+      margin-top:10px; padding:10px 12px; border:1px solid var(--border);
+      background:rgba(251,252,255,.86); border-radius:14px; color:var(--muted);
+      box-shadow:var(--shadow2); font-size:13px; font-weight:850; line-height:1.35;
+    }
+
+    /* MODE SEGMENT */
+    .seg{
+      display:flex; gap:6px; background:#f3f4f8; border:1px solid var(--border);
+      border-radius:14px; padding:6px; box-shadow:0 3px 10px rgba(0,0,0,.05); user-select:none;
+    }
+    .seg button{ box-shadow:none; border:1px solid transparent; border-radius:12px; padding:9px 10px; background:transparent; font-weight:950; }
+    .seg button.active{ background:white; border-color:#d7daea; box-shadow:0 4px 12px rgba(0,0,0,.06); }
+    .seg button#modeComm.active { color:var(--mode-comm); }
+    .seg button#modeSchool.active { color:var(--mode-school); }
+
+    /* MODE INDICATOR STRIP */
+    .modeStrip{
+      margin-bottom:10px; padding:8px 14px; border-radius:12px; font-size:13px;
+      font-weight:900; display:flex; align-items:center; gap:8px;
+      transition:background .3s, border-color .3s, color .3s;
+    }
+    .modeStrip.comm{ background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; }
+    .modeStrip.school{ background:#f0fdf4; border:1px solid #bbf7d0; color:#166534; }
+
+    .targetBox{
+      border:1px solid var(--border); border-radius:14px; padding:12px;
+      background:rgba(251,252,255,.90); box-shadow:var(--shadow2); backdrop-filter:blur(6px);
+    }
+    .targetTopRow{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start; }
+    .targetHint{ font-size:14px; font-weight:950; color:var(--muted); padding:6px 0; }
+
+    .builtRow{ margin-top:8px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .builtSentence{
+      font-size:18px; font-weight:950; line-height:1.35;
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap; min-height:34px;
+    }
+    .builtSentence .placeholder{ color:var(--muted); font-weight:850; }
+    .speaker{
+      border:1px solid var(--border); background:white; border-radius:999px;
+      padding:8px 12px; cursor:pointer; user-select:none;
+      box-shadow:0 4px 12px rgba(0,0,0,.07); display:inline-flex; align-items:center; gap:6px;
+    }
+    .speaker:hover{ background:#f1f5ff; border-color:#c7d2fe; }
+    .hintLine{ margin:8px 0 0; font-size:13px; color:var(--muted); font-weight:850; }
+
+    .translation{
+      margin-top:10px; border:1px solid var(--border); border-radius:14px; padding:10px 12px;
+      background:rgba(248,250,252,.94); color:#0f172a; box-shadow:var(--shadow2);
+      display:none; font-weight:900;
+    }
+    .translation.show{ display:block; }
+
+    .grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
+    @media (min-width:920px){ .grid{ grid-template-columns:360px 1fr; align-items:start; } }
+
+    .zoneTitleRow{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+
+    /* ZONES — dynamic height */
+    .zone{
+      min-height:80px; border:2px dashed var(--dash); border-radius:16px; padding:12px;
+      background:rgba(251,252,255,.94); display:flex; gap:10px; flex-wrap:wrap;
+      align-items:flex-start; align-content:flex-start;
+      transition:.12s ease; box-shadow:var(--shadow2); backdrop-filter:blur(6px);
+    }
+    .zone.isOver{
+      border-color:var(--primary); background:#f2f7ff;
+      box-shadow:0 0 0 4px rgba(37,99,235,.10), var(--shadow2);
+    }
+    .zone.correctFlash{ animation:correctFlash .5s ease; }
+    @keyframes correctFlash{
+      0%{ background:rgba(251,252,255,.94); }
+      40%{ background:#eafff0; box-shadow:0 0 0 6px rgba(26,127,55,.15), var(--shadow2); }
+      100%{ background:rgba(251,252,255,.94); }
+    }
+    .zone.wrongShake{ animation:wrongShake .4s ease; }
+    @keyframes wrongShake{
+      0%,100%{ transform:translateX(0); }
+      20%{ transform:translateX(-6px); }
+      40%{ transform:translateX(6px); }
+      60%{ transform:translateX(-4px); }
+      80%{ transform:translateX(4px); }
+    }
+
+    /* TOKENS — no arrows */
+    .token{
+      user-select:none; padding:10px 14px; border-radius:999px;
+      border:1px solid #d7daea; background:white; cursor:grab; font-weight:950;
+      box-shadow:0 4px 14px rgba(0,0,0,.08); white-space:nowrap;
+      transition:transform .12s ease, opacity .08s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+      display:inline-flex; align-items:center;
+    }
+    .token:hover{ transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.13); }
+    .token:active{ cursor:grabbing; transform:scale(.97); }
+    .token.dragging{ opacity:.5; }
+    .token.correct{
+      border-color:#7dd38c; background:#f0fff4;
+      animation:tokenCorrect .35s ease;
+    }
+    .token.wrong{ border-color:#ffb4a6; background:#fff7ed; animation:tokenWrong .3s ease; }
+    @keyframes tokenCorrect{ 0%{transform:scale(1)} 50%{transform:scale(1.12)} 100%{transform:scale(1)} }
+    @keyframes tokenWrong  { 0%{transform:scale(1)} 50%{transform:scale(0.94)} 100%{transform:scale(1)} }
+
+    .controlsBar{ margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .controlsLeft, .controlsRight{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+    .status{
+      margin-top:12px; border-radius:14px; padding:12px 14px;
+      border:1px solid var(--border); background:rgba(255,255,255,.96);
+      box-shadow:var(--shadow2); font-weight:950;
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:12px; flex-wrap:wrap; line-height:1.25;
+    }
+    .status.good{ border-color:#b7e4c3; background:#f1fff4; color:var(--good); }
+    .status.warn{ border-color:#ffd7a8; background:#fff7ed; color:var(--warn); }
+    .status.bad { border-color:#ffc6c6; background:#fff2f2; color:var(--bad);  }
+    .status small{ font-weight:900; color:var(--muted); display:block; margin-top:6px; }
+
+    /* XP BURST */
+    .xpBurst{
+      position:fixed; pointer-events:none; z-index:999;
+      font-size:22px; font-weight:900; color:#16a34a;
+      animation:xpFly .9s ease forwards;
+    }
+    @keyframes xpFly{
+      0%  { opacity:1; transform:translateY(0) scale(1); }
+      70% { opacity:1; transform:translateY(-60px) scale(1.2); }
+      100%{ opacity:0; transform:translateY(-90px) scale(.8); }
+    }
+
+    /* CONFETTI */
+    .confetti-piece{
+      position:fixed; pointer-events:none; z-index:998;
+      width:10px; height:10px; border-radius:2px;
+      animation:confettiFall linear forwards;
+    }
+    @keyframes confettiFall{
+      0%  { opacity:1; transform:translateY(0) rotate(0deg); }
+      100%{ opacity:0; transform:translateY(120px) rotate(360deg); }
+    }
+
+    .kpi{
+      margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+      color:var(--muted); font-weight:900; font-size:12px;
+    }
+    .chip{
+      border:1px solid var(--border); background:rgba(255,255,255,.82); border-radius:999px;
+      padding:6px 10px; box-shadow:0 3px 10px rgba(0,0,0,.04);
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .chip.pulse{ animation:chipPulse .4s ease; }
+    @keyframes chipPulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+    .chip b{ color:#0f172a; }
+
+    .toggleRow{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .switch{ display:flex; align-items:center; gap:10px; font-weight:950; color:#0f172a; }
+    .switch input{ width:18px; height:18px; }
+
+    .modalBack{
+      position:fixed; inset:0; background:rgba(15,23,42,.50); display:none; z-index:50; padding:18px;
+    }
+    .modalBack.show{ display:flex; align-items:center; justify-content:center; }
+    .modal{ width:min(720px,100%); background:white; border-radius:18px; border:1px solid #e5e7eb; box-shadow:0 22px 60px rgba(0,0,0,.22); padding:16px; }
+    .modal h2{ margin:0 0 8px; font-size:18px; }
+    .modal p{ margin:8px 0; color:#334155; font-weight:800; line-height:1.35; }
+    .modal ul{ margin:10px 0; padding-left:18px; color:#334155; font-weight:850; }
+    .modal .actions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; margin-top:12px; }
+    .footerNote{ margin-top:12px; color:var(--muted); font-weight:850; font-size:12px; line-height:1.35; }
+
+    .spinner{ display:inline-block; width:16px; height:16px; border:2px solid #dbe1ff; border-top-color:var(--primary); border-radius:50%; animation:spin .6s linear infinite; vertical-align:middle; margin-right:6px; }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+  </style>
+</head>
+
+<body class="mode-comm">
+  <div id="bgFlag" class="bg-flag"></div>
+
+  <div class="wrap">
+    <h1>FajnCvičebna – skládání vět</h1>
+    <div class="topHint">
+      Přetáhni slova ze slovní banky a slož správnou anglickou větu. Poslechni si výslovnost a zkus větu zopakovat nahlas.
+      <div class="tiny" style="margin-top:6px;">
+        Postup: 1) Vyber téma → 2) Vytvoř cvičení → 3) Slož větu → 4) Vyhodnoť → 5) Opakuj nahlas
+      </div>
+    </div>
+
+    <div class="panelGrid">
+      <div class="card">
+        <div class="sectionTitle">
+          <span>Nastavení</span>
+        </div>
+
+        <div class="row2" style="margin-bottom:10px;">
+          <div>
+            <label for="levelSel">Úroveň</label>
+            <select id="levelSel">
+              <option value="A1" selected>A1 – začátečník</option>
+              <option value="A2">A2 – základní</option>
+              <option value="B1">B1 – středně pokročilý</option>
+              <option value="B2">B2 – pokročilý</option>
+              <option value="C1">C1 – expert</option>
+            </select>
+          </div>
+          <div>
+            <label for="topicSel">Téma</label>
+            <select id="topicSel"></select>
+          </div>
+        </div>
+
+        <div class="toggleRow" style="margin-bottom:10px;">
+          <div class="switch">
+            <input type="checkbox" id="mixToggle" />
+            <label for="mixToggle" style="margin:0;font-size:13px;">🔀 Míchat témata (vše z úrovně)</label>
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label for="customSentence">Vlastní věta (volitelné)</label>
+          <input id="customSentence" type="text" placeholder="Např.: Včera jsem šel do školy." />
+          <div class="tiny" style="margin-top:6px;">Napiš vlastní českou větu a klikni Vlastní věta.</div>
+        </div>
+
+        <div class="row2" style="margin-bottom:10px;">
+          <div>
+            <label>Režim hodnocení</label>
+            <div class="seg" role="tablist">
+              <button id="modeComm"   class="active" type="button" role="tab" aria-selected="true">Domluvit se 🗣️</button>
+              <button id="modeSchool" type="button"  role="tab" aria-selected="false">Do školy 🎓</button>
+            </div>
+            <div class="tiny" style="margin-top:6px;">Domluvit se = toleruje drobné chyby. Do školy = přísnější.</div>
+          </div>
+          <div>
+            <label for="distrSel">Rušiče</label>
+            <select id="distrSel">
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+            <div class="tiny" style="margin-top:6px;">Rušiče = přesně tolik slov navíc.</div>
+          </div>
+        </div>
+
+        <div class="toggleRow">
+          <div class="switch">
+            <input type="checkbox" id="flagToggle" checked />
+            <label for="flagToggle" style="margin:0;font-size:13px;">Pozadí: britská vlajka</label>
+          </div>
+          <div class="switch">
+            <input type="checkbox" id="autoSpeakToggle" checked />
+            <label for="autoSpeakToggle" style="margin:0;font-size:13px;">Po správně: přehrát pomalu</label>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="btnRow">
+          <button id="createTopicBtn" class="primary" type="button">Vytvořit cvičení z tématu</button>
+          <button id="createCustomBtn" type="button">Vlastní věta</button>
+          <button id="nextBtnLeft" type="button">Nové cvičení</button>
+          <button id="resetProgBtn" class="danger" type="button" title="Vynuluje XP a postup v tomto prohlížeči">Reset XP</button>
+        </div>
+
+        <div class="note">
+          Témata s hvězdičkou ⭐ mají věty uložené přímo v aplikaci — fungují i bez internetu. Ostatní témata volají AI backend.
+        </div>
+        <div class="footerNote">
+          Tip: Pro rychlý test zkus A1 → Present Simple, nebo napiš vlastní větu "Včera jsem šel do školy." a klikni Vlastní věta.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="sectionTitle">
+          <span>Cvičení</span>
+          <span id="pillTopic" class="pill">—</span>
+          <span id="pillLevel" class="pill">—</span>
+          <span id="pillMode"  class="pill">Domluvit se</span>
+          <span id="pillSource" class="pill" style="display:none;"></span>
+        </div>
+
+        <div id="modeStrip" class="modeStrip comm">
+          🗣️ Režim: <strong>Domluvit se</strong> — toleruje drobné chyby v gramatice, pokud je věta srozumitelná.
+        </div>
+
+        <div class="kpi" style="margin-top:0;">
+          <span class="chip">⭐ XP: <b id="xpVal">0</b></span>
+          <span class="chip">🔥 Série: <b id="streakVal">0</b></span>
+          <span class="chip">🧪 Demo: <b id="demoDoneVal">0</b>/30</span>
+          <span class="chip">🏁 Level: <b id="lvlVal">1</b> (<span id="lvlProgText">0/200</span>)</span>
+        </div>
+
+        <div class="targetBox" style="margin-top:10px;">
+          <div class="targetTopRow">
+            <div id="targetHint" class="targetHint">Vyber téma nebo napiš vlastní větu a vytvoř cvičení.</div>
+            <div class="btnRow">
+              <button id="slowBtn" class="ghost" type="button">Přehrát pomalu</button>
+              <button id="toggleTrBtn" class="warn" type="button">Zobrazit překlad</button>
+            </div>
+          </div>
+          <div class="builtRow">
+            <div class="builtSentence" id="builtSentence">
+              <span class="placeholder">— (zatím prázdné)</span>
+            </div>
+            <span id="speakerBtn" class="speaker" title="Přehrát">
+              🔊 <span class="tiny" style="font-weight:900;">Přehrát</span>
+            </span>
+          </div>
+          <div class="hintLine">Poslechni a opakuj nahlas.</div>
+          <div id="translation" class="translation"></div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <div class="zoneTitleRow">
+              <div class="sectionTitle" style="margin:0;">Slovní banka</div>
+              <button id="shuffleBtn" type="button">Zamíchat</button>
+            </div>
+            <div id="bank" class="zone" aria-label="Slovní banka"></div>
+            <div class="hintLine">Pořadí je vždy rozházené a jsou tam rušiče.</div>
+          </div>
+
+          <div>
+            <div class="zoneTitleRow">
+              <div class="sectionTitle" style="margin:0;">Skládání věty</div>
+              <div class="tiny">Kliknutím nebo přetažením přesunuješ slova.</div>
+            </div>
+            <div id="builder" class="zone" aria-label="Skládání věty"></div>
+
+            <div class="controlsBar">
+              <div class="controlsLeft">
+                <button id="evalBtn"  class="primary" type="button">Vyhodnotit</button>
+                <button id="hintBtn"  class="warn"    type="button">Srovnat (nápověda)</button>
+                <button id="clearBtn" class="danger"  type="button">Vyčistit</button>
+              </div>
+              <div class="controlsRight">
+                <button id="nextBtn" type="button">Nové cvičení</button>
+              </div>
+            </div>
+
+            <div id="status" class="status">
+              <span>📌 Vyber úroveň a téma nebo napiš vlastní větu.</span>
+              <small id="statusDetail">—</small>
+            </div>
+
+            <div class="kpi" style="margin-top:10px;">
+              <span class="chip" id="chipLeft">Zbývá vložit: —</span>
+              <span class="chip" id="chipMode">Režim: Domluvit se</span>
+              <span class="chip" id="chipSlow">Pomalu: 0,6×</span>
+              <span class="chip" id="chipCorrectCount">Správná slova: —</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalBack" class="modalBack" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2>Gratulujeme! 🎉 Dokončil/a jsi demo (30 správných vět).</h2>
+      <p>Tohle byla ochutnávka. Plná verze s AI umí generovat neomezené množství cvičení a hlavně vysvětlí chyby tak, aby ses rychle zlepšoval/a.</p>
+      <ul>
+        <li>neomezené věty podle tématu a úrovně (A1–C1)</li>
+        <li>AI vysvětlení chyb + návrat do cvičení</li>
+        <li>trénink slovní zásoby na míru</li>
+        <li>chytré rušiče (typické záměny)</li>
+      </ul>
+      <p class="tiny">Demo můžeš dál používat, ale už jsi viděl/a maximum. 😉</p>
+      <div class="actions">
+        <a id="buyFullBtn" href="https://fajndoucko.cz/fajncvicebna-rozcestnik/" class="primary" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">Získat plný přístup →</a>
+        <button id="closeModalBtn" type="button">Zavřít</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ─── STATE ────────────────────────────────────────────────────────────────
+  const apiState = {
+    usedIds: [],
+    usedLocalIdx: [],
+    currentExercise: null,
+    lastMode: "topic"
+  };
+
+  // ─── DOM ─────────────────────────────────────────────────────────────────
+  const levelSel            = document.getElementById("levelSel");
+  const topicSel            = document.getElementById("topicSel");
+  const distrSel            = document.getElementById("distrSel");
+  const customSentenceInput = document.getElementById("customSentence");
+  const modeCommBtn         = document.getElementById("modeComm");
+  const modeSchoolBtn       = document.getElementById("modeSchool");
+  const mixToggle           = document.getElementById("mixToggle");
+  const flagToggle          = document.getElementById("flagToggle");
+  const bgFlag              = document.getElementById("bgFlag");
+  const autoSpeakToggle     = document.getElementById("autoSpeakToggle");
+  const createTopicBtn      = document.getElementById("createTopicBtn");
+  const createCustomBtn     = document.getElementById("createCustomBtn");
+  const nextBtnLeft         = document.getElementById("nextBtnLeft");
+  const nextBtn             = document.getElementById("nextBtn");
+  const resetProgBtn        = document.getElementById("resetProgBtn");
+  const pillTopic           = document.getElementById("pillTopic");
+  const pillLevel           = document.getElementById("pillLevel");
+  const pillMode            = document.getElementById("pillMode");
+  const pillSource          = document.getElementById("pillSource");
+  const modeStrip           = document.getElementById("modeStrip");
+  const targetHint          = document.getElementById("targetHint");
+  const builtSentenceEl     = document.getElementById("builtSentence");
+  const translationEl       = document.getElementById("translation");
+  const toggleTrBtn         = document.getElementById("toggleTrBtn");
+  const speakerBtn          = document.getElementById("speakerBtn");
+  const slowBtn             = document.getElementById("slowBtn");
+  const bankEl              = document.getElementById("bank");
+  const builderEl           = document.getElementById("builder");
+  const shuffleBtn          = document.getElementById("shuffleBtn");
+  const evalBtn             = document.getElementById("evalBtn");
+  const hintBtn             = document.getElementById("hintBtn");
+  const clearBtn            = document.getElementById("clearBtn");
+  const statusEl            = document.getElementById("status");
+  const statusDetail        = document.getElementById("statusDetail");
+  const chipLeft            = document.getElementById("chipLeft");
+  const chipMode            = document.getElementById("chipMode");
+  const chipSlow            = document.getElementById("chipSlow");
+  const chipCorrectCount    = document.getElementById("chipCorrectCount");
+  const xpVal               = document.getElementById("xpVal");
+  const streakVal           = document.getElementById("streakVal");
+  const demoDoneVal         = document.getElementById("demoDoneVal");
+  const lvlVal              = document.getElementById("lvlVal");
+  const lvlProgText         = document.getElementById("lvlProgText");
+  const modalBack           = document.getElementById("modalBack");
+  const closeModalBtn       = document.getElementById("closeModalBtn");
+
+  // ─── CONSTANTS ───────────────────────────────────────────────────────────
+  const DEMO_GOAL      = 30;
+  const XP_PER_LEVEL   = 200;
+  const SLOW_RATE      = 0.6;
+  const API_URL        = "https://fdc-gateway.vercel.app/api/exercise";
+  const API_TIMEOUT_MS = 8000;
+  const FULL_MODE      = new URLSearchParams(window.location.search).get("mode") === "full";
+
+  let mode             = "comm";
+  let translationShown = false;
+  let preferredVoice   = null;
+  let current          = null;
+  let loadingActive    = false;
+
+  // ─── PROGRESS ────────────────────────────────────────────────────────────
+  const PROG_KEY = "fdc_sentence_demo_progress_v1";
+  let prog = { xp: 0, streak: 0, demoDone: 0, level: 1 };
+
+  // ─── LOCAL DATABASE ───────────────────────────────────────────────────────
+  const DB = {
+    A1: {
+      "present-simple": {
+        name: "Present Simple ⭐",
+        items: [
+          { en:"I go to school every day.", cz:"Každý den chodím do školy." },
+          { en:"She drinks coffee in the morning.", cz:"Ráno pije kávu." },
+          { en:"They play football on Sunday.", cz:"V neděli hrají fotbal." },
+          { en:"He works in an office.", cz:"Pracuje v kanceláři." },
+          { en:"We watch movies on Friday evening.", cz:"V pátek večer se díváme na filmy." },
+          { en:"I like coffee in the morning.", cz:"Ráno mám rád/a kávu." },
+          { en:"She speaks English at work.", cz:"V práci mluví anglicky." },
+          { en:"My brother reads books every week.", cz:"Můj bratr čte knihy každý týden." },
+          { en:"The train leaves at seven.", cz:"Vlak odjíždí v sedm." },
+          { en:"We live in a small town.", cz:"Žijeme v malém městě." },
+          { en:"She teaches English at school.", cz:"Vyučuje angličtinu ve škole." },
+          { en:"He always walks to work.", cz:"Vždy chodí do práce pěšky." },
+          { en:"I usually wake up early.", cz:"Obvykle vstávám brzy." },
+          { en:"They eat dinner at seven.", cz:"Večeří v sedm hodin." },
+          { en:"She never drinks tea.", cz:"Nikdy nepije čaj." },
+          { en:"My dog sleeps all day.", cz:"Můj pes spí celý den." },
+          { en:"He often visits his parents.", cz:"Často navštěvuje rodiče." },
+          { en:"We always eat breakfast together.", cz:"Vždy snídáme společně." },
+          { en:"She listens to music every evening.", cz:"Každý večer poslouchá hudbu." },
+          { en:"I sometimes go to the cinema.", cz:"Někdy chodím do kina." },
+          { en:"He drives to work every morning.", cz:"Každé ráno jezdí do práce autem." },
+          { en:"They speak French at home.", cz:"Doma mluví francouzsky." },
+          { en:"She starts work at eight.", cz:"Začíná pracovat v osm." },
+          { en:"I buy fresh bread every morning.", cz:"Každé ráno kupuji čerstvý chléb." },
+          { en:"We take the bus to school.", cz:"Do školy jezdíme autobusem." },
+          { en:"He knows a lot of people.", cz:"Zná hodně lidí." },
+          { en:"She finishes work at five.", cz:"Končí práci v pět." },
+          { en:"I need a new jacket.", cz:"Potřebuji novou bundu." },
+          { en:"They open the shop at nine.", cz:"Obchod otvírají v devět." },
+          { en:"He plays the guitar very well.", cz:"Hraje na kytaru velmi dobře." },
+        ]
+      },
+      "present-continuous": {
+        name: "Present Continuous ⭐",
+        items: [
+          { en:"She is reading a book.", cz:"Právě čte knihu." },
+          { en:"We are cooking dinner tonight.", cz:"Dnes večer vaříme večeři." },
+          { en:"I am watching TV now.", cz:"Teď se dívám na televizi." },
+          { en:"They are playing in the park.", cz:"Hrají si v parku." },
+          { en:"He is working today.", cz:"Dnes pracuje." },
+          { en:"I am learning English this year.", cz:"Letos se učím anglicky." },
+          { en:"She is talking on the phone.", cz:"Telefonuje." },
+          { en:"We are waiting for the bus.", cz:"Čekáme na autobus." },
+          { en:"He is writing an email.", cz:"Píše e-mail." },
+          { en:"They are having lunch now.", cz:"Právě obědvají." },
+          { en:"I am listening to music.", cz:"Poslouchám hudbu." },
+          { en:"She is helping her mother.", cz:"Pomáhá své matce." },
+          { en:"We are visiting our grandparents.", cz:"Navštěvujeme prarodiče." },
+          { en:"The children are sleeping.", cz:"Děti spí." },
+          { en:"He is drinking coffee.", cz:"Pije kávu." },
+          { en:"I am studying for my exam.", cz:"Studuji na zkoušku." },
+          { en:"She is wearing a red dress.", cz:"Má na sobě červené šaty." },
+          { en:"They are building a new house.", cz:"Staví nový dům." },
+          { en:"We are planning our holiday.", cz:"Plánujeme dovolenou." },
+          { en:"He is running in the park.", cz:"Běhá v parku." },
+          { en:"I am thinking about you.", cz:"Myslím na tebe." },
+          { en:"She is cleaning her room.", cz:"Uklízí svůj pokoj." },
+          { en:"They are watching a film.", cz:"Dívají se na film." },
+          { en:"He is fixing his bicycle.", cz:"Opravuje svůj bicykl." },
+          { en:"We are eating pizza.", cz:"Jíme pizzu." },
+          { en:"I am walking to school.", cz:"Jdu pěšky do školy." },
+          { en:"She is looking for her keys.", cz:"Hledá své klíče." },
+          { en:"They are singing in the choir.", cz:"Zpívají ve sboru." },
+          { en:"He is swimming in the pool.", cz:"Plave v bazénu." },
+          { en:"I am reading a great novel.", cz:"Čtu skvělý román." },
+        ]
+      },
+      "past-simple": {
+        name: "Past Simple ⭐",
+        items: [
+          { en:"I went to school yesterday.", cz:"Včera jsem šel/šla do školy." },
+          { en:"She watched a movie last night.", cz:"Včera večer se dívala na film." },
+          { en:"We played football on Saturday.", cz:"V sobotu jsme hráli fotbal." },
+          { en:"He visited his friend last week.", cz:"Minulý týden navštívil kamaráda." },
+          { en:"They cooked dinner together.", cz:"Společně uvařili večeři." },
+          { en:"I bought a new phone yesterday.", cz:"Včera jsem koupil/a nový telefon." },
+          { en:"She studied English at university.", cz:"Studovala angličtinu na univerzitě." },
+          { en:"We went to the beach last summer.", cz:"Minulé léto jsme jeli na pláž." },
+          { en:"He read the newspaper this morning.", cz:"Dnes ráno četl noviny." },
+          { en:"I woke up late today.", cz:"Dnes jsem vstal/a pozdě." },
+          { en:"She wrote a long letter.", cz:"Napsala dlouhý dopis." },
+          { en:"They arrived at the airport on time.", cz:"Přijeli na letiště včas." },
+          { en:"He forgot his keys at home.", cz:"Zapomněl klíče doma." },
+          { en:"I saw a great film last week.", cz:"Minulý týden jsem viděl/a skvělý film." },
+          { en:"We met our friends in the café.", cz:"Setkali jsme se s přáteli v kavárně." },
+          { en:"She made a delicious cake.", cz:"Upekla lahodný dort." },
+          { en:"He took the train to Prague.", cz:"Jel vlakem do Prahy." },
+          { en:"I called my mother yesterday.", cz:"Včera jsem zavolal/a matce." },
+          { en:"They moved to a new apartment.", cz:"Přestěhovali se do nového bytu." },
+          { en:"She left work at five.", cz:"Odešla z práce v pět." },
+          { en:"We had a great time at the party.", cz:"Na večírku jsme se skvěle bavili." },
+          { en:"He lost his wallet on the bus.", cz:"Ztratil peněženku v autobusu." },
+          { en:"I found a great restaurant.", cz:"Našel/našla jsem skvělou restauraci." },
+          { en:"She sang at the concert.", cz:"Zpívala na koncertě." },
+          { en:"They won the match easily.", cz:"Snadno vyhráli zápas." },
+          { en:"He drove to work today.", cz:"Dnes jel do práce autem." },
+          { en:"I broke my favourite cup.", cz:"Rozbil/a jsem svůj oblíbený hrnek." },
+          { en:"She spent the weekend in the mountains.", cz:"Víkend strávila v horách." },
+          { en:"We enjoyed the concert very much.", cz:"Koncert se nám velmi líbil." },
+          { en:"He started a new job last month.", cz:"Minulý měsíc nastoupil do nové práce." },
+        ]
+      },
+      "there-is-are": {
+        name: "There is / There are ⭐",
+        items: [
+          { en:"There is a book on the table.", cz:"Na stole je kniha." },
+          { en:"There are two chairs in the room.", cz:"V místnosti jsou dvě židle." },
+          { en:"There is a dog in the garden.", cz:"Na zahradě je pes." },
+          { en:"There are many people in the park.", cz:"V parku je hodně lidí." },
+          { en:"There is a good café near here.", cz:"Poblíž je dobrá kavárna." },
+          { en:"There are three windows in my room.", cz:"V mém pokoji jsou tři okna." },
+          { en:"There is a supermarket on the corner.", cz:"Na rohu je supermarket." },
+          { en:"There are no eggs in the fridge.", cz:"V lednici nejsou žádná vejce." },
+          { en:"There is a mistake in your letter.", cz:"V tvém dopise je chyba." },
+          { en:"There are ten students in the class.", cz:"Ve třídě je deset studentů." },
+          { en:"There is a bus stop outside.", cz:"Venku je zastávka autobusu." },
+          { en:"There are flowers in the garden.", cz:"V zahradě jsou květiny." },
+          { en:"There is not much time left.", cz:"Nezbývá mnoho času." },
+          { en:"There are some apples on the table.", cz:"Na stole jsou nějaká jablka." },
+          { en:"There is a cinema in our town.", cz:"V našem městě je kino." },
+          { en:"There are two bedrooms in this flat.", cz:"V tomto bytě jsou dvě ložnice." },
+          { en:"There is a map on the wall.", cz:"Na zdi je mapa." },
+          { en:"There are a lot of trees in the forest.", cz:"V lese je hodně stromů." },
+          { en:"There is a problem with my computer.", cz:"S mým počítačem je problém." },
+          { en:"There are no seats left.", cz:"Nezbylo žádné místo k sezení." },
+          { en:"There is a letter for you.", cz:"Je tu pro tebe dopis." },
+          { en:"There are many options to choose from.", cz:"Je z čeho vybírat." },
+          { en:"There is a meeting tomorrow.", cz:"Zítra je schůzka." },
+          { en:"There are birds in the tree.", cz:"Na stromě jsou ptáci." },
+          { en:"There is a swimming pool nearby.", cz:"Poblíž je bazén." },
+          { en:"There are five people in my family.", cz:"V mé rodině je pět lidí." },
+          { en:"There is a new restaurant in town.", cz:"Ve městě je nová restaurace." },
+          { en:"There are too many cars on the road.", cz:"Na silnici je příliš mnoho aut." },
+          { en:"There is a beautiful view from the hill.", cz:"Z kopce je krásný výhled." },
+          { en:"There are some nice parks in the city.", cz:"Ve městě jsou pěkné parky." },
+        ]
+      },
+      "future-will": {
+        name: "Future – will ⭐",
+        items: [
+          { en:"I will call you tomorrow.", cz:"Zítra ti zavolám." },
+          { en:"She will visit her friend next week.", cz:"Příští týden navštíví kamarádku." },
+          { en:"We will watch a movie tonight.", cz:"Dnes večer se podíváme na film." },
+          { en:"He will start a new job next month.", cz:"Příští měsíc nastoupí do nové práce." },
+          { en:"I will help you with your homework.", cz:"Pomohu ti s domácím úkolem." },
+          { en:"She will be back soon.", cz:"Brzy se vrátí." },
+          { en:"They will arrive at six.", cz:"Přijedou v šest." },
+          { en:"It will rain tomorrow.", cz:"Zítra bude pršet." },
+          { en:"We will meet at the station.", cz:"Setkáme se na nádraží." },
+          { en:"I will not forget your birthday.", cz:"Nezapomenu na tvoje narozeniny." },
+          { en:"He will send you an email.", cz:"Pošle ti e-mail." },
+          { en:"She will pass her exam.", cz:"Složí zkoušku." },
+          { en:"We will have lunch together.", cz:"Společně se naobědváme." },
+          { en:"I will finish the report by Friday.", cz:"Zprávu dokončím do pátku." },
+          { en:"They will travel to Spain.", cz:"Pojedou do Španělska." },
+          { en:"He will fix your car.", cz:"Opraví ti auto." },
+          { en:"I will try my best.", cz:"Dám do toho vše." },
+          { en:"She will join us for dinner.", cz:"Přijde s námi na večeři." },
+          { en:"We will move to a bigger house.", cz:"Přestěhujeme se do většího domu." },
+          { en:"He will study medicine at university.", cz:"Na univerzitě bude studovat medicínu." },
+          { en:"I will never do that again.", cz:"To už nikdy neudělám." },
+          { en:"She will teach the children herself.", cz:"Děti bude učit sama." },
+          { en:"They will open a new shop.", cz:"Otevřou nový obchod." },
+          { en:"I will be ready in ten minutes.", cz:"Budu připraven/a za deset minut." },
+          { en:"He will retire next year.", cz:"Příští rok odejde do důchodu." },
+          { en:"We will see each other again.", cz:"Ještě se uvidíme." },
+          { en:"She will write her first novel.", cz:"Napíše svůj první román." },
+          { en:"I will cook dinner tonight.", cz:"Dnes večer uvařím večeři." },
+          { en:"They will build a new school.", cz:"Postaví novou školu." },
+          { en:"He will win the competition.", cz:"Vyhraje soutěž." },
+        ]
+      },
+      "articles": {
+        name: "Articles (a / an / the) ⭐",
+        items: [
+          { en:"I have a dog and a cat.", cz:"Mám psa a kočku." },
+          { en:"She is reading an interesting book.", cz:"Čte zajímavou knihu." },
+          { en:"The sun is shining today.", cz:"Dnes svítí slunce." },
+          { en:"He wants an apple from the shop.", cz:"Chce jablko z obchodu." },
+          { en:"I saw a great film last night.", cz:"Včera večer jsem viděl/a skvělý film." },
+          { en:"She is a doctor.", cz:"Je lékařka." },
+          { en:"The children are in the garden.", cz:"Děti jsou na zahradě." },
+          { en:"He bought a new car.", cz:"Koupil nové auto." },
+          { en:"I need an umbrella.", cz:"Potřebuji deštník." },
+          { en:"The book on the table is mine.", cz:"Ta kniha na stole je moje." },
+          { en:"She lives in a small village.", cz:"Žije v malé vesnici." },
+          { en:"Can I have a glass of water?", cz:"Mohu dostat sklenici vody?" },
+          { en:"The film was very long.", cz:"Film byl velmi dlouhý." },
+          { en:"He is an engineer.", cz:"Je inženýr." },
+          { en:"I found a wallet on the bus.", cz:"V autobusu jsem našel/la peněženku." },
+          { en:"The weather is nice today.", cz:"Dnes je hezké počasí." },
+          { en:"She has an important meeting.", cz:"Má důležitou schůzku." },
+          { en:"I take the train every day.", cz:"Každý den jezdím vlakem." },
+          { en:"He is a very honest person.", cz:"Je velmi čestný člověk." },
+          { en:"The answer is very simple.", cz:"Odpověď je velmi jednoduchá." },
+          { en:"I need a new pair of shoes.", cz:"Potřebuji nové boty." },
+          { en:"She opened the window.", cz:"Otevřela okno." },
+          { en:"He is an excellent teacher.", cz:"Je výborný učitel." },
+          { en:"The map is on the wall.", cz:"Mapa je na zdi." },
+          { en:"I have a meeting at ten.", cz:"V deset mám schůzku." },
+          { en:"She bought an old painting.", cz:"Koupila starý obraz." },
+          { en:"The station is far from here.", cz:"Nádraží je odtud daleko." },
+          { en:"He found an interesting job.", cz:"Našel zajímavou práci." },
+          { en:"I left the keys in the car.", cz:"Nechal/a jsem klíče v autě." },
+          { en:"She works in an office.", cz:"Pracuje v kanceláři." },
+        ]
+      },
+      "can": {
+        name: "Modal – can / can't ⭐",
+        items: [
+          { en:"I can swim very well.", cz:"Umím velmi dobře plavat." },
+          { en:"She can speak French.", cz:"Umí mluvit francouzsky." },
+          { en:"He cannot drive a car.", cz:"Neumí řídit auto." },
+          { en:"We can meet tomorrow.", cz:"Můžeme se setkat zítra." },
+          { en:"Can you help me please?", cz:"Můžeš mi prosím pomoci?" },
+          { en:"I can not find my keys.", cz:"Nemohu najít klíče." },
+          { en:"She can play the piano.", cz:"Umí hrát na klavír." },
+          { en:"He can run very fast.", cz:"Umí běhat velmi rychle." },
+          { en:"Can I open the window?", cz:"Mohu otevřít okno?" },
+          { en:"They can come on Saturday.", cz:"Mohou přijít v sobotu." },
+          { en:"I can speak three languages.", cz:"Umím mluvit třemi jazyky." },
+          { en:"She cannot sing very well.", cz:"Neumí dobře zpívat." },
+          { en:"Can we sit here?", cz:"Můžeme si tady sednout?" },
+          { en:"He can fix the problem.", cz:"Dokáže problém vyřešit." },
+          { en:"I can not afford a new car.", cz:"Nemohu si dovolit nové auto." },
+          { en:"She can finish the work today.", cz:"Práci může dokončit dnes." },
+          { en:"Can you speak more slowly please?", cz:"Můžete mluvit pomaleji, prosím?" },
+          { en:"I can see the mountains from here.", cz:"Odtud vidím hory." },
+          { en:"He cannot come to the party.", cz:"Na večírek nemůže přijít." },
+          { en:"We can go by train or by bus.", cz:"Můžeme jet vlakem nebo autobusem." },
+          { en:"She can bake very well.", cz:"Umí velmi dobře péct." },
+          { en:"Can I borrow your pen?", cz:"Mohu si půjčit tvoje pero?" },
+          { en:"I can not understand him.", cz:"Nerozumím mu." },
+          { en:"They can play chess.", cz:"Umí hrát šachy." },
+          { en:"He can speak without notes.", cz:"Umí mluvit bez poznámek." },
+          { en:"She can read very quickly.", cz:"Umí číst velmi rychle." },
+          { en:"Can you wait a moment?", cz:"Můžeš chvilku počkat?" },
+          { en:"I can try to help you.", cz:"Zkusím ti pomoct." },
+          { en:"We cannot park here.", cz:"Tady nemůžeme parkovat." },
+          { en:"He can cook Italian food.", cz:"Umí vařit italská jídla." },
+        ]
+      },
+      "have-got": {
+        name: "Have got / has got ⭐",
+        items: [
+          { en:"I have got a new phone.", cz:"Mám nový telefon." },
+          { en:"She has got two brothers.", cz:"Má dva bratry." },
+          { en:"We have got a big garden.", cz:"Máme velkou zahradu." },
+          { en:"He has got a new bicycle.", cz:"Má nové kolo." },
+          { en:"They have got three children.", cz:"Mají tři děti." },
+          { en:"I have got a headache.", cz:"Bolí mě hlava." },
+          { en:"She has got long dark hair.", cz:"Má dlouhé tmavé vlasy." },
+          { en:"Have you got a pen?", cz:"Máš pero?" },
+          { en:"He has not got a car.", cz:"Nemá auto." },
+          { en:"We have got a problem.", cz:"Máme problém." },
+          { en:"She has got a nice flat.", cz:"Má pěkný byt." },
+          { en:"I have got a lot of work today.", cz:"Mám dnes hodně práce." },
+          { en:"He has got blue eyes.", cz:"Má modré oči." },
+          { en:"We have got no bread left.", cz:"Nezbyl nám žádný chléb." },
+          { en:"Has she got a dog?", cz:"Má psa?" },
+          { en:"I have got a good idea.", cz:"Mám dobrý nápad." },
+          { en:"They have got tickets for the concert.", cz:"Mají lístky na koncert." },
+          { en:"He has got a cold.", cz:"Je nastydlý." },
+          { en:"She has not got a sister.", cz:"Nemá sestru." },
+          { en:"We have got a lot to do.", cz:"Máme toho hodně." },
+          { en:"Have they got a swimming pool?", cz:"Mají bazén?" },
+          { en:"I have got a surprise for you.", cz:"Mám pro tebe překvapení." },
+          { en:"He has got a good job.", cz:"Má dobrou práci." },
+          { en:"She has got two cats and a dog.", cz:"Má dvě kočky a psa." },
+          { en:"I have got an appointment at three.", cz:"Ve tři mám schůzku." },
+          { en:"They have not got much money.", cz:"Nemají moc peněz." },
+          { en:"Has he got any brothers?", cz:"Má nějaké bratry?" },
+          { en:"We have got a new teacher.", cz:"Máme nového učitele." },
+          { en:"She has got a lot of experience.", cz:"Má hodně zkušeností." },
+          { en:"I have got no time to rest.", cz:"Nemám čas na odpočinek." },
+        ]
+      },
+      "prepositions-place": {
+        name: "Prepositions of place ⭐",
+        items: [
+          { en:"The cat is under the table.", cz:"Kočka je pod stolem." },
+          { en:"My book is on the chair.", cz:"Moje kniha je na židli." },
+          { en:"She is standing in front of the school.", cz:"Stojí před školou." },
+          { en:"The shop is next to the bank.", cz:"Obchod je vedle banky." },
+          { en:"He lives behind the park.", cz:"Bydlí za parkem." },
+          { en:"The keys are in the drawer.", cz:"Klíče jsou v zásuvce." },
+          { en:"There is a bridge over the river.", cz:"Nad řekou je most." },
+          { en:"She sat between her two friends.", cz:"Seděla mezi svými dvěmi přáteli." },
+          { en:"The station is opposite the hotel.", cz:"Nádraží je naproti hotelu." },
+          { en:"I put the milk in the fridge.", cz:"Mléko jsem dal/a do lednice." },
+          { en:"The children are outside.", cz:"Děti jsou venku." },
+          { en:"He is waiting at the bus stop.", cz:"Čeká na autobusové zastávce." },
+          { en:"The dog is sleeping under the bed.", cz:"Pes spí pod postelí." },
+          { en:"She lives near the city centre.", cz:"Bydlí blízko centra města." },
+          { en:"The picture is above the fireplace.", cz:"Obraz je nad krbem." },
+          { en:"Put the box in the corner.", cz:"Dej krabici do rohu." },
+          { en:"The café is at the end of the street.", cz:"Kavárna je na konci ulice." },
+          { en:"He is standing behind the door.", cz:"Stojí za dveřmi." },
+          { en:"The bus stop is outside the school.", cz:"Zastávka autobusu je před školou." },
+          { en:"She keeps her diary in the drawer.", cz:"Deník schovává v zásuvce." },
+          { en:"The restaurant is between two shops.", cz:"Restaurace je mezi dvěma obchody." },
+          { en:"I sat in front of the TV.", cz:"Sedl/a jsem si před televizi." },
+          { en:"The children are playing in the garden.", cz:"Děti si hrají v zahradě." },
+          { en:"The post office is opposite the library.", cz:"Pošta je naproti knihovně." },
+          { en:"He hid the letter under the mattress.", cz:"Skryl dopis pod matraci." },
+          { en:"She is waiting inside the building.", cz:"Čeká uvnitř budovy." },
+          { en:"The hospital is at the top of the hill.", cz:"Nemocnice je nahoře na kopci." },
+          { en:"My bag is on the floor.", cz:"Moje taška je na podlaze." },
+          { en:"The lamp is above the table.", cz:"Lampa je nad stolem." },
+          { en:"He works in the building next to ours.", cz:"Pracuje v budově vedle nás." },
+        ]
+      },
+      "adjectives": {
+        name: "Adjectives ⭐",
+        items: [
+          { en:"This is a beautiful day.", cz:"Je to krásný den." },
+          { en:"She has a small dog.", cz:"Má malého psa." },
+          { en:"He is a tall man.", cz:"Je to vysoký muž." },
+          { en:"The film was boring.", cz:"Film byl nudný." },
+          { en:"I am very tired today.", cz:"Dnes jsem velmi unavený/á." },
+          { en:"She wore a red dress.", cz:"Měla na sobě červené šaty." },
+          { en:"The soup is hot.", cz:"Polévka je horká." },
+          { en:"He is a friendly person.", cz:"Je to přátelský člověk." },
+          { en:"This bag is too heavy.", cz:"Tato taška je příliš těžká." },
+          { en:"The weather is cold today.", cz:"Dnes je chladné počasí." },
+          { en:"She has a long journey ahead.", cz:"Čeká ji dlouhá cesta." },
+          { en:"It was an expensive holiday.", cz:"Byla to drahá dovolená." },
+          { en:"He is a hard-working student.", cz:"Je pilný student." },
+          { en:"This room is very comfortable.", cz:"Tento pokoj je velmi útulný." },
+          { en:"She felt happy after the news.", cz:"Po té zprávě se cítila šťastná." },
+          { en:"The garden is very green in spring.", cz:"Zahrada je na jaře velmi zelená." },
+          { en:"It was a difficult question.", cz:"Byla to obtížná otázka." },
+          { en:"He spoke in a quiet voice.", cz:"Mluvil tichým hlasem." },
+          { en:"The milk is fresh.", cz:"Mléko je čerstvé." },
+          { en:"She gave a short answer.", cz:"Dala krátkou odpověď." },
+          { en:"This is a very interesting book.", cz:"Toto je velmi zajímavá kniha." },
+          { en:"He is a clever student.", cz:"Je to chytrý student." },
+          { en:"The old bridge is dangerous.", cz:"Starý most je nebezpečný." },
+          { en:"She felt nervous before the exam.", cz:"Před zkouškou se cítila nervózní." },
+          { en:"The new flat is much bigger.", cz:"Nový byt je mnohem větší." },
+          { en:"It was a warm summer evening.", cz:"Byl to teplý letní večer." },
+          { en:"He had a serious expression.", cz:"Tvářil se vážně." },
+          { en:"The restaurant has a lovely atmosphere.", cz:"Restaurace má příjemnou atmosféru." },
+          { en:"She is a very confident speaker.", cz:"Je velmi sebejistá mluvčí." },
+          { en:"That was a strange story.", cz:"To byl podivný příběh." },
+        ]
+      },
+      "questions-simple": {
+        name: "Simple questions ⭐",
+        items: [
+          { en:"Where do you live?", cz:"Kde bydlíš?" },
+          { en:"What time does she start work?", cz:"V kolik začíná pracovat?" },
+          { en:"Do you like coffee?", cz:"Máš rád/a kávu?" },
+          { en:"Does he speak English?", cz:"Mluví anglicky?" },
+          { en:"How often do they go to the gym?", cz:"Jak často chodí do posilovny?" },
+          { en:"What do you do at the weekend?", cz:"Co děláš o víkendu?" },
+          { en:"Where does she go to school?", cz:"Do jaké školy chodí?" },
+          { en:"Do they have any children?", cz:"Mají nějaké děti?" },
+          { en:"What does he do for a living?", cz:"Čím se živí?" },
+          { en:"How do you get to work?", cz:"Jak se dostáváš do práce?" },
+          { en:"Does she study medicine?", cz:"Studuje medicínu?" },
+          { en:"What time do you wake up?", cz:"V kolik vstáváš?" },
+          { en:"Do you enjoy cooking?", cz:"Baví tě vaření?" },
+          { en:"Where does he work?", cz:"Kde pracuje?" },
+          { en:"How many languages do you speak?", cz:"Kolika jazyky mluvíš?" },
+          { en:"Does the train stop here?", cz:"Zastavuje tu vlak?" },
+          { en:"What sport do they play?", cz:"Jaký sport hrají?" },
+          { en:"Do you know the answer?", cz:"Znáš odpověď?" },
+          { en:"How long does the journey take?", cz:"Jak dlouho trvá cesta?" },
+          { en:"Does she live alone?", cz:"Bydlí sama?" },
+          { en:"What do you usually eat for breakfast?", cz:"Co obvykle jíš k snídani?" },
+          { en:"Why do they always arrive late?", cz:"Proč vždy přicházejí pozdě?" },
+          { en:"Do you have any brothers or sisters?", cz:"Máš nějaké bratry nebo sestry?" },
+          { en:"What time does the shop open?", cz:"V kolik se obchod otvírá?" },
+          { en:"How often does he visit his parents?", cz:"Jak často navštěvuje rodiče?" },
+          { en:"Does she drink tea or coffee?", cz:"Pije čaj nebo kávu?" },
+          { en:"Where do you want to go on holiday?", cz:"Kam chceš jet na dovolenou?" },
+          { en:"What does this word mean?", cz:"Co znamená toto slovo?" },
+          { en:"Do they live near the city centre?", cz:"Bydlí blízko centra města?" },
+          { en:"How do you spell your surname?", cz:"Jak se píše tvoje příjmení?" },
+        ]
+      }
+    },
+
+    A2: {
+      "past-simple": {
+        name: "Past Simple ⭐",
+        items: [
+          { en:"I went to school yesterday.", cz:"Včera jsem šel/šla do školy." },
+          { en:"She watched a movie last night.", cz:"Včera večer se dívala na film." },
+          { en:"We cooked dinner on Saturday.", cz:"V sobotu jsme vařili večeři." },
+          { en:"They played football in the morning.", cz:"Ráno hráli fotbal." },
+          { en:"He visited his friend last week.", cz:"Minulý týden navštívil kamaráda." },
+          { en:"I bought a new jacket yesterday.", cz:"Včera jsem koupil/a novou bundu." },
+          { en:"She studied for three hours.", cz:"Studovala tři hodiny." },
+          { en:"We went to the cinema on Friday.", cz:"V pátek jsme šli do kina." },
+          { en:"He lost his phone at work.", cz:"Ztratil telefon v práci." },
+          { en:"I spoke to my boss this morning.", cz:"Dnes ráno jsem mluvil/a se šéfem." },
+          { en:"She made a big mistake.", cz:"Udělala velkou chybu." },
+          { en:"They won the championship last year.", cz:"Loni vyhráli šampionát." },
+          { en:"He read the whole book in one day.", cz:"Přečetl celou knihu za jeden den." },
+          { en:"I took the wrong bus.", cz:"Nastoupil/a jsem do špatného autobusu." },
+          { en:"She met her husband in Paris.", cz:"Svého manžela poznala v Paříži." },
+          { en:"We stayed in a lovely hotel.", cz:"Bydleli jsme v krásném hotelu." },
+          { en:"He forgot to call me back.", cz:"Zapomněl mi zavolat zpět." },
+          { en:"I left my bag on the train.", cz:"Nechal/a jsem tašku ve vlaku." },
+          { en:"She gave him a book as a gift.", cz:"Darovala mu knihu." },
+          { en:"They moved to a new city.", cz:"Přestěhovali se do nového města." },
+          { en:"He sent me an email yesterday.", cz:"Včera mi poslal e-mail." },
+          { en:"I found a great deal online.", cz:"Online jsem našel/la skvělou nabídku." },
+          { en:"She broke her leg last winter.", cz:"Minulou zimu si zlomila nohu." },
+          { en:"We had a great holiday in Greece.", cz:"Skvěle jsme si užili dovolenou v Řecku." },
+          { en:"He wrote his first novel at thirty.", cz:"Ve třiceti napsal svůj první román." },
+          { en:"I saw a famous actor at the restaurant.", cz:"V restauraci jsem viděl/a slavného herce." },
+          { en:"She wore a beautiful dress to the party.", cz:"Na večírek si oblékla krásné šaty." },
+          { en:"They built their own house.", cz:"Postavili si vlastní dům." },
+          { en:"He chose the wrong answer.", cz:"Zvolil špatnou odpověď." },
+          { en:"I drove across the whole country.", cz:"Projel/a jsem celou zemi autem." },
+        ]
+      },
+      "present-perfect": {
+        name: "Present Perfect ⭐",
+        items: [
+          { en:"I have seen that film before.", cz:"Ten film jsem již viděl/a." },
+          { en:"She has just arrived home.", cz:"Právě přijela domů." },
+          { en:"We have lived here for ten years.", cz:"Bydlíme tady deset let." },
+          { en:"He has never eaten sushi.", cz:"Nikdy nejedl sushi." },
+          { en:"They have already finished.", cz:"Už skončili." },
+          { en:"Have you ever been to London?", cz:"Byl/a jsi někdy v Londýně?" },
+          { en:"I have just eaten lunch.", cz:"Právě jsem se naobědval/a." },
+          { en:"She has worked here since 2010.", cz:"Pracuje tady od roku 2010." },
+          { en:"He has lost his keys again.", cz:"Znovu ztratil klíče." },
+          { en:"We have not seen them recently.", cz:"V poslední době jsme je neviděli." },
+          { en:"I have known her for years.", cz:"Znám ji léta." },
+          { en:"She has visited many countries.", cz:"Navštívila mnoho zemí." },
+          { en:"Have they left yet?", cz:"Už odešli?" },
+          { en:"He has written three books.", cz:"Napsal tři knihy." },
+          { en:"I have never driven a bus.", cz:"Nikdy jsem neřídil/a autobus." },
+          { en:"She has just called me.", cz:"Právě mi zavolala." },
+          { en:"We have already bought the tickets.", cz:"Lístky jsme už koupili." },
+          { en:"He has studied English for five years.", cz:"Angličtinu studuje pět let." },
+          { en:"I have not eaten anything today.", cz:"Dnes jsem ještě nic nejedl/a." },
+          { en:"She has broken the record.", cz:"Překonala rekord." },
+          { en:"Have you finished the report?", cz:"Dokončil/a jsi zprávu?" },
+          { en:"They have moved to a new house.", cz:"Přestěhovali se do nového domu." },
+          { en:"He has grown a lot since last year.", cz:"Od loňska hodně vyrostl." },
+          { en:"I have been to Paris twice.", cz:"V Paříži jsem byl/a dvakrát." },
+          { en:"She has not replied to my email.", cz:"Na e-mail mi neodpověděla." },
+          { en:"We have just heard the news.", cz:"Právě jsme se dozvěděli zprávy." },
+          { en:"He has always wanted to be a doctor.", cz:"Vždy chtěl být lékařem." },
+          { en:"I have tried everything.", cz:"Vyzkoušel/a jsem vše." },
+          { en:"She has taught here for many years.", cz:"Vyučuje tady mnoho let." },
+          { en:"They have not made a decision yet.", cz:"Ještě se nerozhodli." },
+        ]
+      },
+      "going-to": {
+        name: "Going to – future plans ⭐",
+        items: [
+          { en:"I am going to visit my parents.", cz:"Chystám se navštívit rodiče." },
+          { en:"She is going to start a new job.", cz:"Chystá se nastoupit do nové práce." },
+          { en:"We are going to travel to Italy.", cz:"Chystáme se jet do Itálie." },
+          { en:"He is going to buy a new car.", cz:"Chystá se koupit nové auto." },
+          { en:"They are going to move next month.", cz:"Příští měsíc se chystají přestěhovat." },
+          { en:"I am not going to eat meat anymore.", cz:"Maso už jíst nebudu." },
+          { en:"She is going to learn Spanish.", cz:"Bude se učit španělsky." },
+          { en:"Are you going to come to the party?", cz:"Přijdeš na večírek?" },
+          { en:"He is going to call you later.", cz:"Zavolá ti později." },
+          { en:"We are going to have a baby.", cz:"Čekáme dítě." },
+          { en:"I am going to study hard this year.", cz:"Letos se budu pilně učit." },
+          { en:"She is going to open her own café.", cz:"Chystá se otevřít vlastní kavárnu." },
+          { en:"They are going to paint the house.", cz:"Chystají se natřít dům." },
+          { en:"He is going to take an exam.", cz:"Bude skládat zkoušku." },
+          { en:"I am going to leave early tomorrow.", cz:"Zítra odejdu brzy." },
+          { en:"She is going to cook something special.", cz:"Uvaří něco zvláštního." },
+          { en:"We are not going to wait any longer.", cz:"Déle čekat nebudeme." },
+          { en:"Are they going to sell the house?", cz:"Chystají se prodat dům?" },
+          { en:"He is going to fix the problem.", cz:"Problém vyřeší." },
+          { en:"I am going to join the gym.", cz:"Chystám se chodit do posilovny." },
+          { en:"She is going to write a book.", cz:"Hodlá napsat knihu." },
+          { en:"We are going to have dinner together.", cz:"Chystáme se společně na večeři." },
+          { en:"He is going to retire soon.", cz:"Brzy odejde do důchodu." },
+          { en:"I am going to try a new recipe.", cz:"Vyzkouším nový recept." },
+          { en:"She is going to redecorate the flat.", cz:"Chystá se předělat byt." },
+          { en:"They are going to play a concert.", cz:"Chystají se zahrát koncert." },
+          { en:"He is going to take a holiday.", cz:"Chystá se na dovolenou." },
+          { en:"I am going to save more money.", cz:"Budu více šetřit." },
+          { en:"Are you going to tell her the truth?", cz:"Řekneš jí pravdu?" },
+          { en:"We are going to adopt a dog.", cz:"Chystáme se adoptovat psa." },
+        ]
+      },
+      "comparative": {
+        name: "Comparative & Superlative ⭐",
+        items: [
+          { en:"She is taller than her brother.", cz:"Je vyšší než její bratr." },
+          { en:"This film is more interesting than that one.", cz:"Tento film je zajímavější než tamten." },
+          { en:"He runs faster than me.", cz:"Běhá rychleji než já." },
+          { en:"The weather is better today.", cz:"Počasí je dnes lepší." },
+          { en:"That was the worst film I have ever seen.", cz:"To byl nejhorší film, jaký jsem kdy viděl/a." },
+          { en:"She is the best student in the class.", cz:"Je nejlepší studentkou ve třídě." },
+          { en:"This bag is heavier than the other one.", cz:"Tato taška je těžší než ta druhá." },
+          { en:"He is older than he looks.", cz:"Je starší, než vypadá." },
+          { en:"This is the most beautiful park in the city.", cz:"Toto je nejkrásnější park ve městě." },
+          { en:"My flat is smaller than yours.", cz:"Můj byt je menší než tvůj." },
+          { en:"She speaks English better than I do.", cz:"Mluví anglicky lépe než já." },
+          { en:"That was the most difficult exam ever.", cz:"To byla vůbec nejtěžší zkouška." },
+          { en:"He is more patient than his colleague.", cz:"Je trpělivější než jeho kolega." },
+          { en:"The new restaurant is cheaper than the old one.", cz:"Nová restaurace je levnější než stará." },
+          { en:"She arrived earlier than expected.", cz:"Přijela dříve, než se čekalo." },
+          { en:"This coffee is stronger than usual.", cz:"Tato káva je silnější než obvykle." },
+          { en:"He is the most talented musician I know.", cz:"Je nejtalentovanější hudebník, kterého znám." },
+          { en:"The journey was much longer than planned.", cz:"Cesta trvala mnohem déle, než bylo plánováno." },
+          { en:"She works harder than anyone else.", cz:"Pracuje tvrději než kdokoli jiný." },
+          { en:"This is the cheapest option available.", cz:"Toto je nejlevnější dostupná možnost." },
+          { en:"He got a worse result than last time.", cz:"Dosáhl horšího výsledku než posledně." },
+          { en:"The exam was easier than I expected.", cz:"Zkouška byla snazší, než jsem čekal/a." },
+          { en:"She is more confident than before.", cz:"Je sebejistější než dřív." },
+          { en:"This is the most popular café in town.", cz:"Toto je nejoblíbenější kavárna ve městě." },
+          { en:"He is less experienced than his colleague.", cz:"Má méně zkušeností než jeho kolega." },
+          { en:"The new system is much faster.", cz:"Nový systém je mnohem rychlejší." },
+          { en:"She is the youngest person in the team.", cz:"Je nejmladší osobou v týmu." },
+          { en:"It was colder than we expected.", cz:"Bylo chladněji, než jsme čekali." },
+          { en:"He earns more than she does.", cz:"Vydělává více než ona." },
+          { en:"This is the longest river in the country.", cz:"Toto je nejdelší řeka v zemi." },
+        ]
+      },
+      "first-conditional": {
+        name: "1st Conditional ⭐",
+        items: [
+          { en:"If it rains, we will stay at home.", cz:"Když bude pršet, zůstaneme doma." },
+          { en:"If you study, you will pass the test.", cz:"Když se budeš učit, zkoušku zvládneš." },
+          { en:"If I have time, I will call you.", cz:"Když budu mít čas, zavolám ti." },
+          { en:"If they come early, we will start.", cz:"Když přijdou brzy, začneme." },
+          { en:"If she is late, we will leave without her.", cz:"Když přijde pozdě, odejdeme bez ní." },
+          { en:"If you eat too much, you will feel ill.", cz:"Když budeš příliš jíst, bude ti špatně." },
+          { en:"If he works hard, he will get a promotion.", cz:"Když bude tvrdě pracovat, povýší ho." },
+          { en:"If we hurry, we will catch the train.", cz:"Pokud si pospíšíme, vlak stihneme." },
+          { en:"If you do not sleep, you will be tired.", cz:"Pokud nebudeš spát, budeš unavený/á." },
+          { en:"If the weather is nice, we will go for a walk.", cz:"Bude-li hezké počasí, půjdeme na procházku." },
+          { en:"If I find the keys, I will call you.", cz:"Až najdu klíče, zavolám ti." },
+          { en:"If she passes the exam, she will celebrate.", cz:"Pokud zkoušku složí, bude slavit." },
+          { en:"If they sell the house, they will move abroad.", cz:"Pokud prodají dům, přestěhují se do zahraničí." },
+          { en:"If you help me, I will help you.", cz:"Pomůžeš-li mi, pomohu ti." },
+          { en:"If it gets cold, we will need warm clothes.", cz:"Pokud se ochladí, budeme potřebovat teplé oblečení." },
+          { en:"If the bus is late, I will take a taxi.", cz:"Pokud autobus přijede pozdě, vezmu si taxi." },
+          { en:"If you ask nicely, she will say yes.", cz:"Pokud se hezky zeptáš, řekne ano." },
+          { en:"If he does not call, I will worry.", cz:"Pokud nezavolá, budu se bát." },
+          { en:"If we save enough, we will buy a house.", cz:"Pokud naspořím dost, koupíme dům." },
+          { en:"If she reads this book, she will love it.", cz:"Přečte-li tuto knihu, zamiluje si ji." },
+          { en:"If you take the medicine, you will feel better.", cz:"Vezmeš-li si lék, budeš se cítit lépe." },
+          { en:"If they do not hurry, they will miss the flight.", cz:"Nepospíší-li si, let zmeškají." },
+          { en:"If I win the prize, I will donate it.", cz:"Vyhraji-li cenu, věnuji ji." },
+          { en:"If he trains every day, he will improve.", cz:"Pokud bude trénovat každý den, zlepší se." },
+          { en:"If you do not eat breakfast, you will be hungry.", cz:"Jestli se nenasnídáš, budeš mít hlad." },
+          { en:"If the meeting ends early, we will go for lunch.", cz:"Skončí-li schůzka brzy, půjdeme na oběd." },
+          { en:"If she joins the club, she will make new friends.", cz:"Vstoupí-li do klubu, získá nové přátele." },
+          { en:"If I miss the bus, I will walk.", cz:"Jestli zmeškám autobus, půjdu pěšky." },
+          { en:"If you practise every day, you will improve quickly.", cz:"Pokud cvičíte každý den, rychle se zlepšíte." },
+          { en:"If he finishes the report, I will send it.", cz:"Dokončí-li zprávu, pošlu ji." },
+        ]
+      },
+      "past-continuous": {
+        name: "Past Continuous ⭐",
+        items: [
+          { en:"I was reading when he arrived.", cz:"Četl/a jsem, když přišel." },
+          { en:"She was sleeping at midnight.", cz:"O půlnoci spala." },
+          { en:"They were watching TV all evening.", cz:"Celý večer se dívali na televizi." },
+          { en:"He was driving when his phone rang.", cz:"Řídil, když mu zazvonil telefon." },
+          { en:"We were having lunch at noon.", cz:"V poledne jsme obědvali." },
+          { en:"I was working from home yesterday.", cz:"Včera jsem pracoval/a z domova." },
+          { en:"She was crying when I saw her.", cz:"Když jsem ji viděl/a, plakala." },
+          { en:"They were dancing all night.", cz:"Celou noc tančili." },
+          { en:"He was not listening to me.", cz:"Neposlouchal mě." },
+          { en:"I was waiting for two hours.", cz:"Čekal/a jsem dvě hodiny." },
+          { en:"She was cooking when the fire started.", cz:"Vařila, když vypukl požár." },
+          { en:"We were talking about you.", cz:"Mluvili jsme o tobě." },
+          { en:"He was playing football when it started to rain.", cz:"Hrál fotbal, když začalo pršet." },
+          { en:"I was walking home when I saw them.", cz:"Šel/šla jsem domů, když jsem je uviděl/a." },
+          { en:"She was writing a letter all morning.", cz:"Celé ráno psala dopis." },
+          { en:"They were arguing again.", cz:"Zase se hádali." },
+          { en:"He was studying when I called him.", cz:"Učil se, když jsem mu zavolal/a." },
+          { en:"I was not feeling well yesterday.", cz:"Včera mi nebylo dobře." },
+          { en:"She was thinking about her future.", cz:"Přemýšlela o své budoucnosti." },
+          { en:"We were eating dinner when the lights went out.", cz:"Večeřeli jsme, když zhaslo světlo." },
+          { en:"He was running very fast.", cz:"Běžel velmi rychle." },
+          { en:"I was shopping when I met her.", cz:"Nakupoval/a jsem, když jsem ji potkal/a." },
+          { en:"She was laughing the whole time.", cz:"Celou dobu se smála." },
+          { en:"They were building a new road.", cz:"Budovali novou silnici." },
+          { en:"I was thinking about you all day.", cz:"Celý den jsem na tebe myslel/a." },
+          { en:"He was reading the newspaper in the café.", cz:"V kavárně četl noviny." },
+          { en:"She was learning to drive.", cz:"Učila se řídit auto." },
+          { en:"We were preparing for the event.", cz:"Připravovali jsme se na akci." },
+          { en:"I was listening to music on the train.", cz:"Ve vlaku jsem poslouchal/a hudbu." },
+          { en:"They were discussing the new plan.", cz:"Diskutovali o novém plánu." },
+        ]
+      },
+      "prepositions-time": {
+        name: "Prepositions of time ⭐",
+        items: [
+          { en:"I always wake up at seven.", cz:"Vždy vstávám v sedm." },
+          { en:"She started working on Monday.", cz:"V pondělí začala pracovat." },
+          { en:"We met in summer.", cz:"Potkali jsme se v létě." },
+          { en:"He was born in 1990.", cz:"Narodil se v roce 1990." },
+          { en:"The meeting is on Friday.", cz:"Schůzka je v pátek." },
+          { en:"She called me at night.", cz:"Zavolala mi v noci." },
+          { en:"I will finish the report by Thursday.", cz:"Zprávu dokončím do čtvrtka." },
+          { en:"He worked there for ten years.", cz:"Pracoval tam deset let." },
+          { en:"She arrived at noon.", cz:"Přijela v poledne." },
+          { en:"We will go on holiday in August.", cz:"V srpnu jedeme na dovolenou." },
+          { en:"The train leaves at half past eight.", cz:"Vlak odjíždí v půl deváté." },
+          { en:"I usually read before bed.", cz:"Obvykle čtu před spaním." },
+          { en:"She has lived here since 2015.", cz:"Bydlí tady od roku 2015." },
+          { en:"He finished work after midnight.", cz:"Práci dokončil po půlnoci." },
+          { en:"We always go for a walk in the morning.", cz:"Ráno vždy chodíme na procházku." },
+          { en:"I will see you on Sunday.", cz:"Uvidíme se v neděli." },
+          { en:"She is coming at the weekend.", cz:"Přijede o víkendu." },
+          { en:"He went on a trip during the holidays.", cz:"O prázdninách jel na výlet." },
+          { en:"I study English in the evenings.", cz:"Angličtinu studuji večer." },
+          { en:"She gets home at five o'clock.", cz:"Přichází domů v pět." },
+          { en:"They left early in the morning.", cz:"Odešli brzy ráno." },
+          { en:"I have not seen her since last year.", cz:"Neviděl/a jsem ji od loňska." },
+          { en:"He will retire at sixty.", cz:"Odejde do důchodu v šedesáti." },
+          { en:"We usually eat dinner at seven.", cz:"Obvykle večeříme v sedm." },
+          { en:"She called me during my lunch break.", cz:"Zavolala mi během přestávky na oběd." },
+          { en:"I will be back by ten.", cz:"Budu zpátky do desíti." },
+          { en:"He started his new job in January.", cz:"V lednu nastoupil do nové práce." },
+          { en:"She was born on the fifth of March.", cz:"Narodila se pátého března." },
+          { en:"They arrived after dinner.", cz:"Přijeli po večeři." },
+          { en:"I usually go to the gym on weekdays.", cz:"Obvykle chodím do posilovny ve všedních dnech." },
+        ]
+      },
+      "questions-past": {
+        name: "Questions in the past ⭐",
+        items: [
+          { en:"Did you see the film last night?", cz:"Viděl/a jsi včera večer ten film?" },
+          { en:"Where did they go on holiday?", cz:"Kam jeli na dovolenou?" },
+          { en:"What did she say?", cz:"Co řekla?" },
+          { en:"Did he call you yesterday?", cz:"Zavolal ti včera?" },
+          { en:"How long did you wait?", cz:"Jak dlouho jsi čekal/a?" },
+          { en:"When did they arrive?", cz:"Kdy dorazili?" },
+          { en:"Did you enjoy the party?", cz:"Líbil se ti večírek?" },
+          { en:"Who did she meet at the airport?", cz:"Koho potkala na letišti?" },
+          { en:"What time did he leave?", cz:"V kolik odešel?" },
+          { en:"Did we have enough time?", cz:"Měli jsme dost času?" },
+          { en:"How did you get there?", cz:"Jak ses tam dostal/a?" },
+          { en:"Did it rain yesterday?", cz:"Pršelo včera?" },
+          { en:"What happened at the meeting?", cz:"Co se stalo na schůzce?" },
+          { en:"Did she finish the project?", cz:"Dokončila projekt?" },
+          { en:"Why did he leave so early?", cz:"Proč odešel tak brzy?" },
+          { en:"Did you take the medicine?", cz:"Vzal/a jsi lék?" },
+          { en:"Where did you put the keys?", cz:"Kam jsi dal/a klíče?" },
+          { en:"How much did it cost?", cz:"Kolik to stálo?" },
+          { en:"Did they win the match?", cz:"Vyhráli zápas?" },
+          { en:"What did you have for lunch?", cz:"Co jsi měl/a k obědu?" },
+          { en:"Did he speak to the manager?", cz:"Mluvil s manažerem?" },
+          { en:"When did she start working there?", cz:"Kdy tam začala pracovat?" },
+          { en:"How long did the journey take?", cz:"Jak dlouho trvala cesta?" },
+          { en:"Did you understand the question?", cz:"Pochopil/a jsi otázku?" },
+          { en:"What did you do at the weekend?", cz:"Co jsi dělal/a o víkendu?" },
+          { en:"Did they find a solution?", cz:"Našli řešení?" },
+          { en:"Who wrote this report?", cz:"Kdo napsal tuto zprávu?" },
+          { en:"Did she bring her passport?", cz:"Přinesla pas?" },
+          { en:"Where did he study?", cz:"Kde studoval?" },
+          { en:"Did you hear the news this morning?", cz:"Slyšel/a jsi dnes ráno zprávy?" },
+        ]
+      }
+    },
+
+    B1: {
+      "modals": {
+        name: "Modals (can / must / should) ⭐",
+        items: [
+          { en:"You should drink more water.", cz:"Měl/a bys pít více vody." },
+          { en:"I can help you with your homework.", cz:"Mohu ti pomoci s domácím úkolem." },
+          { en:"We must leave early tomorrow.", cz:"Zítra musíme odejít brzy." },
+          { en:"He can speak three languages.", cz:"Umí mluvit třemi jazyky." },
+          { en:"You should see a doctor.", cz:"Měl/a bys jít k lékaři." },
+          { en:"I must finish this report today.", cz:"Dnes musím dokončit tuto zprávu." },
+          { en:"She should apologise for her behaviour.", cz:"Měla by se omluvit za své chování." },
+          { en:"We cannot park here.", cz:"Tady nemůžeme parkovat." },
+          { en:"You must not use your phone during the exam.", cz:"Během zkoušky nesmíte používat telefon." },
+          { en:"He should try harder.", cz:"Měl by se více snažit." },
+          { en:"She can finish the task by noon.", cz:"Úkol může dokončit do poledne." },
+          { en:"I must remember to call him.", cz:"Nesmím mu zapomenout zavolat." },
+          { en:"We should book the tickets in advance.", cz:"Měli bychom si lístky rezervovat předem." },
+          { en:"You can use my computer if you like.", cz:"Můžeš použít můj počítač, chceš-li." },
+          { en:"They must not be late again.", cz:"Nesmějí znovu přijít pozdě." },
+          { en:"She should take a break.", cz:"Měla by si dát pauzu." },
+          { en:"I can manage on my own.", cz:"Zvládnu to sám/sama." },
+          { en:"He must pay his taxes.", cz:"Musí platit daně." },
+          { en:"We should discuss this with the team.", cz:"Měli bychom to probrat s týmem." },
+          { en:"You should not eat so much sugar.", cz:"Neměl/a bys jíst tolik cukru." },
+          { en:"She must be more careful.", cz:"Musí být opatrnější." },
+          { en:"I cannot agree with this decision.", cz:"S tímto rozhodnutím nesouhlasím." },
+          { en:"He should get more sleep.", cz:"Měl by více spát." },
+          { en:"We must protect the environment.", cz:"Musíme chránit životní prostředí." },
+          { en:"You can always ask me for help.", cz:"Vždy mě můžeš požádat o pomoc." },
+          { en:"She should reconsider her plans.", cz:"Měla by své plány přehodnotit." },
+          { en:"I must apologise for the mistake.", cz:"Musím se za chybu omluvit." },
+          { en:"He can solve any problem quickly.", cz:"Dokáže rychle vyřešit jakýkoliv problém." },
+          { en:"We should be more patient.", cz:"Měli bychom být trpělivější." },
+          { en:"You must sign the document.", cz:"Dokument musíte podepsat." },
+        ]
+      },
+      "relative-clauses": {
+        name: "Relative clauses ⭐",
+        items: [
+          { en:"This is the man who helped me yesterday.", cz:"Tohle je muž, který mi včera pomohl." },
+          { en:"I have a friend who lives in Brno.", cz:"Mám kamaráda, který žije v Brně." },
+          { en:"That is the book which I want to buy.", cz:"To je ta kniha, kterou si chci koupit." },
+          { en:"She is the woman who won the prize.", cz:"To je ta žena, která vyhrála cenu." },
+          { en:"This is the café where we met.", cz:"Toto je kavárna, kde jsme se potkali." },
+          { en:"He is the teacher whose lessons I enjoy most.", cz:"Je to učitel, jehož hodiny se mi nejvíce líbí." },
+          { en:"The film that we saw last night was great.", cz:"Film, který jsme viděli včera večer, byl skvělý." },
+          { en:"I remember the day when we first met.", cz:"Pamatuji si den, kdy jsme se poprvé setkali." },
+          { en:"She is the colleague who always arrives early.", cz:"Je to kolegyně, která vždy přichází brzy." },
+          { en:"The house where I grew up was sold.", cz:"Dům, kde jsem vyrostl/a, byl prodán." },
+          { en:"He is someone who never gives up.", cz:"Je to někdo, kdo se nikdy nevzdá." },
+          { en:"That is the reason why I left.", cz:"To je důvod, proč jsem odešel/la." },
+          { en:"The exam which she passed was very difficult.", cz:"Zkouška, kterou složila, byla velmi obtížná." },
+          { en:"I know a shop that sells handmade furniture.", cz:"Znám obchod, který prodává ručně vyráběný nábytek." },
+          { en:"She is the person who designed the building.", cz:"Je to osoba, která budovu navrhla." },
+          { en:"This is the street where he was born.", cz:"Toto je ulice, kde se narodil." },
+          { en:"The company that employs him is very successful.", cz:"Firma, která ho zaměstnává, je velmi úspěšná." },
+          { en:"He is the one who told me the news.", cz:"On je ten, kdo mi řekl ty zprávy." },
+          { en:"I talked to a woman who knew your sister.", cz:"Mluvil/a jsem s ženou, která znala tvou sestru." },
+          { en:"The report which you wrote was excellent.", cz:"Zpráva, kterou jsi napsal/a, byla výborná." },
+          { en:"That was the moment when everything changed.", cz:"To byl okamžik, kdy se vše změnilo." },
+          { en:"She is the artist whose work I admire.", cz:"Je to umělkyně, jejíž tvorbu obdivuji." },
+          { en:"I remember the year when we moved here.", cz:"Pamatuji si rok, kdy jsme se sem přistěhovali." },
+          { en:"The city where she grew up is in the south.", cz:"Město, kde vyrůstala, leží na jihu." },
+          { en:"He is the manager who runs the whole department.", cz:"To je manažer, který řídí celé oddělení." },
+          { en:"That is the hotel which we stayed in.", cz:"Toto je hotel, ve kterém jsme bydleli." },
+          { en:"I need someone who can translate this document.", cz:"Potřebuji někoho, kdo může přeložit tento dokument." },
+          { en:"She found a recipe that she wanted to try.", cz:"Našla recept, který si chtěla vyzkoušet." },
+          { en:"This is the park where we always used to play.", cz:"Toto je park, kde jsme si vždy hráli." },
+          { en:"He is a person who takes his work very seriously.", cz:"Je to člověk, který bere svou práci velmi vážně." },
+        ]
+      },
+      "second-conditional": {
+        name: "2nd Conditional ⭐",
+        items: [
+          { en:"If I had more time, I would travel.", cz:"Kdybych měl/a více času, cestoval/a bych." },
+          { en:"She would be happier if she had a better job.", cz:"Byla by šťastnější, kdyby měla lepší práci." },
+          { en:"If we lived near the sea, we would swim every day.", cz:"Kdybychom bydleli u moře, plavali bychom každý den." },
+          { en:"He would buy a house if he had enough money.", cz:"Koupil by dům, kdyby měl dost peněz." },
+          { en:"If you studied harder, you would pass.", cz:"Kdyby ses více učil/a, složil/a bys zkoušku." },
+          { en:"What would you do if you lost your job?", cz:"Co bys dělal/a, kdybys přišel/la o práci?" },
+          { en:"If I were you, I would accept the offer.", cz:"Na tvém místě bych tu nabídku přijal/a." },
+          { en:"She would not worry so much if she trusted him.", cz:"Tolik by se nebála, kdyby mu věřila." },
+          { en:"If they had a car, they could visit us.", cz:"Kdyby měli auto, mohli by nás navštívit." },
+          { en:"I would help you if I knew how.", cz:"Pomohl/a bych ti, kdybych věděl/a jak." },
+          { en:"If he practised every day, he would improve.", cz:"Kdyby cvičil každý den, zlepšil by se." },
+          { en:"We would save money if we cooked at home.", cz:"Ušetřili bychom, kdybychom vařili doma." },
+          { en:"If she spoke better English, she would get the job.", cz:"Kdyby lépe mluvila anglicky, dostala by to místo." },
+          { en:"I would not be tired if I slept more.", cz:"Nebyl/a bych unavený/á, kdybych více spal/a." },
+          { en:"If you asked him, he would help you.", cz:"Kdybys ho požádal/a, pomohl by ti." },
+          { en:"She would move abroad if she could.", cz:"Kdyby mohla, přestěhovala by se do zahraničí." },
+          { en:"If I had a million, I would start a business.", cz:"Kdybych měl/a milion, založil/a bych podnik." },
+          { en:"He would be promoted if he worked harder.", cz:"Byl by povýšen, kdyby pracoval tvrději." },
+          { en:"If we had more staff, the project would be easier.", cz:"Kdybychom měli více zaměstnanců, projekt by byl snazší." },
+          { en:"What would happen if no one voted?", cz:"Co by se stalo, kdyby nikdo nevolil?" },
+          { en:"If I were in charge, I would change the rules.", cz:"Kdybych byl/a šéf, změnil/a bych pravidla." },
+          { en:"She would be less stressed if she delegated more.", cz:"Byla by méně ve stresu, kdyby více delegovala." },
+          { en:"If he listened to advice, he would avoid problems.", cz:"Kdyby naslouchal radám, problémům by se vyhnul." },
+          { en:"I would feel better if I exercised regularly.", cz:"Cítil/a bych se lépe, kdybych pravidelně cvičil/a." },
+          { en:"If they reduced the price, more people would buy it.", cz:"Kdyby snížili cenu, více lidí by to koupilo." },
+          { en:"She would write a book if she had the time.", cz:"Napsala by knihu, kdyby měla čas." },
+          { en:"If you told the truth, things would be easier.", cz:"Kdybys řekl/a pravdu, bylo by to snazší." },
+          { en:"I would call him if I had his number.", cz:"Zavolal/a bych mu, kdybych měl/a jeho číslo." },
+          { en:"If the company paid better, I would stay.", cz:"Kdyby firma lépe platila, zůstal/a bych." },
+          { en:"He would feel better if he went on holiday.", cz:"Cítil by se lépe, kdyby šel na dovolenou." },
+        ]
+      },
+      "passive-intro": {
+        name: "Passive voice – základy ⭐",
+        items: [
+          { en:"The cake was made by my mother.", cz:"Dort upekla moje matka." },
+          { en:"English is spoken all over the world.", cz:"Anglicky se mluví po celém světě." },
+          { en:"The letter was written last week.", cz:"Dopis byl napsán minulý týden." },
+          { en:"The new bridge is being built.", cz:"Nový most se staví." },
+          { en:"The report will be finished tomorrow.", cz:"Zpráva bude dokončena zítra." },
+          { en:"The meeting has been cancelled.", cz:"Schůzka byla zrušena." },
+          { en:"The window was broken by a stone.", cz:"Okno bylo rozbito kamenem." },
+          { en:"Rice is grown in warm countries.", cz:"Rýže se pěstuje v teplých zemích." },
+          { en:"The house was built in the 1950s.", cz:"Dům byl postaven v padesátých letech." },
+          { en:"The problem was solved quickly.", cz:"Problém byl rychle vyřešen." },
+          { en:"The documents have been signed.", cz:"Dokumenty byly podepsány." },
+          { en:"The package will be delivered tomorrow.", cz:"Balíček bude doručen zítra." },
+          { en:"The film was directed by a famous director.", cz:"Film natočil slavný režisér." },
+          { en:"The car was stolen last night.", cz:"Auto bylo ukradeno včera v noci." },
+          { en:"The children are taught by two teachers.", cz:"Děti vyučují dva učitelé." },
+          { en:"A new museum is being opened in the city.", cz:"Ve městě se otevírá nové muzeum." },
+          { en:"The rules have been changed.", cz:"Pravidla byla změněna." },
+          { en:"The money was found on the street.", cz:"Peníze byly nalezeny na ulici." },
+          { en:"This book was written in the nineteenth century.", cz:"Tato kniha byla napsána v devatenáctém století." },
+          { en:"The exam papers have been corrected.", cz:"Zkouškové práce byly opraveny." },
+          { en:"A decision will be made by the end of the week.", cz:"Rozhodnutí bude přijato do konce týdne." },
+          { en:"The shop was closed for repairs.", cz:"Obchod byl kvůli opravám zavřen." },
+          { en:"The email has been sent.", cz:"E-mail byl odeslán." },
+          { en:"The concert was enjoyed by everyone.", cz:"Koncert si všichni užili." },
+          { en:"The project is expected to be completed in June.", cz:"Předpokládá se, že projekt bude dokončen v červnu." },
+          { en:"The prize was awarded to three students.", cz:"Cena byla udělena třem studentům." },
+          { en:"The kitchen is being renovated.", cz:"Kuchyně prochází rekonstrukcí." },
+          { en:"The plan was approved by the board.", cz:"Plán byl schválen radou." },
+          { en:"The water is cleaned before use.", cz:"Voda je před použitím čištěna." },
+          { en:"The mistake was noticed immediately.", cz:"Chyba byla okamžitě rozpoznána." },
+        ]
+      },
+      "reported-speech-intro": {
+        name: "Reported speech – základy ⭐",
+        items: [
+          { en:"She said that she was tired.", cz:"Řekla, že je unavená." },
+          { en:"He told me that he would come later.", cz:"Řekl mi, že přijde později." },
+          { en:"They said that they had finished.", cz:"Řekli, že skončili." },
+          { en:"She told me that she liked the film.", cz:"Řekla mi, že se jí film líbil." },
+          { en:"He said that he did not understand.", cz:"Řekl, že nerozumí." },
+          { en:"They told us that the train was late.", cz:"Řekli nám, že vlak má zpoždění." },
+          { en:"She said she could not come.", cz:"Řekla, že nemůže přijít." },
+          { en:"He told the students to sit down.", cz:"Řekl studentům, aby si sedli." },
+          { en:"She asked me where I lived.", cz:"Zeptala se mě, kde bydlím." },
+          { en:"He said he would help me.", cz:"Řekl, že mi pomůže." },
+          { en:"They told him not to worry.", cz:"Řekli mu, aby se nebál." },
+          { en:"She said that she had seen him before.", cz:"Řekla, že ho už viděla." },
+          { en:"He told me that he was leaving.", cz:"Řekl mi, že odjíždí." },
+          { en:"She asked if I had any questions.", cz:"Zeptala se, zda mám nějaké otázky." },
+          { en:"He said he wanted to speak to the manager.", cz:"Řekl, že chce mluvit s manažerem." },
+          { en:"She told us that the meeting had been cancelled.", cz:"Řekla nám, že schůzka byla zrušena." },
+          { en:"He asked her if she was feeling better.", cz:"Zeptal se jí, zda se cítí lépe." },
+          { en:"They said they would be in touch.", cz:"Řekli, že se ozvou." },
+          { en:"She told me that she had passed the exam.", cz:"Řekla mi, že složila zkoušku." },
+          { en:"He said he did not want to go.", cz:"Řekl, že nechce jít." },
+          { en:"She asked me to wait outside.", cz:"Požádala mě, abych čekal/a venku." },
+          { en:"They told us that dinner was ready.", cz:"Řekli nám, že večeře je připravena." },
+          { en:"He said that the project was nearly finished.", cz:"Řekl, že projekt je skoro hotový." },
+          { en:"She told him that she agreed.", cz:"Řekla mu, že souhlasí." },
+          { en:"He asked if we could help.", cz:"Zeptal se, zda bychom mohli pomoci." },
+          { en:"They said they had not received the email.", cz:"Řekli, že e-mail neobdrželi." },
+          { en:"She told me not to tell anyone.", cz:"Řekla mi, ať nikomu nic neříkám." },
+          { en:"He said that he was going to apply for the job.", cz:"Řekl, že se hodlá ucházet o tu práci." },
+          { en:"She asked why I was late.", cz:"Zeptala se, proč jsem přišel/la pozdě." },
+          { en:"They told her that she had done a great job.", cz:"Řekli jí, že odvedla skvělou práci." },
+        ]
+      },
+      "present-perfect-continuous": {
+        name: "Present Perfect Continuous ⭐",
+        items: [
+          { en:"I have been waiting for an hour.", cz:"Čekám hodinu." },
+          { en:"She has been studying all day.", cz:"Celý den studuje." },
+          { en:"They have been working on this project for months.", cz:"Na tomto projektu pracují měsíce." },
+          { en:"He has been running every morning.", cz:"Každé ráno běhá." },
+          { en:"We have been living here since 2018.", cz:"Bydlíme tady od roku 2018." },
+          { en:"I have been learning Spanish for two years.", cz:"Dva roky se učím španělsky." },
+          { en:"She has been feeling unwell recently.", cz:"Poslední dobou se necítí dobře." },
+          { en:"He has been trying to fix the computer.", cz:"Snaží se opravit počítač." },
+          { en:"We have been discussing this for too long.", cz:"Diskutujeme o tom příliš dlouho." },
+          { en:"They have been arguing all morning.", cz:"Celé ráno se hádají." },
+          { en:"I have been thinking about the problem.", cz:"Přemýšlím o tom problému." },
+          { en:"She has been cooking since three o'clock.", cz:"Vaří od tří." },
+          { en:"He has been travelling for six months.", cz:"Cestuje šest měsíců." },
+          { en:"We have been expecting your call.", cz:"Čekáme na tvůj hovor." },
+          { en:"I have been reading this book all week.", cz:"Celý týden čtu tuto knihu." },
+          { en:"She has been training for the marathon.", cz:"Připravuje se na maraton." },
+          { en:"He has been sleeping badly recently.", cz:"Poslední dobou špatně spí." },
+          { en:"They have been searching for a solution.", cz:"Hledají řešení." },
+          { en:"I have been trying to reach you.", cz:"Snažím se tě dostihnout." },
+          { en:"She has been writing reports since this morning.", cz:"Od rána píše zprávy." },
+          { en:"He has been saving money for a new car.", cz:"Spoří na nové auto." },
+          { en:"We have been planning this trip for months.", cz:"Tento výlet plánujeme měsíce." },
+          { en:"They have been building the new road for a year.", cz:"Novou silnici budují rok." },
+          { en:"I have been walking for three hours.", cz:"Procházím se tři hodiny." },
+          { en:"She has been taking piano lessons since childhood.", cz:"Bere hodiny klavíru od dětství." },
+          { en:"He has been growing vegetables in his garden.", cz:"Na zahradě pěstuje zeleninu." },
+          { en:"We have been waiting for the results.", cz:"Čekáme na výsledky." },
+          { en:"I have been feeling much better lately.", cz:"Poslední dobou se cítím mnohem lépe." },
+          { en:"She has been working on her thesis.", cz:"Pracuje na diplomové práci." },
+          { en:"They have been preparing for the meeting.", cz:"Připravují se na schůzku." },
+        ]
+      }
+    },
+
+    B2: {
+      "passive": {
+        name: "Passive voice – pokročilý ⭐",
+        items: [
+          { en:"The car was repaired yesterday.", cz:"Auto bylo včera opraveno." },
+          { en:"The meeting will be held next week.", cz:"Schůzka se bude konat příští týden." },
+          { en:"The email has been sent already.", cz:"E-mail byl již odeslán." },
+          { en:"The new law will be implemented next year.", cz:"Nový zákon bude zaveden příští rok." },
+          { en:"The report has been reviewed and approved.", cz:"Zpráva byla přezkoumána a schválena." },
+          { en:"The employees were informed about the changes.", cz:"Zaměstnanci byli informováni o změnách." },
+          { en:"The budget must be reduced.", cz:"Rozpočet musí být snížen." },
+          { en:"The new product is expected to be launched in spring.", cz:"Nový produkt by měl být uveden na trh na jaře." },
+          { en:"The building has been renovated twice.", cz:"Budova byla dvakrát rekonstruována." },
+          { en:"The research is being conducted by a team of scientists.", cz:"Výzkum provádí tým vědců." },
+          { en:"All tickets have been sold out.", cz:"Všechny lístky byly vyprodány." },
+          { en:"The decision was made without consulting anyone.", cz:"Rozhodnutí bylo přijato bez konzultace s kýmkoliv." },
+          { en:"The suspect was released due to lack of evidence.", cz:"Podezřelý byl propuštěn pro nedostatek důkazů." },
+          { en:"A new approach will be adopted.", cz:"Bude přijat nový přístup." },
+          { en:"The project has been delayed by bad weather.", cz:"Projekt byl zpožděn kvůli špatnému počasí." },
+          { en:"The company was founded in the nineteenth century.", cz:"Společnost byla založena v devatenáctém století." },
+          { en:"The children have been taken care of.", cz:"O děti bylo postaráno." },
+          { en:"The contract has not been signed yet.", cz:"Smlouva ještě nebyla podepsána." },
+          { en:"The match was played in difficult conditions.", cz:"Zápas byl odehrán v těžkých podmínkách." },
+          { en:"He was awarded a scholarship.", cz:"Bylo mu uděleno stipendium." },
+          { en:"The price should be reduced to attract more customers.", cz:"Cena by měla být snížena, aby přilákala více zákazníků." },
+          { en:"All employees are expected to attend.", cz:"Očekává se, že se zúčastní všichni zaměstnanci." },
+          { en:"The building was designed by a famous architect.", cz:"Budovu navrhl slavný architekt." },
+          { en:"The plan is being reviewed by the committee.", cz:"Plán přezkoumává výbor." },
+          { en:"The results will be announced next week.", cz:"Výsledky budou oznámeny příští týden." },
+          { en:"Mistakes were made at every stage of the project.", cz:"V každé fázi projektu se dělaly chyby." },
+          { en:"The goods have been dispatched to the warehouse.", cz:"Zboží bylo odesláno do skladu." },
+          { en:"The issue will be addressed at the next meeting.", cz:"Tato záležitost bude řešena na příštím zasedání." },
+          { en:"The child was praised for her effort.", cz:"Dítě bylo pochváleno za svou snahu." },
+          { en:"The virus has been identified by researchers.", cz:"Virus byl identifikován výzkumníky." },
+        ]
+      },
+      "reported-speech": {
+        name: "Reported speech – pokročilý ⭐",
+        items: [
+          { en:"He said that he was tired.", cz:"Řekl, že je unavený." },
+          { en:"She told me that she would come later.", cz:"Řekla mi, že přijde později." },
+          { en:"They said that they had finished.", cz:"Řekli, že skončili." },
+          { en:"She warned me not to be late.", cz:"Varovala mě, abych nepřišel/přišla pozdě." },
+          { en:"He promised that he would call.", cz:"Slíbil, že zavolá." },
+          { en:"She suggested going for a walk.", cz:"Navrhla, abychom šli na procházku." },
+          { en:"He insisted that he had not taken the money.", cz:"Trval na tom, že peníze nevzal." },
+          { en:"She admitted that she had made a mistake.", cz:"Přiznala, že udělala chybu." },
+          { en:"He denied having been there.", cz:"Popřel, že tam byl." },
+          { en:"She explained that she had been unwell.", cz:"Vysvětlila, že nebyla zdravá." },
+          { en:"He claimed that the report was incorrect.", cz:"Tvrdil, že zpráva je nesprávná." },
+          { en:"She told us not to worry.", cz:"Řekla nám, abychom se nebáli." },
+          { en:"He announced that the company would merge.", cz:"Oznámil, že se společnost sloučí." },
+          { en:"She asked whether I had eaten.", cz:"Zeptala se, zda jsem jedl/a." },
+          { en:"He wondered why no one had told him.", cz:"Divil se, proč mu to nikdo neřekl." },
+          { en:"She mentioned that she was moving abroad.", cz:"Zmínila, že se stěhuje do zahraničí." },
+          { en:"He requested that the meeting be postponed.", cz:"Požádal o odložení schůzky." },
+          { en:"She acknowledged that the situation was difficult.", cz:"Uznala, že situace je obtížná." },
+          { en:"He refused to give any details.", cz:"Odmítl poskytnout jakékoli podrobnosti." },
+          { en:"She ordered them to leave immediately.", cz:"Přikázala jim, aby okamžitě odešli." },
+          { en:"He pointed out that the deadline had passed.", cz:"Upozornil, že termín uplynul." },
+          { en:"She encouraged him to apply for the post.", cz:"Povzbudila ho, aby o místo požádal." },
+          { en:"He confirmed that the flight was on schedule.", cz:"Potvrdil, že let probíhá podle plánu." },
+          { en:"She advised me to see a specialist.", cz:"Poradila mi, abych navštívil/a odborníka." },
+          { en:"He warned them that the road was dangerous.", cz:"Varoval je, že silnice je nebezpečná." },
+          { en:"She complained that nobody listened to her.", cz:"Stěžovala si, že ji nikdo neposlouchá." },
+          { en:"He added that there were other options.", cz:"Dodal, že existují jiné možnosti." },
+          { en:"She reminded me to lock the door.", cz:"Připomněla mi, abych zamkl/a dveře." },
+          { en:"He insisted that we try again.", cz:"Trval na tom, abychom to zkusili znovu." },
+          { en:"She disclosed that the contract had been signed.", cz:"Prozradila, že smlouva byla podepsána." },
+        ]
+      },
+      "conditionals-2": {
+        name: "2nd & 3rd Conditional ⭐",
+        items: [
+          { en:"If I had time, I would travel more.", cz:"Kdybych měl/a čas, cestoval/a bych víc." },
+          { en:"If she knew, she would tell you.", cz:"Kdyby věděla, řekla by ti to." },
+          { en:"If we lived near the sea, we would swim every day.", cz:"Kdybychom bydleli u moře, plavali bychom každý den." },
+          { en:"If he had studied harder, he would have passed.", cz:"Kdyby se byl více učil, byl by prošel." },
+          { en:"She would have helped if you had asked her.", cz:"Pomohla by, kdybys ji byl/a požádal/a." },
+          { en:"If they had left earlier, they would not have missed the train.", cz:"Kdyby odjeli dříve, vlak by nezmeškali." },
+          { en:"I would have called you if I had had your number.", cz:"Byl/a bych ti zavolal/a, kdybych měl/a tvoje číslo." },
+          { en:"If it had not rained, we would have gone to the beach.", cz:"Kdyby nepršelo, byli bychom šli na pláž." },
+          { en:"She would have been promoted if she had worked harder.", cz:"Byla by povýšena, kdyby pracovala tvrději." },
+          { en:"If I were more confident, I would apply for the job.", cz:"Kdybych byl/a sebejistější, o práci bych se ucházel/a." },
+          { en:"If they had invested earlier, they would be rich now.", cz:"Kdyby investovali dříve, byli by teď bohatí." },
+          { en:"He would not have made that mistake if he had been more careful.", cz:"Tu chybu by neudělal, kdyby byl opatrnější." },
+          { en:"If she had told the truth, things would have been easier.", cz:"Kdyby řekla pravdu, bylo by to jednodušší." },
+          { en:"I would feel better now if I had slept more.", cz:"Nyní bych se cítil/a lépe, kdybych byl/a více spal/a." },
+          { en:"If we had booked in advance, we would have got a better price.", cz:"Kdybychom si to rezervovali předem, dostali bychom lepší cenu." },
+          { en:"He would have won if he had trained more.", cz:"Byl by vyhrál, kdyby více trénoval." },
+          { en:"If you had listened, you would have understood.", cz:"Kdybys poslouchal/a, byl/a bys pochopil/a." },
+          { en:"She would have come if she had been invited.", cz:"Přišla by, kdyby dostala pozvání." },
+          { en:"If they had merged earlier, the company would be stronger.", cz:"Kdyby se sloučili dříve, firma by byla silnější." },
+          { en:"I would not have gone if I had known the truth.", cz:"Nebyl/a bych šel/šla, kdybych znal/a pravdu." },
+          { en:"If the weather were better, we would go outside.", cz:"Kdyby bylo lepší počasí, šli bychom ven." },
+          { en:"If I had your talent, I would be a musician.", cz:"Kdybych měl/a tvůj talent, byl/a bych hudebník." },
+          { en:"She would have stayed if the job had been better paid.", cz:"Zůstala by, kdyby práce byla lépe placená." },
+          { en:"If he had taken the medicine, he would have recovered.", cz:"Kdyby vzal léky, uzdravil by se." },
+          { en:"We would have had a better result if we had cooperated.", cz:"Dosáhli bychom lepšího výsledku, kdybychom spolupracovali." },
+          { en:"If I had not met her, my life would be very different.", cz:"Kdybych ji nepotkal/a, byl by můj život úplně jiný." },
+          { en:"He would have caught the bus if he had run faster.", cz:"Autobus by stihl, kdyby běžel rychleji." },
+          { en:"If she had chosen a different career, she would be happier.", cz:"Kdyby si zvolila jinou kariéru, byla by šťastnější." },
+          { en:"I would have been on time if the traffic had not been so bad.", cz:"Přišel/přišla bych včas, kdyby provoz nebyl tak hustý." },
+          { en:"If they had asked, we would have helped.", cz:"Kdyby požádali, pomohli bychom." },
+        ]
+      },
+      "advanced-modals": {
+        name: "Advanced modals ⭐",
+        items: [
+          { en:"She must have forgotten about the meeting.", cz:"Určitě zapomněla na schůzku." },
+          { en:"He might have taken the wrong bus.", cz:"Možná nastoupil do špatného autobusu." },
+          { en:"They cannot have left already.", cz:"Přece nemohli odejít tak brzy." },
+          { en:"She should have told me earlier.", cz:"Měla mi to říct dřív." },
+          { en:"He could have done better.", cz:"Mohl to zvládnout lépe." },
+          { en:"They must be waiting for us.", cz:"Určitě na nás čekají." },
+          { en:"She may have misunderstood the question.", cz:"Možná otázce neporozuměla." },
+          { en:"He need not have worried so much.", cz:"Nemusel se tolik starat." },
+          { en:"We ought to have checked the timetable.", cz:"Měli jsme zkontrolovat jízdní řád." },
+          { en:"She cannot be serious about this.", cz:"To přece nemyslí vážně." },
+          { en:"He might be working late tonight.", cz:"Možná dnes pracuje dlouho." },
+          { en:"They should have arrived by now.", cz:"Teď by už měli být tady." },
+          { en:"She could have been a great doctor.", cz:"Mohla být skvělou lékařkou." },
+          { en:"He must have worked very hard to pass.", cz:"Musel tvrdě pracovat, aby uspěl." },
+          { en:"We may not have enough time.", cz:"Možná nebudeme mít dostatek času." },
+          { en:"She ought to be more careful.", cz:"Měla by být opatrnější." },
+          { en:"He might not have received the message.", cz:"Možná zprávu neobdržel." },
+          { en:"They cannot have understood the instructions.", cz:"Určitě nepochopili pokyny." },
+          { en:"She must have been very tired after the journey.", cz:"Po té cestě musela být velmi unavená." },
+          { en:"He could have prevented the accident.", cz:"Mohl nehodě zabránit." },
+          { en:"We should not have ignored the warning.", cz:"Neměli jsme varování ignorovat." },
+          { en:"She may already have made a decision.", cz:"Možná se již rozhodla." },
+          { en:"He need not have brought so much luggage.", cz:"Nemusel brát tolik zavazadel." },
+          { en:"They must have changed their plans.", cz:"Určitě změnili plány." },
+          { en:"She could have called to let us know.", cz:"Mohla zavolat, aby nás informovala." },
+          { en:"He might have left his phone at the office.", cz:"Možná nechal telefon v kanceláři." },
+          { en:"We ought to have consulted the experts.", cz:"Měli jsme se poradit s odborníky." },
+          { en:"She cannot have been the only one who noticed.", cz:"Přece nemohla být jediná, kdo si toho všiml." },
+          { en:"He should have listened to the advice.", cz:"Měl naslouchat radám." },
+          { en:"They may have run out of time.", cz:"Možná jim došel čas." },
+        ]
+      },
+      "inversion": {
+        name: "Inversion & Emphasis ⭐",
+        items: [
+          { en:"Never have I seen such a beautiful sunset.", cz:"Nikdy jsem neviděl/a tak krásný západ slunce." },
+          { en:"Rarely does she make a mistake.", cz:"Jen zřídka dělá chybu." },
+          { en:"Only then did he realise the truth.", cz:"Teprve tehdy si uvědomil pravdu." },
+          { en:"Not only did she win, but she also broke the record.", cz:"Nejenže vyhrála, ale také překonala rekord." },
+          { en:"Hardly had I sat down when the phone rang.", cz:"Sotva jsem si sedl/a, zazvonil telefon." },
+          { en:"No sooner had he arrived than problems started.", cz:"Sotva dorazil, začaly problémy." },
+          { en:"Little did she know what was coming.", cz:"Málo tušila, co ji čeká." },
+          { en:"Under no circumstances should you lie.", cz:"Za žádných okolností nesmíte lhát." },
+          { en:"Only after the meeting did I understand.", cz:"Teprve po schůzce jsem pochopil/a." },
+          { en:"Not once did he thank me.", cz:"Ani jednou mi nepoděkoval." },
+          { en:"Seldom does such an opportunity arise.", cz:"Taková příležitost se naskytne jen vzácně." },
+          { en:"In no way is this an acceptable solution.", cz:"Toto není v žádném případě přijatelné řešení." },
+          { en:"Only by working together can we succeed.", cz:"Jen společnou prací můžeme uspět." },
+          { en:"Nowhere else can you find such quality.", cz:"Taková kvalita se jinde nenajde." },
+          { en:"Not until she explained did I understand.", cz:"Pochopil/a jsem až poté, co to vysvětlila." },
+          { en:"Should you need help, do not hesitate to call.", cz:"Budete-li potřebovat pomoc, neváhejte zavolat." },
+          { en:"Were I in your position, I would act differently.", cz:"Kdybych byl/a na tvém místě, jednal/a bych jinak." },
+          { en:"Had we known the risks, we would have refused.", cz:"Kdybychom znali rizika, odmítli bychom." },
+          { en:"Such was his determination that nothing could stop him.", cz:"Jeho odhodlání bylo takové, že ho nic nemohlo zastavit." },
+          { en:"So difficult was the exam that many students failed.", cz:"Zkouška byla tak obtížná, že mnozí studenti neuspěli." },
+          { en:"Only when she apologised did he forgive her.", cz:"Teprve když se omluvila, odpustil jí." },
+          { en:"Barely had they started when the power went out.", cz:"Sotva začali, výpadek elektřiny to přerušil." },
+          { en:"Never before had anyone solved the problem so quickly.", cz:"Nikdy předtím nikdo nevyřešil problém tak rychle." },
+          { en:"Not a word did he say in his defence.", cz:"Na svou obranu nepromluvil ani slovo." },
+          { en:"Only in this way can the goal be achieved.", cz:"Pouze tímto způsobem lze cíle dosáhnout." },
+          { en:"At no point did she consider giving up.", cz:"V žádném okamžiku neuvažovala o tom, že by se vzdala." },
+          { en:"No sooner had I left than it started to rain.", cz:"Sotva jsem odešel/odešla, začalo pršet." },
+          { en:"Little did we suspect what was about to happen.", cz:"Sotva jsme tušili, co se stane." },
+          { en:"Only by making sacrifices can real progress be made.", cz:"Skutečného pokroku lze dosáhnout jen za cenu obětí." },
+          { en:"Such was the pressure that he resigned.", cz:"Tlak byl takový, že rezignoval." },
+        ]
+      },
+      "mixed-conditionals": {
+        name: "Mixed Conditionals ⭐",
+        items: [
+          { en:"If she had studied medicine, she would be a doctor now.", cz:"Kdyby studovala medicínu, byla by teď lékařka." },
+          { en:"If he had emigrated, he would not be here today.", cz:"Kdyby emigroval, dnes by tu nebyl." },
+          { en:"If I had saved more, I would not be in debt now.", cz:"Kdybych více šetřil/a, nebyl/a bych teď v dluzích." },
+          { en:"If she had taken that job, she would be living in Paris.", cz:"Kdyby tu práci přijala, žila by v Paříži." },
+          { en:"If he were more organised, he would have met the deadline.", cz:"Kdyby si to lépe zorganizoval, stihl by termín." },
+          { en:"If I were better at maths, I would have chosen engineering.", cz:"Kdybych byl/a lepší v matematice, zvolil/a bych strojírenství." },
+          { en:"If they had invested wisely, they would be wealthy now.", cz:"Kdyby investovali chytře, byli by nyní bohatí." },
+          { en:"If she did not hate flying, she would have visited us last year.", cz:"Kdyby neměla strach z létání, navštívila by nás loni." },
+          { en:"If he were less stubborn, he would have accepted the advice.", cz:"Kdyby byl méně tvrdohlavý, radu by přijal." },
+          { en:"If I spoke better Spanish, I would have got the promotion.", cz:"Kdybych lépe mluvil/a španělsky, byl/a bych povýšen/a." },
+          { en:"If you had been more careful, you would not have this problem.", cz:"Kdybys byl/a opatrnější, tento problém bys neměl/a." },
+          { en:"If she were not so shy, she would have made more friends.", cz:"Kdyby nebyla tak plachá, získala by více přátel." },
+          { en:"If he had taken care of his health, he would be fitter now.", cz:"Kdyby pečoval o své zdraví, byl by teď v lepší kondici." },
+          { en:"If I had not taken that wrong turn, I would be home by now.", cz:"Kdybych neodbočil/a špatně, byl/a bych teď doma." },
+          { en:"If they had negotiated better, they would not face these problems.", cz:"Kdyby lépe vyjednávali, těmto problémům by nečelili." },
+          { en:"If she had not left the company, she would be the director now.", cz:"Kdyby firmu neopustila, byla by teď ředitelkou." },
+          { en:"If he were not afraid of change, he would have moved long ago.", cz:"Kdyby se nebál změn, byl by se přestěhoval dávno." },
+          { en:"If I had practised more, I would be a better musician now.", cz:"Kdybych více cvičil/a, byl/a bych teď lepší hudebník." },
+          { en:"If they had caught the earlier train, they would be here now.", cz:"Kdyby stihli dřívější vlak, byli by teď tady." },
+          { en:"If she had not lost the documents, she would not be in trouble now.", cz:"Kdyby dokumenty neztratila, nebyla by teď v problémech." },
+          { en:"If I were not so tired, I would have finished by now.", cz:"Kdybych nebyl/a tak unavený/á, byl/a bych teď hotov/a." },
+          { en:"If he had chosen differently, his life would be better now.", cz:"Kdyby zvolil jinak, jeho život by byl teď lepší." },
+          { en:"If they had started earlier, the project would be finished.", cz:"Kdyby začali dříve, projekt by byl dokončen." },
+          { en:"If she were not so indecisive, she would have solved it already.", cz:"Kdyby nebyla tak nerozhodná, problém by vyřešila." },
+          { en:"If I had taken his advice, I would not be in this situation.", cz:"Kdybych poslechl/a jeho radu, nebyl/a bych v této situaci." },
+          { en:"If he did not live so far away, he would have come yesterday.", cz:"Kdyby nebydlel tak daleko, byl by přišel včera." },
+          { en:"If you had been there, you would understand what I mean.", cz:"Kdybys tam byl/a, pochopil/a bys, co tím myslím." },
+          { en:"If we had a bigger budget, we would have done it differently.", cz:"Kdybychom měli větší rozpočet, udělali bychom to jinak." },
+          { en:"If she had been promoted then, she would be happier now.", cz:"Kdyby byla tehdy povýšena, byla by teď šťastnější." },
+          { en:"If I were not so busy, I would have called you earlier.", cz:"Kdybych nebyl/a tak zaneprázdněný/á, zavolal/a bych ti dříve." },
+        ]
+      }
+    },
+
+    C1: {
+      "collocations": {
+        name: "Collocations & Phrases ⭐",
+        items: [
+          { en:"We need to take into account the long-term costs.", cz:"Musíme vzít v úvahu dlouhodobé náklady." },
+          { en:"He raised a valid point during the discussion.", cz:"Během diskuse vznesl platný argument." },
+          { en:"She is highly skilled at solving complex problems.", cz:"Je velmi zdatná v řešení složitých problémů." },
+          { en:"The company made significant progress last quarter.", cz:"Minulé čtvrtletí společnost dosáhla výrazného pokroku." },
+          { en:"They reached a consensus after lengthy negotiations.", cz:"Po zdlouhavých jednáních dosáhli shody." },
+          { en:"She drew attention to a critical flaw in the plan.", cz:"Upozornila na kritickou chybu v plánu." },
+          { en:"He held the position for over a decade.", cz:"Zastával tuto funkci déle než deset let." },
+          { en:"We must take immediate action.", cz:"Musíme okamžitě jednat." },
+          { en:"She gave a thorough account of the incident.", cz:"Podala podrobný popis incidentu." },
+          { en:"He made a compelling case for reform.", cz:"Přesvědčivě argumentoval pro reformu." },
+          { en:"They came to a mutual understanding.", cz:"Dospěli k vzájemnému porozumění." },
+          { en:"She paid close attention to every detail.", cz:"Věnovala pozornost každému detailu." },
+          { en:"The new policy came into effect last month.", cz:"Nová politika vstoupila v platnost minulý měsíc." },
+          { en:"He set a precedent with his decision.", cz:"Svým rozhodnutím vytvořil precedens." },
+          { en:"She struck a balance between work and personal life.", cz:"Dosáhla rovnováhy mezi prací a osobním životem." },
+          { en:"The project fell behind schedule.", cz:"Projekt se opozdil oproti harmonogramu." },
+          { en:"He took the blame for the failure.", cz:"Vzal na sebe vinu za neúspěch." },
+          { en:"She laid the groundwork for future development.", cz:"Připravila půdu pro budoucí rozvoj." },
+          { en:"They entered into a formal agreement.", cz:"Uzavřeli formální dohodu." },
+          { en:"He made a substantial contribution to the field.", cz:"Přispěl výrazně do tohoto oboru." },
+          { en:"She put forward a number of suggestions.", cz:"Přednesla řadu návrhů." },
+          { en:"The results gave rise to further questions.", cz:"Výsledky vyvolaly další otázky." },
+          { en:"He brought the matter to a close.", cz:"Věc uzavřel." },
+          { en:"She called into question the reliability of the data.", cz:"Zpochybnila spolehlivost dat." },
+          { en:"They took a collaborative approach to solving the issue.", cz:"Na řešení problému se podíleli společně." },
+          { en:"He shed light on an often overlooked aspect.", cz:"Osvětlil často přehlížený aspekt." },
+          { en:"She mounted a strong defence of her argument.", cz:"Pevně hájila svůj argument." },
+          { en:"The committee put the proposal to a vote.", cz:"Výbor předal návrh k hlasování." },
+          { en:"He exercised considerable influence over the outcome.", cz:"Měl značný vliv na výsledek." },
+          { en:"She struck an optimistic note in her speech.", cz:"Ve svém projevu zaujala optimistický tón." },
+        ]
+      },
+      "complex-clauses": {
+        name: "Complex clauses ⭐",
+        items: [
+          { en:"Although it was late, we decided to continue.", cz:"Ačkoli bylo pozdě, rozhodli jsme se pokračovat." },
+          { en:"The more you practise, the better you will become.", cz:"Čím více budeš cvičit, tím lepší budeš." },
+          { en:"Had I known earlier, I would have acted differently.", cz:"Kdybych to věděl/a dříve, jednal/a bych jinak." },
+          { en:"Despite the difficulties, she achieved her goal.", cz:"Navzdory obtížím dosáhla svého cíle." },
+          { en:"He spoke so quickly that I could not follow.", cz:"Mluvil tak rychle, že jsem ho nestačil/a sledovat." },
+          { en:"Provided that you pass the test, you will get the job.", cz:"Pokud projdeš testem, práci dostaneš." },
+          { en:"She left without saying goodbye, which surprised everyone.", cz:"Odešla, aniž by se rozloučila, což všechny překvapilo." },
+          { en:"Not only is the plan expensive, but it is also impractical.", cz:"Plán není jen nákladný, ale také nepraktický." },
+          { en:"The longer you wait, the worse the situation will get.", cz:"Čím déle budete čekat, tím horší bude situace." },
+          { en:"Were it not for her help, we would have failed.", cz:"Nebýt její pomoci, selhali bychom." },
+          { en:"Much as I respect his opinion, I cannot agree.", cz:"Ač si jeho názoru vážím, nemohu souhlasit." },
+          { en:"No matter how hard he tried, he could not succeed.", cz:"Ať se snažil sebevíce, neuspěl." },
+          { en:"The fact that he resigned came as a surprise.", cz:"Skutečnost, že rezignoval, byla překvapením." },
+          { en:"By the time we arrived, the meeting had started.", cz:"Než jsme dorazili, schůzka již začala." },
+          { en:"Even if you disagree, please hear me out.", cz:"I kdybyste nesouhlasili, prosím, vyslechněte mě." },
+          { en:"What surprised us most was the lack of communication.", cz:"Nejvíce nás překvapil nedostatek komunikace." },
+          { en:"Bearing in mind the budget, this is the best option.", cz:"S ohledem na rozpočet je toto nejlepší možnost." },
+          { en:"Assuming the data is correct, we can proceed.", cz:"Pokud jsou data správná, můžeme pokračovat." },
+          { en:"The reason why she left is still unclear.", cz:"Důvod, proč odešla, je stále nejasný." },
+          { en:"Whoever finishes first will receive a bonus.", cz:"Kdo první dokončí, dostane odměnu." },
+          { en:"It is not until you travel abroad that you appreciate home.", cz:"Teprve pokud vycestujete, oceníte domov." },
+          { en:"In the event that he refuses, we need another plan.", cz:"Pokud odmítne, potřebujeme jiný plán." },
+          { en:"Such was the impact of the speech that attitudes changed.", cz:"Projev měl takový dopad, že se postoje změnily." },
+          { en:"However difficult the task, it must be completed.", cz:"Jakkoli obtížný je úkol, musí být dokončen." },
+          { en:"The proposal, if accepted, would transform the industry.", cz:"Návrh, bude-li přijat, transformuje odvětví." },
+          { en:"Given the complexity of the issue, a quick solution is unlikely.", cz:"Vzhledem ke složitosti problému je rychlé řešení nepravděpodobné." },
+          { en:"This is the kind of work that requires total concentration.", cz:"Toto je práce, která vyžaduje naprostou soustředěnost." },
+          { en:"On condition that all parties agree, the deal can proceed.", cz:"Pokud všechny strany souhlasí, dohoda může pokračovat." },
+          { en:"The harder she worked, the more recognition she received.", cz:"Čím tvrději pracovala, tím většího uznání se jí dostávalo." },
+          { en:"He succeeded in spite of the fact that everyone doubted him.", cz:"Uspěl navzdory tomu, že o něm všichni pochybovali." },
+        ]
+      },
+      "advanced-passive": {
+        name: "Advanced Passive ⭐",
+        items: [
+          { en:"It is believed that the company will be sold.", cz:"Předpokládá se, že společnost bude prodána." },
+          { en:"She is thought to be one of the best in the field.", cz:"Je považována za jednu z nejlepších v oboru." },
+          { en:"The agreement is said to have been reached.", cz:"Říká se, že bylo dosaženo dohody." },
+          { en:"He is known to have worked for the intelligence service.", cz:"Je známo, že pracoval pro zpravodajské služby." },
+          { en:"The policy is expected to be revised.", cz:"Očekává se, že politika bude přepracována." },
+          { en:"It was reported that the building had been damaged.", cz:"Bylo hlášeno, že budova byla poškozena." },
+          { en:"She is reputed to be extremely talented.", cz:"Má pověst mimořádně talentované osoby." },
+          { en:"The document was found to contain errors.", cz:"V dokumentu byly nalezeny chyby." },
+          { en:"The new system is considered to be more efficient.", cz:"Nový systém je považován za účinnější." },
+          { en:"He is reported to have resigned under pressure.", cz:"Podle zpráv rezignoval pod nátlakem." },
+          { en:"The project was deemed to be a success.", cz:"Projekt byl považován za úspěch." },
+          { en:"It is understood that talks are ongoing.", cz:"Je zřejmé, že rozhovory pokračují." },
+          { en:"She was alleged to have leaked the information.", cz:"Bylo jí přičítáno vyzrazení informací." },
+          { en:"The cause of the accident has not yet been established.", cz:"Příčina nehody dosud nebyla zjištěna." },
+          { en:"He was seen to have influenced the decision.", cz:"Bylo zřejmé, že ovlivnil rozhodnutí." },
+          { en:"The proposal is considered to be too risky.", cz:"Návrh je považován za příliš riskantní." },
+          { en:"The findings are thought to have significant implications.", cz:"Má se za to, že zjištění mají závažné důsledky." },
+          { en:"It has been confirmed that the talks were productive.", cz:"Bylo potvrzeno, že rozhovory byly produktivní." },
+          { en:"The measure is acknowledged to have had limited success.", cz:"Ukázalo se, že to opatření mělo jen malý efekt." },
+          { en:"She was appointed without having been consulted.", cz:"Byla jmenována, aniž by to s ní kdokoli konzultoval." },
+          { en:"The candidate was praised for having handled the crisis well.", cz:"Kandidát byl pochválen za dobré zvládnutí krize." },
+          { en:"It was suspected that the accounts had been falsified.", cz:"Bylo podezření, že účty byly zfalšovány." },
+          { en:"The research is claimed to provide conclusive evidence.", cz:"Tvrdí se, že výzkum poskytuje přesvědčivé důkazy." },
+          { en:"He was assumed to have known about the issue.", cz:"Předpokládalo se, že o problému věděl." },
+          { en:"The initiative was welcomed as being long overdue.", cz:"Ta iniciativa přišla pozdě, ale byla vítaná." },
+          { en:"It is widely accepted that the system needs reform.", cz:"Je všeobecně uznáváno, že systém potřebuje reformu." },
+          { en:"The results were acknowledged to be inconclusive.", cz:"Bylo uznáno, že výsledky jsou neprůkazné." },
+          { en:"She is thought to have predicted the outcome correctly.", cz:"Předpokládá se, že výsledek předpověděla správně." },
+          { en:"The policy is generally regarded as a failure.", cz:"To opatření se obecně považuje za neúspěšné." },
+          { en:"He was found to have been misrepresenting the data.", cz:"Bylo zjištěno, že data zkresloval." },
+        ]
+      },
+      "discourse-markers": {
+        name: "Discourse markers ⭐",
+        items: [
+          { en:"On the whole, the results were satisfactory.", cz:"Celkově vzato byly výsledky uspokojivé." },
+          { en:"In addition to this, there are several other factors.", cz:"Kromě toho existuje ještě několik dalších faktorů." },
+          { en:"Nevertheless, we decided to proceed with the plan.", cz:"Přesto jsme se rozhodli v plánu pokračovat." },
+          { en:"As a result, production costs increased significantly.", cz:"V důsledku toho výrobní náklady výrazně vzrostly." },
+          { en:"Furthermore, the new legislation has changed the situation.", cz:"Navíc nová legislativa situaci změnila." },
+          { en:"By contrast, the second group showed much better results.", cz:"Naproti tomu druhá skupina vykazovala mnohem lepší výsledky." },
+          { en:"In other words, the project was a complete failure.", cz:"Jinými slovy, projekt byl naprostým nezdarem." },
+          { en:"What is more, she completed the task ahead of schedule.", cz:"Navíc úkol dokončila před plánovaným termínem." },
+          { en:"On the contrary, the situation improved considerably.", cz:"Naopak, situace se výrazně zlepšila." },
+          { en:"In contrast, the eastern region showed rapid growth.", cz:"Oproti tomu východní region zaznamenal rychlý růst." },
+          { en:"Consequently, the management decided to restructure.", cz:"V důsledku toho se vedení rozhodlo restrukturalizovat." },
+          { en:"All things considered, this seems the best approach.", cz:"Celkově vzato se zdá, že tento přístup je nejlepší." },
+          { en:"To put it simply, the risks outweigh the benefits.", cz:"Jednoduše řečeno, nevýhody převažují nad výhodami." },
+          { en:"In the meantime, we should prepare for both outcomes.", cz:"Mezitím bychom se měli připravit na oba výsledky." },
+          { en:"On balance, I believe the proposal should be accepted.", cz:"Po zvážení všech argumentů se domnívám, že návrh by měl být přijat." },
+          { en:"As a matter of fact, this has been known for years.", cz:"Ve skutečnosti je to známo léta." },
+          { en:"Bearing this in mind, we need to reconsider our strategy.", cz:"Mějme to na paměti a přehodnoťme strategii." },
+          { en:"To be precise, there were forty-two participants.", cz:"Přesněji řečeno, bylo tam čtyřicet dva účastníků." },
+          { en:"By and large, the new system has worked well.", cz:"Celkově nový systém fungoval dobře." },
+          { en:"As far as I am concerned, the issue has been resolved.", cz:"Pokud jde o mě, záležitost je vyřešena." },
+          { en:"In light of the new evidence, we should reconsider.", cz:"S ohledem na nové důkazy bychom měli vše přehodnotit." },
+          { en:"As opposed to the previous version, this is far simpler.", cz:"Na rozdíl od předchozí verze je tato mnohem jednodušší." },
+          { en:"In terms of cost, the second option is more competitive.", cz:"Z hlediska nákladů je druhá možnost konkurenceschopnější." },
+          { en:"Notwithstanding the difficulties, the goal was achieved.", cz:"Navzdory obtížím bylo cíle dosaženo." },
+          { en:"To sum up, the initiative has had mixed results.", cz:"Shrnuto, iniciativa přinesla smíšené výsledky." },
+          { en:"In so far as this is true, we must act accordingly.", cz:"Pokud je to pravda, musíme podle toho jednat." },
+          { en:"Having said that, there are still unresolved issues.", cz:"To ale nic nemění na tom, že některé problémy pořád zůstávají." },
+          { en:"From a practical standpoint, the plan seems feasible.", cz:"Z praktického hlediska se plán zdá proveditelný." },
+          { en:"As previously mentioned, the results were encouraging.", cz:"Jak bylo zmíněno dříve, výsledky byly povzbudivé." },
+          { en:"With regard to the budget, further cuts seem inevitable.", cz:"Pokud jde o rozpočet, další škrty se zdají nevyhnutelné." },
+        ]
+      },
+      "subjunctive": {
+        name: "Subjunctive & Formal structures ⭐",
+        items: [
+          { en:"It is essential that he attend the meeting.", cz:"Je nezbytné, aby se schůzky zúčastnil." },
+          { en:"I suggest that the report be rewritten.", cz:"Navrhuji, aby byla zpráva přepsána." },
+          { en:"It is vital that she be informed immediately.", cz:"Je zásadní, aby byla okamžitě informována." },
+          { en:"They recommended that he take a different approach.", cz:"Doporučili mu, aby zvolil jiný přístup." },
+          { en:"It is important that all documents be submitted on time.", cz:"Je důležité, aby byly všechny dokumenty předloženy včas." },
+          { en:"The committee proposed that the decision be postponed.", cz:"Výbor navrhl odložení rozhodnutí." },
+          { en:"It is necessary that we reconsider the options.", cz:"Je nutné, abychom možnosti přehodnotili." },
+          { en:"He insisted that the matter be dealt with urgently.", cz:"Trval na tom, aby věc byla naléhavě řešena." },
+          { en:"I demand that a full explanation be provided.", cz:"Žádám, aby bylo podáno úplné vysvětlení." },
+          { en:"It is crucial that the deadline not be missed.", cz:"Je klíčové, aby termín nebyl zmeškán." },
+          { en:"She requested that he not be dismissed.", cz:"Požádala, aby nebyl propuštěn." },
+          { en:"It is imperative that this information remain confidential.", cz:"Je nezbytné, aby tato informace zůstala důvěrná." },
+          { en:"We recommend that the proposal be revised.", cz:"Doporučujeme, aby byl návrh přepracován." },
+          { en:"It is advisable that he seek legal advice.", cz:"Je vhodné, aby vyhledal právní pomoc." },
+          { en:"They stipulated that the agreement be signed promptly.", cz:"Stanovili, že dohoda musí být neprodleně podepsána." },
+          { en:"It is preferable that the work be done in-house.", cz:"Bude lépe, když si to vyřešíme sami." },
+          { en:"The regulations require that all forms be completed.", cz:"Předpisy vyžadují, aby byly vyplněny všechny formuláře." },
+          { en:"He requested that the findings not be disclosed.", cz:"Požádal, aby výsledky nebyly zveřejněny." },
+          { en:"It is desirable that both parties reach an agreement.", cz:"Je žádoucí, aby obě strany dosáhly dohody." },
+          { en:"She moved that the proposal be accepted.", cz:"Navrhla přijmout návrh." },
+          { en:"The manager recommended that the policy be reviewed annually.", cz:"Manažer doporučil, aby se to každý rok znovu posoudilo." },
+          { en:"It is essential that accurate records be kept.", cz:"Je nezbytné, aby byly vedeny přesné záznamy." },
+          { en:"I insist that a proper investigation be carried out.", cz:"Trvám na řádném šetření." },
+          { en:"It is required that the candidate have prior experience.", cz:"Je požadováno, aby uchazeč měl předchozí zkušenosti." },
+          { en:"The court ordered that the documents be produced.", cz:"Soud nařídil předložení dokumentů." },
+          { en:"It is suggested that the process be simplified.", cz:"Navrhuje se, aby byl proces zjednodušen." },
+          { en:"She asked that the matter be treated with discretion.", cz:"Požádala, aby bylo s věcí nakládáno diskrétně." },
+          { en:"The protocol demands that all procedures be followed.", cz:"Protokol vyžaduje dodržení všech postupů." },
+          { en:"It is proposed that a new committee be formed.", cz:"Navrhuje se, aby byl vytvořen nový výbor." },
+          { en:"We request that the contract be reviewed before signing.", cz:"Žádáme o přezkum smlouvy před podpisem." },
+        ]
+      }
+    }
+  };
+
+  const QUICK_TIPS = [
+    "Tip: Základní pořadí je podmět – sloveso – předmět (I eat an apple).",
+    "Tip: Příslovce četnosti (always/often/never) stojí před hlavním slovesem.",
+    "Tip: U slovesa 'be' stojí příslovce za ním (She is always happy).",
+    "Tip: Časové výrazy dávej nejčastěji na konec věty (every day / last week).",
+    "Tip: Člen 'a/an/the' stojí těsně před podstatným jménem.",
+    "Tip: V přítomném čase přidej -s/-es ke slovesu ve 3. osobě jednotného čísla (He works).",
+    "Tip: V záporné větě s do/does pokračuje sloveso v základním tvaru.",
+    "Tip: Předložky in/on/at se liší: in (měsíc/rok), on (den), at (hodina).",
+    "Tip: Will používáme pro spontánní rozhodnutí, going to pro předem plánované.",
+    "Tip: V present perfect používáme just/already/yet/ever/never.",
+  ];
+
+  // ─── HELPERS ─────────────────────────────────────────────────────────────
+  const shuffle = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const clearZone = (z) => { while (z.firstChild) z.removeChild(z.firstChild); };
+  const normalizeSentence = (s) => (s || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/\s+([.,!?;:])/g, "$1")
+    .trim();
+  const sentenceStringFromWords = (words) => {
+    let out = "";
+    for (const w of words) {
+      if (!out) out = w;
+      else if (/^[\.\,\?\!\;\:]$/.test(w)) out += w;
+      else out += " " + w;
+    }
+    return out;
+  };
+  const wordsFromEN = (sentence) => {
+    const raw = (sentence || "").trim()
+      .replace(/([.,!?;:])/g, " $1 ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ");
+    return raw.filter(Boolean);
+  };
+  const tokenizeForMeaningCompare = (words) => {
+    const ignore = new Set(["a","an","the","to","in","on","at","of","for","with","is","are","am","was","were","do","does","did","have","has","had","will","would","can","could","should","must","that"]);
+    return words.map(w => w.toLowerCase())
+      .filter(w => !/^[.,!?;:]$/.test(w))
+      .filter(w => !ignore.has(w));
+  };
+  const getWordsInZone = (zone) => [...zone.querySelectorAll(".token")].map(t => t.dataset.value);
+
+  const setStatus = (kind, main, detail = "") => {
+    statusEl.classList.remove("good", "warn", "bad");
+    if (kind) statusEl.classList.add(kind);
+    statusEl.querySelector("span").textContent = main;
+    statusDetail.textContent = detail || "—";
+  };
+  const clearMarks = () => {
+    [...bankEl.querySelectorAll(".token"), ...builderEl.querySelectorAll(".token")]
+      .forEach(t => t.classList.remove("correct", "wrong"));
+  };
+  const randTip = () => QUICK_TIPS[Math.floor(Math.random() * QUICK_TIPS.length)];
+  const setButtonLoading = (btn, loading) => {
+    if (loading) {
+      btn.disabled = true;
+      btn.dataset.origText = btn.textContent;
+      btn.innerHTML = `<span class="spinner"></span> Načítám…`;
+    } else {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.origText || btn.textContent;
+    }
+  };
+
+  // ─── VISUAL REWARDS ───────────────────────────────────────────────────────
+  const spawnXpBurst = (xp) => {
+    const el = document.createElement("div");
+    el.className = "xpBurst";
+    el.textContent = `+${xp} XP`;
+    const r = evalBtn.getBoundingClientRect();
+    el.style.left = (r.left + r.width / 2) + "px";
+    el.style.top  = (r.top - 10) + "px";
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+  };
+
+  const spawnConfetti = () => {
+    const colors = ["#16a34a","#2563eb","#f59e0b","#ef4444","#8b5cf6","#06b6d4"];
+    const r = builderEl.getBoundingClientRect();
+    for (let i = 0; i < 18; i++) {
+      const el = document.createElement("div");
+      el.className = "confetti-piece";
+      el.style.background = colors[i % colors.length];
+      el.style.left = (r.left + Math.random() * r.width) + "px";
+      el.style.top  = (r.top  + Math.random() * 30) + "px";
+      el.style.animationDuration = (0.6 + Math.random() * 0.6) + "s";
+      el.style.animationDelay   = (Math.random() * 0.3) + "s";
+      el.style.transform = `rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }
+  };
+
+  const pulseChip = (el) => {
+    el.classList.remove("pulse");
+    void el.offsetWidth;
+    el.classList.add("pulse");
+    setTimeout(() => el.classList.remove("pulse"), 450);
+  };
+
+  // ─── DISTRACTOR GENERATION ────────────────────────────────────────────────
+  const generateDistractors = (level, correctWords, count) => {
+    const levelData = DB[level] || {};
+    const wordPool = new Set();
+    for (const topic of Object.values(levelData)) {
+      for (const item of (topic.items || [])) {
+        for (const w of wordsFromEN(item.en)) wordPool.add(w);
+      }
+    }
+    const correctSet = new Set(correctWords.map(w => w.toLowerCase()));
+    const candidates = [...wordPool].filter(w => !correctSet.has(w.toLowerCase()));
+    return shuffle(candidates).slice(0, count);
+  };
+
+  // ─── LOCAL EXERCISE PICKER ─────────────────────────────────────────────────
+  const getLocalExercise = (level, topicKey, distractorCount) => {
+    const topicData = DB[level]?.[topicKey];
+    if (!topicData || !topicData.items || topicData.items.length === 0) return null;
+    const items = topicData.items;
+    const sessionKey = `${level}::${topicKey}`;
+    const usedSet = new Set(apiState.usedLocalIdx
+      .filter(e => e.key === sessionKey)
+      .map(e => e.idx));
+    let available = items.map((item, idx) => ({ item, idx })).filter(({ idx }) => !usedSet.has(idx));
+    if (available.length === 0) {
+      apiState.usedLocalIdx = apiState.usedLocalIdx.filter(e => e.key !== sessionKey);
+      available = items.map((item, idx) => ({ item, idx }));
+    }
+    const { item, idx } = available[Math.floor(Math.random() * available.length)];
+    apiState.usedLocalIdx.push({ key: sessionKey, idx });
+    const correctWords = wordsFromEN(item.en);
+    const distractors  = generateDistractors(level, correctWords, distractorCount);
+    return {
+      level, topicKey, topicName: topicData.name,
+      targetEN: item.en, translationCZ: item.cz,
+      words: correctWords, distractors, sourceType: "local"
+    };
+  };
+
+  // Míchání témat — rotuje přes všechna témata úrovně, z každého vybere jednu větu
+  const mixState = { topicKeys: [], currentIdx: 0 };
+
+  const initMixState = (level) => {
+    mixState.topicKeys = Object.keys(DB[level] || {});
+    mixState.currentIdx = 0;
+  };
+
+  const getLocalExerciseMixed = (level, distractorCount) => {
+    if (mixState.topicKeys.length === 0) initMixState(level);
+    // Zkus najít větu z aktuálního i dalších témat (přeskoč prázdná)
+    const total = mixState.topicKeys.length;
+    for (let i = 0; i < total; i++) {
+      const idx = (mixState.currentIdx + i) % total;
+      const topicKey = mixState.topicKeys[idx];
+      const ex = getLocalExercise(level, topicKey, distractorCount);
+      if (ex) {
+        mixState.currentIdx = (idx + 1) % total;
+        return ex;
+      }
+    }
+    return null;
+  };
+
+  // ─── UPDATE CHIPS ─────────────────────────────────────────────────────────
+  const updateRemainingChip = () => {
+    if (!current) {
+      chipLeft.textContent = "Zbývá vložit: —";
+      chipCorrectCount.textContent = "Správná slova: —";
+      return;
+    }
+    const expected = current.words.map(w => w.toLowerCase());
+    const built    = getWordsInZone(builderEl).map(w => w.toLowerCase());
+    const bag = new Map();
+    for (const w of expected) bag.set(w, (bag.get(w) || 0) + 1);
+    let matchedNow = 0;
+    for (const w of built) {
+      const n = bag.get(w) || 0;
+      if (n > 0) { matchedNow++; bag.set(w, n - 1); }
+    }
+    let remaining = 0;
+    for (const n of bag.values()) remaining += n;
+    chipLeft.textContent = `Zbývá vložit: ${remaining}`;
+    chipCorrectCount.textContent = `Správná slova: ${matchedNow}/${expected.length}`;
+  };
+
+  const updateBuiltSentence = () => {
+    const words = getWordsInZone(builderEl);
+    const s = sentenceStringFromWords(words).trim();
+    builtSentenceEl.innerHTML = "";
+    if (!s) {
+      const ph = document.createElement("span");
+      ph.className = "placeholder";
+      ph.textContent = "— (zatím prázdné)";
+      builtSentenceEl.appendChild(ph);
+    } else {
+      builtSentenceEl.textContent = s;
+    }
+    updateRemainingChip();
+  };
+
+  // ─── PROGRESS ─────────────────────────────────────────────────────────────
+  const loadProg = () => {
+    try {
+      const raw = localStorage.getItem(PROG_KEY);
+      if (raw) {
+        const obj = JSON.parse(raw);
+        if (obj && typeof obj === "object") {
+          prog = {
+            xp:       Number(obj.xp       || 0),
+            streak:   Number(obj.streak   || 0),
+            demoDone: Number(obj.demoDone || 0),
+            level:    Number(obj.level    || 1)
+          };
+        }
+      }
+    } catch (_) {}
+    recomputeLevelFromXP();
+    renderProg();
+  };
+
+  const saveProg = () => {
+    try { localStorage.setItem(PROG_KEY, JSON.stringify(prog)); } catch (_) {}
+  };
+
+  const recomputeLevelFromXP = () => {
+    prog.level = Math.max(1, Math.floor(Math.max(0, prog.xp) / XP_PER_LEVEL) + 1);
+  };
+
+  const renderProg = () => {
+    xpVal.textContent       = String(prog.xp);
+    streakVal.textContent   = String(prog.streak);
+    demoDoneVal.textContent = FULL_MODE ? "∞" : String(Math.min(prog.demoDone, DEMO_GOAL));
+    lvlVal.textContent      = String(prog.level);
+    const inLevel = prog.xp % XP_PER_LEVEL;
+    lvlProgText.textContent = `${inLevel}/${XP_PER_LEVEL}`;
+
+    const demoChip = demoDoneVal?.closest(".chip");
+    if (demoChip) {
+      if (FULL_MODE) {
+        demoChip.innerHTML = `💎 Režim: <b>Plná verze</b>`;
+      } else {
+        demoChip.innerHTML = `🧪 Demo: <b id="demoDoneVal">${Math.min(prog.demoDone, DEMO_GOAL)}</b>/${DEMO_GOAL}`;
+      }
+    }
+  };
+
+  const ensureDemoAccess = () => {
+    if (FULL_MODE) return true;
+    if (prog.demoDone >= DEMO_GOAL) {
+      showModal();
+      setStatus("warn", "🟨 Demo bylo vyčerpáno.", "Pokračuj přes rozcestník do plné verze.");
+      return false;
+    }
+    return true;
+  };
+
+  const addXP = (amount) => {
+    prog.xp = Math.max(0, prog.xp + Math.max(0, Math.floor(amount)));
+    recomputeLevelFromXP();
+    saveProg();
+    renderProg();
+    pulseChip(document.querySelector(".chip"));
+  };
+
+  const setStreak = (n) => {
+    prog.streak = Math.max(0, Math.floor(n));
+    saveProg();
+    renderProg();
+    pulseChip(streakVal.closest(".chip"));
+  };
+
+  const incDemoDone = () => {
+    if (FULL_MODE) return;
+    prog.demoDone = Math.max(0, prog.demoDone + 1);
+    saveProg();
+    renderProg();
+    if (prog.demoDone >= DEMO_GOAL) showModal();
+  };
+
+  const resetProg = () => {
+    if (!confirm("Opravdu chceš vynulovat XP a postup v tomto prohlížeči?")) return;
+    prog = { xp: 0, streak: 0, demoDone: 0, level: 1 };
+    saveProg();
+    renderProg();
+    setStatus("", "Resetováno. Vyber úroveň a téma nebo napiš vlastní větu.", "—");
+  };
+
+  const showModal = () => modalBack.classList.add("show");
+  const hideModal = () => modalBack.classList.remove("show");
+
+  // ─── TOPIC DROPDOWN ────────────────────────────────────────────────────────
+  const refreshTopics = () => {
+    const level  = levelSel.value;
+    const topics = DB[level] || {};
+    const keys   = Object.keys(topics);
+    const prev   = topicSel.value;
+    topicSel.innerHTML = "";
+    for (const k of keys) {
+      const opt = document.createElement("option");
+      opt.value = k;
+      opt.textContent = topics[k].name;
+      topicSel.appendChild(opt);
+    }
+    if (prev && keys.includes(prev)) topicSel.value = prev;
+    else if (keys.length > 0)        topicSel.value = keys[0];
+  };
+
+  // ─── MODE ──────────────────────────────────────────────────────────────────
+  const setMode = (m) => {
+    mode = m;
+    const isComm = mode === "comm";
+    modeCommBtn.classList.toggle("active",  isComm);
+    modeSchoolBtn.classList.toggle("active", !isComm);
+    modeCommBtn.setAttribute("aria-selected",  String(isComm));
+    modeSchoolBtn.setAttribute("aria-selected", String(!isComm));
+    pillMode.textContent  = isComm ? "Domluvit se" : "Do školy";
+    chipMode.textContent  = "Režim: " + (isComm ? "Domluvit se" : "Do školy");
+    document.body.className = isComm ? "mode-comm" : "mode-school";
+    modeStrip.className = "modeStrip " + (isComm ? "comm" : "school");
+    modeStrip.innerHTML = isComm
+      ? "🗣️ Režim: <strong>Domluvit se</strong> — toleruje drobné chyby, pokud je věta srozumitelná."
+      : "🎓 Režim: <strong>Do školy</strong> — přísné hodnocení, gramatika musí být správná.";
+    if (current) {
+      setStatus("", "📌 Složte větu a klikněte Vyhodnotit.",
+        isComm ? "Cíl: domluvit se — toleruje drobné chyby."
+               : "Cíl: do školy — přísnější hodnocení.");
+    }
+  };
+
+  // ─── SPEECH ───────────────────────────────────────────────────────────────
+  const pickPreferredVoice = () => {
+    const synth = window.speechSynthesis;
+    if (!synth) return null;
+    const voices = synth.getVoices() || [];
+    return voices.find(v => v.lang.toLowerCase().startsWith("en-gb"))
+        || voices.find(v => v.lang.toLowerCase().startsWith("en-us"))
+        || voices.find(v => v.lang.toLowerCase().startsWith("en"))
+        || null;
+  };
+
+  const speak = (text, rate = 1.0) => {
+    const synth = window.speechSynthesis;
+    if (!synth || !window.SpeechSynthesisUtterance) {
+      setStatus("warn", "⚠️ Prohlížeč nepodporuje čtení nahlas (Web Speech API).", "Zkus Chrome nebo Edge.");
+      return;
+    }
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = rate;
+    if (!preferredVoice) preferredVoice = pickPreferredVoice();
+    if (preferredVoice) u.voice = preferredVoice;
+    synth.speak(u);
+  };
+
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.onvoiceschanged = () => { preferredVoice = pickPreferredVoice(); };
+  }
+  preferredVoice = pickPreferredVoice();
+  chipSlow.textContent = `Pomalu: ${String(SLOW_RATE).replace(".", ",")}×`;
+
+  // ─── TOKENS (no arrows) ───────────────────────────────────────────────────
+  const makeToken = (text) => {
+    const el = document.createElement("div");
+    el.className     = "token";
+    el.draggable     = true;
+    el.dataset.value = text;
+    el.tabIndex      = 0;
+    el.textContent   = text;
+
+    el.addEventListener("dragstart", (e) => {
+      el.classList.add("dragging");
+      e.dataTransfer.setData("text/plain", "token");
+      e.dataTransfer.effectAllowed = "move";
+    });
+    el.addEventListener("dragend", () => {
+      el.classList.remove("dragging");
+      updateBuiltSentence();
+    });
+    el.addEventListener("click", () => {
+      const parent = el.parentElement;
+      if (parent === bankEl) builderEl.appendChild(el);
+      else bankEl.appendChild(el);
+      clearMarks();
+      setStatus("", "📌 Složte větu a klikněte Vyhodnotit.", "Tip: slova přesunete kliknutím nebo přetažením.");
+      updateBuiltSentence();
+    });
+    return el;
+  };
+
+  // ─── DRAG & DROP ZONES ────────────────────────────────────────────────────
+  const getClosestToken = (container, x, y) => {
+    const tokens = [...container.querySelectorAll(".token:not(.dragging)")];
+    if (tokens.length === 0) return null;
+    let best = { dist: Infinity, el: null };
+    for (const t of tokens) {
+      const r  = t.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top  + r.height / 2;
+      const d  = Math.hypot(x - cx, y - cy);
+      if (d < best.dist) best = { dist: d, el: t };
+    }
+    return best.el;
+  };
+
+  const enableDropZone = (zone) => {
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      zone.classList.add("isOver");
+      const dragging = document.querySelector(".token.dragging");
+      if (!dragging) return;
+      const afterEl = getClosestToken(zone, e.clientX, e.clientY);
+      if (afterEl == null) zone.appendChild(dragging);
+      else zone.insertBefore(dragging, afterEl);
+    });
+    zone.addEventListener("dragleave", () => zone.classList.remove("isOver"));
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      zone.classList.remove("isOver");
+      clearMarks();
+      setStatus("", "📌 Složte větu a klikněte Vyhodnotit.");
+      updateBuiltSentence();
+    });
+  };
+  enableDropZone(bankEl);
+  enableDropZone(builderEl);
+
+  // ─── LOAD EXERCISE ────────────────────────────────────────────────────────
+  const loadExercise = (ex) => {
+    current = ex;
+    pillTopic.textContent  = ex.topicName;
+    pillLevel.textContent  = ex.level;
+    pillMode.textContent   = (mode === "comm") ? "Domluvit se" : "Do školy";
+    chipMode.textContent   = "Režim: " + ((mode === "comm") ? "Domluvit se" : "Do školy");
+    pillSource.style.display = "inline-flex";
+    pillSource.textContent = ex.sourceType === "local" ? "📦 lokální"
+                           : ex.sourceType === "custom" ? "✏️ vlastní" : "🤖 AI";
+    translationShown = false;
+    translationEl.textContent = ex.translationCZ || "(bez překladu)";
+    translationEl.classList.remove("show");
+    toggleTrBtn.textContent = "Zobrazit překlad";
+    clearZone(bankEl);
+    clearZone(builderEl);
+    clearMarks();
+    const bankWords = shuffle([...ex.words, ...ex.distractors]);
+    bankWords.forEach(w => bankEl.appendChild(makeToken(w)));
+    updateBuiltSentence();
+    targetHint.textContent = "Složte větu a klikněte Vyhodnotit.";
+    setStatus("", "✅ Cvičení připraveno. Nyní skládejte.",
+      `Zdroj: ${ex.sourceType} • Úroveň: ${ex.level} • Rušiče: ${ex.distractors.length}`);
+  };
+
+  // ─── API FETCH ────────────────────────────────────────────────────────────
+  const fetchWithTimeout = async (url, options, timeoutMs) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timer);
+      return res;
+    } catch (err) {
+      clearTimeout(timer);
+      throw err;
+    }
+  };
+
+  const normalizeApiExercise = (data, requestMode, level, topicKey, topicName) => {
+    const correctWords  = Array.isArray(data.correctWords) && data.correctWords.length
+      ? data.correctWords : wordsFromEN(data.targetSentence || "");
+    const distractors   = Array.isArray(data.extraWords) ? data.extraWords : [];
+    const targetEN      = data.targetSentence || sentenceStringFromWords(correctWords);
+    const translationCZ = data.translationCs || "";
+    const sourceType    = data.sourceType || (requestMode === "custom" ? "custom" : "api");
+    return { level, topicKey, topicName, targetEN, translationCZ, words: correctWords, distractors, sourceType };
+  };
+
+  const tryFetchFromApi = async (payload) => {
+    const res = await fetchWithTimeout(
+      API_URL,
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) },
+      API_TIMEOUT_MS
+    );
+    if (!res.ok) { const errText = await res.text().catch(() => ""); throw new Error(`HTTP ${res.status}: ${errText}`); }
+    return res.json();
+  };
+
+  // ─── MAIN EXERCISE CREATORS ───────────────────────────────────────────────
+  const createTopicExercise = async () => {
+    if (loadingActive) return;
+    if (!ensureDemoAccess()) return;
+    apiState.lastMode = "topic";
+    const level    = levelSel.value;
+    const topicKey = topicSel.value;
+    const topicName = DB[level]?.[topicKey]?.name
+      || topicSel.options[topicSel.selectedIndex]?.textContent
+      || topicKey;
+    const distractorCount = Number(distrSel.value || 2);
+
+    // Míchání témat
+    if (mixToggle.checked) {
+      const mixEx = getLocalExerciseMixed(level, distractorCount);
+      if (mixEx) { loadExercise(mixEx); return; }
+    }
+
+    const localEx = getLocalExercise(level, topicKey, distractorCount);
+    if (localEx) { loadExercise(localEx); return; }
+
+    loadingActive = true;
+    setButtonLoading(createTopicBtn, true);
+    setStatus("", "⏳ Načítám cvičení z AI…", "Prosím, chvíli strpení.");
+    try {
+      const payload = { level, topic: topicKey, sourceType: "preset", usedIds: apiState.usedIds };
+      const data = await tryFetchFromApi(payload);
+      if (data.id && !apiState.usedIds.includes(data.id)) apiState.usedIds.push(data.id);
+      const ex = normalizeApiExercise(data, "topic", level, topicKey, topicName);
+      loadExercise(ex);
+    } catch (err) {
+      console.error("API error (topic):", err);
+      const isTimeout = err.name === "AbortError";
+      setStatus("bad",
+        isTimeout ? "🟥 AI server neodpověděl včas." : "🟥 AI backend je nedostupný.",
+        "Pro toto téma nejsou lokální data. Zkus jiné téma (⭐ = funguje offline).");
+    } finally {
+      loadingActive = false;
+      setButtonLoading(createTopicBtn, false);
+    }
+  };
+
+  const translateCzechToEnglish = async (czText) => {
+    try {
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(czText)}&langpair=cs|en`;
+      const res = await fetchWithTimeout(url, {}, 8000);
+      if (res.ok) {
+        const data = await res.json();
+        const translated = data?.responseData?.translatedText;
+        if (translated && !translated.startsWith("MYMEMORY WARNING")) return translated.trim();
+      }
+    } catch (_) {}
+    try {
+      const payload = { level: levelSel.value, topic: "custom", sourceType: "custom", usedIds: [], sentenceCs: czText };
+      const data = await tryFetchFromApi(payload);
+      if (data?.targetSentence) return data.targetSentence.trim();
+    } catch (_) {}
+    throw new Error("translation_failed");
+  };
+
+  const createCustomExercise = async () => {
+    if (loadingActive) return;
+    if (!ensureDemoAccess()) return;
+    apiState.lastMode = "custom";
+    const czSentence = customSentenceInput.value.trim();
+    if (!czSentence) { setStatus("bad", "🟥 Nejdříve napište českou větu.", "Pole ‚Vlastní věta' je prázdné."); return; }
+    const level = levelSel.value;
+    const distractorCount = Number(distrSel.value || 2);
+    loadingActive = true;
+    setButtonLoading(createCustomBtn, true);
+    setStatus("", "⏳ Překládám větu…", "Používám překlad MyMemory (zdarma).");
+    try {
+      const enSentence   = await translateCzechToEnglish(czSentence);
+      const correctWords = wordsFromEN(enSentence);
+      let distractors = generateDistractors(level, correctWords, distractorCount);
+      if (distractors.length < distractorCount) {
+        const extra = ["because","although","however","before","after","usually","really","just","still","already","also","often","never","always","very","too","quite","both","either","neither"]
+          .filter(w => !correctWords.map(x => x.toLowerCase()).includes(w))
+          .slice(0, distractorCount - distractors.length);
+        distractors = [...distractors, ...extra];
+      }
+      loadExercise({ level, topicKey: "custom", topicName: "Vlastní věta",
+        targetEN: enSentence, translationCZ: czSentence,
+        words: correctWords, distractors, sourceType: "custom" });
+    } catch (err) {
+      console.error("Custom exercise error:", err);
+      setStatus("bad", "🟥 Překlad se nezdařil.", "Zkontroluj připojení k internetu. Překlad zajišťuje MyMemory (zdarma).");
+    } finally {
+      loadingActive = false;
+      setButtonLoading(createCustomBtn, false);
+    }
+  };
+
+  const nextExercise = () => {
+    if (!ensureDemoAccess()) return;
+    if (apiState.lastMode === "custom") return createCustomExercise();
+    return createTopicExercise();
+  };
+
+  // ─── EVALUATE ─────────────────────────────────────────────────────────────
+  const buildFeedbackForSchool = (builtWords) => {
+    const built  = builtWords.map(w => w.toLowerCase());
+    const target = current.words.map(w => w.toLowerCase());
+    const bag    = new Map();
+    for (const w of target) bag.set(w, (bag.get(w) || 0) + 1);
+    const missing = [];
+    for (const w of built) { const n = bag.get(w) || 0; if (n > 0) bag.set(w, n - 1); }
+    for (const [w, n] of bag.entries()) { if (n > 0 && !/^[.,!?;:]$/.test(w)) missing.push(w); }
+    const functionWords = ["a","an","the","to","in","on","at","for","with","have","has","had","am","is","are","was","were","will","would","do","does","did"];
+    const mf = missing.filter(w => functionWords.includes(w)).slice(0, 3);
+    const mc = missing.filter(w => !functionWords.includes(w)).slice(0, 3);
+    if (mc.length) return `Chybí klíčové slovo/a: ${mc.join(", ")}.`;
+    if (mf.length) return `Pozor na gramatiku: chybí ${mf.join(", ")}.`;
+    return "Zkus doladit slovosled a drobnou gramatiku.";
+  };
+
+  const buildFeedbackForComm = (builtWords) => {
+    const builtMeaning  = tokenizeForMeaningCompare(builtWords);
+    const targetMeaning = tokenizeForMeaningCompare(current.words);
+    const targetSet     = new Set(targetMeaning);
+    const wrong = builtMeaning.filter(w => !targetSet.has(w));
+    if (wrong.length) return `Možná máš navíc nebo špatně: ${wrong.slice(0, 3).join(", ")}.`;
+    if (builtMeaning.length < Math.max(2, Math.floor(targetMeaning.length * 0.6)))
+      return "Chybí část významu — zkus doplnit hlavní slova.";
+    return "Skoro perfektní — doladíš slovosled a bude to.";
+  };
+
+  const awardForGreen = () => {
+    let xp = 10;
+    const nextStreak = prog.streak + 1;
+    if (nextStreak >= 5) xp += 10;
+    else if (nextStreak >= 3) xp += 5;
+    if (mode === "school") xp += 2;
+    setStreak(nextStreak);
+    addXP(xp);
+    if (!FULL_MODE && prog.demoDone < DEMO_GOAL) incDemoDone();
+    return xp;
+  };
+
+  const evaluate = () => {
+    if (!current) {
+      setStatus("warn", "🟨 Nejdřív vytvoř cvičení.", "Vyber úroveň a téma nebo napiš vlastní větu.");
+      return;
+    }
+    clearMarks();
+    const builtWords = getWordsInZone(builderEl);
+    const builtStr   = normalizeSentence(sentenceStringFromWords(builtWords));
+    const targetStr  = normalizeSentence(current.targetEN);
+
+    if (builtStr === targetStr) {
+      [...builderEl.querySelectorAll(".token")].forEach(t => t.classList.add("correct"));
+      builderEl.classList.remove("correctFlash");
+      void builderEl.offsetWidth;
+      builderEl.classList.add("correctFlash");
+      const earned = awardForGreen();
+      spawnConfetti();
+      spawnXpBurst(earned);
+      targetHint.textContent = "Výborně! Teď větu přehraj a zopakuj nahlas.";
+      const streakMsg = prog.streak >= 5 ? ` 🔥 Série ${prog.streak}!` : prog.streak >= 3 ? " 🔥 Dobrá série!" : "";
+      setStatus("good",
+        `🟩 Gramaticky správně! (+${earned} XP)${streakMsg}`,
+        `🔥 Série: ${prog.streak} • ⭐ XP: ${prog.xp} • 🧪 Demo: ${Math.min(prog.demoDone, DEMO_GOAL)}/${DEMO_GOAL}`);
+      if (autoSpeakToggle.checked) speak(builtStr, SLOW_RATE);
+      return;
+    }
+
+    const expectedMeaning = tokenizeForMeaningCompare(current.words);
+    const builtMeaning    = tokenizeForMeaningCompare(builtWords);
+    const bag = new Map();
+    for (const w of builtMeaning) bag.set(w, (bag.get(w) || 0) + 1);
+    let matched = 0;
+    for (const w of expectedMeaning) {
+      const n = bag.get(w) || 0;
+      if (n > 0) { matched++; bag.set(w, n - 1); }
+    }
+    const coverage         = expectedMeaning.length ? (matched / expectedMeaning.length) : 0;
+    const expectedSet      = new Set(expectedMeaning);
+    const wrongMeaningCount = builtMeaning.filter(w => !expectedSet.has(w)).length;
+
+    [...builderEl.querySelectorAll(".token")].forEach((t, i) => {
+      t.classList.add(current.words[i] === t.dataset.value ? "correct" : "wrong");
+    });
+
+    builderEl.classList.remove("wrongShake");
+    void builderEl.offsetWidth;
+    builderEl.classList.add("wrongShake");
+    setStreak(0);
+
+    if (mode === "comm") {
+      if (coverage >= 0.65 && wrongMeaningCount <= 2) {
+        targetHint.textContent = "Srozumitelné — ale gramatiku ještě dolaď.";
+        setStatus("warn",
+          "🟨 Domluvil/a by ses, ale gramatika není správná.",
+          buildFeedbackForComm(builtWords) + " " + randTip());
+      } else {
+        targetHint.textContent = "Zkus to znovu. Při potížích klikni na Srovnat (nápověda).";
+        setStatus("bad", "🟥 Tato věta není srozumitelná.", buildFeedbackForComm(builtWords) + " " + randTip());
+      }
+      return;
+    }
+
+    if (coverage >= 0.80 && wrongMeaningCount <= 1) {
+      targetHint.textContent = "Skoro! Chybí detail — slovosled nebo drobná gramatika.";
+      setStatus("warn",
+        "🟨 Skoro správně, ale do školy to nestačí.",
+        buildFeedbackForSchool(builtWords) + " " + randTip());
+    } else {
+      targetHint.textContent = "Zkus to znovu. Při potížích klikni na Srovnat (nápověda).";
+      setStatus("bad", "🟥 Tato věta je špatně.", buildFeedbackForSchool(builtWords) + " " + randTip());
+    }
+  };
+
+  // ─── HINT ─────────────────────────────────────────────────────────────────
+  const hintAlign = () => {
+    if (!current) {
+      setStatus("warn", "🟨 Nejdřív vytvoř cvičení.", "Pak teprve má nápověda smysl.");
+      return;
+    }
+    clearMarks();
+    const allTokens = [...bankEl.querySelectorAll(".token"), ...builderEl.querySelectorAll(".token")];
+    const byWord = new Map();
+    for (const t of allTokens) {
+      const w = t.dataset.value;
+      if (!byWord.has(w)) byWord.set(w, []);
+      byWord.get(w).push(t);
+    }
+    clearZone(builderEl);
+    for (const w of current.words) {
+      const list = byWord.get(w) || [];
+      builderEl.appendChild(list.shift() || makeToken(w));
+    }
+    clearZone(bankEl);
+    const remaining = [];
+    for (const list of byWord.values()) for (const t of list) remaining.push(t);
+    shuffle(remaining).forEach(t => bankEl.appendChild(t));
+    targetHint.textContent = "Nápověda použita. Teď klikni Vyhodnotit.";
+    setStatus("warn", "🟨 Srovnáno (nápověda).", "Rušiče zůstaly v bance.");
+    clearMarks();
+    updateBuiltSentence();
+  };
+
+  const clearBuilder = () => {
+    [...builderEl.querySelectorAll(".token")].forEach(t => bankEl.appendChild(t));
+    clearMarks();
+    setStatus("", "📌 Vyčištěno. Zkus to znovu.", "Tip: slova přesunuješ kliknutím nebo přetažením.");
+    updateBuiltSentence();
+  };
+
+  const shuffleBank = () => {
+    const tokens = [...bankEl.querySelectorAll(".token")];
+    clearZone(bankEl);
+    shuffle(tokens).forEach(t => bankEl.appendChild(t));
+    clearMarks();
+    setStatus("", "📌 Zamícháno.", "Banka je znovu zamíchaná.");
+  };
+
+  const toggleTranslation = () => {
+    if (!current) {
+      setStatus("warn", "🟨 Nejdřív vytvoř cvičení.", "Pak si můžeš zobrazit překlad.");
+      return;
+    }
+    translationShown = !translationShown;
+    translationEl.classList.toggle("show", translationShown);
+    toggleTrBtn.textContent = translationShown ? "Skrýt překlad" : "Zobrazit překlad";
+  };
+
+  const getBuiltTextOrWarn = () => {
+    const s = sentenceStringFromWords(getWordsInZone(builderEl)).trim();
+    if (!s) { setStatus("warn", "🟨 Nejdřív slož větu.", "Pak ji přehraj."); return null; }
+    return s;
+  };
+
+  // ─── EVENT LISTENERS ──────────────────────────────────────────────────────
+  levelSel.addEventListener("change", () => {
+    apiState.usedIds      = [];
+    apiState.usedLocalIdx = [];
+    mixState.topicKeys    = [];
+    refreshTopics();
+    setStatus("", "📌 Vyber téma a klikni Vytvořit cvičení z tématu.", "Změnila se úroveň.");
+  });
+  topicSel.addEventListener("change", () => {
+    apiState.usedIds      = [];
+    apiState.usedLocalIdx = [];
+    setStatus("", "📌 Klikni Vytvořit cvičení z tématu.", "Změnilo se téma.");
+  });
+  mixToggle.addEventListener("change", () => {
+    topicSel.disabled = mixToggle.checked;
+    if (mixToggle.checked) {
+      initMixState(levelSel.value);
+      setStatus("", "🔀 Míchání témat zapnuto.", "Každá věta bude z jiného tématu v rámci vybrané úrovně.");
+    } else {
+      setStatus("", "📌 Vyber téma a klikni Vytvořit cvičení z tématu.", "Míchání vypnuto.");
+    }
+  });
+  modeCommBtn.addEventListener("click",   () => setMode("comm"));
+  modeSchoolBtn.addEventListener("click",  () => setMode("school"));
+  flagToggle.addEventListener("change", () => {
+    bgFlag.style.display = flagToggle.checked ? "block" : "none";
+  });
+  createTopicBtn.addEventListener("click",  createTopicExercise);
+  createCustomBtn.addEventListener("click", createCustomExercise);
+  nextBtnLeft.addEventListener("click",     nextExercise);
+  nextBtn.addEventListener("click",         nextExercise);
+  shuffleBtn.addEventListener("click",  shuffleBank);
+  clearBtn.addEventListener("click",    clearBuilder);
+  toggleTrBtn.addEventListener("click", toggleTranslation);
+  evalBtn.addEventListener("click",  evaluate);
+  hintBtn.addEventListener("click",  hintAlign);
+  speakerBtn.addEventListener("click", () => { const s = getBuiltTextOrWarn(); if (s) speak(s, 1.0); });
+  slowBtn.addEventListener("click",    () => { const s = getBuiltTextOrWarn(); if (s) speak(s, SLOW_RATE); });
+  distrSel.addEventListener("change", () => {
+    if (current) setStatus("", "⚙️ Počet rušičů se použije v dalším cvičení.", "Klikni Nové cvičení.");
+  });
+  resetProgBtn.addEventListener("click",  resetProg);
+  closeModalBtn.addEventListener("click", hideModal);
+  modalBack.addEventListener("click",     (e) => { if (e.target === modalBack) hideModal(); });
+  document.addEventListener("keydown",    (e) => { if (e.key === "Escape") hideModal(); });
+
+  // ─── INIT ─────────────────────────────────────────────────────────────────
+  const init = () => {
+    loadProg();
+    refreshTopics();
+    setMode("comm");
+    bgFlag.style.display = flagToggle.checked ? "block" : "none";
+    if (FULL_MODE) {
+      setStatus("", "💎 Plná verze je aktivní.", "Můžeš cvičit bez demo limitu.");
+    } else if (prog.demoDone >= DEMO_GOAL) {
+      setStatus("warn", "🟨 Demo bylo vyčerpáno.", "Pokračuj přes rozcestník do plné verze.");
+      showModal();
+    } else {
+      setStatus("", "📌 Vyber úroveň a téma vlevo, nebo napiš vlastní větu.", "Témata s ⭐ fungují i bez internetu.");
+    }
+    updateBuiltSentence();
+  };
+  init();
+})();
+</script>
+</body>
+</html>
