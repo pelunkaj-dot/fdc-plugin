@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>FajnRovnice — Lineární rovnice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f7f4ee;
+  --paper:#fffef9;
+  --paper2:#f0ede4;
+  --ink:#1c1c2e;
+  --ink2:#6b6880;
+  --ink3:#b8b4c8;
+  --accent:#2145c8;
+  --accent2:#162fa8;
+  --correct:#1a7f4b;
+  --correct-bg:#edfaf3;
+  --wrong:#c0392b;
+  --wrong-bg:#fdf0ee;
+  --warn:#d97706;
+  --warn-bg:#fffbeb;
+  --border:#e0dbd0;
+  --shadow:0 2px 16px rgba(28,28,46,.08);
+  --shadow-lg:0 8px 40px rgba(28,28,46,.12);
+  /* margin line red */
+  --margin:#e8c4c0;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Nunito',sans-serif;
+  min-height:100svh;
+  overflow-x:hidden;
+}
+
+/* Subtle graph paper bg */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(33,69,200,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(33,69,200,.04) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+
+/* SCREENS */
+.screen{display:none;min-height:100svh;flex-direction:column;position:relative;z-index:1}
+.screen.active{display:flex}
+
+/* HEADER */
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:2px solid var(--border);
+  background:rgba(247,244,238,.95);backdrop-filter:blur(12px);
+  position:sticky;top:0;z-index:20;
+}
+.app-logo{
+  font-family:'Playfair Display',serif;font-weight:800;font-size:1.3rem;
+  color:var(--accent);letter-spacing:-.5px;
+}
+.hdr-right{display:flex;gap:8px;align-items:center}
+.badge{
+  background:var(--paper);border:1.5px solid var(--border);border-radius:20px;
+  padding:4px 12px;display:flex;align-items:center;gap:5px;
+  font-size:.8rem;font-weight:700;color:var(--ink2);box-shadow:var(--shadow);
+}
+.badge-fire{color:#e76f51} .badge-xp{color:var(--accent)}
+
+/* HOME */
+.home-hero{
+  padding:32px 22px 18px;text-align:center;
+  background:linear-gradient(180deg,var(--paper) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);margin-bottom:4px;
+}
+.home-eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;
+  color:var(--ink3);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;
+}
+.home-title{
+  font-family:'Playfair Display',serif;font-weight:800;
+  font-size:clamp(2rem,6vw,2.8rem);line-height:1.1;color:var(--ink);margin-bottom:8px;
+}
+.home-eq{
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:1.1rem;color:var(--accent);margin-bottom:8px;opacity:.7;
+}
+.home-sub{color:var(--ink2);font-size:.86rem;max-width:300px;margin:0 auto}
+
+/* CATEGORY GRID */
+.cats-wrap{
+  display:flex;flex-direction:column;gap:10px;
+  padding:14px 18px 40px;max-width:500px;margin:0 auto;width:100%;
+}
+.cat-card{
+  background:var(--paper);border:1.5px solid var(--border);border-radius:16px;
+  padding:18px 20px;cursor:pointer;box-shadow:var(--shadow);
+  transition:transform .15s,box-shadow .15s,border-color .15s;
+  display:flex;align-items:center;gap:16px;position:relative;overflow:hidden;
+}
+.cat-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:var(--accent);border-radius:4px 0 0 4px;
+}
+.cat-card:hover{transform:translateY(-2px) translateX(3px);box-shadow:var(--shadow-lg);border-color:var(--accent)}
+.cat-card:active{transform:scale(.98)}
+.cat-eq{
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.15rem;
+  color:var(--accent);flex-shrink:0;min-width:100px;line-height:1.3;
+}
+.cat-info{flex:1}
+.cat-name{font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:3px}
+.cat-desc{font-size:.78rem;color:var(--ink2);line-height:1.4}
+.cat-stars{font-size:.85rem;color:var(--warn);flex-shrink:0}
+.cat-arrow{color:var(--ink3);font-size:1.1rem;flex-shrink:0}
+
+/* TOPIC SCREEN */
+.screen-hdr{
+  display:flex;align-items:center;gap:12px;padding:13px 18px;
+  border-bottom:2px solid var(--border);position:sticky;top:0;
+  background:rgba(247,244,238,.95);backdrop-filter:blur(12px);z-index:10;
+}
+.back-btn{
+  background:none;border:none;color:var(--ink2);font-size:1.35rem;
+  cursor:pointer;padding:4px 6px;border-radius:8px;transition:color .15s;line-height:1;
+}
+.back-btn:hover{color:var(--ink)}
+.scr-title{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:1.05rem;flex:1;color:var(--ink);
+}
+
+.topics-wrap{
+  padding:14px 18px 40px;max-width:500px;margin:0 auto;
+  width:100%;display:flex;flex-direction:column;gap:9px;
+}
+.topic-card{
+  background:var(--paper);border:1.5px solid var(--border);border-radius:13px;
+  padding:15px 18px;cursor:pointer;box-shadow:var(--shadow);
+  transition:border-color .15s,transform .12s;
+  display:flex;align-items:center;gap:14px;
+}
+.topic-card:hover{border-color:var(--accent);transform:translateX(4px)}
+.topic-card:active{transform:scale(.98)}
+.topic-card.all{border-style:dashed}
+.tc-eq{
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:.88rem;color:var(--accent);min-width:80px;flex-shrink:0;line-height:1.4;
+}
+.tc-left{flex:1}
+.tc-name{font-weight:700;font-size:.9rem;color:var(--ink);margin-bottom:2px}
+.tc-desc{font-size:.75rem;color:var(--ink2);line-height:1.4}
+.tc-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.topic-help-btn{
+  background:none;border:1.5px solid var(--border);border-radius:50%;
+  width:30px;height:30px;cursor:pointer;color:var(--ink2);
+  font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .13s,color .13s;flex-shrink:0;
+}
+.topic-help-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── EXERCISE SCREEN ── */
+.ex-topbar{
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-bottom:2px solid var(--border);position:sticky;top:0;
+  background:rgba(247,244,238,.95);backdrop-filter:blur(8px);z-index:10;
+}
+.prog-bar{flex:1;height:5px;background:var(--paper2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .35s ease}
+.ex-count{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--ink2);white-space:nowrap}
+.help-btn{
+  background:none;border:1.5px solid var(--border);border-radius:50%;
+  width:30px;height:30px;cursor:pointer;color:var(--ink2);
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .13s,color .13s;flex-shrink:0;
+}
+.help-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* NOTEBOOK EXERCISE BODY */
+.ex-body{
+  flex:1;display:flex;flex-direction:column;
+  padding:0 0 140px;max-width:560px;margin:0 auto;width:100%;
+  overflow-y:auto;
+}
+
+/* Paper note */
+.paper-note{
+  background:var(--warn-bg);border:1.5px solid #fde68a;border-radius:10px;
+  padding:9px 14px;margin:14px 18px 0;
+  display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--warn);font-weight:600;
+}
+
+/* Equation display — the main card */
+.eq-card{
+  background:var(--paper);border:1.5px solid var(--border);border-radius:16px;
+  margin:14px 18px 0;box-shadow:var(--shadow);overflow:hidden;
+  position:relative;
+}
+.eq-card::before{
+  content:'';position:absolute;left:36px;top:0;bottom:0;width:1.5px;background:var(--margin);
+}
+.eq-card-label{
+  font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--ink3);
+  letter-spacing:2px;text-transform:uppercase;
+  padding:10px 18px 0 52px;
+}
+.eq-display{
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:clamp(1.6rem,5.5vw,2.4rem);color:var(--ink);
+  padding:8px 18px 16px 52px;line-height:1.4;
+  letter-spacing:-.5px;
+}
+.eq-display .x-var{color:var(--accent)}
+.eq-display .frac-inline{
+  display:inline-flex;flex-direction:column;align-items:center;
+  vertical-align:middle;margin:0 2px;font-size:.72em;
+}
+.eq-display .frac-inline .fn{border-bottom:2px solid currentColor;padding:0 3px 1px;text-align:center}
+.eq-display .frac-inline .fd{padding:1px 3px 0;text-align:center}
+
+/* Steps history */
+.steps-history{
+  margin:12px 18px 0;display:flex;flex-direction:column;gap:6px;
+}
+.step-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 14px;border-radius:9px;font-family:'JetBrains Mono',monospace;
+  font-size:.92rem;font-weight:700;animation:stepIn .2s ease;
+}
+@keyframes stepIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.step-item.step-ok{background:var(--correct-bg);color:var(--correct);border:1px solid #b7e8cf}
+.step-item.step-done{background:var(--correct-bg);color:var(--correct);border:1.5px solid var(--correct)}
+.step-item.step-wrong{background:var(--wrong-bg);color:var(--wrong);border:1px solid #f5c6c2}
+.step-icon{font-size:1rem;flex-shrink:0}
+.step-text{flex:1;word-break:break-all}
+.step-hint{font-size:.72rem;color:var(--ink2);margin-left:auto;font-family:'Nunito',sans-serif;font-weight:600;flex-shrink:0}
+
+/* Input area */
+.input-area{
+  margin:12px 18px 0;
+}
+.input-row{
+  display:flex;gap:8px;align-items:stretch;
+}
+.eq-input{
+  flex:1;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.1rem;
+  background:var(--paper);border:2px solid var(--border);border-radius:11px;
+  color:var(--ink);padding:12px 16px;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  box-shadow:var(--shadow);
+}
+.eq-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(33,69,200,.1)}
+.eq-input.input-ok{border-color:var(--correct);box-shadow:0 0 0 3px rgba(26,127,75,.12)}
+.eq-input.input-wrong{border-color:var(--wrong);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
+.btn-check{
+  background:var(--accent);color:#fff;border:none;border-radius:11px;
+  padding:12px 18px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:background .13s,transform .1s;white-space:nowrap;
+  box-shadow:var(--shadow);
+}
+.btn-check:hover{background:var(--accent2)}
+.btn-check:active{transform:scale(.97)}
+.input-hint{
+  font-size:.72rem;color:var(--ink3);margin-top:6px;line-height:1.5;
+}
+.input-hint kbd{
+  background:var(--paper2);border:1px solid var(--border);border-radius:4px;
+  padding:1px 5px;font-size:.7rem;font-family:'JetBrains Mono',monospace;
+}
+
+/* Skip / give up */
+.btn-skip{
+  background:none;border:none;color:var(--ink3);font-family:'Nunito',sans-serif;
+  font-size:.78rem;cursor:pointer;padding:6px 0;margin-top:4px;
+  transition:color .13s;text-decoration:underline;text-underline-offset:3px;
+}
+.btn-skip:hover{color:var(--ink2)}
+
+/* DONE banner (inside exercise) */
+.done-banner{
+  background:var(--correct-bg);border:2px solid var(--correct);border-radius:14px;
+  margin:12px 18px 0;padding:16px 20px;text-align:center;
+  animation:stepIn .3s ease;
+}
+.done-banner-title{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:1.4rem;color:var(--correct);margin-bottom:4px;
+}
+.done-banner-sub{font-size:.82rem;color:var(--ink2);margin-bottom:14px}
+.btn-next-eq{
+  background:var(--accent);color:#fff;border:none;border-radius:10px;
+  padding:11px 28px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:700;
+  cursor:pointer;transition:background .13s;box-shadow:var(--shadow);
+}
+.btn-next-eq:hover{background:var(--accent2)}
+
+/* RESULT */
+.result-body{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 20px;text-align:center;
+  max-width:420px;margin:0 auto;width:100%;
+}
+.res-eq{
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:1.2rem;color:var(--accent);margin-bottom:12px;opacity:.7;
+}
+.res-stars{font-size:2rem;letter-spacing:5px;margin-bottom:6px;color:var(--warn)}
+.res-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.75rem;margin-bottom:6px}
+.res-score{color:var(--ink2);margin-bottom:18px;font-size:.88rem}
+.res-xp-box{
+  background:var(--paper);border:1.5px solid var(--border);border-radius:11px;
+  padding:10px 28px;margin-bottom:22px;font-size:.9rem;box-shadow:var(--shadow);
+}
+.res-xp-box span{color:var(--accent);font-weight:700;font-size:1.1rem}
+.res-actions{display:flex;flex-direction:column;gap:9px;width:100%;max-width:260px}
+.btn-primary{
+  background:var(--accent);color:#fff;border:none;border-radius:10px;
+  padding:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:background .13s;width:100%;box-shadow:var(--shadow);
+}
+.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{
+  background:none;border:1.5px solid var(--border);border-radius:10px;
+  padding:12px;color:var(--ink2);font-family:'Nunito',sans-serif;
+  font-size:.88rem;cursor:pointer;transition:border-color .13s,color .13s;width:100%;
+}
+.btn-secondary:hover{border-color:var(--accent);color:var(--ink)}
+
+/* HELP PANEL */
+.help-overlay{
+  position:fixed;inset:0;background:rgba(28,28,46,.35);z-index:199;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.help-overlay.show{opacity:1;pointer-events:all}
+.help-panel{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--paper);border-top:2.5px solid var(--accent);
+  border-radius:20px 20px 0 0;padding:22px 22px;
+  padding-bottom:max(28px,env(safe-area-inset-bottom));
+  transform:translateY(100%);transition:transform .26s ease;
+  max-height:75svh;overflow-y:auto;box-shadow:0 -8px 40px rgba(28,28,46,.15);
+}
+.help-panel.show{transform:translateY(0)}
+.help-panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.help-panel-title{font-family:'Playfair Display',serif;font-weight:700;font-size:1.05rem;color:var(--accent)}
+.help-close{background:none;border:none;color:var(--ink2);font-size:1.3rem;cursor:pointer;padding:2px 6px;border-radius:8px;line-height:1}
+.help-close:hover{color:var(--ink)}
+.help-steps{display:flex;flex-direction:column;gap:10px}
+.help-step{display:flex;gap:11px;align-items:flex-start}
+.help-step-num{
+  background:var(--accent);color:#fff;border-radius:50%;
+  width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;margin-top:1px;
+}
+.help-step-txt{font-size:.86rem;line-height:1.6;color:var(--ink2)}
+.help-step-txt strong{color:var(--ink)}
+.help-example{
+  background:var(--paper2);border-radius:9px;padding:10px 14px;margin-top:10px;
+  font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--ink);
+  line-height:1.8;
+}
+.help-example .ok{color:var(--correct)} .help-example .err{color:var(--wrong)}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="app-header">
+    <div class="app-logo">FajnRovnice</div>
+    <div class="hdr-right">
+      <div class="badge"><span class="badge-fire">🔥</span><span id="hdr-streak">0</span></div>
+      <div class="badge"><span class="badge-xp">⚡</span><span id="hdr-xp">0</span></div>
+    </div>
+  </div>
+  <div class="home-hero">
+    <div class="home-eyebrow">lineární rovnice</div>
+    <div class="home-title">Najdi x</div>
+    <div class="home-eq">2x + 3 = 11 → x = ?</div>
+    <div class="home-sub">Vyber téma a piš každý krok — systém ověří postup</div>
+  </div>
+  <div class="cats-wrap" id="cats-wrap"></div>
+</div>
+
+<!-- TOPICS -->
+<div id="screen-topics" class="screen">
+  <div class="screen-hdr">
+    <button class="back-btn" id="topics-back">←</button>
+    <div class="scr-title" id="topics-title"></div>
+  </div>
+  <div class="topics-wrap" id="topics-wrap"></div>
+</div>
+
+<!-- EXERCISE -->
+<div id="screen-exercise" class="screen">
+  <div class="ex-topbar">
+    <button class="back-btn" onclick="exitExercise()">←</button>
+    <div class="prog-bar"><div class="prog-fill" id="ex-prog"></div></div>
+    <div class="ex-count" id="ex-count">1/8</div>
+    <div class="badge"><span class="badge-xp">⚡</span><span id="ex-xp-badge">0</span></div>
+    <button class="help-btn" id="ex-help-btn" onclick="showExHelp()" style="display:none">?</button>
+  </div>
+  <div class="ex-body" id="ex-body">
+    <!-- dynamically filled -->
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="screen-hdr">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div class="scr-title">Výsledek</div>
+  </div>
+  <div class="result-body">
+    <div class="res-eq" id="res-eq">x = ?</div>
+    <div class="res-stars" id="res-stars">★★★</div>
+    <div class="res-title" id="res-title">Skvělé!</div>
+    <div class="res-score" id="res-score">8/8 vyřešeno</div>
+    <div class="res-xp-box">Získáno <span id="res-xp">+120</span> XP</div>
+    <div class="res-actions">
+      <button class="btn-primary" onclick="retrySession()">Hrát znovu</button>
+      <button class="btn-secondary" onclick="backToTopics()">← Zpět na témata</button>
+      <button class="btn-secondary" onclick="showHome()">← Výběr kategorie</button>
+    </div>
+  </div>
+</div>
+
+<!-- HELP -->
+<div class="help-overlay" id="help-overlay" onclick="closeHelp()"></div>
+<div class="help-panel" id="help-panel">
+  <div class="help-panel-hdr">
+    <div class="help-panel-title" id="help-panel-title">Jak postupovat</div>
+    <button class="help-close" onclick="closeHelp()">✕</button>
+  </div>
+  <div id="help-panel-body"></div>
+</div>
+
+<script>
+"use strict";
+
+// ── HELPERS ────────────────────────────────────────────────
+const ri     = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const rFrom  = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = arr => [...arr].sort(()=>Math.random()-.5);
+const rSign  = () => Math.random()<.5 ? 1 : -1;
+
+// Render x with color
+const X = '<span class="x-var">x</span>';
+const fracInline = (n,d) =>
+  `<span class="frac-inline"><span class="fn">${n}</span><span class="fd">${d}</span></span>`;
+
+// ── STEP EVALUATOR ─────────────────────────────────────────
+// Core idea: substitute x = solution into both sides of student's equation.
+// If LHS(sol) ≈ RHS(sol) → valid step (or done if x = N).
+
+function prepareExpr(s, xVal) {
+  // Replace x with the numeric value
+  // Handle: 2x → 2*x, (number)x → (number)*x
+  let e = s.trim();
+  // implicit mult: digit followed by x
+  e = e.replace(/(\d)(x)/g, `$1*${xVal}`);
+  // x alone or x followed by non-digit
+  e = e.replace(/\bx\b/g, String(xVal));
+  // comma → dot
+  e = e.replace(/,/g, '.');
+  return e;
+}
+
+function safeEval(expr) {
+  try {
+    // only allow safe chars
+    if (!/^[\d\s\+\-\*\/\(\)\.\,]+$/.test(expr)) return NaN;
+    return Function('"use strict";return(' + expr + ')')();
+  } catch(e) { return NaN; }
+}
+
+function evalSide(s, xVal) {
+  return safeEval(prepareExpr(s, xVal));
+}
+
+// Returns: 'done' | 'valid' | 'wrong' | 'invalid'
+function checkStep(studentInput, solution) {
+  const input = studentInput.trim();
+  if (!input) return 'invalid';
+
+  // Must contain exactly one =
+  const eqParts = input.split('=');
+  if (eqParts.length !== 2) return 'invalid';
+  const [rawL, rawR] = eqParts.map(s=>s.trim());
+  if (!rawL || !rawR) return 'invalid';
+
+  // Evaluate both sides at x = solution
+  const lv = evalSide(rawL, solution);
+  const rv = evalSide(rawR, solution);
+  if (!isFinite(lv) || !isFinite(rv)) return 'invalid';
+
+  const isEquivalent = Math.abs(lv - rv) < 0.001;
+  if (!isEquivalent) return 'wrong';
+
+  // Check if it's the final answer: left side is x and right side is a number (no x)
+  const lIsX = rawL === 'x';
+  const rIsX = rawR === 'x';
+  const lIsNum = isFinite(Number(rawL.replace(',','.'))) && !rawL.toLowerCase().includes('x');
+  const rIsNum = isFinite(Number(rawR.replace(',','.'))) && !rawR.toLowerCase().includes('x');
+
+  if ((lIsX && rIsNum) || (rIsX && lIsNum)) return 'done';
+  return 'valid';
+}
+
+// ── EQUATION GENERATORS ───────────────────────────────────
+// Each generator returns:
+// { display, solution, category, hint?, help? }
+// display: HTML string of the equation (with X spans)
+// solution: number (value of x)
+
+// Helper: format coefficient (don't show 1)
+const coef = (n) => n === 1 ? '' : n === -1 ? '-' : String(n);
+const sign = (n) => n >= 0 ? `+ ${n}` : `− ${Math.abs(n)}`;
+const signTight = (n) => n >= 0 ? `+${n}` : `−${Math.abs(n)}`;
+
+// ── KATEGORIE 1: Jednoduché rovnice ──────────────────────
+// ax = b
+function gen_axEb() {
+  const x = ri(-8, 8);
+  const a = rFrom([2,3,4,5,6,7,8,9].filter(v=>v!==0));
+  const b = a * x;
+  return {
+    display: `${coef(a)}${X} = ${b}`,
+    solution: x,
+    category: 'jednoduche'
+  };
+}
+
+// x + b = c  or  x − b = c
+function gen_xPbEc() {
+  const x = ri(-10, 10);
+  const b = ri(-9, 9);
+  const c = x + b;
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  return {
+    display: `${X} ${bStr} = ${c}`,
+    solution: x,
+    category: 'jednoduche'
+  };
+}
+
+// ax + b = c
+function gen_axPbEc() {
+  const x = ri(-6, 6);
+  const a = rFrom([2,3,4,5,6]);
+  const b = rFrom([-8,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,8]);
+  const c = a*x + b;
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  return {
+    display: `${coef(a)}${X} ${bStr} = ${c}`,
+    solution: x,
+    category: 'jednoduche'
+  };
+}
+
+// ax + b = cx + d  (x na obou stranách)
+function gen_axObouStr() {
+  let x, a, b, c, d;
+  do {
+    x = ri(-5, 5);
+    a = rFrom([2,3,4,5,6,7]);
+    c = rFrom([1,2,3,4,5]);
+    b = ri(-8, 8);
+    d = ri(-8, 8);
+  } while (a === c || (a*x+b) !== (c*x+d) && Math.abs(x) > 10);
+  d = a*x + b - c*x;
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  const dStr = d >= 0 ? `+ ${d}` : `− ${Math.abs(d)}`;
+  return {
+    display: `${coef(a)}${X} ${bStr} = ${coef(c)}${X} ${dStr}`,
+    solution: x,
+    category: 'jednoduche'
+  };
+}
+
+// ── KATEGORIE 2: Se závorkami ──────────────────────────────
+// a(x + b) = c
+function gen_azavorkou() {
+  const x = ri(-6, 6);
+  const a = rFrom([2,3,4,5,6]);
+  const b = rFrom([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]);
+  const c = a*(x+b);
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  return {
+    display: `${a}(${X} ${bStr}) = ${c}`,
+    solution: x,
+    category: 'zavorky'
+  };
+}
+
+// a(x + b) + c = d
+function gen_azavorkou2() {
+  const x = ri(-5, 5);
+  const a = rFrom([2,3,4,5]);
+  const b = rFrom([-4,-3,-2,-1,1,2,3,4]);
+  const c = rFrom([-8,-6,-4,-3,-2,-1,1,2,3,4,6,8]);
+  const d = a*(x+b)+c;
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  const cStr = c >= 0 ? `+ ${c}` : `− ${Math.abs(c)}`;
+  return {
+    display: `${a}(${X} ${bStr}) ${cStr} = ${d}`,
+    solution: x,
+    category: 'zavorky'
+  };
+}
+
+// a(bx + c) = d
+function gen_azavorkou3() {
+  const x = ri(-4, 4);
+  const a = rFrom([2,3,4]);
+  const b = rFrom([2,3,4,5]);
+  const c = rFrom([-6,-4,-3,-2,-1,1,2,3,4,6]);
+  const d = a*(b*x+c);
+  const cStr = c >= 0 ? `+ ${c}` : `− ${Math.abs(c)}`;
+  return {
+    display: `${a}(${coef(b)}${X} ${cStr}) = ${d}`,
+    solution: x,
+    category: 'zavorky'
+  };
+}
+
+// a(x + b) = c(x + d)   závorka na obou stranách
+function gen_azavorkou_obou() {
+  let x, a, b, c, d;
+  let tries = 0;
+  do {
+    tries++;
+    x  = ri(-5, 5);
+    a  = rFrom([2,3,4,5]);
+    c  = rFrom([2,3,4,5]);
+    b  = ri(-5, 5);
+    d  = ri(-5, 5);
+    if (a === c) continue;
+  } while (a*(x+b) !== c*(x+d) && tries < 50);
+  // force d to satisfy
+  d = a*(x+b)/c - x;
+  if (!Number.isInteger(d)) {
+    // fallback to simpler
+    return gen_azavorkou();
+  }
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  const dStr = d >= 0 ? `+ ${d}` : `− ${Math.abs(d)}`;
+  return {
+    display: `${a}(${X} ${bStr}) = ${c}(${X} ${dStr})`,
+    solution: x,
+    category: 'zavorky'
+  };
+}
+
+// ── KATEGORIE 3: Se zlomky ──────────────────────────────────
+// x/a = b
+function gen_xDa() {
+  const x = ri(-9, 9);
+  const a = rFrom([2,3,4,5,6]);
+  const b = x / a;
+  if (!Number.isInteger(b)) return gen_xDa();
+  return {
+    display: `${fracInline('x',a)} = ${b}`,
+    solution: x,
+    category: 'zlomky'
+  };
+}
+
+// x/a + b = c
+function gen_xDaPb() {
+  const x = ri(-10, 10);
+  const a = rFrom([2,3,4,5]);
+  if (x % a !== 0) return gen_xDaPb();
+  const b = ri(-6, 6);
+  const c = x/a + b;
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  return {
+    display: `${fracInline('x',a)} ${bStr} = ${c}`,
+    solution: x,
+    category: 'zlomky'
+  };
+}
+
+// ax/b = c  (výsledek celé číslo)
+function gen_axDb() {
+  const x = ri(-8, 8);
+  const b = rFrom([2,3,4,5]);
+  const a = rFrom([1,2,3,4,5].filter(v=>v!==b));
+  const c = a*x/b;
+  if (!Number.isInteger(c)) return gen_axDb();
+  return {
+    display: `${fracInline(coef(a)+'x',b)} = ${c}`,
+    solution: x,
+    category: 'zlomky'
+  };
+}
+
+// x/a + x/b = c (zlomky s různými jmenovateli)
+function gen_xDaPxDb() {
+  const b1 = rFrom([2,3,4]);
+  const b2 = rFrom([2,3,4,5].filter(v=>v!==b1));
+  // find x divisible by lcm(b1,b2)
+  const lcm_ = (a,b) => Math.abs(a*b)/gcd_(a,b);
+  const gcd_ = (a,b) => b===0?a:gcd_(b,a%b);
+  const lcm = lcm_(b1,b2);
+  const mult = ri(1,3);
+  const x = lcm * mult * rFrom([-1,1]);
+  const c = x/b1 + x/b2;
+  if (!Number.isInteger(c)) return gen_xDaPxDb();
+  return {
+    display: `${fracInline('x',b1)} + ${fracInline('x',b2)} = ${c}`,
+    solution: x,
+    category: 'zlomky'
+  };
+}
+
+// ax + b = c/d  (pravá strana zlomek → celé řešení)
+function gen_axPbEcDd() {
+  const x = ri(-5,5);
+  const a = rFrom([2,3,4]);
+  const b = ri(-5,5);
+  const rhs_num = (a*x+b);
+  const d = rFrom([2,3,4]);
+  const c = rhs_num * d;
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  return {
+    display: `${coef(a)}${X} ${bStr} = ${fracInline(c,d)}`,
+    solution: x,
+    category: 'zlomky'
+  };
+}
+
+
+// ── ZLOMKY: NEZNÁMÁ V ČITATELI ────────────────────────────
+// (x + a) / b = c
+function gen_xPaDivbEc() {
+  const b = rFrom([2,3,4,5,6]);
+  const c = ri(-6, 6);
+  const a = ri(-8, 8);
+  const x = b*c - a;
+  if (!Number.isInteger(x)) return gen_xPaDivbEc();
+  const aStr = a >= 0 ? `+ ${a}` : `− ${Math.abs(a)}`;
+  return {
+    display: `${fracInline(`${X} ${aStr}`, b)} = ${c}`,
+    solution: x,
+    category: 'citatel',
+    hint: `Vynásob obě strany číslem ${b}`
+  };
+}
+
+// (ax + b) / c = d
+function gen_axPbDivcEd() {
+  let x, a, b, c, d;
+  for (let t=0; t<50; t++) {
+    x = ri(-6, 6);
+    a = rFrom([2,3,4,5]);
+    b = ri(-8, 8);
+    c = rFrom([2,3,4,5,6]);
+    d = (a*x + b) / c;
+    if (Number.isInteger(d)) break;
+    d = null;
+  }
+  if (d === null) return gen_axPbDivcEd();
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  return {
+    display: `${fracInline(`${coef(a)}${X} ${bStr}`, c)} = ${d}`,
+    solution: x,
+    category: 'citatel',
+    hint: `Vynásob obě strany číslem ${c}, pak pokračuj standardně`
+  };
+}
+
+// (x + a)/b = (x + c)/d  — křížové násobení
+function gen_crossMult() {
+  let x, a, b, c, d;
+  for (let t=0; t<80; t++) {
+    b = rFrom([2,3,4,5]);
+    d = rFrom([2,3,4,5,6].filter(v=>v!==b));
+    a = ri(-6, 6);
+    x = ri(-6, 6);
+    // solve: (x+a)/b = (x+c)/d → d(x+a) = b(x+c) → dx+da = bx+bc → (d-b)x = bc - da
+    // pick c such that x is integer
+    // d*x + d*a = b*x + b*c → b*c = d*x + d*a - b*x = x(d-b) + d*a
+    if (b === d) continue;
+    const rhs = x*(d-b) + d*a;
+    if (rhs % b !== 0) continue;
+    c = rhs / b;
+    if (Math.abs(c) > 12) continue;
+    if (a === c) continue; // trivial
+    break;
+  }
+  if (c === undefined) return gen_crossMult();
+  const aStr = a >= 0 ? `+ ${a}` : `− ${Math.abs(a)}`;
+  const cStr = c >= 0 ? `+ ${c}` : `− ${Math.abs(c)}`;
+  return {
+    display: `${fracInline(`${X} ${aStr}`, b)} = ${fracInline(`${X} ${cStr}`, d)}`,
+    solution: x,
+    category: 'citatel',
+    hint: `Křížové násobení: (${X} ${aStr}) · ${d} = (${X} ${cStr}) · ${b}`
+  };
+}
+
+// ── ZLOMKY: NEZNÁMÁ VE JMENOVATELI ────────────────────────
+// a / x = b
+function gen_aDivx() {
+  for (let t=0; t<50; t++) {
+    const b = rFrom([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]);
+    const x = rFrom([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]);
+    const a = b * x;
+    if (Math.abs(a) > 30 || a === 0) continue;
+    return {
+      display: `${fracInline(a, X)} = ${b}`,
+      solution: x,
+      category: 'jmenovatel',
+      hint: `Vynásob obě strany ${X} — nezapomeň na podmínku x ≠ 0`
+    };
+  }
+  return gen_aDivx();
+}
+
+// a / x + c = d
+function gen_aDivxPc() {
+  for (let t=0; t<60; t++) {
+    const x = rFrom([-5,-4,-3,-2,-1,1,2,3,4,5]);
+    const c = ri(-6, 6);
+    const d = ri(-6, 6);
+    if (c === d) continue;
+    const a = (d - c) * x;
+    if (!Number.isInteger(a) || a === 0 || Math.abs(a) > 24) continue;
+    const cStr = c >= 0 ? `+ ${c}` : `− ${Math.abs(c)}`;
+    return {
+      display: `${fracInline(a, X)} ${cStr} = ${d}`,
+      solution: x,
+      category: 'jmenovatel',
+      hint: `Nejdřív odečti ${c}, pak vynásob ${X}`
+    };
+  }
+  return gen_aDivxPc();
+}
+
+// a/x + b/x = c  (stejný jmenovatel x)
+function gen_aDivxPbDivx() {
+  for (let t=0; t<50; t++) {
+    const x = rFrom([-5,-4,-3,-2,-1,1,2,3,4,5]);
+    const c = rFrom([-8,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,8]);
+    const sum = c * x; // a + b = c*x
+    if (!Number.isInteger(sum)) continue;
+    // split sum into a + b
+    const a = ri(-8, 8);
+    const b = sum - a;
+    if (b === 0 || a === 0 || Math.abs(b) > 12) continue;
+    const bStr = b >= 0 ? `+ ${fracInline(b,X)}` : `− ${fracInline(Math.abs(b),X)}`;
+    return {
+      display: `${fracInline(a,X)} ${bStr} = ${c}`,
+      solution: x,
+      category: 'jmenovatel',
+      hint: `Zlomky mají stejného jmenovatele ${X} — sečti čitatele`
+    };
+  }
+  return gen_aDivxPbDivx();
+}
+
+// a/x = b/c  (proporce — výsledek celé číslo)
+function gen_aDivxEbDivc() {
+  for (let t=0; t<60; t++) {
+    const c = rFrom([2,3,4,5,6]);
+    const b = ri(1, 8);
+    const x = rFrom([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]);
+    const a = b * x / c;
+    if (!Number.isInteger(a) || a === 0 || Math.abs(a) > 20) continue;
+    return {
+      display: `${fracInline(a,X)} = ${fracInline(b,c)}`,
+      solution: x,
+      category: 'jmenovatel',
+      hint: `Křížové násobení: ${a} · ${c} = ${b} · ${X}`
+    };
+  }
+  return gen_aDivxEbDivc();
+}
+
+
+
+// ── DESETINNÉ KOEFICIENTY ──────────────────────────────────
+// Strategie: generuj s celými čísly, pak vyděl koeficienty vhodným číslem
+// aby výsledek byl celé číslo a koeficienty vypadaly jako desetinná čísla
+
+function gen_decAxEb() {
+  // 0,5x = 3  |  1,5x = 6  |  0,25x = 2
+  const decCoefs = [0.5, 1.5, 2.5, 0.25, 0.75, 1.25, 0.2, 0.4];
+  const a = rFrom(decCoefs);
+  const x = ri(-8, 8);
+  const b = a * x;
+  if (!Number.isInteger(b)) return gen_decAxEb();
+  return {
+    display: `${toDec(a)}${X} = ${b}`,
+    solution: x, category: 'desetinne'
+  };
+}
+
+function gen_decAxPbEc() {
+  // 1,5x + 3 = 12  |  0,5x − 2 = 4
+  const decCoefs = [0.5, 1.5, 2.5, 0.25, 0.75];
+  const a = rFrom(decCoefs);
+  const x = ri(-8, 8);
+  const b = rFrom([-6,-4,-3,-2,-1,1,2,3,4,6]);
+  const c = a*x + b;
+  if (!Number.isInteger(c)) return gen_decAxPbEc();
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  return {
+    display: `${toDec(a)}${X} ${bStr} = ${c}`,
+    solution: x, category: 'desetinne',
+    hint: `Vyděl obě strany číslem ${toDec(a)}`
+  };
+}
+
+function gen_decAxPbEcxPd() {
+  // 1,5x + 2 = 0,5x + 8  (x na obou stranách, des. koeficienty)
+  const decCoefs = [0.5, 1.5, 2.5, 0.25, 0.75, 1.25];
+  let a, c, x, b, d;
+  for (let t=0; t<60; t++) {
+    a = rFrom(decCoefs);
+    c = rFrom(decCoefs.filter(v => v !== a));
+    if (a === c) continue;
+    x = ri(-6, 6);
+    b = ri(-6, 6);
+    d = a*x + b - c*x;
+    if (!Number.isInteger(d)) continue;
+    if (Math.abs(d) > 12) continue;
+    break;
+  }
+  if (d === undefined || !Number.isInteger(d)) return gen_decAxPbEcxPd();
+  const bStr = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
+  const dStr = d >= 0 ? `+ ${d}` : `− ${Math.abs(d)}`;
+  return {
+    display: `${toDec(a)}${X} ${bStr} = ${toDec(c)}${X} ${dStr}`,
+    solution: x, category: 'desetinne',
+    hint: `Odečti ${toDec(c)}x od obou stran`
+  };
+}
+
+function gen_decZavorka() {
+  // 0,5(x + a) = b  |  1,5(x − a) = b
+  const decCoefs = [0.5, 1.5, 2.5, 0.25];
+  const a2 = rFrom(decCoefs);
+  const x = ri(-8, 8);
+  const b2 = rFrom([-6,-4,-3,-2,-1,1,2,3,4,6]);
+  const c = a2*(x + b2);
+  if (!Number.isInteger(c)) return gen_decZavorka();
+  const bStr = b2 >= 0 ? `+ ${b2}` : `− ${Math.abs(b2)}`;
+  return {
+    display: `${toDec(a2)}(${X} ${bStr}) = ${c}`,
+    solution: x, category: 'desetinne',
+    hint: `Vyděl obě strany ${toDec(a2)}, nebo rozbal závorku`
+  };
+}
+
+// helper: format decimal nicely with comma
+function toDec(n) {
+  return Number.isInteger(n) ? String(n) : n.toFixed(2).replace('.', ',').replace(/0$/, '');
+}
+
+// ── TOPICS — PLOCHÝ SEZNAM ────────────────────────────────
+// Každý topic má: name, eq (ukázková rovnice), desc, section, gen[], help?
+
+const TOPICS = [
+  // ── JEDNODUCHÉ ──────────────────────────────────────────
+  {
+    name: 'Přímé rovnice',
+    eq: 'ax = b', desc: 'Jedna operace — vyděl nebo odečti',
+    section: 'Jednoduché rovnice',
+    gen: [gen_axEb, gen_xPbEc],
+    help: {
+      title: 'Přímé rovnice',
+      steps: [
+        '<strong>ax = b</strong> → vyděl obě strany číslem a.',
+        '<strong>x + b = c</strong> → odečti b od obou stran.',
+        'Pravidlo: <strong>co uděláš na jedné straně, musíš udělat na druhé</strong>.',
+      ],
+      example: [
+        {text:'3x = 12', type:'eq'},{text:'x = 4 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: 'ax + b = c',
+    eq: '2x+3=11', desc: 'Nejčastější typ — odstraň člen bez x, pak vyděl',
+    section: 'Jednoduché rovnice',
+    gen: [gen_axPbEc],
+    help: {
+      title: 'ax + b = c',
+      steps: [
+        '<strong>Krok 1:</strong> odstraň člen bez x (odečti nebo přičti b).',
+        '<strong>Krok 2:</strong> vyděl koeficientem a.',
+      ],
+      example: [
+        {text:'2x + 3 = 11', type:'eq'},{text:'2x = 8', type:'ok'},{text:'x = 4 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: 'x na obou stranách',
+    eq: '3x+1=x+9', desc: 'Přesuň x na jednu stranu, čísla na druhou',
+    section: 'Jednoduché rovnice',
+    gen: [gen_axObouStr],
+    help: {
+      title: 'x na obou stranách',
+      steps: [
+        '<strong>Krok 1:</strong> přesuň všechna x na jednu stranu.',
+        '<strong>Krok 2:</strong> přesuň čísla na druhou stranu.',
+        '<strong>Krok 3:</strong> vyděl koeficientem.',
+      ],
+      example: [
+        {text:'3x + 1 = x + 9', type:'eq'},{text:'2x = 8', type:'ok'},{text:'x = 4 ✓', type:'done'}
+      ]
+    }
+  },
+  // ── SE ZÁVORKAMI ────────────────────────────────────────
+  {
+    name: 'Závorka na jedné straně',
+    eq: '3(x+2)=15', desc: 'Rozbal závorku, pak řeš standardně',
+    section: 'Se závorkami',
+    gen: [gen_azavorkou, gen_azavorkou2],
+    help: {
+      title: 'a(x + b) = c',
+      steps: [
+        '<strong>Krok 1:</strong> rozbal závorku — vynásob každý člen.',
+        '<strong>Krok 2:</strong> řeš jako ax + b = c.',
+        'Pozor na záporné číslo před závorkou: −2(x+3) = −2x − 6',
+      ],
+      example: [
+        {text:'3(x + 2) = 15', type:'eq'},{text:'3x + 6 = 15', type:'ok'},
+        {text:'3x = 9', type:'ok'},{text:'x = 3 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: 'Složitější závorky',
+    eq: '2(3x−1)=16', desc: 'Koeficient uvnitř + závorka na obou stranách',
+    section: 'Se závorkami',
+    gen: [gen_azavorkou3, gen_azavorkou_obou],
+    help: {
+      title: 'Složitější závorky',
+      steps: [
+        'Rozbal závorky na obou stranách zvlášť.',
+        'Přesuň x na jednu stranu, čísla na druhou.',
+        'Kontroluj znaménka — záporný koeficient obrací znaménka.',
+      ],
+      example: [
+        {text:'2(3x − 1) = 16', type:'eq'},{text:'6x − 2 = 16', type:'ok'},
+        {text:'6x = 18', type:'ok'},{text:'x = 3 ✓', type:'done'}
+      ]
+    }
+  },
+  // ── DESETINNÉ KOEFICIENTY ────────────────────────────────
+  {
+    name: 'Desetinné koeficienty — základní',
+    eq: '0,5x=3', desc: '0,5x = 3  nebo  1,5x + 2 = 8 — vyděl desetinným číslem',
+    section: 'Desetinné koeficienty',
+    gen: [gen_decAxEb, gen_decAxPbEc],
+    help: {
+      title: 'Rovnice s desetinnými koeficienty',
+      steps: [
+        'Postup je <strong>stejný jako u celých čísel</strong> — přesuň člen bez x, pak vyděl.',
+        'Dělení desetinným číslem: 0,5x = 3 → x = 3 ÷ 0,5 = 6',
+        'Tip: vynásob celou rovnici 10 nebo 100, aby zmizela desetinná čísla.',
+      ],
+      example: [
+        {text:'1,5x + 3 = 12', type:'eq'},{text:'1,5x = 9', type:'ok'},{text:'x = 6 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: 'Desetinné koeficienty — x na obou stranách',
+    eq: '1,5x+2=0,5x+8', desc: 'Des. koeficienty + x na obou stranách + závorky',
+    section: 'Desetinné koeficienty',
+    gen: [gen_decAxPbEcxPd, gen_decZavorka],
+    help: {
+      title: 'Desetinné koeficienty — pokročilé',
+      steps: [
+        'Nejprve <strong>zjednoduš koeficienty</strong> — vynásob rovnici 2 nebo 4 (zmizí 0,5 a 0,25).',
+        'Pak přesuň x na jednu stranu jako obvykle.',
+        'Příklad: 1,5x = 0,5x + 4 → ×2 → 3x = x + 8 → 2x = 8 → x = 4',
+      ],
+      example: [
+        {text:'1,5x + 2 = 0,5x + 8', type:'eq'},{text:'x + 2 = 8  (−0,5x)', type:'ok'},
+        {text:'x = 6 ✓', type:'done'}
+      ]
+    }
+  },
+  // ── ZLOMKY — X V ČITATELI ───────────────────────────────
+  {
+    name: 'x/a = b  a  x/a + c = d',
+    eq: 'x/3=4', desc: 'x dělené číslem — vynásob jmenovatelem',
+    section: 'Zlomky — x v čitateli',
+    gen: [gen_xDa, gen_xDaPb],
+    help: {
+      title: 'x/a = b',
+      steps: [
+        '<strong>x/a = b</strong> → vynásob obě strany a. Výsledek: x = a·b',
+        '<strong>x/a + c = d</strong> → nejdřív odečti c, pak vynásob a.',
+      ],
+      example: [
+        {text:'x/3 + 2 = 6', type:'eq'},{text:'x/3 = 4', type:'ok'},{text:'x = 12 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: 'ax/b = c  a  součet zlomků',
+    eq: '3x/4=6', desc: 'Koeficient v čitateli + NSJ pro součet',
+    section: 'Zlomky — x v čitateli',
+    gen: [gen_axDb, gen_xDaPxDb, gen_axPbEcDd],
+    help: {
+      title: 'ax/b = c  a  x/a + x/b = c',
+      steps: [
+        '<strong>ax/b = c</strong> → vynásob b, pak vyděl a.',
+        '<strong>Součet x/a + x/b:</strong> najdi NSJ, vynásob rovnici NSJ — zlomky zmizí.',
+      ],
+      example: [
+        {text:'x/2 + x/3 = 5', type:'eq'},{text:'3x + 2x = 30  (×6)', type:'ok'},
+        {text:'5x = 30', type:'ok'},{text:'x = 6 ✓', type:'done'}
+      ]
+    }
+  },
+  // ── ZLOMKY — SLOŽENÉ ────────────────────────────────────
+  {
+    name: '(x + a)/b = c',
+    eq: '(x+3)/2=5', desc: 'Výraz s x v čitateli — vynásob jmenovatelem',
+    section: 'Zlomky — složené výrazy',
+    gen: [gen_xPaDivbEc],
+    help: {
+      title: '(x + a)/b = c',
+      steps: [
+        '<strong>Krok 1:</strong> vynásob obě strany jmenovatelem b.',
+        '<strong>Krok 2:</strong> řeš vzniklou rovnici x + a = c·b.',
+      ],
+      example: [
+        {text:'(x + 3)/2 = 5', type:'eq'},{text:'x + 3 = 10  (×2)', type:'ok'},{text:'x = 7 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: '(ax + b)/c = d',
+    eq: '(2x+1)/3=5', desc: 'Koeficient u x v čitateli',
+    section: 'Zlomky — složené výrazy',
+    gen: [gen_axPbDivcEd],
+    help: {
+      title: '(ax + b)/c = d',
+      steps: [
+        '<strong>Krok 1:</strong> vynásob c — zlomek zmizí.',
+        '<strong>Krok 2:</strong> přesuň b, pak vyděl a.',
+      ],
+      example: [
+        {text:'(2x + 1)/3 = 5', type:'eq'},{text:'2x + 1 = 15  (×3)', type:'ok'},
+        {text:'2x = 14', type:'ok'},{text:'x = 7 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: 'Zlomek = zlomku',
+    eq: '(x+1)/2=(x+3)/4', desc: 'Křížové násobení — zbav se obou zlomků najednou',
+    section: 'Zlomky — složené výrazy',
+    gen: [gen_crossMult],
+    help: {
+      title: 'Křížové násobení',
+      steps: [
+        '<strong>(x+a)/b = (x+c)/d</strong> → vynásob křížem: (x+a)·d = (x+c)·b',
+        'Rozbal závorky, přesuň x na jednu stranu.',
+      ],
+      example: [
+        {text:'(x+1)/2 = (x+5)/4', type:'eq'},{text:'4(x+1) = 2(x+5)', type:'ok'},
+        {text:'4x + 4 = 2x + 10', type:'ok'},{text:'2x = 6', type:'ok'},{text:'x = 3 ✓', type:'done'}
+      ]
+    }
+  },
+  // ── NEZNÁMÁ VE JMENOVATELI ──────────────────────────────
+  {
+    name: 'a/x = b',
+    eq: '6/x=2', desc: 'x ve jmenovateli — vynásob obě strany x',
+    section: 'Neznámá ve jmenovateli',
+    gen: [gen_aDivx],
+    help: {
+      title: 'a/x = b',
+      steps: [
+        'Vynásob obě strany x: a = b·x',
+        'Pak vyděl b: x = a/b',
+        '<strong>Podmínka:</strong> x ≠ 0',
+      ],
+      example: [
+        {text:'6/x = 2', type:'eq'},{text:'6 = 2x  (×x)', type:'ok'},{text:'x = 3 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: 'a/x + c = d  a  a/x = b/c',
+    eq: '12/x+1=4', desc: 'S konstantou nebo proporce',
+    section: 'Neznámá ve jmenovateli',
+    gen: [gen_aDivxPc, gen_aDivxEbDivc],
+    help: {
+      title: 'a/x + c = d  a  proporce',
+      steps: [
+        '<strong>a/x + c = d:</strong> odečti c, pak vynásob x.',
+        '<strong>a/x = b/c:</strong> křížové násobení → a·c = b·x',
+      ],
+      example: [
+        {text:'12/x + 1 = 4', type:'eq'},{text:'12/x = 3', type:'ok'},
+        {text:'12 = 3x', type:'ok'},{text:'x = 4 ✓', type:'done'}
+      ]
+    }
+  },
+  {
+    name: 'a/x + b/x = c',
+    eq: '6/x+3/x=9', desc: 'Stejný jmenovatel x — sečti čitatele',
+    section: 'Neznámá ve jmenovateli',
+    gen: [gen_aDivxPbDivx],
+    help: {
+      title: 'a/x + b/x = c',
+      steps: [
+        'Zlomky mají stejného jmenovatele x — sečti čitatele: (a+b)/x = c',
+        'Pak vynásob x: a+b = c·x → x = (a+b)/c',
+      ],
+      example: [
+        {text:'6/x + 3/x = 9', type:'eq'},{text:'9/x = 9', type:'ok'},
+        {text:'9 = 9x', type:'ok'},{text:'x = 1 ✓', type:'done'}
+      ]
+    }
+  },
+  // ── VŠE DOHROMADY ────────────────────────────────────────
+  {
+    name: 'Náhodný mix — vše',
+    eq: '∼', desc: 'Rovnice ze všech kategorií — náhodně',
+    section: 'Mix',
+    gen: [gen_axEb, gen_xPbEc, gen_axPbEc, gen_axObouStr,
+          gen_azavorkou, gen_azavorkou2,
+          gen_decAxEb, gen_decAxPbEc,
+          gen_xDa, gen_xDaPb, gen_axDb,
+          gen_xPaDivbEc, gen_axPbDivcEd,
+          gen_aDivx, gen_aDivxPc]
+  }
+];
+
+</script>
+<script>
+"use strict";
+
+// ── STATE ─────────────────────────────────────────────────
+let ST = { xp:0, streak:0, progress:{} };
+function loadST() { try { const s=localStorage.getItem('fajnrovnice_v1'); if(s) ST={...ST,...JSON.parse(s)}; } catch(e){} }
+function saveST() { try { localStorage.setItem('fajnrovnice_v1',JSON.stringify(ST)); } catch(e){} }
+const getStars = (idx) => ST.progress?.[idx]?.stars ?? 0;
+function setStars(idx, stars) {
+  if(!ST.progress[idx]) ST.progress[idx]={};
+  const cur = ST.progress[idx]?.stars ?? 0;
+  ST.progress[idx] = { stars:Math.max(cur,stars) };
+  saveST();
+}
+
+// ── AUDIO ─────────────────────────────────────────────────
+let actx=null;
+function getCtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();return actx;}
+function beep(freq,type,dur,gain=0.18){
+  try{const c=getCtx(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type=type;o.frequency.value=freq;
+    g.gain.setValueAtTime(gain,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dur);
+    o.start();o.stop(c.currentTime+dur);}catch(e){}
+}
+const sndValid    = () => beep(523,'sine',.12);
+const sndDone     = () => { beep(523,'sine',.1); setTimeout(()=>beep(659,'sine',.1),80); setTimeout(()=>beep(784,'sine',.18),160); };
+const sndWrong    = () => { beep(220,'sawtooth',.15); setTimeout(()=>beep(196,'sawtooth',.15),90); };
+const sndComplete = () => { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.2,.26),i*100)); };
+
+// ── SESSION ───────────────────────────────────────────────
+const EQS_PER_SESSION = 8;
+let SEL = { topicIdx: null };
+let SES = null;
+let _currentHelp = null;
+let _enterHandler = null;
+
+function buildEqList(gens) {
+  const eqs = [];
+  let pool = [];
+  while (eqs.length < EQS_PER_SESSION) {
+    if (!pool.length) pool = shuffle(gens);
+    const gen = pool.shift();
+    let eq = null, tries = 0;
+    while (!eq && tries++ < 20) {
+      try {
+        const candidate = gen();
+        if (candidate && isFinite(candidate.solution)) eq = candidate;
+      } catch(e) {}
+    }
+    if (eq) eqs.push(eq);
+  }
+  return eqs;
+}
+
+function startSession(topicIdx) {
+  SEL = { topicIdx };
+  const topic = TOPICS[topicIdx];
+  _currentHelp = topic.help || null;
+
+  const hBtn = document.getElementById('ex-help-btn');
+  if (hBtn) hBtn.style.display = _currentHelp ? 'flex' : 'none';
+
+  SES = {
+    topicIdx,
+    eqs: buildEqList(topic.gen),
+    cur: 0, solved: 0, skipped: 0, xpGained: 0,
+    steps: [], wrongCount: 0, done: false,
+  };
+
+  showScreen('screen-exercise');
+  renderEquation();
+}
+
+// ── RENDER CURRENT EQUATION ───────────────────────────────
+function renderEquation() {
+  const eq    = SES.eqs[SES.cur];
+  const total = SES.eqs.length;
+  SES.steps     = [];
+  SES.wrongCount = 0;
+  SES.done      = false;
+
+  // topbar
+  document.getElementById('ex-prog').style.width = `${(SES.cur/total)*100}%`;
+  document.getElementById('ex-count').textContent = `${SES.cur+1}/${total}`;
+  document.getElementById('ex-xp-badge').textContent = ST.xp;
+
+  // build body
+  const body = document.getElementById('ex-body');
+  body.innerHTML = '';
+
+  // paper note
+  const note = document.createElement('div');
+  note.className = 'paper-note';
+  note.innerHTML = '✏️ Piš každý krok — systém ověří postup';
+  body.appendChild(note);
+
+  // equation card
+  const card = document.createElement('div');
+  card.className = 'eq-card';
+  card.innerHTML = `
+    <div class="eq-card-label">Rovnice ${SES.cur+1} / ${total}</div>
+    <div class="eq-display" id="eq-display">${eq.display}</div>`;
+  body.appendChild(card);
+
+  // steps history container
+  const hist = document.createElement('div');
+  hist.className = 'steps-history';
+  hist.id = 'steps-history';
+  body.appendChild(hist);
+
+  // input area
+  const inputWrap = document.createElement('div');
+  inputWrap.className = 'input-area';
+  inputWrap.id = 'input-area';
+  inputWrap.innerHTML = `
+    <div class="input-row">
+      <input class="eq-input" id="eq-input" type="text"
+        placeholder="napi&scaron; n&aacute;sleduj&iacute;c&iacute; krok&hellip;"
+        autocomplete="off" autocorrect="off" spellcheck="false" inputmode="text">
+      <button class="btn-check" id="btn-check">Ověřit</button>
+    </div>
+    <div class="input-hint">
+      Piš rovnici ve tvaru <kbd>levá = pravá</kbd>, např. <kbd>2x = 8</kbd> nebo <kbd>x = 4</kbd><br>
+      Zlomky: <kbd>x/2</kbd> · záporná čísla: <kbd>x = -3</kbd> · potvrdit: <kbd>Enter</kbd>
+    </div>
+    <button class="btn-skip" id="btn-skip">Zobrazit řešení</button>`;
+  body.appendChild(inputWrap);
+
+  // bind events
+  const inp   = document.getElementById('eq-input');
+  const btnC  = document.getElementById('btn-check');
+  const btnS  = document.getElementById('btn-skip');
+
+  const submit = () => {
+    const val = inp.value.trim();
+    if (!val || SES.done) return;
+    processStep(val);
+    inp.value = '';
+    inp.focus();
+  };
+
+  btnC.addEventListener('click', submit);
+  inp.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); submit(); } });
+  btnS.addEventListener('click', () => skipEquation());
+
+  setTimeout(() => inp.focus(), 80);
+}
+
+// ── PROCESS A STEP ─────────────────────────────────────────
+function processStep(raw) {
+  if (SES.done) return;
+  const eq  = SES.eqs[SES.cur];
+  const res = checkStep(raw, eq.solution);
+
+  const inp = document.getElementById('eq-input');
+  inp.className = 'eq-input';
+
+  if (res === 'invalid') {
+    // flash input
+    inp.className = 'eq-input input-wrong';
+    showStepItem('invalid', raw, 'Nerozumím — zkus formát: 2x = 8');
+    setTimeout(()=>{ inp.className='eq-input'; }, 800);
+    return;
+  }
+
+  if (res === 'wrong') {
+    SES.wrongCount++;
+    ST.streak = 0; saveST();
+    sndWrong();
+    inp.className = 'eq-input input-wrong';
+    setTimeout(()=>{ inp.className='eq-input'; }, 600);
+    showStepItem('wrong', raw, SES.wrongCount >= 2 ? `Tip: řešení je x = ${eq.solution}` : null);
+    return;
+  }
+
+  if (res === 'valid') {
+    sndValid();
+    inp.className = 'eq-input input-ok';
+    setTimeout(()=>{ inp.className='eq-input'; }, 400);
+    showStepItem('valid', raw, 'Správný krok');
+    SES.steps.push({ raw, type:'valid' });
+    return;
+  }
+
+  if (res === 'done') {
+    sndDone();
+    SES.done = true;
+    SES.solved++;
+    SES.steps.push({ raw, type:'done' });
+    // XP: base minus wrong penalties
+    const xp = Math.max(5, 20 - SES.wrongCount * 5);
+    SES.xpGained += xp;
+    ST.xp += xp; ST.streak++; saveST();
+    document.getElementById('ex-xp-badge').textContent = ST.xp;
+    document.getElementById('hdr-xp').textContent = ST.xp;
+    document.getElementById('hdr-streak').textContent = ST.streak;
+    showStepItem('done', raw, null);
+    showDoneBanner(xp);
+    // hide input
+    const ia = document.getElementById('input-area');
+    if (ia) ia.style.display = 'none';
+  }
+}
+
+function showStepItem(type, raw, hint) {
+  const hist = document.getElementById('steps-history');
+  if (!hist) return;
+  const item = document.createElement('div');
+  const icons = { valid:'✓', done:'✓✓', wrong:'✗', invalid:'?' };
+  const classes = { valid:'step-ok', done:'step-done', wrong:'step-wrong', invalid:'step-wrong' };
+  item.className = `step-item ${classes[type]||'step-wrong'}`;
+  item.innerHTML = `
+    <span class="step-icon">${icons[type]||'?'}</span>
+    <span class="step-text">${escHtml(raw)}</span>
+    ${hint ? `<span class="step-hint">${hint}</span>` : ''}`;
+  hist.appendChild(item);
+  // scroll into view
+  setTimeout(()=>item.scrollIntoView({behavior:'smooth',block:'nearest'}), 50);
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showDoneBanner(xp) {
+  const body = document.getElementById('ex-body');
+  const banner = document.createElement('div');
+  banner.className = 'done-banner';
+  banner.id = 'done-banner';
+  const isLast = SES.cur >= SES.eqs.length - 1;
+  banner.innerHTML = `
+    <div class="done-banner-title">Vyřešeno! 🎉</div>
+    <div class="done-banner-sub">+${xp} XP · ${SES.wrongCount===0?'Čistý postup!':'Pokračuj dál'}</div>
+    <button class="btn-next-eq" onclick="nextEquation()">${isLast?'Zobrazit výsledky →':'Další rovnice →'}</button>`;
+  body.appendChild(banner);
+  setTimeout(()=>banner.scrollIntoView({behavior:'smooth',block:'nearest'}), 80);
+
+  // Enter → next
+  if (_enterHandler) document.removeEventListener('keydown', _enterHandler);
+  _enterHandler = e => { if(e.key==='Enter'){ e.preventDefault(); nextEquation(); } };
+  setTimeout(()=>document.addEventListener('keydown', _enterHandler), 150);
+}
+
+function skipEquation() {
+  if (SES.done) return;
+  SES.skipped++;
+  ST.streak = 0; saveST();
+  // show solution
+  const eq = SES.eqs[SES.cur];
+  showStepItem('valid', `x = ${eq.solution}`, '← řešení');
+  const ia = document.getElementById('input-area');
+  if (ia) ia.style.display = 'none';
+  SES.done = true;
+  // show next button inline
+  const body = document.getElementById('ex-body');
+  const banner = document.createElement('div');
+  banner.className = 'done-banner';
+  banner.style.borderColor = 'var(--warn)';
+  banner.style.background  = 'var(--warn-bg)';
+  const isLast = SES.cur >= SES.eqs.length - 1;
+  banner.innerHTML = `
+    <div class="done-banner-title" style="color:var(--warn)">Řešení zobrazeno</div>
+    <div class="done-banner-sub">Příště to zkus sám ✏️</div>
+    <button class="btn-next-eq" onclick="nextEquation()">${isLast?'Zobrazit výsledky →':'Další rovnice →'}</button>`;
+  body.appendChild(banner);
+  setTimeout(()=>banner.scrollIntoView({behavior:'smooth',block:'nearest'}), 80);
+
+  if (_enterHandler) document.removeEventListener('keydown', _enterHandler);
+  _enterHandler = e => { if(e.key==='Enter'){ e.preventDefault(); nextEquation(); } };
+  setTimeout(()=>document.addEventListener('keydown', _enterHandler), 150);
+}
+
+function nextEquation() {
+  if (_enterHandler) { document.removeEventListener('keydown', _enterHandler); _enterHandler=null; }
+  SES.cur++;
+  if (SES.cur >= SES.eqs.length) finishSession();
+  else renderEquation();
+}
+
+function exitExercise() {
+  if (_enterHandler) { document.removeEventListener('keydown', _enterHandler); _enterHandler=null; }
+  showHome();
+}
+
+function retrySession() { startSession(SEL.topicIdx); }
+function backToTopics() { showHome(); }
+
+// ── FINISH ────────────────────────────────────────────────
+function finishSession() {
+  const total   = SES.eqs.length;
+  const solved  = SES.solved;
+  const ratio   = solved / total;
+  const stars   = ratio>=1?3:ratio>=0.75?2:ratio>=0.5?1:0;
+  setStars(SEL.topicIdx, stars);
+  sndComplete();
+
+  document.getElementById('res-eq').textContent = `${solved}/${total} vyřešeno`;
+  document.getElementById('res-stars').textContent = '★'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('res-title').textContent =
+    ['Zkus to znovu!','Slušný výkon!','Dobře!','Perfektní!'][stars];
+  document.getElementById('res-score').textContent =
+    `${solved} vyřešeno · ${SES.skipped} zobrazeno · ${total} celkem`;
+  document.getElementById('res-xp').textContent = `+${SES.xpGained}`;
+  showScreen('screen-result');
+}
+
+// ── SCREENS ───────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showHome() {
+  renderHome();
+  showScreen('screen-home');
+}
+
+function showTopics() { showHome(); } // compatibility shim
+
+function renderHome() {
+  document.getElementById('hdr-xp').textContent = ST.xp;
+  document.getElementById('hdr-streak').textContent = ST.streak;
+  const wrap = document.getElementById('cats-wrap');
+  wrap.innerHTML = '';
+
+  let lastSection = null;
+  TOPICS.forEach((topic, idx) => {
+    // Section divider
+    if (topic.section !== lastSection) {
+      lastSection = topic.section;
+      const div = document.createElement('div');
+      div.style.cssText = 'font-family:"JetBrains Mono",monospace;font-size:.62rem;' +
+        'color:var(--ink3);letter-spacing:2.5px;text-transform:uppercase;' +
+        'padding:10px 4px 4px;margin-top:4px';
+      div.textContent = topic.section;
+      wrap.appendChild(div);
+    }
+
+    const stars   = getStars(idx);
+    const starStr = stars > 0 ? '★'.repeat(stars)+'☆'.repeat(3-stars) : '';
+    const isMix   = topic.eq === '∼';
+
+    const card = document.createElement('div');
+    card.className = `topic-card${isMix?' all':''}`;
+    card.innerHTML = `
+      <div class="tc-eq">${topic.eq}</div>
+      <div class="tc-left">
+        <div class="tc-name">${topic.name}</div>
+        <div class="tc-desc">${topic.desc}</div>
+      </div>
+      <div class="tc-right">
+        ${starStr ? `<span style="color:var(--warn);font-size:.82rem">${starStr}</span>` : ''}
+        ${topic.help ? `<button class="topic-help-btn">?</button>` : ''}
+        <span style="color:var(--ink3);font-size:.9rem">→</span>
+      </div>`;
+
+    if (topic.help) {
+      card.querySelector('.topic-help-btn').addEventListener('click', e => {
+        e.stopPropagation(); openHelp(topic.help);
+      });
+    }
+    card.addEventListener('click', () => startSession(idx));
+    wrap.appendChild(card);
+  });
+}
+
+// ── HELP PANEL ────────────────────────────────────────────
+function openHelp(help) {
+  document.getElementById('help-panel-title').textContent = help.title||'Jak postupovat';
+  const body = document.getElementById('help-panel-body');
+  body.innerHTML = '';
+
+  if (help.steps?.length) {
+    const sec = document.createElement('div');
+    sec.innerHTML = `<div class="help-steps">${
+      help.steps.map((s,i)=>`<div class="help-step">
+        <div class="help-step-num">${i+1}</div>
+        <div class="help-step-txt">${s}</div>
+      </div>`).join('')
+    }</div>`;
+    body.appendChild(sec);
+  }
+
+  if (help.example?.length) {
+    const ex = document.createElement('div');
+    ex.className = 'help-example';
+    ex.innerHTML = help.example.map(e=>{
+      if (e.type==='eq')   return `<div>${escHtml(e.text)}</div>`;
+      if (e.type==='ok')   return `<div class="ok">  → ${escHtml(e.text)}</div>`;
+      if (e.type==='done') return `<div class="ok">  ✓ ${escHtml(e.text)}</div>`;
+      return `<div class="err">  ✗ ${escHtml(e.text)}</div>`;
+    }).join('');
+    body.appendChild(ex);
+  }
+
+  document.getElementById('help-panel').classList.add('show');
+  document.getElementById('help-overlay').classList.add('show');
+}
+
+function closeHelp() {
+  document.getElementById('help-panel').classList.remove('show');
+  document.getElementById('help-overlay').classList.remove('show');
+}
+
+function showExHelp() { if (_currentHelp) openHelp(_currentHelp); }
+
+// ── INIT ──────────────────────────────────────────────────
+loadST();
+renderHome();
+</script>
+
+</body>
+</html>
