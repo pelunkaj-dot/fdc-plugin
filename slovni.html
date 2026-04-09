@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>FajnSlovní — Slovní úlohy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#fdf6ec;
+  --paper:#fffdf7;
+  --paper2:#f5ede0;
+  --ink:#1a1510;
+  --ink2:#7a6a55;
+  --ink3:#c4b49a;
+  --accent:#1a6b5c;
+  --accent2:#124d42;
+  --amber:#d97706;
+  --amber-bg:#fffbeb;
+  --correct:#1a7f4b;
+  --correct-bg:#edfaf3;
+  --wrong:#c0392b;
+  --wrong-bg:#fdf0ee;
+  --border:#e8dcc8;
+  --shadow:0 2px 12px rgba(26,21,16,.07);
+  --shadow-lg:0 8px 36px rgba(26,21,16,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:'Nunito',sans-serif;min-height:100svh;overflow-x:hidden}
+
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle at 20% 20%,rgba(26,107,92,.04) 0%,transparent 60%),
+    radial-gradient(circle at 80% 80%,rgba(217,119,6,.04) 0%,transparent 60%)}
+
+.screen{display:none;min-height:100svh;flex-direction:column;position:relative;z-index:1}
+.screen.active{display:flex}
+
+/* HEADER */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;
+  border-bottom:2px solid var(--border);background:rgba(253,246,236,.95);
+  backdrop-filter:blur(12px);position:sticky;top:0;z-index:20}
+.app-logo{font-family:'Lora',serif;font-weight:700;font-size:1.3rem;color:var(--accent)}
+.hdr-right{display:flex;gap:8px}
+.badge{background:var(--paper);border:1.5px solid var(--border);border-radius:20px;
+  padding:4px 12px;display:flex;align-items:center;gap:5px;font-size:.8rem;font-weight:700;
+  color:var(--ink2);box-shadow:var(--shadow)}
+.badge-fire{color:#e76f51} .badge-xp{color:var(--accent)}
+
+/* HOME */
+.home-hero{padding:28px 22px 16px;text-align:center;
+  background:linear-gradient(180deg,var(--paper) 0%,transparent 100%);
+  border-bottom:1px solid var(--border)}
+.home-tag{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--ink3);
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}
+.home-title{font-family:'Lora',serif;font-weight:700;font-size:clamp(1.9rem,5.5vw,2.6rem);
+  line-height:1.1;margin-bottom:8px;color:var(--ink)}
+.home-sub{color:var(--ink2);font-size:.85rem;max-width:320px;margin:0 auto;line-height:1.5}
+
+/* TOPIC LIST */
+.topics-list{display:flex;flex-direction:column;padding:10px 18px 40px;
+  max-width:520px;margin:0 auto;width:100%}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--ink3);
+  letter-spacing:2.5px;text-transform:uppercase;padding:12px 2px 5px;margin-top:2px}
+.topic-row{background:var(--paper);border:1.5px solid var(--border);border-radius:13px;
+  padding:14px 16px;cursor:pointer;box-shadow:var(--shadow);
+  transition:transform .14s,border-color .15s,box-shadow .15s;
+  display:flex;align-items:center;gap:14px;margin-bottom:8px;position:relative;overflow:hidden}
+.topic-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);opacity:0;transition:opacity .15s}
+.topic-row:hover::before{opacity:1}
+.topic-row:hover{border-color:var(--accent);transform:translateX(3px);box-shadow:var(--shadow-lg)}
+.topic-row:active{transform:scale(.98)}
+.topic-row.mix{border-style:dashed;opacity:.8}
+.topic-row.mix:hover{opacity:1}
+.tr-emoji{font-size:1.5rem;flex-shrink:0;width:36px;text-align:center}
+.tr-left{flex:1}
+.tr-name{font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:2px}
+.tr-desc{font-size:.75rem;color:var(--ink2);line-height:1.4}
+.tr-right{display:flex;gap:7px;align-items:center;flex-shrink:0}
+.tr-stars{font-size:.8rem;color:var(--amber)}
+.topic-help-btn{background:none;border:1.5px solid var(--border);border-radius:50%;
+  width:28px;height:28px;cursor:pointer;color:var(--ink2);
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:border-color .13s,color .13s}
+.topic-help-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* SCREEN HEADER */
+.screen-hdr{display:flex;align-items:center;gap:12px;padding:13px 18px;
+  border-bottom:2px solid var(--border);position:sticky;top:0;
+  background:rgba(253,246,236,.95);backdrop-filter:blur(12px);z-index:10}
+.back-btn{background:none;border:none;color:var(--ink2);font-size:1.35rem;
+  cursor:pointer;padding:4px 6px;border-radius:8px;transition:color .15s;line-height:1}
+.back-btn:hover{color:var(--ink)}
+.scr-title{font-family:'Lora',serif;font-weight:600;font-size:1rem;flex:1;color:var(--ink)}
+
+/* EXERCISE TOPBAR */
+.ex-topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-bottom:2px solid var(--border);position:sticky;top:0;
+  background:rgba(253,246,236,.95);backdrop-filter:blur(8px);z-index:10}
+.prog-bar{flex:1;height:5px;background:var(--paper2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .35s ease}
+.ex-count{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--ink2);white-space:nowrap}
+
+/* EXERCISE BODY */
+.ex-body{flex:1;display:flex;flex-direction:column;padding:0 0 120px;
+  max-width:560px;margin:0 auto;width:100%;overflow-y:auto}
+
+/* PROBLEM CARD */
+.problem-card{background:var(--paper);border:1.5px solid var(--border);border-radius:16px;
+  margin:16px 18px 0;box-shadow:var(--shadow);overflow:hidden}
+.problem-meta{display:flex;align-items:center;gap:8px;padding:11px 16px 0;
+  font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--ink3);
+  letter-spacing:2px;text-transform:uppercase}
+.problem-meta .p-emoji{font-size:1rem}
+.problem-text{padding:10px 18px 18px;font-size:.95rem;line-height:1.7;color:var(--ink)}
+.problem-text strong{color:var(--accent);font-weight:700}
+.problem-q{margin-top:10px;font-weight:700;color:var(--ink);font-size:.95rem;
+  border-top:1px solid var(--border);padding-top:10px}
+
+/* PHASE LABEL */
+.phase-label{margin:14px 18px 6px;display:flex;align-items:center;gap:8px}
+.phase-num{background:var(--accent);color:#fff;border-radius:50%;
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;flex-shrink:0}
+.phase-text{font-weight:700;font-size:.88rem;color:var(--ink2)}
+
+/* EQUATION CHOICES */
+.eq-choices{display:flex;flex-direction:column;gap:8px;padding:0 18px}
+.eq-btn{background:var(--paper);border:1.5px solid var(--border);border-radius:11px;
+  padding:13px 16px;cursor:pointer;text-align:left;
+  font-family:'JetBrains Mono',monospace;font-size:.92rem;font-weight:700;color:var(--ink);
+  transition:border-color .13s,background .13s,transform .1s;box-shadow:var(--shadow);
+  line-height:1.4}
+.eq-btn:hover{border-color:var(--accent);background:var(--amber-bg)}
+.eq-btn:active{transform:scale(.98)}
+.eq-btn.correct{border-color:var(--correct)!important;background:var(--correct-bg)!important;color:var(--correct)!important}
+.eq-btn.wrong{border-color:var(--wrong)!important;background:var(--wrong-bg)!important;color:var(--wrong)!important}
+.eq-btn.reveal{border-color:var(--correct)!important;background:var(--correct-bg)!important;opacity:.7}
+.eq-btn:disabled{cursor:default}
+
+/* ANSWER INPUT */
+.answer-wrap{padding:0 18px;margin-top:4px}
+.answer-row{display:flex;gap:8px;align-items:center}
+.answer-input{flex:1;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.4rem;
+  background:var(--paper);border:2px solid var(--border);border-radius:11px;
+  color:var(--ink);padding:11px 16px;outline:none;
+  transition:border-color .15s,box-shadow .15s;box-shadow:var(--shadow);
+  -moz-appearance:textfield;appearance:textfield;text-align:center}
+.answer-input::-webkit-inner-spin-button,.answer-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.answer-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(26,107,92,.1)}
+.answer-input.ok{border-color:var(--correct)!important;box-shadow:0 0 0 3px rgba(26,127,75,.12)!important}
+.answer-input.err{border-color:var(--wrong)!important;box-shadow:0 0 0 3px rgba(192,57,43,.1)!important}
+.answer-unit{font-weight:700;font-size:.95rem;color:var(--ink2);flex-shrink:0;min-width:32px}
+.btn-check{background:var(--accent);color:#fff;border:none;border-radius:11px;
+  padding:11px 20px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:background .13s,transform .1s;white-space:nowrap;box-shadow:var(--shadow)}
+.btn-check:hover{background:var(--accent2)}
+.btn-check:active{transform:scale(.97)}
+.answer-hint{font-size:.72rem;color:var(--ink3);margin-top:5px}
+
+/* SOLUTION BOX */
+.solution-box{background:var(--correct-bg);border:1.5px solid #b7e8cf;border-radius:12px;
+  padding:13px 16px;margin:10px 18px 0;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.solution-title{font-weight:700;font-size:.82rem;color:var(--correct);margin-bottom:6px;
+  display:flex;align-items:center;gap:5px}
+.solution-steps{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--ink);
+  line-height:1.8;white-space:pre-wrap}
+
+/* FEEDBACK BAR */
+.feedback-bar{position:fixed;bottom:0;left:0;right:0;padding:14px 18px;
+  padding-bottom:max(18px,env(safe-area-inset-bottom));
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  transform:translateY(100%);transition:transform .22s ease;z-index:100;
+  border-top:2px solid transparent;backdrop-filter:blur(14px)}
+.feedback-bar.show{transform:translateY(0)}
+.feedback-bar.fb-correct{background:rgba(253,246,236,.97);border-color:var(--correct)}
+.feedback-bar.fb-wrong{background:rgba(253,246,236,.97);border-color:var(--wrong)}
+.feedback-bar.fb-info{background:rgba(253,246,236,.97);border-color:var(--amber)}
+.fb-label{font-weight:700;font-size:.95rem;margin-bottom:2px}
+.fb-sub{font-size:.77rem;color:var(--ink2);line-height:1.4}
+.fb-correct .fb-label{color:var(--correct)}
+.fb-wrong .fb-label{color:var(--wrong)}
+.fb-info .fb-label{color:var(--amber)}
+.btn-next{background:none;border:1.5px solid var(--border);border-radius:9px;
+  color:var(--ink);padding:9px 20px;font-family:'Nunito',sans-serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  transition:border-color .13s}
+.btn-next:hover{border-color:var(--ink)}
+
+/* RESULT */
+.result-body{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 20px;text-align:center;
+  max-width:420px;margin:0 auto;width:100%}
+.res-emoji{font-size:3rem;margin-bottom:8px}
+.res-stars{font-size:2rem;letter-spacing:5px;margin-bottom:6px;color:var(--amber)}
+.res-title{font-family:'Lora',serif;font-weight:700;font-size:1.7rem;margin-bottom:6px}
+.res-score{color:var(--ink2);margin-bottom:18px;font-size:.88rem}
+.res-xp-box{background:var(--paper);border:1.5px solid var(--border);border-radius:11px;
+  padding:10px 28px;margin-bottom:22px;font-size:.9rem;box-shadow:var(--shadow)}
+.res-xp-box span{color:var(--accent);font-weight:700;font-size:1.1rem}
+.res-actions{display:flex;flex-direction:column;gap:9px;width:100%;max-width:260px}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:10px;
+  padding:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;
+  cursor:pointer;transition:background .13s;width:100%;box-shadow:var(--shadow)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:none;border:1.5px solid var(--border);border-radius:10px;
+  padding:12px;color:var(--ink2);font-family:'Nunito',sans-serif;
+  font-size:.88rem;cursor:pointer;transition:border-color .13s,color .13s;width:100%}
+.btn-secondary:hover{border-color:var(--accent);color:var(--ink)}
+
+/* HELP PANEL */
+.help-overlay{position:fixed;inset:0;background:rgba(26,21,16,.35);z-index:199;
+  opacity:0;pointer-events:none;transition:opacity .25s}
+.help-overlay.show{opacity:1;pointer-events:all}
+.help-panel{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--paper);border-top:2.5px solid var(--accent);border-radius:20px 20px 0 0;
+  padding:22px 22px;padding-bottom:max(28px,env(safe-area-inset-bottom));
+  transform:translateY(100%);transition:transform .26s ease;max-height:75svh;overflow-y:auto;
+  box-shadow:0 -8px 40px rgba(26,21,16,.15)}
+.help-panel.show{transform:translateY(0)}
+.help-panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.help-panel-title{font-family:'Lora',serif;font-weight:700;font-size:1.05rem;color:var(--accent)}
+.help-close{background:none;border:none;color:var(--ink2);font-size:1.3rem;cursor:pointer;padding:2px 6px;border-radius:8px;line-height:1}
+.help-close:hover{color:var(--ink)}
+.help-steps{display:flex;flex-direction:column;gap:10px}
+.help-step{display:flex;gap:11px;align-items:flex-start}
+.help-step-num{background:var(--accent);color:#fff;border-radius:50%;
+  width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;margin-top:1px}
+.help-step-txt{font-size:.86rem;line-height:1.6;color:var(--ink2)}
+.help-step-txt strong{color:var(--ink)}
+.help-example{background:var(--paper2);border-radius:9px;padding:10px 14px;margin-top:12px;
+  font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--ink);line-height:1.9}
+.help-example .ok{color:var(--correct)} .help-example .bad{color:var(--wrong)}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="app-header">
+    <div class="app-logo">FajnSlovní</div>
+    <div class="hdr-right">
+      <div class="badge"><span class="badge-fire">🔥</span><span id="hdr-streak">0</span></div>
+      <div class="badge"><span class="badge-xp">⚡</span><span id="hdr-xp">0</span></div>
+    </div>
+  </div>
+  <div class="home-hero">
+    <div class="home-tag">slovní úlohy</div>
+    <div class="home-title">Přečti.<br>Sestav rovnici.<br>Vyřeš.</div>
+    <div class="home-sub">Pohyb · práce · směsi · procenta · věk · geometrie — nekonečné variace</div>
+  </div>
+  <div class="topics-list" id="topics-list"></div>
+</div>
+
+<!-- EXERCISE -->
+<div id="screen-exercise" class="screen">
+  <div class="ex-topbar">
+    <button class="back-btn" onclick="exitExercise()">←</button>
+    <div class="prog-bar"><div class="prog-fill" id="ex-prog"></div></div>
+    <div class="ex-count" id="ex-count">1/8</div>
+    <div class="badge"><span class="badge-xp">⚡</span><span id="ex-xp-badge">0</span></div>
+  </div>
+  <div class="ex-body" id="ex-body"></div>
+  <div class="feedback-bar" id="feedback-bar">
+    <div>
+      <div class="fb-label" id="fb-label"></div>
+      <div class="fb-sub" id="fb-sub"></div>
+    </div>
+    <button class="btn-next" id="btn-next">Další →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="screen-hdr">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div class="scr-title">Výsledek</div>
+  </div>
+  <div class="result-body">
+    <div class="res-emoji" id="res-emoji">🎉</div>
+    <div class="res-stars" id="res-stars">★★★</div>
+    <div class="res-title" id="res-title">Výborně!</div>
+    <div class="res-score" id="res-score">8/8 vyřešeno</div>
+    <div class="res-xp-box">Získáno <span id="res-xp">+120</span> XP</div>
+    <div class="res-actions">
+      <button class="btn-primary" onclick="retrySession()">Hrát znovu</button>
+      <button class="btn-secondary" onclick="showHome()">← Výběr tématu</button>
+    </div>
+  </div>
+</div>
+
+<!-- HELP -->
+<div class="help-overlay" id="help-overlay" onclick="closeHelp()"></div>
+<div class="help-panel" id="help-panel">
+  <div class="help-panel-hdr">
+    <div class="help-panel-title" id="help-panel-title">Jak na to</div>
+    <button class="help-close" onclick="closeHelp()">✕</button>
+  </div>
+  <div id="help-panel-body"></div>
+</div>
+
+<script>
+"use strict";
+
+// ── HELPERS ───────────────────────────────────────────────
+const ri     = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const rFrom  = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = arr => [...arr].sort(()=>Math.random()-.5);
+const numEq  = (a,b) => Math.abs(Number(a)-Number(b)) < 0.001;
+
+// Czech grammar helpers
+const hodin = n => n===1?'hodinu':n<=4?'hodiny':'hodin';
+const minut = n => n===1?'minutu':n<=4?'minuty':'minut';
+const dnu   = n => n===1?'den':n<=4?'dny':'dní';
+const lidi  = n => n===1?'člověk':n<=4?'lidé':'lidí';
+const km    = n => `${n} km`;
+const kmh   = n => `${n} km/h`;
+const pct   = n => `${n} %`;
+
+// Shuffle equation choices keeping track of correct index
+function makeChoices(correct, distractors) {
+  const all = [{ eq: correct, isCorrect: true },
+    ...distractors.map(d => ({ eq: d, isCorrect: false }))];
+  return shuffle(all.slice(0, 4));
+}
+
+// ── GENERATORS ────────────────────────────────────────────
+
+// ════════════════════════════════════════════════════════
+// 1. POHYB
+// ════════════════════════════════════════════════════════
+
+function poh_protismer() {
+  const v1 = rFrom([40,50,60,70,80,90,100,110,120]);
+  const v2 = rFrom([40,50,60,70,80,90,100,110,120]);
+  const t  = ri(1,4);
+  const d  = (v1+v2)*t;
+  const pair = rFrom([
+    ['Vlak A','vlak B'],['Auto','motorka'],['Rychlík','osobní vlak'],
+    ['Autobus','auto'],['Jana','Petr'],
+  ]);
+  const [a,b] = pair;
+  return {
+    emoji:'🚂', category:'Pohyb',
+    text:`<strong>${a}</strong> jede rychlostí <strong>${kmh(v1)}</strong> a <strong>${b}</strong> rychlostí <strong>${kmh(v2)}</strong>. Vyjeli si vstříc ze vzdálenosti <strong>${km(d)}</strong>.`,
+    question:`Za jak dlouho se setkají?`,
+    equation:`${v1}t + ${v2}t = ${d}`,
+    distractors:[
+      `${v1}t − ${v2}t = ${d}`,
+      `(${v1} + ${v2}) · ${d} = t`,
+      `${v1}t = ${d}`,
+    ],
+    answer: t, unit:'h',
+    solutionSteps:`(${v1} + ${v2}) · t = ${d}\n${v1+v2}t = ${d}\nt = ${d} ÷ ${v1+v2} = ${t} h`
+  };
+}
+
+function poh_dojizdeni() {
+  const v2 = rFrom([60,70,80,90,100,110,120]);
+  const headStart = ri(1,3);
+  const v1 = rFrom([40,50,60,70,80].filter(v=>v<v2));
+  const t  = Math.round(v1*headStart/(v2-v1));
+  if (t<=0||t>8||!Number.isInteger(v1*headStart/(v2-v1))) return poh_dojizdeni();
+  const d = v2*t;
+  return {
+    emoji:'🏎️', category:'Pohyb',
+    text:`Auto jede rychlostí <strong>${kmh(v1)}</strong>. Po <strong>${headStart} ${hodin(headStart)}</strong> vyjede za ním motorka rychlostí <strong>${kmh(v2)}</strong>.`,
+    question:`Za jak dlouho motorka auto dožene?`,
+    equation:`${v2}t = ${v1}(t + ${headStart})`,
+    distractors:[
+      `${v2}t = ${v1}t + ${headStart}`,
+      `${v2}t − ${v1}t = ${headStart}`,
+      `${v1}t = ${v2}(t + ${headStart})`,
+    ],
+    answer: t, unit:'h',
+    solutionSteps:`${v2}t = ${v1}(t + ${headStart})\n${v2}t = ${v1}t + ${v1*headStart}\n${v2-v1}t = ${v1*headStart}\nt = ${v1*headStart} ÷ ${v2-v1} = ${t} h`
+  };
+}
+
+function poh_tamZpet() {
+  const v1 = rFrom([10,12,15,20,25,30]);
+  const v2 = rFrom([20,25,30,40,50,60].filter(v=>v>v1));
+  const T = ri(2,5);
+  const lcm_ = (a,b) => { let g=a; while(g%b)g+=a; return g; };
+  const dNum = T*v1*v2;
+  const dDen = v1+v2;
+  if (dNum%dDen!==0) return poh_tamZpet();
+  const d = dNum/dDen;
+  const vehicle = rFrom(['Cyklista','Běžec','Jezdec na koni','Turista','Lyžař']);
+  return {
+    emoji:'🚴', category:'Pohyb',
+    text:`<strong>${vehicle}</strong> jel do kopce rychlostí <strong>${kmh(v1)}</strong> a zpět rychlostí <strong>${kmh(v2)}</strong>. Celá cesta tam a zpět trvala <strong>${T} ${hodin(T)}</strong>.`,
+    question:`Jak daleko je cíl?`,
+    equation:`d/${v1} + d/${v2} = ${T}`,
+    distractors:[
+      `d · ${v1} + d · ${v2} = ${T}`,
+      `d/${v1} − d/${v2} = ${T}`,
+      `d/${v1+v2} = ${T}`,
+    ],
+    answer: d, unit:'km',
+    solutionSteps:`d/${v1} + d/${v2} = ${T}   (×${lcm_(v1,v2)})\n${lcm_(v1,v2)/v1}d + ${lcm_(v1,v2)/v2}d = ${T*lcm_(v1,v2)}\n${lcm_(v1,v2)/v1+lcm_(v1,v2)/v2}d = ${T*lcm_(v1,v2)}\nd = ${d} km`
+  };
+}
+
+function poh_vlakNadrazí() {
+  const v = rFrom([60,80,100,120,150,180]);
+  const l = ri(2,8) * 100;
+  const t2 = Math.round(l*3.6/v);
+  if (t2<=0||t2>120) return poh_vlakNadrazí();
+  return {
+    emoji:'🚄', category:'Pohyb',
+    text:`Vlak délky <strong>${l} m</strong> jede rychlostí <strong>${kmh(v)}</strong>. Projíždí kolem nástupiště.`,
+    question:`Za kolik sekund mine nástupiště celý vlak?`,
+    equation:`${v}/3,6 · t = ${l}`,
+    distractors:[
+      `${v} · t = ${l}`,
+      `${v}/3,6 = ${l}/t`,
+      `t = ${l} · ${v}`,
+    ],
+    answer: t2, unit:'s',
+    solutionSteps:`Rychlost v m/s: ${v}/3,6 ≈ ${(v/3.6).toFixed(1)} m/s\n${(v/3.6).toFixed(1)} · t = ${l}\nt = ${l} ÷ ${(v/3.6).toFixed(1)} = ${t2} s`
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// 2. PRÁCE
+// ════════════════════════════════════════════════════════
+
+function prace_spolecna() {
+  const t1 = rFrom([4,6,8,10,12,15,20]);
+  const t2 = rFrom([4,6,8,10,12,15,20].filter(v=>v!==t1));
+  const tNum = t1*t2, tDen = t1+t2;
+  if (tNum%tDen!==0) return prace_spolecna();
+  const t = tNum/tDen;
+  const [A, B] = rFrom([['Marek','Pavel'],['Jana','Eva'],['Dělník A','dělník B'],
+    ['Starší bratr','mladší bratr'],['Rychlý stroj','pomalý stroj']]);
+  const work = rFrom(['celou zahradu poseká','celý dům vymaluje','celý sklad uklidí',
+    'celý projekt dokončí','celou práci odvede']);
+  return {
+    emoji:'🔨', category:'Práce',
+    text:`<strong>${A}</strong> by ${work} sám za <strong>${t1} ${dnu(t1)}</strong>. <strong>${B}</strong> by totéž zvládl za <strong>${t2} ${dnu(t2)}</strong>.`,
+    question:`Za kolik dní práci dokončí, když pracují spolu?`,
+    equation:`t/${t1} + t/${t2} = 1`,
+    distractors:[
+      `${t1} + ${t2} = t`,
+      `t · ${t1} + t · ${t2} = 1`,
+      `1/${t1} + 1/${t2} = t`,
+    ],
+    answer: t, unit: t===1?'den':t<=4?'dny':'dní',
+    solutionSteps:`t/${t1} + t/${t2} = 1   (×${t1*t2})\n${t2}t + ${t1}t = ${t1*t2}\n${t1+t2}t = ${t1*t2}\nt = ${t1*t2} ÷ ${t1+t2} = ${t} ${dnu(t)}`
+  };
+}
+
+function prace_castUdelanal() {
+  const t1 = rFrom([6,8,10,12,15,20]);
+  const t2 = rFrom([4,6,8,10,12].filter(v=>v!==t1));
+  const h  = ri(1,3);
+  const fNum = (t1-h)*t2, fDen = t1+t2;
+  if (fNum<=0||fNum%fDen!==0) return prace_castUdelanal();
+  const f = fNum/fDen;
+  const [A,B] = rFrom([['Pavel','Karel'],['Starší','mladší'],['Stroj A','stroj B']]);
+  return {
+    emoji:'⚒️', category:'Práce',
+    text:`<strong>${A}</strong> zvládne celou práci za <strong>${t1} ${dnu(t1)}</strong>. <strong>${B}</strong> za <strong>${t2} ${dnu(t2)}</strong>. ${A} pracoval <strong>${h} ${dnu(h)}</strong> sám, pak se přidal ${B}.`,
+    question:`Za kolik dalších dní práci spolu dokončí?`,
+    equation:`${h}/${t1} + d·(1/${t1} + 1/${t2}) = 1`,
+    distractors:[
+      `${h}/${t1} + d/${t2} = 1`,
+      `d/(${t1} + ${t2}) = 1 − ${h}/${t1}`,
+      `${h}·${t1} + d·(${t1}+${t2}) = 1`,
+    ],
+    answer: f, unit: f===1?'den':f<=4?'dny':'dní',
+    solutionSteps:`Část hotová: ${h}/${t1}\nZbývá: 1 − ${h}/${t1} = ${t1-h}/${t1}\nSpolu za den: 1/${t1} + 1/${t2} = ${t1+t2}/${t1*t2}\nd = (${t1-h}/${t1}) ÷ (${t1+t2}/${t1*t2}) = ${f} ${dnu(f)}`
+  };
+}
+
+function prace_stroje() {
+  const v1 = rFrom([100,120,150,200,250,300]);
+  const v2 = rFrom([80,100,120,150,200].filter(v=>v!==v1));
+  const total = ri(3,8) * (v1+v2);
+  const t = total/(v1+v2);
+  return {
+    emoji:'🏭', category:'Práce',
+    text:`Stroj A vyrobí <strong>${v1} kusů za hodinu</strong>. Stroj B vyrobí <strong>${v2} kusů za hodinu</strong>. Musí se vyrobit celkem <strong>${total} kusů</strong>.`,
+    question:`Za jak dlouho oba stroje výrobu zvládnou?`,
+    equation:`(${v1} + ${v2}) · t = ${total}`,
+    distractors:[
+      `${v1} · t + ${v2} = ${total}`,
+      `${v1} · t = ${total}`,
+      `t = ${total} · (${v1} + ${v2})`,
+    ],
+    answer: t, unit:'h',
+    solutionSteps:`Společný výkon: ${v1} + ${v2} = ${v1+v2} ks/h\n${v1+v2} · t = ${total}\nt = ${total} ÷ ${v1+v2} = ${t} h`
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// 3. SMĚSI
+// ════════════════════════════════════════════════════════
+
+function smesi_smichani() {
+  const c2 = rFrom([60,70,80,90,100]);
+  const c1 = rFrom([0,5,10,20,30].filter(v=>v<c2-10));
+  const m2 = rFrom([1,2,3,4,5]);
+  const c  = ri(c1+10, c2-10);
+  const m1Num = m2*(c2-c), m1Den = c-c1;
+  if (m1Den<=0||m1Num%m1Den!==0) return smesi_smichani();
+  const m1 = m1Num/m1Den;
+  const liquid = rFrom(['alkohol','kyselina','solný roztok','ovocná šťáva','cukrový roztok']);
+  return {
+    emoji:'🧪', category:'Směsi',
+    text:`Máme <strong>${c1}% ${liquid}</strong> a <strong>${c2}% ${liquid}</strong>. Chceme smíchat a získat <strong>${m2} l roztoku o koncentraci ${c} %</strong>.`,
+    question:`Kolik litrů slabšího roztoku (${c1} %) potřebujeme?`,
+    equation:`${c1}/100 · x + ${c2}/100 · ${m2} = ${c}/100 · (x + ${m2})`,
+    distractors:[
+      `${c1} · x + ${c2} · ${m2} = ${c} · (x + ${m2})`,
+      `x/${c1} + ${m2}/${c2} = ${c}`,
+      `${c1} · x + ${c2} · ${m2} = ${c}`,
+    ],
+    answer: m1, unit:'l',
+    solutionSteps:`${c1}x + ${c2}·${m2} = ${c}(x + ${m2})\n${c1}x + ${c2*m2} = ${c}x + ${c*m2}\n${c1}x − ${c}x = ${c*m2} − ${c2*m2}\n${c1-c}x = ${c*m2-c2*m2}\nx = ${c*m2-c2*m2} ÷ ${c1-c} = ${m1} l`
+  };
+}
+
+function smesi_pridaniVody() {
+  const c1 = rFrom([20,25,30,40,50,60]);
+  const c2 = rFrom([5,10,15,20].filter(v=>v<c1));
+  const m  = rFrom([2,4,5,6,8,10]);
+  const wNum = m*(c1-c2), wDen = c2;
+  if (wNum%wDen!==0) return smesi_pridaniVody();
+  const w = wNum/wDen;
+  return {
+    emoji:'💧', category:'Směsi',
+    text:`Máme <strong>${m} l roztoku o koncentraci ${c1} %</strong>. Chceme ho naředit čistou vodou na koncentraci <strong>${c2} %</strong>.`,
+    question:`Kolik litrů vody musíme přidat?`,
+    equation:`${c1}/100 · ${m} = ${c2}/100 · (${m} + v)`,
+    distractors:[
+      `${c1} · ${m} = ${c2} · v`,
+      `${c1}/100 · v = ${c2}/100 · (${m} + v)`,
+      `${c1} · ${m} + v = ${c2} · (${m} + v)`,
+    ],
+    answer: w, unit:'l',
+    solutionSteps:`${c1}·${m} = ${c2}·(${m} + v)\n${c1*m} = ${c2*m} + ${c2}v\n${c1*m-c2*m} = ${c2}v\nv = ${c1*m-c2*m} ÷ ${c2} = ${w} l`
+  };
+}
+
+function smesi_pridaniLatky() {
+  const m  = rFrom([100,200,400,500,800,1000]);
+  const c1 = rFrom([10,15,20,25,30,40]);
+  const c2 = rFrom([20,25,30,40,50].filter(v=>v>c1+5));
+  const sNum = m*(c2-c1), sDen = 100-c2;
+  if (sDen<=0||sNum%sDen!==0) return smesi_pridaniLatky();
+  const s = sNum/sDen;
+  const substance = rFrom(['sůl','cukr','koncentrát','látku']);
+  return {
+    emoji:'🧂', category:'Směsi',
+    text:`Máme <strong>${m} g roztoku o koncentraci ${c1} %</strong>. Přidáme čistou ${substance} (100 %).`,
+    question:`Kolik gramů ${substance} musíme přidat, abychom dostali ${c2}% roztok?`,
+    equation:`(${c1}/100 · ${m} + s) / (${m} + s) = ${c2}/100`,
+    distractors:[
+      `${c1}/100 · ${m} + s = ${c2}/100 · ${m}`,
+      `${c1} · ${m} + s = ${c2} · (${m} + s)`,
+      `s / (${m} + s) = ${c2}/100`,
+    ],
+    answer: s, unit:'g',
+    solutionSteps:`${c1}·${m} + 100s = ${c2}(${m}+s)\n${c1*m} + 100s = ${c2*m} + ${c2}s\n${100-c2}s = ${c2*m-c1*m}\ns = ${c2*m-c1*m} ÷ ${100-c2} = ${s} g`
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// 4. PROCENTA
+// ════════════════════════════════════════════════════════
+
+function proc_zdrazeni() {
+  const orig = rFrom([200,400,500,800,1000,1200,1500,2000]);
+  const p  = rFrom([10,15,20,25,30,40,50]);
+  const novaCena = orig * (1+p/100);
+  if (!Number.isInteger(novaCena)) return proc_zdrazeni();
+  return {
+    emoji:'💰', category:'Procenta',
+    text:`Cena výrobku vzrostla o <strong>${p} %</strong>. Nová cena je <strong>${novaCena} Kč</strong>.`,
+    question:`Jaká byla původní cena?`,
+    equation:`x · (1 + ${p}/100) = ${novaCena}`,
+    distractors:[
+      `x + ${p} = ${novaCena}`,
+      `x · ${p}/100 = ${novaCena}`,
+      `x · (1 − ${p}/100) = ${novaCena}`,
+    ],
+    answer: orig, unit:'Kč',
+    solutionSteps:`x · ${1+p/100} = ${novaCena}\nx = ${novaCena} ÷ ${1+p/100} = ${orig} Kč`
+  };
+}
+
+function proc_sleva() {
+  const orig = rFrom([200,400,500,800,1000,1500,2000,2500]);
+  const p  = rFrom([10,15,20,25,30,40,50]);
+  const novaCena = orig * (1-p/100);
+  if (!Number.isInteger(novaCena)) return proc_sleva();
+  // nominativ — cena je podmět věty "stojí X Kč"
+  const shop = rFrom(['tričko','boty','notebook','telefon','kolo','bunda','hodinky']);
+  return {
+    emoji:'🏷️', category:'Procenta',
+    text:`Po slevě <strong>${p} %</strong> stojí <strong>${shop} ${novaCena} Kč</strong>.`,
+    question:`Jaká byla původní cena?`,
+    equation:`x · (1 − ${p}/100) = ${novaCena}`,
+    distractors:[
+      `x − ${p} = ${novaCena}`,
+      `x · (1 + ${p}/100) = ${novaCena}`,
+      `x · ${p}/100 = ${novaCena}`,
+    ],
+    answer: orig, unit:'Kč',
+    solutionSteps:`x · ${1-p/100} = ${novaCena}\nx = ${novaCena} ÷ ${1-p/100} = ${orig} Kč`
+  };
+}
+
+function proc_castZCelku() {
+  const total = rFrom([200,400,500,800,1000,1200,1500,2000]);
+  const p   = rFrom([10,15,20,25,30,40]);
+  const part  = total*p/100;
+  if (!Number.isInteger(part)) return proc_castZCelku();
+  // FIX: byl zde dvojitý rFrom — context bylo pole, pak rFrom(context) vrátilo jeden string
+  // a destrukturizace ho rozložila na znaky. Opraveno: přímý destructuring.
+  const [text, question, unit2] = rFrom([
+    [`Ve třídě je <strong>${part} dívek</strong>, což je <strong>${p} %</strong> všech žáků.`, `Kolik žáků je ve třídě celkem?`, 'žáků'],
+    [`Firma vyrobila <strong>${part} vadných kusů</strong>, což je <strong>${p} %</strong> celé výroby.`, `Kolik kusů firma celkem vyrobila?`, 'kusů'],
+    [`<strong>${part} Kč</strong> tvoří <strong>${p} %</strong> celkové ceny zájezdu.`, `Kolik stojí celý zájezd?`, 'Kč'],
+  ]);
+  return {
+    emoji:'📊', category:'Procenta',
+    text, question,
+    equation:`${p}/100 · x = ${part}`,
+    distractors:[
+      `x/${p} = ${part}`,
+      `${p} · x = ${part}`,
+      `x · ${100/p} = ${part}`,
+    ],
+    answer: total, unit: unit2,
+    solutionSteps:`${p}/100 · x = ${part}\nx = ${part} · 100/${p} = ${total}`
+  };
+}
+
+function proc_urok() {
+  const kapital = rFrom([10000,20000,50000,100000]);
+  const sazba   = rFrom([2,3,4,5,6]);
+  const roky    = ri(1,5);
+  const urok    = kapital*sazba/100*roky;
+  return {
+    emoji:'🏦', category:'Procenta',
+    text:`Peníze jsou uloženy v bance na <strong>${roky} ${roky===1?'rok':roky<=4?'roky':'let'}</strong> při roční úrokové sazbě <strong>${sazba} %</strong>. Úrok (bez připisování úroků) je <strong>${urok} Kč</strong>.`,
+    question:`Kolik peněz bylo vloženo?`,
+    equation:`x · ${sazba}/100 · ${roky} = ${urok}`,
+    distractors:[
+      `x · ${sazba*roky}/100 = ${urok} · ${roky}`,
+      `x + ${sazba}/100 · ${roky} = ${urok}`,
+      `${sazba}/100 = ${urok}/(x · ${roky})`,
+    ],
+    answer: kapital, unit:'Kč',
+    solutionSteps:`x · ${sazba/100} · ${roky} = ${urok}\nx · ${sazba*roky/100} = ${urok}\nx = ${urok} ÷ ${sazba*roky/100} = ${kapital} Kč`
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// 5. VĚKOVÉ ÚLOHY
+// ════════════════════════════════════════════════════════
+
+function vek_soucetRozdil() {
+  const diff = ri(2,20);
+  const sum  = ri(20,80);
+  if ((sum+diff)%2!==0) return vek_soucetRozdil();
+  const older = (sum+diff)/2, younger = (sum-diff)/2;
+  if (younger<=0) return vek_soucetRozdil();
+  // [nominativ A, genitiv A, dativ A, nominativ B, genitiv B]
+  const [Anom,Agen,Adat,Bnom,Bgen] = rFrom([
+    ['Pavel',  'Pavla',           'Pavlovi',          'Jana',          'Jany'],
+    ['Tomáš',  'Tomáše',          'Tomášovi',         'Eva',           'Evy'],
+    ['otec',   'otce',            'otci',             'syn',           'syna'],
+    ['matka',  'matky',           'matce',            'dcera',         'dcery'],
+    ['starší bratr', 'staršího bratra', 'staršímu bratru', 'mladší sestra', 'mladší sestry'],
+  ]);
+  const A=Anom, B=Bnom;
+  return {
+    emoji:'👥', category:'Věkové úlohy',
+    text:`Součet věků <strong>${Agen} a ${Bgen}</strong> je <strong>${sum} let</strong>. <strong>${A}</strong> je o <strong>${diff} let starší</strong>.`,
+    question:`Kolik let je ${Adat}?`,
+    equation:`x + (x − ${diff}) = ${sum}`,
+    distractors:[
+      `x − (x + ${diff}) = ${sum}`,
+      `x · (x − ${diff}) = ${sum}`,
+      `2x + ${diff} = ${sum}`,
+    ],
+    answer: older, unit:'let',
+    solutionSteps:`x + (x − ${diff}) = ${sum}\n2x − ${diff} = ${sum}\n2x = ${sum+diff}\nx = ${older} let`
+  };
+}
+
+function vek_zaLet() {
+  const nowA = ri(25,45), nowB = ri(5,15);
+  const years = ri(2,15);
+  const k = ri(2,4);
+  const nowBcalc = (nowA+years)/k - years;
+  if (!Number.isInteger(nowBcalc)||nowBcalc<=0||nowBcalc>=nowA) return vek_zaLet();
+  // [nominativ A, nominativ B, dativ B]
+  const [A,B,Bdat] = rFrom([
+    ['otec',  'syn',     'synovi'],
+    ['matka', 'dcera',   'dceři'],
+    ['strýc', 'neteř',   'neteři'],
+    ['teta',  'synovec', 'synovci'],
+  ]);
+  return {
+    emoji:'🎂', category:'Věkové úlohy',
+    text:`<strong>${A}</strong> je nyní <strong>${nowA} let</strong>. Za <strong>${years} ${years===1?'rok':years<=4?'roky':'let'}</strong> bude ${k}× starší než <strong>${B}</strong> tehdy.`,
+    question:`Kolik let je nyní ${Bdat}?`,
+    equation:`${nowA} + ${years} = ${k} · (x + ${years})`,
+    distractors:[
+      `${nowA} = ${k} · (x + ${years})`,
+      `${nowA} + ${years} = ${k} · x`,
+      `${k} · (${nowA} + ${years}) = x + ${years}`,
+    ],
+    answer: nowBcalc, unit:'let',
+    solutionSteps:`${nowA+years} = ${k} · (x + ${years})\n${nowA+years} = ${k}x + ${k*years}\n${k}x = ${nowA+years-k*years}\nx = ${nowBcalc} let`
+  };
+}
+
+function vek_pomer() {
+  const k1 = ri(1,4), k2 = ri(k1+1,6);
+  const sum = ri(2,6)*(k1+k2);
+  const younger = sum*k1/(k1+k2), older = sum*k2/(k1+k2);
+  if (!Number.isInteger(younger)||younger<=0) return vek_pomer();
+  // [nominativ A, genitiv A, dativ A, nominativ B, genitiv B]
+  const [Anom,Agen,Adat,Bnom,Bgen] = rFrom([
+    ['Pavel',  'Pavla',   'Pavlovi', 'Karel',  'Karla'],
+    ['Marie',  'Marie',   'Marii',   'Jitka',  'Jitky'],
+    ['bratr',  'bratra',  'bratru',  'sestra', 'sestry'],
+  ]);
+  const A=Anom, B=Bnom;
+  return {
+    emoji:'⚖️', category:'Věkové úlohy',
+    text:`Věky <strong>${Agen} a ${Bgen}</strong> jsou v poměru <strong>${k1} : ${k2}</strong>. Jejich věkový součet je <strong>${sum} let</strong>.`,
+    question:`Kolik let je ${Adat}?`,
+    equation:`x/${k1} = (${sum} − x)/${k2}`,
+    distractors:[
+      `x · ${k2} = (${sum} − x) · ${k1}`,
+      `x + ${k2}x = ${sum}`,
+      `${k1}x + ${k2}x = ${sum} · ${k1}`,
+    ],
+    answer: younger, unit:'let',
+    solutionSteps:`${A} = ${k1}/${k1+k2} · ${sum} = ${younger} let\n(${B} = ${k2}/${k1+k2} · ${sum} = ${older} let)\nSoučet: ${younger}+${older} = ${sum} ✓`
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// 6. GEOMETRIE
+// ════════════════════════════════════════════════════════
+
+function geo_obvodObdelnik() {
+  const b = ri(3,10);
+  const k = ri(2,4);
+  const a = k*b;
+  const O = 2*(a+b);
+  const shape = rFrom(['obdélníkový pozemek','obdélníkový bazén','pole','místnost','hřiště']);
+  return {
+    emoji:'📐', category:'Geometrie',
+    text:`<strong>${shape}</strong> má obvod <strong>${O} m</strong>. Délka je <strong>${k}× větší</strong> než šířka.`,
+    question:`Jaká je šířka?`,
+    equation:`2 · (${k}x + x) = ${O}`,
+    distractors:[
+      `${k}x + x = ${O}`,
+      `2 · ${k}x + x = ${O}`,
+      `(${k}x) · x = ${O}`,
+    ],
+    answer: b, unit:'m',
+    solutionSteps:`2(${k}x + x) = ${O}\n2 · ${k+1}x = ${O}\n${2*(k+1)}x = ${O}\nx = ${O} ÷ ${2*(k+1)} = ${b} m\n(délka = ${a} m)`
+  };
+}
+
+function geo_obsahObdelnik() {
+  const b = ri(3,12);
+  const k = ri(2,4);
+  const a = k*b;
+  const S = a*b;
+  const shape = rFrom(['zahrady','místnosti','skladu','parcely','hřiště']);
+  return {
+    emoji:'🟥', category:'Geometrie',
+    text:`Obsah pravoúhlé <strong>${shape}</strong> je <strong>${S} m²</strong>. Délka je <strong>${k}× větší</strong> než šířka.`,
+    question:`Jaká je šířka?`,
+    equation:`${k}x · x = ${S}`,
+    distractors:[
+      `${k}x + x = ${S}`,
+      `x · x = ${S}`,
+      `2(${k}x + x) = ${S}`,
+    ],
+    answer: b, unit:'m',
+    solutionSteps:`${k}x² = ${S}\nx² = ${S}/${k} = ${S/k}\nx = √${S/k} = ${b} m`
+  };
+}
+
+function geo_trojuhelnik() {
+  const a = ri(3,10), b = ri(3,10), c = ri(3,10);
+  const mult = ri(2,5);
+  const O = (a+b+c)*mult;
+  const shape = rFrom(['trojúhelníkového pozemku','triangulárního hřiště','trojúhelníkové plochy']);
+  return {
+    emoji:'🔺', category:'Geometrie',
+    text:`Obvod <strong>${shape}</strong> je <strong>${O} m</strong>. Strany jsou v poměru <strong>${a} : ${b} : ${c}</strong>.`,
+    question:`Jaká je nejdelší strana?`,
+    equation:`${a}x + ${b}x + ${c}x = ${O}`,
+    distractors:[
+      `${a} + ${b} + ${c} = ${O}/x`,
+      `x = ${O}/(${a} · ${b} · ${c})`,
+      `${a}x = ${b}x + ${c}x + ${O}`,
+    ],
+    answer: Math.max(a,b,c)*mult, unit:'m',
+    solutionSteps:`${a+b+c}x = ${O}\nx = ${O} ÷ ${a+b+c} = ${mult} m (díl)\nNejdelší strana: ${Math.max(a,b,c)} · ${mult} = ${Math.max(a,b,c)*mult} m`
+  };
+}
+
+function geo_pytag() {
+  const triples = [[3,4,5],[5,12,13],[8,15,17],[6,8,10],[9,12,15],[20,21,29]];
+  const [a,b,c] = rFrom(triples);
+  const mult = ri(1,4);
+  const [A,B,C] = [a*mult, b*mult, c*mult];
+  const findC = Math.random()<.5;
+  if (findC) {
+    return {
+      emoji:'📏', category:'Geometrie',
+      text:`Pravoúhlý trojúhelník má odvěsny <strong>${A} cm</strong> a <strong>${B} cm</strong>.`,
+      question:`Jaká je délka přepony?`,
+      equation:`x² = ${A}² + ${B}²`,
+      distractors:[
+        `x = ${A} + ${B}`,
+        `x² = ${A}² − ${B}²`,
+        `x² + ${A}² = ${B}²`,
+      ],
+      answer: C, unit:'cm',
+      solutionSteps:`x² = ${A}² + ${B}² = ${A*A} + ${B*B} = ${A*A+B*B}\nx = √${A*A+B*B} = ${C} cm`
+    };
+  } else {
+    return {
+      emoji:'📏', category:'Geometrie',
+      text:`Pravoúhlý trojúhelník má přeponu <strong>${C} cm</strong> a jednu odvěsnu <strong>${A} cm</strong>.`,
+      question:`Jaká je druhá odvěsna?`,
+      equation:`${A}² + x² = ${C}²`,
+      distractors:[
+        `x² = ${C}² + ${A}²`,
+        `x = ${C} − ${A}`,
+        `${A}² · x² = ${C}²`,
+      ],
+      answer: B, unit:'cm',
+      solutionSteps:`x² = ${C}² − ${A}² = ${C*C} − ${A*A} = ${B*B}\nx = √${B*B} = ${B} cm`
+    };
+  }
+}
+
+// ════════════════════════════════════════════════════════
+// TOPICS CONFIG
+// ════════════════════════════════════════════════════════
+const TOPICS = [
+  { emoji:'🚂', name:'Protisměr', desc:'Dvě vozidla jedou vstříc sobě — kdy se setkají?',
+    section:'Pohyb', gen:[poh_protismer],
+    help:{ title:'Pohyb — protisměr',
+      steps:['<strong>Klíčový vztah:</strong> v₁ · t + v₂ · t = vzdálenost',
+             'Obě vozidla jedou stejnou dobu t, každé svou rychlostí.',
+             'Celková vzdálenost = součet ujetých drah.'],
+      example:`v₁·t + v₂·t = d\n(v₁ + v₂)·t = d\nt = d / (v₁ + v₂)` }},
+  { emoji:'🏎️', name:'Dojíždění', desc:'Jedno vozidlo dohání druhé s náskokem',
+    section:'Pohyb', gen:[poh_dojizdeni],
+    help:{ title:'Pohyb — dojíždění',
+      steps:['Dohánějící vozidlo ujede za t hodin: v₂ · t',
+             'Dohnalo znamená: dráhy jsou si rovny',
+             '<strong>v₂ · t = v₁ · (t + náskok)</strong>'],
+      example:`v₂·t = v₁·(t + h)\n(v₂−v₁)·t = v₁·h\nt = v₁·h / (v₂−v₁)` }},
+  { emoji:'🚴', name:'Tam a zpět', desc:'Různé rychlosti v obou směrech — celkový čas',
+    section:'Pohyb', gen:[poh_tamZpet],
+    help:{ title:'Pohyb — tam a zpět',
+      steps:['Čas tam: d/v₁  ·  Čas zpět: d/v₂',
+             '<strong>d/v₁ + d/v₂ = celkový čas</strong>',
+             'Vynásob nejmenším společným násobkem jmenovatelů — zlomky zmizí.'],
+      example:`d/v₁ + d/v₂ = T\nd·(1/v₁ + 1/v₂) = T\nd = T / (1/v₁ + 1/v₂)` }},
+  { emoji:'🚄', name:'Vlak kolem nástupiště', desc:'Délka vlaku, rychlost, čas průjezdu',
+    section:'Pohyb', gen:[poh_vlakNadrazí],
+    help:{ title:'Délka vlaku a čas průjezdu',
+      steps:['Rychlost v m/s = rychlost v km/h ÷ 3,6',
+             '<strong>rychlost · čas = délka vlaku</strong>'],
+      example:`v[m/s] · t = délka\nt = délka / v[m/s]` }},
+  { emoji:'🔨', name:'Společná práce', desc:'Kolik dní zvládnou práci spolu?',
+    section:'Práce', gen:[prace_spolecna],
+    help:{ title:'Práce — společná práce',
+      steps:['Za 1 den udělá A: 1/t₁ práce  ·  B: 1/t₂ práce',
+             '<strong>Spolu za den: 1/t₁ + 1/t₂</strong>',
+             'Celá práce = 1: t/t₁ + t/t₂ = 1'],
+      example:`t/t₁ + t/t₂ = 1\nt·(1/t₁ + 1/t₂) = 1\nt = 1 / (1/t₁ + 1/t₂)` }},
+  { emoji:'⚒️', name:'Nejprve sám, pak spolu', desc:'Část práce hotová, pak se přidá druhý',
+    section:'Práce', gen:[prace_castUdelanal]},
+  { emoji:'🏭', name:'Výroba a stroje', desc:'Dva stroje s různým výkonem — společný čas',
+    section:'Práce', gen:[prace_stroje]},
+  { emoji:'🧪', name:'Mísení roztoků', desc:'Smíchej dvě koncentrace a získej požadovanou',
+    section:'Směsi', gen:[smesi_smichani],
+    help:{ title:'Směsi — mísení roztoků',
+      steps:['<strong>Množství látky = koncentrace · objem</strong>',
+             'c₁·m₁ + c₂·m₂ = c·(m₁ + m₂)',
+             'Celkové množství látky = součet z obou složek.'],
+      example:`c₁·x + c₂·m₂ = c·(x + m₂)\nRozluštíš jako lineární rovnici` }},
+  { emoji:'💧', name:'Ředění vodou', desc:'Přidej vodu — sniž koncentraci',
+    section:'Směsi', gen:[smesi_pridaniVody]},
+  { emoji:'🧂', name:'Přidání čisté látky', desc:'Přidej koncentrát — zvyš koncentraci',
+    section:'Směsi', gen:[smesi_pridaniLatky]},
+  { emoji:'💰', name:'Původní cena (zdražení)', desc:'Nová cena po zdražení — najdi původní',
+    section:'Procenta', gen:[proc_zdrazeni],
+    help:{ title:'Procenta — zpětný výpočet',
+      steps:['Nová cena = původní · (1 + p/100)',
+             'Nebo: nová cena = původní · (1 − p/100) pro slevu',
+             '<strong>x = nová cena ÷ koeficient</strong>'],
+      example:`x · 1,2 = 240\nx = 240 ÷ 1,2 = 200 Kč` }},
+  { emoji:'🏷️', name:'Původní cena (sleva)', desc:'Cena po slevě — najdi původní',
+    section:'Procenta', gen:[proc_sleva]},
+  { emoji:'📊', name:'Část je procento z celku', desc:'Znáš část a procento — najdi celek',
+    section:'Procenta', gen:[proc_castZCelku]},
+  { emoji:'🏦', name:'Bankovní úrok', desc:'Znáš úrok — najdi vložený kapitál',
+    section:'Procenta', gen:[proc_urok]},
+  { emoji:'👥', name:'Součet a rozdíl věků', desc:'Dva lidé — součet a rozdíl věků',
+    section:'Věkové úlohy', gen:[vek_soucetRozdil],
+    help:{ title:'Věkové úlohy',
+      steps:['Starší = x, mladší = x − rozdíl',
+             'Součet: x + (x − d) = S → 2x − d = S',
+             'Za N let: každému přibyde N.'],
+      example:`x + (x − d) = S\n2x = S + d\nx = (S + d) / 2` }},
+  { emoji:'🎂', name:'Věk za N let', desc:'Za N let bude jeden k-násobkem druhého',
+    section:'Věkové úlohy', gen:[vek_zaLet]},
+  { emoji:'⚖️', name:'Poměr věků', desc:'Věky v poměru k₁:k₂, znáš součet',
+    section:'Věkové úlohy', gen:[vek_pomer]},
+  { emoji:'📐', name:'Obvod obdélníku', desc:'Obvod a poměr stran — najdi rozměry',
+    section:'Geometrie', gen:[geo_obvodObdelnik],
+    help:{ title:'Geometrie — obvod a obsah',
+      steps:['Obvod obdélníku: O = 2·(a + b)',
+             'Obsah obdélníku: S = a · b',
+             'Pokud a = k·b, dosaď a řeš.'],
+      example:`O = 2(kb + b) = 2b(k+1)\nb = O / (2(k+1))` }},
+  { emoji:'🟥', name:'Obsah obdélníku', desc:'Obsah a poměr stran — najdi šířku',
+    section:'Geometrie', gen:[geo_obsahObdelnik]},
+  { emoji:'🔺', name:'Obvod trojúhelníku (poměr stran)', desc:'Strany v poměru, znáš obvod',
+    section:'Geometrie', gen:[geo_trojuhelnik]},
+  { emoji:'📏', name:'Pythagorova věta', desc:'Vypočítej přeponu nebo odvěsnu',
+    section:'Geometrie', gen:[geo_pytag]},
+  { emoji:'🎲', name:'Náhodný mix — vše', desc:'Úlohy ze všech kategorií náhodně',
+    section:'Mix', gen:[
+      poh_protismer, poh_dojizdeni, poh_tamZpet,
+      prace_spolecna, prace_stroje,
+      smesi_smichani, smesi_pridaniVody,
+      proc_zdrazeni, proc_sleva, proc_castZCelku,
+      vek_soucetRozdil, vek_zaLet,
+      geo_obvodObdelnik, geo_trojuhelnik, geo_pytag
+    ]}
+];
+</script>
+<script>
+"use strict";
+
+// ── STATE ─────────────────────────────────────────────────
+let ST = { xp:0, streak:0, progress:{} };
+function loadST(){ try{ const s=localStorage.getItem('fajnslovni_v1'); if(s) ST={...ST,...JSON.parse(s)}; }catch(e){} }
+function saveST(){ try{ localStorage.setItem('fajnslovni_v1',JSON.stringify(ST)); }catch(e){} }
+const getStars = idx => ST.progress?.[idx]?.stars ?? 0;
+function setStars(idx, stars){
+  if(!ST.progress[idx]) ST.progress[idx]={};
+  ST.progress[idx] = { stars: Math.max(ST.progress[idx]?.stars??0, stars) };
+  saveST();
+}
+
+// ── AUDIO ─────────────────────────────────────────────────
+let actx=null;
+function getCtx(){ if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)(); return actx; }
+function beep(freq,type,dur,gain=0.18){
+  try{ const c=getCtx(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g); g.connect(c.destination); o.type=type; o.frequency.value=freq;
+    g.gain.setValueAtTime(gain,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dur);
+    o.start(); o.stop(c.currentTime+dur); }catch(e){}
+}
+const sndEqOk    = () => beep(523,'sine',.1);
+const sndEqWrong = () => beep(280,'sawtooth',.15);
+const sndAnsOk   = () => { beep(523,'sine',.09); setTimeout(()=>beep(659,'sine',.09),70); setTimeout(()=>beep(784,'sine',.14),140); };
+const sndAnsWrong= () => { beep(220,'sawtooth',.15); setTimeout(()=>beep(196,'sawtooth',.15),90); };
+const sndComplete= () => { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.2,.26),i*100)); };
+
+// ── SESSION ───────────────────────────────────────────────
+const PROBS_PER_SESSION = 8;
+let SEL = { topicIdx: null };
+let SES = null;
+let _enterHandler = null;
+
+function buildProblems(gens){
+  const probs=[];
+  let pool=[];
+  while(probs.length<PROBS_PER_SESSION){
+    if(!pool.length) pool=shuffle(gens);
+    const gen=pool.shift();
+    let p=null, tries=0;
+    while(!p && tries++<25){ try{ const c=gen(); if(c&&isFinite(c.answer)) p=c; }catch(e){} }
+    if(p) probs.push(p);
+  }
+  return probs;
+}
+
+function startSession(topicIdx){
+  SEL = { topicIdx };
+  const topic = TOPICS[topicIdx];
+  SES = {
+    topicIdx,
+    probs: buildProblems(topic.gen),
+    cur: 0, solved: 0, xpGained: 0,
+    phase: 1,
+    eqCorrect: false,
+    ansWrong: 0,
+    done: false,
+  };
+  showScreen('screen-exercise');
+  renderProblem();
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderProblem(){
+  const prob  = SES.probs[SES.cur];
+  const total = SES.probs.length;
+  SES.phase   = 1;
+  SES.eqCorrect = false;
+  SES.ansWrong  = 0;
+  SES.done      = false;
+
+  document.getElementById('ex-prog').style.width=`${(SES.cur/total)*100}%`;
+  document.getElementById('ex-count').textContent=`${SES.cur+1}/${total}`;
+  document.getElementById('ex-xp-badge').textContent=ST.xp;
+
+  const body = document.getElementById('ex-body');
+  body.innerHTML='';
+  hideFeedback();
+
+  const card = document.createElement('div');
+  card.className='problem-card';
+  card.innerHTML=`
+    <div class="problem-meta"><span class="p-emoji">${prob.emoji}</span>${prob.category}</div>
+    <div class="problem-text">${prob.text}<div class="problem-q">❓ ${prob.question}</div></div>`;
+  body.appendChild(card);
+
+  renderPhase1(body, prob);
+}
+
+function renderPhase1(body, prob){
+  const lbl = document.createElement('div');
+  lbl.className='phase-label';
+  lbl.innerHTML='<div class="phase-num">1</div><div class="phase-text">Vyber rovnici, která modeluje situaci:</div>';
+  body.appendChild(lbl);
+
+  const choices = makeChoices(prob.equation, prob.distractors);
+  const wrap = document.createElement('div');
+  wrap.className='eq-choices';
+  wrap.id='eq-choices';
+
+  choices.forEach((choice) => {
+    const btn = document.createElement('button');
+    btn.className='eq-btn';
+    btn.textContent=choice.eq;
+    btn.dataset.correct=choice.isCorrect?'1':'0';
+    btn.addEventListener('click',()=>handleEqChoice(btn, choice.isCorrect, choices, prob));
+    wrap.appendChild(btn);
+  });
+  body.appendChild(wrap);
+}
+
+function handleEqChoice(btn, isCorrect, choices, prob){
+  if(SES.phase!==1) return;
+  SES.phase=0;
+  document.querySelectorAll('.eq-btn').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.eq-btn').forEach(b=>{
+    if(b.dataset.correct==='1') b.classList.add(isCorrect?'correct':'reveal');
+  });
+  if(!isCorrect){
+    btn.classList.add('wrong');
+    sndEqWrong();
+    showInlineNotice('Nesprávná rovnice — správná je níže zvýrazněna');
+  } else {
+    sndEqOk();
+    SES.eqCorrect=true;
+    showInlineNotice('✓ Správně! Nyní vyřeš rovnici…');
+  }
+  setTimeout(()=>moveToPhase2(prob), 900);
+}
+
+function showInlineNotice(msg){
+  const body=document.getElementById('ex-body');
+  const n=document.createElement('div');
+  n.style.cssText='margin:8px 18px 0;padding:9px 14px;border-radius:9px;font-size:.82rem;'+
+    'font-weight:700;background:var(--paper2);color:var(--ink2)';
+  n.textContent=msg;
+  body.appendChild(n);
+}
+
+function moveToPhase2(prob){
+  SES.phase=2;
+  const body = document.getElementById('ex-body');
+
+  const lbl = document.createElement('div');
+  lbl.className='phase-label';
+  lbl.style.marginTop='12px';
+  lbl.innerHTML='<div class="phase-num">2</div><div class="phase-text">Vyřeš rovnici — zadej výsledek:</div>';
+  body.appendChild(lbl);
+
+  const wrap = document.createElement('div');
+  wrap.className='answer-wrap';
+  const unitLabel = typeof prob.unit==='string' && prob.unit.length<=8 ? prob.unit : '';
+  wrap.innerHTML=`
+    <div class="answer-row">
+      <input class="answer-input" id="ans-input" type="text"
+        inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false"
+        placeholder="?">
+      <span class="answer-unit">${unitLabel}</span>
+      <button class="btn-check" id="btn-ans-check">Ověřit</button>
+    </div>
+    <div class="answer-hint">Celé číslo nebo desetinné číslo (čárka nebo tečka)</div>`;
+  body.appendChild(wrap);
+
+  const inp = document.getElementById('ans-input');
+  const btn = document.getElementById('btn-ans-check');
+
+  const submit=()=>{
+    let raw = inp.value.trim();
+    if(raw.includes('=')) raw=raw.split('=').pop().trim();
+    raw=raw.replace(',','.');
+    const val = parseFloat(raw);
+    if(isNaN(val)) return;
+    handleAnswer(val, prob);
+  };
+  btn.addEventListener('click',submit);
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter') submit(); });
+  setTimeout(()=>inp.focus(), 80);
+}
+
+function handleAnswer(val, prob){
+  const inp = document.getElementById('ans-input');
+  if(numEq(val, prob.answer)){
+    inp.className='answer-input ok';
+    SES.done=true;
+    SES.solved++;
+    const xp = SES.eqCorrect ? 20 : 10;
+    SES.xpGained+=xp; ST.xp+=xp; ST.streak++; saveST();
+    document.getElementById('ex-xp-badge').textContent=ST.xp;
+    document.getElementById('hdr-xp').textContent=ST.xp;
+    document.getElementById('hdr-streak').textContent=ST.streak;
+    sndAnsOk();
+    showSolution(prob);
+    showFeedback('correct',`Správně! +${xp} XP`,`x = ${prob.answer} ${prob.unit}`,()=>nextProblem());
+  } else {
+    SES.ansWrong++;
+    inp.className='answer-input err';
+    setTimeout(()=>{ inp.className='answer-input'; inp.select(); },700);
+    sndAnsWrong();
+    if(SES.ansWrong>=2){
+      SES.done=true;
+      ST.streak=0; saveST();
+      showSolution(prob);
+      showFeedback('wrong',`Správná odpověď: ${prob.answer} ${prob.unit}`,'Prohlédni si postup výše.',()=>nextProblem());
+    } else {
+      showFeedback('wrong','Zkus to znovu',`Tip: výsledek je ${Number.isInteger(prob.answer)?'celé číslo':'desetinné číslo'}`,null,1500);
+    }
+  }
+}
+
+function showSolution(prob){
+  const body=document.getElementById('ex-body');
+  const box=document.createElement('div');
+  box.className='solution-box';
+  box.innerHTML=`<div class="solution-title">📋 Postup řešení</div>
+    <div class="solution-steps">${prob.solutionSteps||''}</div>`;
+  body.appendChild(box);
+  setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+// ── FEEDBACK BAR ──────────────────────────────────────────
+function showFeedback(type, label, sub, onNext, autoMs){
+  const bar   = document.getElementById('feedback-bar');
+  const lbl   = document.getElementById('fb-label');
+  const subEl = document.getElementById('fb-sub');
+  const btn   = document.getElementById('btn-next');
+
+  const cls = type.includes('correct')?'fb-correct':type.includes('wrong')?'fb-wrong':'fb-info';
+  bar.className=`feedback-bar show ${cls}`;
+  lbl.textContent=label;
+  subEl.textContent=sub||'';
+
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+
+  if(onNext){
+    btn.style.display='';
+    btn.onclick=()=>{ hideFeedback(); onNext(); };
+    setTimeout(()=>{
+      _enterHandler=e=>{ if(e.key==='Enter'){ e.preventDefault(); hideFeedback(); onNext(); } };
+      document.addEventListener('keydown',_enterHandler);
+    },150);
+  } else {
+    btn.style.display='none';
+    if(autoMs) setTimeout(()=>hideFeedback(), autoMs);
+  }
+}
+
+function hideFeedback(){
+  document.getElementById('feedback-bar').className='feedback-bar';
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+function nextProblem(){
+  hideFeedback();
+  SES.cur++;
+  if(SES.cur>=SES.probs.length) finishSession();
+  else renderProblem();
+}
+
+function exitExercise(){
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+  hideFeedback();
+  showHome();
+}
+
+function retrySession(){ startSession(SEL.topicIdx); }
+
+function finishSession(){
+  const total=SES.probs.length, solved=SES.solved, ratio=solved/total;
+  const stars=ratio>=1?3:ratio>=0.75?2:ratio>=0.5?1:0;
+  setStars(SEL.topicIdx, stars);
+  sndComplete();
+  const emojis=['😅','🙂','👍','🎉'];
+  document.getElementById('res-emoji').textContent=emojis[stars];
+  document.getElementById('res-stars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('res-title').textContent=['Zkus to znovu!','Dobrý začátek!','Dobře!','Výborně!'][stars];
+  document.getElementById('res-score').textContent=`${solved} / ${total} správně vyřešeno`;
+  document.getElementById('res-xp').textContent=`+${SES.xpGained}`;
+  showScreen('screen-result');
+}
+
+// ── SCREENS ───────────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showHome(){
+  renderHome();
+  showScreen('screen-home');
+}
+
+function renderHome(){
+  document.getElementById('hdr-xp').textContent=ST.xp;
+  document.getElementById('hdr-streak').textContent=ST.streak;
+  const list=document.getElementById('topics-list');
+  list.innerHTML='';
+  let lastSection=null;
+
+  TOPICS.forEach((topic,idx)=>{
+    if(topic.section!==lastSection){
+      lastSection=topic.section;
+      const div=document.createElement('div');
+      div.className='section-label';
+      div.textContent=topic.section;
+      list.appendChild(div);
+    }
+    const stars=getStars(idx);
+    const starStr=stars>0?'★'.repeat(stars)+'☆'.repeat(3-stars):'';
+    const isMix=topic.name.includes('mix')||topic.name.includes('Mix');
+    const row=document.createElement('div');
+    row.className=`topic-row${isMix?' mix':''}`;
+    row.innerHTML=`
+      <div class="tr-emoji">${topic.emoji}</div>
+      <div class="tr-left">
+        <div class="tr-name">${topic.name}</div>
+        <div class="tr-desc">${topic.desc}</div>
+      </div>
+      <div class="tr-right">
+        ${starStr?`<span class="tr-stars">${starStr}</span>`:''}
+        ${topic.help?`<button class="topic-help-btn">?</button>`:''}
+        <span style="color:var(--ink3);font-size:.85rem">→</span>
+      </div>`;
+    if(topic.help){
+      row.querySelector('.topic-help-btn').addEventListener('click',e=>{
+        e.stopPropagation(); openHelp(topic.help);
+      });
+    }
+    row.addEventListener('click',()=>startSession(idx));
+    list.appendChild(row);
+  });
+}
+
+// ── HELP ──────────────────────────────────────────────────
+function openHelp(help){
+  document.getElementById('help-panel-title').textContent=help.title||'Jak na to';
+  const body=document.getElementById('help-panel-body');
+  body.innerHTML='';
+  if(help.steps?.length){
+    const sec=document.createElement('div');
+    sec.innerHTML=`<div class="help-steps">${
+      help.steps.map((s,i)=>`<div class="help-step">
+        <div class="help-step-num">${i+1}</div>
+        <div class="help-step-txt">${s}</div>
+      </div>`).join('')
+    }</div>`;
+    body.appendChild(sec);
+  }
+  if(help.example){
+    const ex=document.createElement('div');
+    ex.className='help-example';
+    ex.textContent=help.example;
+    body.appendChild(ex);
+  }
+  document.getElementById('help-panel').classList.add('show');
+  document.getElementById('help-overlay').classList.add('show');
+}
+function closeHelp(){
+  document.getElementById('help-panel').classList.remove('show');
+  document.getElementById('help-overlay').classList.remove('show');
+}
+
+// ── INIT ──────────────────────────────────────────────────
+loadST();
+renderHome();
+</script>
+
+</body>
+</html>
