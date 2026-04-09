@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>FajnGeometrie — Planimetrie a Stereometrie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@700;800;900&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f9fc;--paper:#ffffff;--paper2:#f0f2f8;
+  --ink:#1a1d2e;--ink2:#6b7094;--ink3:#c4c8dc;
+  --accent:#3b5bdb;--accent2:#2f4ac0;
+  --teal:#0ca678;--teal-bg:#e6fcf5;
+  --orange:#e67700;--orange-bg:#fff4e6;
+  --correct:#2f9e44;--correct-bg:#ebfbee;
+  --wrong:#c92a2a;--wrong-bg:#fff5f5;
+  --border:#e0e4f0;
+  --shadow:0 2px 12px rgba(26,29,46,.07);
+  --shadow-lg:0 8px 32px rgba(26,29,46,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:'Source Sans 3',sans-serif;
+  min-height:100svh;overflow-x:hidden}
+
+/* subtle pattern */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(59,91,219,.04) 1px,transparent 1px);
+  background-size:24px 24px}
+
+.screen{display:none;min-height:100svh;flex-direction:column;position:relative;z-index:1}
+.screen.active{display:flex}
+
+/* HEADER */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;
+  border-bottom:2px solid var(--border);background:rgba(248,249,252,.95);
+  backdrop-filter:blur(12px);position:sticky;top:0;z-index:20}
+.app-logo{font-family:'Raleway',sans-serif;font-weight:900;font-size:1.3rem;
+  color:var(--accent);letter-spacing:-.5px}
+.hdr-right{display:flex;gap:8px}
+.badge{background:var(--paper);border:1.5px solid var(--border);border-radius:20px;
+  padding:4px 12px;display:flex;align-items:center;gap:5px;
+  font-size:.8rem;font-weight:700;color:var(--ink2);box-shadow:var(--shadow)}
+.badge-fire{color:var(--orange)} .badge-xp{color:var(--accent)}
+
+/* HOME */
+.home-hero{padding:28px 22px 16px;text-align:center;
+  background:linear-gradient(180deg,var(--paper) 0%,transparent 100%);
+  border-bottom:1px solid var(--border)}
+.home-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.6rem;
+  color:var(--ink3);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px}
+.home-title{font-family:'Raleway',sans-serif;font-weight:900;
+  font-size:clamp(2rem,6vw,2.8rem);line-height:1.05;margin-bottom:8px;color:var(--ink)}
+.home-shapes{display:flex;justify-content:center;gap:12px;margin-bottom:8px;opacity:.6}
+.home-sub{color:var(--ink2);font-size:.84rem;max-width:300px;margin:0 auto;line-height:1.5}
+
+/* TOPIC LIST */
+.topics-list{display:flex;flex-direction:column;padding:10px 18px 40px;
+  max-width:520px;margin:0 auto;width:100%}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:.59rem;color:var(--ink3);
+  letter-spacing:2.5px;text-transform:uppercase;padding:12px 2px 5px;margin-top:2px}
+.topic-row{background:var(--paper);border:1.5px solid var(--border);border-radius:13px;
+  padding:14px 16px;cursor:pointer;box-shadow:var(--shadow);
+  transition:transform .14s,border-color .15s,box-shadow .15s;
+  display:flex;align-items:center;gap:14px;margin-bottom:8px;position:relative;overflow:hidden}
+.topic-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);opacity:0;transition:opacity .15s}
+.topic-row:hover::before{opacity:1}
+.topic-row:hover{border-color:var(--accent);transform:translateX(3px);box-shadow:var(--shadow-lg)}
+.topic-row:active{transform:scale(.98)}
+.topic-row.mix{border-style:dashed;opacity:.8}
+.topic-row.mix:hover{opacity:1}
+.tr-icon{font-size:1.6rem;flex-shrink:0;width:36px;text-align:center;line-height:1}
+.tr-left{flex:1}
+.tr-name{font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:2px}
+.tr-desc{font-size:.75rem;color:var(--ink2);line-height:1.4}
+.tr-diff{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;flex-shrink:0}
+.diff-l{background:#ebfbee;color:#2f9e44}
+.diff-m{background:#fff4e6;color:#e67700}
+.diff-h{background:#fff5f5;color:#c92a2a}
+.tr-stars{font-size:.8rem;color:var(--orange);flex-shrink:0}
+.topic-help-btn{background:none;border:1.5px solid var(--border);border-radius:50%;
+  width:28px;height:28px;cursor:pointer;color:var(--ink2);
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:border-color .13s,color .13s}
+.topic-help-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* EXERCISE TOPBAR */
+.ex-topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-bottom:2px solid var(--border);position:sticky;top:0;
+  background:rgba(248,249,252,.95);backdrop-filter:blur(8px);z-index:10}
+.prog-bar{flex:1;height:5px;background:var(--paper2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .35s ease}
+.ex-count{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--ink2);white-space:nowrap}
+.help-btn{background:none;border:1.5px solid var(--border);border-radius:50%;
+  width:30px;height:30px;cursor:pointer;color:var(--ink2);
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:border-color .13s,color .13s}
+.help-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* EXERCISE BODY */
+.ex-body{flex:1;display:flex;flex-direction:column;padding:0 0 130px;
+  max-width:560px;margin:0 auto;width:100%;overflow-y:auto}
+
+/* SVG VISUALIZATION */
+.viz-card{background:var(--paper);border:1.5px solid var(--border);border-radius:16px;
+  margin:16px 18px 0;box-shadow:var(--shadow);overflow:hidden}
+.viz-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--ink3);
+  letter-spacing:2px;text-transform:uppercase;padding:11px 16px 0}
+.viz-svg{display:flex;justify-content:center;align-items:center;padding:12px 16px 14px;
+  min-height:160px}
+.viz-svg svg{max-width:100%;height:auto;overflow:visible}
+
+/* PROBLEM TEXT */
+.problem-card{background:var(--paper);border:1.5px solid var(--border);border-radius:13px;
+  margin:10px 18px 0;padding:14px 16px;box-shadow:var(--shadow)}
+.prob-text{font-size:.9rem;line-height:1.7;color:var(--ink)}
+.prob-text strong{color:var(--accent);font-weight:700}
+.prob-q{margin-top:10px;font-weight:700;font-size:.92rem;
+  border-top:1px solid var(--border);padding-top:10px;color:var(--ink)}
+
+/* HINT PANEL (inline, collapsible) */
+.hint-toggle{display:flex;align-items:center;gap:8px;margin:10px 18px 0;
+  background:var(--orange-bg);border:1px solid rgba(230,119,0,.2);border-radius:10px;
+  padding:10px 14px;cursor:pointer;transition:background .13s;user-select:none}
+.hint-toggle:hover{background:#ffe8cc}
+.hint-icon{font-size:1.1rem}
+.hint-label{font-weight:700;font-size:.82rem;color:var(--orange);flex:1}
+.hint-arrow{font-size:.75rem;color:var(--ink3);transition:transform .2s}
+.hint-arrow.open{transform:rotate(90deg)}
+.hint-body{display:none;margin:0 18px;background:var(--orange-bg);
+  border:1px solid rgba(230,119,0,.2);border-top:none;border-radius:0 0 10px 10px;
+  padding:0 14px 12px}
+.hint-body.open{display:block}
+.hint-section{margin-top:10px}
+.hint-section-title{font-family:'JetBrains Mono',monospace;font-size:.62rem;
+  color:var(--ink3);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+.hint-section-body{font-size:.82rem;line-height:1.65;color:var(--ink2)}
+.hint-formula{font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:.85rem;color:var(--accent);background:var(--paper2);
+  border-radius:7px;padding:6px 10px;margin-top:4px;display:inline-block}
+
+/* ANSWER AREA */
+.answer-area{margin:10px 18px 0}
+.answer-row{display:flex;gap:8px;align-items:center}
+.answer-input{flex:1;text-align:center;
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.7rem;
+  background:var(--paper);border:2px solid var(--border);border-radius:12px;
+  color:var(--ink);padding:12px 8px;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  -moz-appearance:textfield;appearance:textfield}
+.answer-input::-webkit-inner-spin-button,.answer-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.answer-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,91,219,.1)}
+.answer-input.ok{border-color:var(--correct)!important;box-shadow:0 0 0 3px rgba(47,158,68,.12)!important}
+.answer-input.err{border-color:var(--wrong)!important;box-shadow:0 0 0 3px rgba(201,42,42,.1)!important}
+.answer-unit{font-weight:700;font-size:.9rem;color:var(--ink2);flex-shrink:0;min-width:36px}
+.btn-check{background:var(--accent);color:#fff;border:none;border-radius:11px;
+  padding:12px 20px;font-family:'Source Sans 3',sans-serif;font-size:.9rem;font-weight:700;
+  cursor:pointer;transition:background .13s,transform .1s;white-space:nowrap;box-shadow:var(--shadow)}
+.btn-check:hover{background:var(--accent2)}
+.btn-check:active{transform:scale(.97)}
+.answer-hint-sub{font-size:.71rem;color:var(--ink3);margin-top:5px;text-align:center}
+
+/* SOLUTION BOX */
+.solution-box{background:var(--correct-bg);border:1.5px solid #b2f2bb;border-radius:12px;
+  padding:13px 16px;margin:10px 18px 0;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.solution-title{font-weight:700;font-size:.8rem;color:var(--correct);
+  margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.solution-steps{font-family:'JetBrains Mono',monospace;font-size:.78rem;
+  color:var(--ink);line-height:1.9;white-space:pre-wrap}
+
+/* FEEDBACK BAR */
+.feedback-bar{position:fixed;bottom:0;left:0;right:0;padding:14px 18px;
+  padding-bottom:max(18px,env(safe-area-inset-bottom));
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  transform:translateY(100%);transition:transform .22s ease;z-index:100;
+  border-top:2px solid transparent;backdrop-filter:blur(14px)}
+.feedback-bar.show{transform:translateY(0)}
+.feedback-bar.fb-correct{background:rgba(248,249,252,.97);border-color:var(--correct)}
+.feedback-bar.fb-wrong{background:rgba(248,249,252,.97);border-color:var(--wrong)}
+.fb-label{font-weight:700;font-size:.95rem;margin-bottom:2px}
+.fb-sub{font-size:.77rem;color:var(--ink2);line-height:1.4}
+.fb-correct .fb-label{color:var(--correct)}
+.fb-wrong .fb-label{color:var(--wrong)}
+.btn-next{background:none;border:1.5px solid var(--border);border-radius:9px;
+  color:var(--ink);padding:9px 20px;font-family:'Source Sans 3',sans-serif;
+  font-size:.88rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  transition:border-color .13s}
+.btn-next:hover{border-color:var(--accent)}
+
+/* RESULT */
+.result-body{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 20px;text-align:center;
+  max-width:420px;margin:0 auto;width:100%}
+.res-shape{font-size:3.5rem;margin-bottom:8px}
+.res-stars{font-size:2rem;letter-spacing:5px;margin-bottom:6px;color:var(--orange)}
+.res-title{font-family:'Raleway',sans-serif;font-weight:900;font-size:1.8rem;margin-bottom:6px}
+.res-score{color:var(--ink2);margin-bottom:18px;font-size:.88rem}
+.res-xp-box{background:var(--paper);border:1.5px solid var(--border);border-radius:11px;
+  padding:10px 28px;margin-bottom:22px;font-size:.9rem;box-shadow:var(--shadow)}
+.res-xp-box span{color:var(--accent);font-weight:700;font-size:1.1rem}
+.res-actions{display:flex;flex-direction:column;gap:9px;width:100%;max-width:260px}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:10px;
+  padding:14px;font-family:'Source Sans 3',sans-serif;font-size:.95rem;font-weight:700;
+  cursor:pointer;width:100%;box-shadow:var(--shadow)}
+.btn-primary:hover{background:var(--accent2)}
+.btn-secondary{background:none;border:1.5px solid var(--border);border-radius:10px;
+  padding:12px;color:var(--ink2);font-family:'Source Sans 3',sans-serif;
+  font-size:.88rem;cursor:pointer;transition:border-color .13s,color .13s;width:100%}
+.btn-secondary:hover{border-color:var(--accent);color:var(--ink)}
+
+/* SCREEN HDR */
+.screen-hdr{display:flex;align-items:center;gap:12px;padding:13px 18px;
+  border-bottom:2px solid var(--border);position:sticky;top:0;
+  background:rgba(248,249,252,.95);backdrop-filter:blur(12px);z-index:10}
+.back-btn{background:none;border:none;color:var(--ink2);font-size:1.35rem;
+  cursor:pointer;padding:4px 6px;border-radius:8px;transition:color .15s;line-height:1}
+.back-btn:hover{color:var(--ink)}
+.scr-title{font-family:'Raleway',sans-serif;font-weight:800;font-size:1rem;flex:1;color:var(--ink)}
+
+/* HELP PANEL */
+.help-overlay{position:fixed;inset:0;background:rgba(26,29,46,.35);z-index:199;
+  opacity:0;pointer-events:none;transition:opacity .25s}
+.help-overlay.show{opacity:1;pointer-events:all}
+.help-panel{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--paper);border-top:2.5px solid var(--accent);
+  border-radius:20px 20px 0 0;padding:22px 22px;
+  padding-bottom:max(28px,env(safe-area-inset-bottom));
+  transform:translateY(100%);transition:transform .26s ease;
+  max-height:75svh;overflow-y:auto;box-shadow:0 -8px 40px rgba(26,29,46,.15)}
+.help-panel.show{transform:translateY(0)}
+.help-panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.help-panel-title{font-family:'Raleway',sans-serif;font-weight:800;font-size:1rem;color:var(--accent)}
+.help-close{background:none;border:none;color:var(--ink2);font-size:1.3rem;cursor:pointer;
+  padding:2px 6px;border-radius:8px;line-height:1}
+.help-close:hover{color:var(--ink)}
+.hp-steps{display:flex;flex-direction:column;gap:10px}
+.hp-step{display:flex;gap:11px;align-items:flex-start}
+.hp-step-num{background:var(--accent);color:#fff;border-radius:50%;
+  width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;margin-top:1px}
+.hp-step-txt{font-size:.85rem;line-height:1.6;color:var(--ink2)}
+.hp-step-txt strong{color:var(--ink)}
+.hp-formula-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.hp-formula{background:var(--paper2);border-radius:8px;padding:8px 12px;
+  font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--accent);
+  font-weight:700;line-height:1.5}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="app-header">
+    <div class="app-logo">FajnGeometrie</div>
+    <div class="hdr-right">
+      <div class="badge"><span class="badge-fire">🔥</span><span id="hdr-streak">0</span></div>
+      <div class="badge"><span class="badge-xp">⚡</span><span id="hdr-xp">0</span></div>
+    </div>
+  </div>
+  <div class="home-hero">
+    <div class="home-eyebrow">planimetrie · stereometrie</div>
+    <div class="home-title">Geometrie<br>s vizualizací</div>
+    <div class="home-shapes">
+      <svg width="40" height="40" viewBox="0 0 40 40"><polygon points="20,4 36,36 4,36" fill="none" stroke="#3b5bdb" stroke-width="2.5"/></svg>
+      <svg width="40" height="40" viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="2" fill="none" stroke="#3b5bdb" stroke-width="2.5"/></svg>
+      <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="#3b5bdb" stroke-width="2.5"/></svg>
+    </div>
+    <div class="home-sub">Každý příklad má obrázek, nápovědu i postup řešení</div>
+  </div>
+  <div class="topics-list" id="topics-list"></div>
+</div>
+
+<!-- EXERCISE -->
+<div id="screen-exercise" class="screen">
+  <div class="ex-topbar">
+    <button class="back-btn" onclick="exitExercise()">←</button>
+    <div class="prog-bar"><div class="prog-fill" id="ex-prog"></div></div>
+    <div class="ex-count" id="ex-count">1/10</div>
+    <div class="badge"><span class="badge-xp">⚡</span><span id="ex-xp-badge">0</span></div>
+    <button class="help-btn" id="ex-help-btn" onclick="showExHelp()" style="display:none">?</button>
+  </div>
+  <div class="ex-body" id="ex-body"></div>
+  <div class="feedback-bar" id="feedback-bar">
+    <div>
+      <div class="fb-label" id="fb-label">Správně!</div>
+      <div class="fb-sub" id="fb-sub"></div>
+    </div>
+    <button class="btn-next" id="btn-next">Další →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="screen-hdr">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div class="scr-title">Výsledek</div>
+  </div>
+  <div class="result-body">
+    <div class="res-shape" id="res-shape">📐</div>
+    <div class="res-stars" id="res-stars">★★★</div>
+    <div class="res-title" id="res-title">Výborně!</div>
+    <div class="res-score" id="res-score">10/10 správně</div>
+    <div class="res-xp-box">Získáno <span id="res-xp">+150</span> XP</div>
+    <div class="res-actions">
+      <button class="btn-primary" onclick="retrySession()">Hrát znovu</button>
+      <button class="btn-secondary" onclick="showHome()">← Výběr tématu</button>
+    </div>
+  </div>
+</div>
+
+<!-- HELP -->
+<div class="help-overlay" id="help-overlay" onclick="closeHelp()"></div>
+<div class="help-panel" id="help-panel">
+  <div class="help-panel-hdr">
+    <div class="help-panel-title" id="help-panel-title">Vzorce</div>
+    <button class="help-close" onclick="closeHelp()">✕</button>
+  </div>
+  <div id="help-panel-body"></div>
+</div>
+
+<script>
+"use strict";
+
+// ── HELPERS ───────────────────────────────────────────────
+const ri     = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const rFrom  = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = arr => [...arr].sort(()=>Math.random()-.5);
+const R2     = n => Math.round(n*100)/100;
+const R1     = n => Math.round(n*10)/10;
+const numEq  = (a,b) => Math.abs(Number(a)-Number(b))<0.12; // allow rounding
+const parseCz = s => parseFloat(String(s).replace(',','.').trim());
+const toCz   = n => Number.isInteger(n) ? String(n) : R2(n).toString().replace('.',',');
+const PI     = Math.PI;
+const sqrt   = Math.sqrt;
+
+// SVG helpers
+const svgWrap = (content, vb='0 0 240 180') =>
+  `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:200px">${content}</svg>`;
+
+const dim  = (x1,y1,x2,y2,label,off='-18') => {
+  const mx=(x1+x2)/2, my=(y1+y2)/2;
+  const angle=Math.atan2(y2-y1,x2-x1)*180/PI;
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#c4c8dc" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="${mx}" y="${my}" dy="${off}" text-anchor="middle" font-family="JetBrains Mono,monospace"
+      font-size="11" font-weight="700" fill="#3b5bdb" transform="rotate(${angle<-90||angle>90?angle+180:angle},${mx},${my})">${label}</text>`;
+};
+const label = (x,y,txt,color='#3b5bdb',size=11) =>
+  `<text x="${x}" y="${y}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="${size}" font-weight="700" fill="${color}">${txt}</text>`;
+// Hidden-aware label: replaces value with ? if it's in the hide set
+let _hideVals = [];
+const labelH = (x,y,txt,color='#3b5bdb',size=11) => {
+  const display = _hideVals.some(v => txt.includes(toCz(v))) ? '?' : txt;
+  const col = display==='?' ? '#e67700' : color;
+  return label(x,y,display,col,size);
+};
+const rightAngle = (x,y,size=8,rot=0) =>
+  `<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="none" stroke="#3b5bdb" stroke-width="1.5" transform="rotate(${rot},${x+size/2},${y+size/2})"/>`;
+
+
+// Run SVG generator with hidden values (answer not shown on diagram)
+function svgHide(fn, hideVals) {
+  _hideVals = hideVals;
+  const result = fn();
+  _hideVals = [];
+  return result;
+}
+
+// ── SVG GENERATORS ────────────────────────────────────────
+
+function svgTriangle(a, b, c, highlight='') {
+  // right triangle with legs a,b, hypotenuse c
+  const scale = 130/Math.max(a,b);
+  const A = a*scale, B = b*scale;
+  const x0=40, y0=150, x1=x0+A, y1=y0, x2=x0, y2=y0-B;
+  return svgWrap(`
+    <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2}"
+      fill="rgba(59,91,219,.06)" stroke="#3b5bdb" stroke-width="2.5" stroke-linejoin="round"/>
+    ${rightAngle(x0,y0-8,8,0)}
+    ${labelH((x0+x1)/2, y0+16, `${toCz(a)} cm`)}
+    ${labelH(x0-20, (y0+y2)/2, `${toCz(b)} cm`)}
+    ${labelH((x1+x2)/2+14, (y1+y2)/2-5, `${toCz(R2(c))} cm`, '#6b7094')}
+  `);
+}
+
+function svgTriangleGeneral(a, b, hb, highlight='') {
+  // general triangle with base a, height hb
+  const scale = 150/Math.max(a, hb*1.5);
+  const A = a*scale, H = hb*scale;
+  const x0=35, y0=155, x1=x0+A, y1=y0;
+  const x2=x0+A*0.4, y2=y0-H;
+  return svgWrap(`
+    <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2}"
+      fill="rgba(59,91,219,.06)" stroke="#3b5bdb" stroke-width="2.5" stroke-linejoin="round"/>
+    <line x1="${x2}" y1="${y2}" x2="${x2}" y2="${y0}"
+      stroke="#0ca678" stroke-width="1.5" stroke-dasharray="4,3"/>
+    ${rightAngle(x2-8,y0-8,8,0)}
+    ${labelH((x0+x1)/2, y0+16, `${toCz(a)} cm`)}
+    ${labelH(x2+14, y2+H/2, `${toCz(hb)} cm`, '#0ca678')}
+  `);
+}
+
+function svgRect(a, b) {
+  const scale = Math.min(160/a, 110/b);
+  const A = a*scale, B = b*scale;
+  const x0=40, y0=(180-B)/2;
+  return svgWrap(`
+    <rect x="${x0}" y="${y0}" width="${A}" height="${B}" rx="2"
+      fill="rgba(59,91,219,.06)" stroke="#3b5bdb" stroke-width="2.5"/>
+    ${labelH(x0+A/2, y0-10, `${toCz(a)} cm`)}
+    ${labelH(x0+A+18, y0+B/2, `${toCz(b)} cm`)}
+    <text x="${x0+A/2}" y="${y0+B/2+5}" text-anchor="middle"
+      font-family="JetBrains Mono,monospace" font-size="10" fill="#c4c8dc">a × b</text>
+  `);
+}
+
+function svgSquare(a) {
+  const scale = Math.min(150/a, 120/a);
+  const A = a*scale;
+  const x0=(240-A)/2, y0=(180-A)/2;
+  return svgWrap(`
+    <rect x="${x0}" y="${y0}" width="${A}" height="${A}" rx="2"
+      fill="rgba(59,91,219,.06)" stroke="#3b5bdb" stroke-width="2.5"/>
+    ${labelH(x0+A/2, y0-10, `${toCz(a)} cm`)}
+    ${rightAngle(x0, y0, 9, 0)}
+  `);
+}
+
+function svgTrapezoid(a, c, h, b) {
+  // a=longer base, c=shorter base, h=height
+  const scale = Math.min(170/Math.max(a,c+20), 130/h);
+  const A=a*scale, C=c*scale, H=h*scale;
+  const x0=30, y0=155;
+  const offset=(A-C)/2;
+  const x2=x0+offset, y2=y0-H;
+  return svgWrap(`
+    <polygon points="${x0},${y0} ${x0+A},${y0} ${x2+C},${y2} ${x2},${y2}"
+      fill="rgba(59,91,219,.06)" stroke="#3b5bdb" stroke-width="2.5" stroke-linejoin="round"/>
+    <line x1="${x2}" y1="${y2}" x2="${x2}" y2="${y0}"
+      stroke="#0ca678" stroke-width="1.5" stroke-dasharray="4,3"/>
+    ${labelH(x0+A/2, y0+16, `${toCz(a)} cm`)}
+    ${labelH(x2+C/2, y2-12, `${toCz(c)} cm`)}
+    ${labelH(x2-16, y0-H/2, `${toCz(h)} cm`, '#0ca678')}
+  `);
+}
+
+function svgCircle(r) {
+  const scale = Math.min(75/r, 75/r);
+  const R = r*scale;
+  const cx=120, cy=95;
+  return svgWrap(`
+    <circle cx="${cx}" cy="${cy}" r="${R}"
+      fill="rgba(59,91,219,.06)" stroke="#3b5bdb" stroke-width="2.5"/>
+    <line x1="${cx}" y1="${cy}" x2="${cx+R}" y2="${cy}"
+      stroke="#0ca678" stroke-width="2" stroke-dasharray="4,3"/>
+    ${labelH(cx+R/2, cy-8, `r = ${toCz(r)} cm`, '#0ca678', 10)}
+    <circle cx="${cx}" cy="${cy}" r="3" fill="#3b5bdb"/>
+  `);
+}
+
+function svgCuboid(a, b, c) {
+  // isometric view
+  const s = Math.min(80/Math.max(a,b,c), 30);
+  const A=a*s, B=b*s, C=c*s;
+  const cos30=Math.cos(PI/6), sin30=Math.sin(PI/6);
+  const ox=100, oy=140;
+  // front face
+  const p = (dx,dy,dz) => [ox+dx*A+dz*C*cos30, oy-dy*B-dz*C*sin30];
+  const pts = [p(0,0,0),p(1,0,0),p(1,1,0),p(0,1,0),
+               p(0,0,1),p(1,0,1),p(1,1,1),p(0,1,1)];
+  const face = idxs => idxs.map(i=>pts[i].join(',')).join(' ');
+  return svgWrap(`
+    <polygon points="${face([0,1,2,3])}" fill="rgba(59,91,219,.07)" stroke="#3b5bdb" stroke-width="2"/>
+    <polygon points="${face([1,5,6,2])}" fill="rgba(59,91,219,.04)" stroke="#3b5bdb" stroke-width="2"/>
+    <polygon points="${face([3,2,6,7])}" fill="rgba(59,91,219,.1)" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${pts[0][0]}" y1="${pts[0][1]}" x2="${pts[4][0]}" y2="${pts[4][1]}" stroke="#c4c8dc" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <line x1="${pts[3][0]}" y1="${pts[3][1]}" x2="${pts[7][0]}" y2="${pts[7][1]}" stroke="#c4c8dc" stroke-width="1.5" stroke-dasharray="3,3"/>
+    ${labelH((pts[0][0]+pts[1][0])/2, pts[0][1]+16, `${toCz(a)} cm`, '#3b5bdb', 10)}
+    ${labelH(pts[2][0]+20, (pts[2][1]+pts[6][1])/2, `${toCz(b)} cm`, '#3b5bdb', 10)}
+    ${labelH((pts[1][0]+pts[5][0])/2+18, (pts[1][1]+pts[5][1])/2+4, `${toCz(c)} cm`, '#6b7094', 10)}
+  `);
+}
+
+function svgCylinder(r, h) {
+  const scale = Math.min(65/r, 120/h, 2.5);
+  const R=r*scale, H=h*scale;
+  const cx=120, ty=40;
+  return svgWrap(`
+    <ellipse cx="${cx}" cy="${ty}" rx="${R}" ry="${R*0.35}" fill="rgba(59,91,219,.08)" stroke="#3b5bdb" stroke-width="2"/>
+    <rect x="${cx-R}" y="${ty}" width="${R*2}" height="${H}" fill="rgba(59,91,219,.05)" stroke="none"/>
+    <line x1="${cx-R}" y1="${ty}" x2="${cx-R}" y2="${ty+H}" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${cx+R}" y1="${ty}" x2="${cx+R}" y2="${ty+H}" stroke="#3b5bdb" stroke-width="2"/>
+    <ellipse cx="${cx}" cy="${ty+H}" rx="${R}" ry="${R*0.35}" fill="rgba(59,91,219,.06)" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${cx}" y1="${ty}" x2="${cx+R}" y2="${ty}" stroke="#0ca678" stroke-width="2" stroke-dasharray="4,3"/>
+    ${labelH(cx+R/2, ty-8, `r=${toCz(r)}`, '#0ca678', 10)}
+    ${labelH(cx+R+18, ty+H/2, `h=${toCz(h)} cm`, '#3b5bdb', 10)}
+  `);
+}
+
+function svgCone(r, h) {
+  const scale = Math.min(65/r, 110/h, 2.5);
+  const R=r*scale, H=h*scale;
+  const cx=120, by=155;
+  return svgWrap(`
+    <ellipse cx="${cx}" cy="${by}" rx="${R}" ry="${R*0.35}"
+      fill="rgba(59,91,219,.08)" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${cx-R}" y1="${by}" x2="${cx}" y2="${by-H}" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${cx+R}" y1="${by}" x2="${cx}" y2="${by-H}" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${cx}" y1="${by-H}" x2="${cx+R}" y2="${by}"
+      stroke="#0ca678" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <line x1="${cx}" y1="${by}" x2="${cx}" y2="${by-H}"
+      stroke="#6b7094" stroke-width="1.5" stroke-dasharray="4,3"/>
+    ${labelH(cx+R/2+8, by-H/2, `s`, '#0ca678', 10)}
+    ${labelH(cx-18, by-H/2, `h=${toCz(h)}`, '#6b7094', 10)}
+    ${labelH(cx+R/2, by+14, `r=${toCz(r)} cm`, '#3b5bdb', 10)}
+    <circle cx="${cx}" cy="${by-H}" r="3" fill="#3b5bdb"/>
+  `);
+}
+
+function svgSphere(r) {
+  const scale = Math.min(70/r, 3);
+  const R=r*scale;
+  const cx=120, cy=95;
+  return svgWrap(`
+    <circle cx="${cx}" cy="${cy}" r="${R}"
+      fill="rgba(59,91,219,.06)" stroke="#3b5bdb" stroke-width="2.5"/>
+    <ellipse cx="${cx}" cy="${cy}" rx="${R}" ry="${R*0.3}"
+      fill="none" stroke="#c4c8dc" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <line x1="${cx}" y1="${cy}" x2="${cx+R}" y2="${cy}"
+      stroke="#0ca678" stroke-width="2" stroke-dasharray="4,3"/>
+    ${labelH(cx+R/2, cy-8, `r = ${toCz(r)} cm`, '#0ca678', 10)}
+    <circle cx="${cx}" cy="${cy}" r="3" fill="#3b5bdb"/>
+  `);
+}
+
+function svgPyramid(a, h) {
+  // square base pyramid, simplified 2D projection
+  const scale = Math.min(100/a, 120/h, 2.5);
+  const A=a*scale, H=h*scale;
+  const ox=80, by=155;
+  return svgWrap(`
+    <polygon points="${ox},${by} ${ox+A},${by} ${ox+A+30},${by-25} ${ox+30},${by-25}"
+      fill="rgba(59,91,219,.08)" stroke="#3b5bdb" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="${ox+A/2+15}" y1="${by-25+12}" x2="${ox+A/2+15}" y2="${by-25-H}"
+      stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${ox}" y1="${by}" x2="${ox+A/2+15}" y2="${by-25-H}" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${ox+A}" y1="${by}" x2="${ox+A/2+15}" y2="${by-25-H}" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${ox+A+30}" y1="${by-25}" x2="${ox+A/2+15}" y2="${by-25-H}" stroke="#3b5bdb" stroke-width="2"/>
+    <line x1="${ox+30}" y1="${by-25}" x2="${ox+A/2+15}" y2="${by-25-H}" stroke="#c4c8dc" stroke-width="1.5" stroke-dasharray="3,3"/>
+    ${labelH(ox+A/2, by+16, `${toCz(a)} cm`, '#3b5bdb', 10)}
+    ${labelH(ox+A/2+15+22, by-25-H/2, `h=${toCz(h)} cm`, '#6b7094', 10)}
+    <circle cx="${ox+A/2+15}" cy="${by-25-H}" r="3" fill="#3b5bdb"/>
+  `);
+}
+
+// ── PROBLEM GENERATORS ─────────────────────────────────────
+// Each returns: { icon, category, difficulty, text, question, answer, unit,
+//                 svgFn (returns html string), hintNacrtni, hintVzorec, hintPostup,
+//                 solutionSteps }
+
+// ════════════════════════════════════════════════════════
+// TROJÚHELNÍK
+// ════════════════════════════════════════════════════════
+function tri_obsah_lehka() {
+  const a = ri(4,14), h = ri(3,10);
+  const S = R2(a*h/2);
+  return {
+    icon:'🔺', category:'Trojúhelník', difficulty:'lehká',
+    text:`Trojúhelník má základnu <strong>${a} cm</strong> a výšku na tuto základnu <strong>${h} cm</strong>.`,
+    question:'Vypočítej obsah trojúhelníku.',
+    answer: S, unit:'cm²',
+    svg: svgTriangleGeneral(a, a*0.7, h),
+    hintNacrtni:'Načrtni trojúhelník. Vyznač základnu a a výšku h kolmo na základnu.',
+    hintVzorec:'S = (a · h) / 2',
+    hintPostup:`S = (${a} · ${h}) / 2 = ${a*h} / 2`,
+    solutionSteps:`S = (a · h) / 2\nS = (${a} · ${h}) / 2\nS = ${a*h} / 2\nS = ${S} cm²`
+  };
+}
+
+function tri_obsah_stredni() {
+  // S given, find h
+  const a = ri(6,16), S_given = ri(3,8)*3;
+  const h = R2(2*S_given/a);
+  if (!Number.isInteger(h*10)||h<=0) return tri_obsah_stredni();
+  return {
+    icon:'🔺', category:'Trojúhelník', difficulty:'střední',
+    text:`Trojúhelník má základnu <strong>${a} cm</strong> a obsah <strong>${S_given} cm²</strong>.`,
+    question:'Jaká je výška trojúhelníku?',
+    answer: h, unit:'cm',
+    svg: svgHide(()=>svgTriangleGeneral(a, a*0.7, h>12?12:h), [h]),
+    hintNacrtni:'Načrtni trojúhelník. Vyznač základnu a a výšku h (hledanou).',
+    hintVzorec:'S = (a · h) / 2  →  h = 2S / a',
+    hintPostup:`h = 2 · ${S_given} / ${a} = ${2*S_given} / ${a}`,
+    solutionSteps:`S = (a · h) / 2\n${S_given} = (${a} · h) / 2\nh = 2 · ${S_given} / ${a}\nh = ${h} cm`
+  };
+}
+
+function tri_pythagoras() {
+  const triples=[[3,4,5],[5,12,13],[8,15,17],[6,8,10],[9,12,15],[7,24,25]];
+  const [a,b,c]=rFrom(triples);
+  const mult=ri(1,3);
+  const [A,B,C]=[a*mult,b*mult,c*mult];
+  const findC=Math.random()<.5;
+  if(findC){
+    return {
+      icon:'🔺', category:'Trojúhelník', difficulty:'střední',
+      text:`Pravoúhlý trojúhelník má odvěsny <strong>${A} cm</strong> a <strong>${B} cm</strong>.`,
+      question:'Jaká je délka přepony?',
+      answer: C, unit:'cm',
+      svg: svgHide(()=>svgTriangle(A,B,C), [C]),
+      hintNacrtni:'Načrtni pravoúhlý trojúhelník. Vyznač odvěsny a, b a přeponu c.',
+      hintVzorec:'Pythagorova věta: c² = a² + b²',
+      hintPostup:`c² = ${A}² + ${B}² = ${A*A} + ${B*B} = ${A*A+B*B}\nc = √${A*A+B*B}`,
+      solutionSteps:`c² = a² + b²\nc² = ${A}² + ${B}²\nc² = ${A*A} + ${B*B} = ${A*A+B*B}\nc = √${A*A+B*B} = ${C} cm`
+    };
+  } else {
+    return {
+      icon:'🔺', category:'Trojúhelník', difficulty:'střední',
+      text:`Pravoúhlý trojúhelník má přeponu <strong>${C} cm</strong> a odvěsnu <strong>${A} cm</strong>.`,
+      question:'Jaká je druhá odvěsna?',
+      answer: B, unit:'cm',
+      svg: svgHide(()=>svgTriangle(A,B,C), [B]),
+      hintNacrtni:'Načrtni pravoúhlý trojúhelník. Vyznač přeponu c a jednu odvěsnu a.',
+      hintVzorec:'b² = c² − a²',
+      hintPostup:`b² = ${C}² − ${A}² = ${C*C} − ${A*A} = ${B*B}\nb = √${B*B}`,
+      solutionSteps:`b² = c² − a²\nb² = ${C}² − ${A}²\nb² = ${C*C} − ${A*A} = ${B*B}\nb = √${B*B} = ${B} cm`
+    };
+  }
+}
+
+function tri_gonio() {
+  const triples=[[3,4,5],[5,12,13],[8,15,17],[6,8,10]];
+  const [a,b,c]=rFrom(triples);
+  const mult=ri(1,3);
+  const [A,B,C]=[a*mult,b*mult,c*mult];
+  const funcs=['sin','cos','tan'];
+  const f=rFrom(funcs);
+  let question, answer, hintVzorec, hintPostup, solutionSteps;
+  const sinA=R2(A/C), cosA=R2(B/C), tanA=R2(A/B);
+  if(f==='sin'){
+    answer=sinA;
+    hintVzorec=`sin α = protilehlá odvěsna / přepona`;
+    hintPostup=`sin α = ${A} / ${C}`;
+    solutionSteps=`sin α = a / c = ${A} / ${C} = ${sinA}`;
+    question=`Vypočítej sin α (úhel mezi přeponou a základnou ${B} cm).`;
+  } else if(f==='cos'){
+    answer=cosA;
+    hintVzorec=`cos α = přilehlá odvěsna / přepona`;
+    hintPostup=`cos α = ${B} / ${C}`;
+    solutionSteps=`cos α = b / c = ${B} / ${C} = ${cosA}`;
+    question=`Vypočítej cos α (úhel u odvěsny ${B} cm).`;
+  } else {
+    answer=tanA;
+    hintVzorec=`tan α = protilehlá / přilehlá`;
+    hintPostup=`tan α = ${A} / ${B}`;
+    solutionSteps=`tan α = a / b = ${A} / ${B} = ${tanA}`;
+    question=`Vypočítej tan α (úhel u odvěsny ${B} cm).`;
+  }
+  return {
+    icon:'🔺', category:'Trojúhelník', difficulty:'těžká',
+    text:`Pravoúhlý trojúhelník: odvěsny <strong>${A} cm</strong> a <strong>${B} cm</strong>, přepona <strong>${C} cm</strong>.`,
+    question, answer, unit:'',
+    svg: svgTriangle(A,B,C),
+    hintNacrtni:`Načrtni pravoúhlý trojúhelník, vyznač úhel α a strany.`,
+    hintVzorec, hintPostup, solutionSteps
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// ČTYŘÚHELNÍKY
+// ════════════════════════════════════════════════════════
+function rect_obvod() {
+  const a=ri(4,15), b=ri(3,12);
+  const O=2*(a+b);
+  return {
+    icon:'🟦', category:'Obdélník', difficulty:'lehká',
+    text:`Obdélník má délku <strong>${a} cm</strong> a šířku <strong>${b} cm</strong>.`,
+    question:'Vypočítej obvod obdélníku.',
+    answer: O, unit:'cm',
+    svg: svgRect(a,b),
+    hintNacrtni:'Načrtni obdélník. Vyznač strany a a b.',
+    hintVzorec:'O = 2 · (a + b)',
+    hintPostup:`O = 2 · (${a} + ${b}) = 2 · ${a+b}`,
+    solutionSteps:`O = 2 · (a + b)\nO = 2 · (${a} + ${b})\nO = 2 · ${a+b}\nO = ${O} cm`
+  };
+}
+
+function rect_obsah() {
+  const a=ri(4,15), b=ri(3,12);
+  const S=a*b;
+  return {
+    icon:'🟦', category:'Obdélník', difficulty:'lehká',
+    text:`Obdélník má délku <strong>${a} cm</strong> a šířku <strong>${b} cm</strong>.`,
+    question:'Vypočítej obsah obdélníku.',
+    answer: S, unit:'cm²',
+    svg: svgRect(a,b),
+    hintNacrtni:'Načrtni obdélník. Vyznač strany a a b.',
+    hintVzorec:'S = a · b',
+    hintPostup:`S = ${a} · ${b}`,
+    solutionSteps:`S = a · b\nS = ${a} · ${b}\nS = ${S} cm²`
+  };
+}
+
+function rect_diagonal() {
+  const a=ri(3,12), b=ri(3,12);
+  const d=R2(sqrt(a*a+b*b));
+  return {
+    icon:'🟦', category:'Obdélník', difficulty:'střední',
+    text:`Obdélník má strany <strong>${a} cm</strong> a <strong>${b} cm</strong>.`,
+    question:'Jaká je délka úhlopříčky?',
+    answer: R1(d), unit:'cm',
+    svg: svgRect(a,b),
+    hintNacrtni:'Načrtni obdélník a zaveď úhlopříčku d. Vzniká pravoúhlý trojúhelník!',
+    hintVzorec:'d² = a² + b²  (Pythagorova věta)',
+    hintPostup:`d² = ${a}² + ${b}² = ${a*a} + ${b*b} = ${a*a+b*b}`,
+    solutionSteps:`d² = a² + b²\nd² = ${a}² + ${b}²\nd² = ${a*a+b*b}\nd = √${a*a+b*b} ≈ ${R1(d)} cm`
+  };
+}
+
+function trap_obsah() {
+  const a=ri(8,18), c=ri(4,12), h=ri(4,10);
+  if(c>=a) return trap_obsah();
+  const S=R2((a+c)*h/2);
+  return {
+    icon:'🔷', category:'Lichoběžník', difficulty:'střední',
+    text:`Lichoběžník má základny <strong>${a} cm</strong> a <strong>${c} cm</strong> a výšku <strong>${h} cm</strong>.`,
+    question:'Vypočítej obsah lichoběžníku.',
+    answer: S, unit:'cm²',
+    svg: svgTrapezoid(a,c,h,0),
+    hintNacrtni:'Načrtni lichoběžník. Vyznač obě základny (a, c) a výšku h.',
+    hintVzorec:'S = (a + c) · h / 2',
+    hintPostup:`S = (${a} + ${c}) · ${h} / 2 = ${a+c} · ${h} / 2`,
+    solutionSteps:`S = (a + c) · h / 2\nS = (${a} + ${c}) · ${h} / 2\nS = ${(a+c)*h} / 2\nS = ${S} cm²`
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// KRUŽNICE
+// ════════════════════════════════════════════════════════
+function circ_obvod() {
+  const r=ri(2,10);
+  const O=R1(2*PI*r);
+  return {
+    icon:'⭕', category:'Kružnice', difficulty:'lehká',
+    text:`Kružnice má poloměr <strong>${r} cm</strong>.`,
+    question:'Vypočítej délku kružnice (obvod kruhu). Výsledek zaokrouhli na 1 des. místo.',
+    answer: O, unit:'cm',
+    svg: svgCircle(r),
+    hintNacrtni:'Načrtni kružnici. Vyznač poloměr r.',
+    hintVzorec:'o = 2 · π · r',
+    hintPostup:`o = 2 · π · ${r} ≈ 2 · 3,14159 · ${r}`,
+    solutionSteps:`o = 2 · π · r\no = 2 · π · ${r}\no ≈ ${O} cm`
+  };
+}
+
+function circ_obsah() {
+  const r=ri(2,10);
+  const S=R1(PI*r*r);
+  return {
+    icon:'⭕', category:'Kružnice', difficulty:'lehká',
+    text:`Kruh má poloměr <strong>${r} cm</strong>.`,
+    question:'Vypočítej obsah kruhu. Výsledek zaokrouhli na 1 des. místo.',
+    answer: S, unit:'cm²',
+    svg: svgCircle(r),
+    hintNacrtni:'Načrtni kruh. Vyznač poloměr r.',
+    hintVzorec:'S = π · r²',
+    hintPostup:`S = π · ${r}² = π · ${r*r}`,
+    solutionSteps:`S = π · r²\nS = π · ${r}²\nS = π · ${r*r}\nS ≈ ${S} cm²`
+  };
+}
+
+function circ_prumer() {
+  const r=ri(3,12);
+  const O=R1(2*PI*r);
+  return {
+    icon:'⭕', category:'Kružnice', difficulty:'střední',
+    text:`Obvod kružnice je <strong>${O} cm</strong>.`,
+    question:'Jaký je poloměr kružnice? Zaokrouhli na 1 des. místo.',
+    answer: r, unit:'cm',
+    svg: svgHide(()=>svgCircle(r), [r]),
+    hintNacrtni:'Načrtni kružnici. Obvod o je zadán, hledáme r.',
+    hintVzorec:'o = 2 · π · r  →  r = o / (2π)',
+    hintPostup:`r = ${O} / (2 · π) = ${O} / ${R1(2*PI)}`,
+    solutionSteps:`o = 2 · π · r\n${O} = 2 · π · r\nr = ${O} / (2π)\nr ≈ ${r} cm`
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// TĚLESA
+// ════════════════════════════════════════════════════════
+function cuboid_objem() {
+  const a=ri(2,8), b=ri(2,8), c=ri(2,8);
+  const V=a*b*c;
+  return {
+    icon:'📦', category:'Kvádr', difficulty:'lehká',
+    text:`Kvádr má rozměry <strong>${a} cm × ${b} cm × ${c} cm</strong>.`,
+    question:'Vypočítej objem kvádru.',
+    answer: V, unit:'cm³',
+    svg: svgCuboid(a,b,c),
+    hintNacrtni:'Načrtni kvádr. Vyznač délku (a), šířku (b) a výšku (c).',
+    hintVzorec:'V = a · b · c',
+    hintPostup:`V = ${a} · ${b} · ${c} = ${a*b} · ${c}`,
+    solutionSteps:`V = a · b · c\nV = ${a} · ${b} · ${c}\nV = ${a*b} · ${c}\nV = ${V} cm³`
+  };
+}
+
+function cuboid_povrch() {
+  const a=ri(2,8), b=ri(2,8), c=ri(2,8);
+  const S=2*(a*b+b*c+a*c);
+  return {
+    icon:'📦', category:'Kvádr', difficulty:'střední',
+    text:`Kvádr má rozměry <strong>${a} cm × ${b} cm × ${c} cm</strong>.`,
+    question:'Vypočítej povrch kvádru.',
+    answer: S, unit:'cm²',
+    svg: svgCuboid(a,b,c),
+    hintNacrtni:'Načrtni kvádr. Kvádr má 6 stěn — 3 různé páry protilehlých stěn.',
+    hintVzorec:'S = 2 · (a·b + b·c + a·c)',
+    hintPostup:`S = 2 · (${a}·${b} + ${b}·${c} + ${a}·${c}) = 2 · (${a*b} + ${b*c} + ${a*c})`,
+    solutionSteps:`S = 2 · (a·b + b·c + a·c)\nS = 2 · (${a*b} + ${b*c} + ${a*c})\nS = 2 · ${a*b+b*c+a*c}\nS = ${S} cm²`
+  };
+}
+
+function cylinder_objem() {
+  const r=ri(2,7), h=ri(3,10);
+  const V=R1(PI*r*r*h);
+  return {
+    icon:'🥫', category:'Válec', difficulty:'střední',
+    text:`Válec má poloměr podstavy <strong>${r} cm</strong> a výšku <strong>${h} cm</strong>.`,
+    question:'Vypočítej objem válce. Zaokrouhli na 1 des. místo.',
+    answer: V, unit:'cm³',
+    svg: svgCylinder(r,h),
+    hintNacrtni:'Načrtni válec — podstava je kruh (r), výška je h.',
+    hintVzorec:'V = π · r² · h',
+    hintPostup:`V = π · ${r}² · ${h} = π · ${r*r} · ${h}`,
+    solutionSteps:`V = π · r² · h\nV = π · ${r}² · ${h}\nV = π · ${r*r*h}\nV ≈ ${V} cm³`
+  };
+}
+
+function cylinder_povrch() {
+  const r=ri(2,6), h=ri(3,9);
+  const S=R1(2*PI*r*(r+h));
+  return {
+    icon:'🥫', category:'Válec', difficulty:'těžká',
+    text:`Válec má poloměr podstavy <strong>${r} cm</strong> a výšku <strong>${h} cm</strong>.`,
+    question:'Vypočítej celkový povrch válce. Zaokrouhli na 1 des. místo.',
+    answer: S, unit:'cm²',
+    svg: svgCylinder(r,h),
+    hintNacrtni:'Válec má: 2 kruhové podstavy + obdélníkový plášť. Načrtni si rozvinutý povrch.',
+    hintVzorec:'S = 2π·r·h + 2·π·r² = 2π·r·(h + r)',
+    hintPostup:`S = 2π·${r}·(${h}+${r}) = 2π·${r}·${h+r}`,
+    solutionSteps:`S = 2·π·r·(r + h)\nS = 2·π·${r}·(${r}+${h})\nS = 2·π·${r}·${r+h}\nS ≈ ${S} cm²`
+  };
+}
+
+function cone_objem() {
+  const r=ri(2,7), h=ri(4,12);
+  const V=R1(PI*r*r*h/3);
+  return {
+    icon:'🍦', category:'Kužel', difficulty:'střední',
+    text:`Kužel má poloměr podstavy <strong>${r} cm</strong> a výšku <strong>${h} cm</strong>.`,
+    question:'Vypočítej objem kužele. Zaokrouhli na 1 des. místo.',
+    answer: V, unit:'cm³',
+    svg: svgCone(r,h),
+    hintNacrtni:'Načrtni kužel — podstava je kruh (r), výška h jde od středu podstavy k vrcholu.',
+    hintVzorec:'V = (1/3) · π · r² · h',
+    hintPostup:`V = (1/3) · π · ${r}² · ${h} = π · ${r*r} · ${h} / 3`,
+    solutionSteps:`V = (1/3) · π · r² · h\nV = (1/3) · π · ${r}² · ${h}\nV = π · ${r*r*h} / 3\nV ≈ ${V} cm³`
+  };
+}
+
+function cone_povrch() {
+  const r=ri(2,6), h=ri(4,10);
+  const s=R2(sqrt(r*r+h*h)); // slant height
+  const S=R1(PI*r*(r+s));
+  return {
+    icon:'🍦', category:'Kužel', difficulty:'těžká',
+    text:`Kužel má poloměr podstavy <strong>${r} cm</strong> a výšku <strong>${h} cm</strong>.`,
+    question:'Vypočítej celkový povrch kužele. Zaokrouhli na 1 des. místo.',
+    answer: S, unit:'cm²',
+    svg: svgCone(r,h),
+    hintNacrtni:'Kužel má: kruhovou podstavu + kuželový plášť. Potřebuješ délku strany s (Pythagoras).',
+    hintVzorec:`1) s = √(r² + h²)  2) S = π·r·(r + s)`,
+    hintPostup:`s = √(${r}² + ${h}²) = √${r*r+h*h} ≈ ${s}\nS = π·${r}·(${r}+${s})`,
+    solutionSteps:`s = √(r² + h²) = √(${r*r}+${h*h}) = √${r*r+h*h} ≈ ${s} cm\nS = π·r·(r+s)\nS = π·${r}·(${r}+${s})\nS ≈ ${S} cm²`
+  };
+}
+
+function sphere_objem() {
+  const r=ri(2,8);
+  const V=R1(4/3*PI*r*r*r);
+  return {
+    icon:'🔮', category:'Koule', difficulty:'střední',
+    text:`Koule má poloměr <strong>${r} cm</strong>.`,
+    question:'Vypočítej objem koule. Zaokrouhli na 1 des. místo.',
+    answer: V, unit:'cm³',
+    svg: svgSphere(r),
+    hintNacrtni:'Načrtni kouli. Vyznač poloměr r.',
+    hintVzorec:'V = (4/3) · π · r³',
+    hintPostup:`V = (4/3) · π · ${r}³ = (4/3) · π · ${r*r*r}`,
+    solutionSteps:`V = (4/3) · π · r³\nV = (4/3) · π · ${r}³\nV = (4/3) · π · ${r*r*r}\nV ≈ ${V} cm³`
+  };
+}
+
+function sphere_povrch() {
+  const r=ri(2,8);
+  const S=R1(4*PI*r*r);
+  return {
+    icon:'🔮', category:'Koule', difficulty:'střední',
+    text:`Koule má poloměr <strong>${r} cm</strong>.`,
+    question:'Vypočítej povrch koule. Zaokrouhli na 1 des. místo.',
+    answer: S, unit:'cm²',
+    svg: svgSphere(r),
+    hintNacrtni:'Načrtni kouli. Vyznač poloměr r.',
+    hintVzorec:'S = 4 · π · r²',
+    hintPostup:`S = 4 · π · ${r}² = 4 · π · ${r*r}`,
+    solutionSteps:`S = 4 · π · r²\nS = 4 · π · ${r}²\nS = 4 · π · ${r*r}\nS ≈ ${S} cm²`
+  };
+}
+
+function pyramid_objem() {
+  const a=ri(3,8), h=ri(4,12);
+  const V=R1(a*a*h/3);
+  return {
+    icon:'🔺', category:'Jehlan', difficulty:'těžká',
+    text:`Čtvercový jehlan má základnu <strong>${a} × ${a} cm</strong> a výšku <strong>${h} cm</strong>.`,
+    question:'Vypočítej objem jehlanu. Zaokrouhli na 1 des. místo.',
+    answer: V, unit:'cm³',
+    svg: svgPyramid(a,h),
+    hintNacrtni:'Načrtni jehlan. Vyznač čtvercovou základnu (a × a) a výšku h.',
+    hintVzorec:'V = (1/3) · S_základny · h = (1/3) · a² · h',
+    hintPostup:`V = (1/3) · ${a}² · ${h} = (1/3) · ${a*a} · ${h}`,
+    solutionSteps:`V = (1/3) · a² · h\nV = (1/3) · ${a}² · ${h}\nV = (1/3) · ${a*a*h}\nV ≈ ${V} cm³`
+  };
+}
+
+// ════════════════════════════════════════════════════════
+// TOPICS CONFIG
+// ════════════════════════════════════════════════════════
+const TOPICS = [
+  // TROJÚHELNÍK
+  { icon:'🔺', name:'Obsah trojúhelníku', diff:'lehká',
+    desc:'Základna a výška → výpočet obsahu a zpět',
+    section:'Trojúhelník', gen:[tri_obsah_lehka, tri_obsah_stredni],
+    help:{ title:'Trojúhelník — obsah',
+      formulas:['S = (a · h) / 2', 'h = 2S / a'],
+      steps:['Vyznač základnu a a výšku h (kolmo na základnu).',
+             'Obsah = polovina součinu základny a výšky.',
+             'Pokud hledáš výšku: h = 2·S / a'] }},
+  { icon:'📐', name:'Pythagorova věta', diff:'střední',
+    desc:'Odvěsny, přepona — pravoúhlý trojúhelník',
+    section:'Trojúhelník', gen:[tri_pythagoras],
+    help:{ title:'Pythagorova věta',
+      formulas:['c² = a² + b²', 'a² = c² − b²'],
+      steps:['Přepona c je oproti pravému úhlu.',
+             'c² = a² + b²  →  c = √(a²+b²)',
+             'Odvěsna: a = √(c²−b²)'] }},
+  { icon:'📐', name:'Goniometrie', diff:'těžká',
+    desc:'sin, cos, tan v pravoúhlém trojúhelníku',
+    section:'Trojúhelník', gen:[tri_gonio],
+    help:{ title:'Goniometrie',
+      formulas:['sin α = a/c (protilehlá/přepona)','cos α = b/c (přilehlá/přepona)','tan α = a/b (protilehlá/přilehlá)'],
+      steps:['Pojmenuj strany vůči úhlu α.',
+             'Protilehlá = strana naproti úhlu α.',
+             'Přilehlá = strana u úhlu α (ne přepona).',
+             'Mnemotechnika: SOH·CAH·TOA'] }},
+  // ČTYŘÚHELNÍKY
+  { icon:'🟦', name:'Obdélník — obvod a obsah', diff:'lehká',
+    desc:'Délka a šířka → obvod, obsah, úhlopříčka',
+    section:'Čtyřúhelníky', gen:[rect_obvod, rect_obsah, rect_diagonal],
+    help:{ title:'Obdélník',
+      formulas:['O = 2·(a+b)','S = a·b','d = √(a²+b²)'],
+      steps:['Obvod = 2× součet sousedních stran.',
+             'Obsah = délka × šířka.',
+             'Úhlopříčka = Pythagoras (tvoří pravoúhlý trojúhelník).'] }},
+  { icon:'🔷', name:'Lichoběžník — obsah', diff:'střední',
+    desc:'Dvě základny a výška → obsah',
+    section:'Čtyřúhelníky', gen:[trap_obsah],
+    help:{ title:'Lichoběžník',
+      formulas:['S = (a + c) · h / 2'],
+      steps:['Lichoběžník má dvě rovnoběžné základny: a (delší) a c (kratší).',
+             'Výška h je kolmá vzdálenost základen.',
+             'Obsah = průměr základen × výška = (a+c)/2 · h'] }},
+  // KRUŽNICE
+  { icon:'⭕', name:'Kružnice — obvod a obsah', diff:'lehká',
+    desc:'Poloměr → obvod, obsah; nebo zpětně',
+    section:'Kružnice', gen:[circ_obvod, circ_obsah, circ_prumer],
+    help:{ title:'Kružnice a kruh',
+      formulas:['o = 2·π·r  (délka kružnice)','S = π·r²  (obsah kruhu)','r = o / (2·π)'],
+      steps:['Poloměr r = polovina průměru d.',
+             'π ≈ 3,14159',
+             'Zaokrouhluj na 1 des. místo není-li řečeno jinak.'] }},
+  // TĚLESA
+  { icon:'📦', name:'Kvádr — objem a povrch', diff:'lehká',
+    desc:'Tři rozměry → objem nebo povrch',
+    section:'Tělesa', gen:[cuboid_objem, cuboid_povrch],
+    help:{ title:'Kvádr',
+      formulas:['V = a·b·c','S = 2·(a·b + b·c + a·c)'],
+      steps:['Objem = délka × šířka × výška.',
+             'Povrch = 2× součet tří různých stěn.',
+             'Kvádr má 3 páry shodných protilehlých stěn.'] }},
+  { icon:'🥫', name:'Válec — objem a povrch', diff:'střední',
+    desc:'Poloměr a výška → objem nebo celkový povrch',
+    section:'Tělesa', gen:[cylinder_objem, cylinder_povrch],
+    help:{ title:'Válec',
+      formulas:['V = π·r²·h','S = 2·π·r·(r+h)'],
+      steps:['Objem = obsah podstavy × výška.',
+             'Povrch = 2 podstavy + plášť.',
+             'Plášť je obdélník: šířka = obvod podstavy (2πr), výška = h.'] }},
+  { icon:'🍦', name:'Kužel — objem a povrch', diff:'těžká',
+    desc:'r a h → objem; povrch vyžaduje délku strany s',
+    section:'Tělesa', gen:[cone_objem, cone_povrch],
+    help:{ title:'Kužel',
+      formulas:['V = (1/3)·π·r²·h','s = √(r²+h²)','S = π·r·(r+s)'],
+      steps:['Objem = třetina objemu válce se stejnou podstavou.',
+             'Pro povrch nejdříve Pythagorasem najdi délku strany s.',
+             's = √(r²+h²) — strana kužele od vrcholu k okraji podstavy.'] }},
+  { icon:'🔮', name:'Koule — objem a povrch', diff:'střední',
+    desc:'Poloměr → objem nebo povrch',
+    section:'Tělesa', gen:[sphere_objem, sphere_povrch],
+    help:{ title:'Koule',
+      formulas:['V = (4/3)·π·r³','S = 4·π·r²'],
+      steps:['Poloměr r je vzdálenost středu od povrchu.',
+             'Objem ≈ 4,189 · r³',
+             'Povrch ≈ 12,566 · r²'] }},
+  { icon:'🔺', name:'Jehlan — objem', diff:'těžká',
+    desc:'Čtvercová základna a výška → objem',
+    section:'Tělesa', gen:[pyramid_objem],
+    help:{ title:'Jehlan',
+      formulas:['V = (1/3)·S_základny·h','Pro čtvercový: V = (1/3)·a²·h'],
+      steps:['Objem jehlanu = třetina objemu hranolu s stejnou základnou.',
+             'Nejdříve vypočítej obsah základny (čtverec = a²).',
+             'Pak vydel 3 a vynásob výškou.'] }},
+  // MIX
+  { icon:'🎲', name:'Náhodný mix — vše', diff:'mix',
+    desc:'Příklady ze všech témat náhodně',
+    section:'Mix',
+    gen:[tri_obsah_lehka, tri_obsah_stredni, tri_pythagoras,
+         rect_obvod, rect_obsah, rect_diagonal, trap_obsah,
+         circ_obvod, circ_obsah,
+         cuboid_objem, cuboid_povrch,
+         cylinder_objem, sphere_objem, cone_objem]}
+];
+</script>
+<script>
+"use strict";
+
+// ── STATE ─────────────────────────────────────────────────
+let ST = { xp:0, streak:0, progress:{} };
+function loadST(){ try{ const s=localStorage.getItem('fajngeo_v1'); if(s) ST={...ST,...JSON.parse(s)}; }catch(e){} }
+function saveST(){ try{ localStorage.setItem('fajngeo_v1',JSON.stringify(ST)); }catch(e){} }
+const getStars = idx => ST.progress?.[idx]?.stars ?? 0;
+function setStars(idx, stars){
+  if(!ST.progress[idx]) ST.progress[idx]={};
+  ST.progress[idx] = { stars: Math.max(ST.progress[idx]?.stars??0, stars) };
+  saveST();
+}
+
+// ── AUDIO ─────────────────────────────────────────────────
+let actx=null;
+function getCtx(){ if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)(); return actx; }
+function beep(f,t,d,g=0.18){ try{ const c=getCtx(),o=c.createOscillator(),gn=c.createGain();
+  o.connect(gn);gn.connect(c.destination);o.type=t;o.frequency.value=f;
+  gn.gain.setValueAtTime(g,c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);
+  o.start();o.stop(c.currentTime+d); }catch(e){} }
+const sndOk    = () => { beep(523,'sine',.09); setTimeout(()=>beep(659,'sine',.09),70); setTimeout(()=>beep(784,'sine',.14),140); };
+const sndWrong = () => { beep(220,'sawtooth',.15); setTimeout(()=>beep(196,'sawtooth',.15),90); };
+const sndDone  = () => { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.2,.26),i*100)); };
+
+// ── SESSION ───────────────────────────────────────────────
+const PROBS_PER = 10;
+let SEL = { topicIdx:null };
+let SES = null;
+let _currentHelp = null;
+let _enterHandler = null;
+
+function buildProbs(gens){
+  const probs=[]; let pool=[];
+  while(probs.length<PROBS_PER){
+    if(!pool.length) pool=shuffle(gens);
+    const gen=pool.shift();
+    let p=null, tries=0;
+    while(!p&&tries++<25){ try{ const c=gen(); if(c&&isFinite(c.answer)) p=c; }catch(e){} }
+    if(p) probs.push(p);
+  }
+  return probs;
+}
+
+function startSession(topicIdx){
+  SEL={topicIdx};
+  const topic=TOPICS[topicIdx];
+  _currentHelp=topic.help||null;
+  const hBtn=document.getElementById('ex-help-btn');
+  if(hBtn) hBtn.style.display=_currentHelp?'flex':'none';
+  SES={topicIdx, probs:buildProbs(topic.gen), cur:0, correct:0, xpGained:0, wrongCount:0};
+  showScreen('screen-exercise');
+  renderProblem();
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderProblem(){
+  const prob=SES.probs[SES.cur];
+  const total=SES.probs.length;
+  SES.wrongCount=0;
+
+  document.getElementById('ex-prog').style.width=`${(SES.cur/total)*100}%`;
+  document.getElementById('ex-count').textContent=`${SES.cur+1}/${total}`;
+  document.getElementById('ex-xp-badge').textContent=ST.xp;
+  hideFeedback();
+
+  const body=document.getElementById('ex-body');
+  body.innerHTML='';
+
+  // SVG visualization
+  const vizCard=document.createElement('div');
+  vizCard.className='viz-card';
+  vizCard.innerHTML=`
+    <div class="viz-label">${prob.icon} ${prob.category}
+      <span style="margin-left:8px;background:${diffColor(prob.difficulty)};color:${diffText(prob.difficulty)};
+        padding:1px 7px;border-radius:20px;font-size:.58rem;font-weight:700">${prob.difficulty||''}</span>
+    </div>
+    <div class="viz-svg">${prob.svg||''}</div>`;
+  body.appendChild(vizCard);
+
+  // Problem text
+  const probCard=document.createElement('div');
+  probCard.className='problem-card';
+  probCard.innerHTML=`<div class="prob-text">${prob.text}<div class="prob-q">❓ ${prob.question}</div></div>`;
+  body.appendChild(probCard);
+
+  // Hint (collapsible)
+  if(prob.hintNacrtni||prob.hintVzorec||prob.hintPostup){
+    const toggle=document.createElement('div');
+    toggle.className='hint-toggle';
+    toggle.innerHTML=`<span class="hint-icon">💡</span>
+      <span class="hint-label">Nápověda</span>
+      <span class="hint-arrow" id="hint-arrow">▶</span>`;
+    body.appendChild(toggle);
+
+    const hBody=document.createElement('div');
+    hBody.className='hint-body';
+    hBody.id='hint-body';
+    hBody.innerHTML=`
+      ${prob.hintNacrtni?`<div class="hint-section">
+        <div class="hint-section-title">✏️ Načrtni</div>
+        <div class="hint-section-body">${prob.hintNacrtni}</div>
+      </div>`:''}
+      ${prob.hintVzorec?`<div class="hint-section">
+        <div class="hint-section-title">📐 Vzorec</div>
+        <div class="hint-formula">${prob.hintVzorec}</div>
+      </div>`:''}
+      ${prob.hintPostup?`<div class="hint-section">
+        <div class="hint-section-title">🧮 Postup</div>
+        <div class="hint-section-body" style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${prob.hintPostup}</div>
+      </div>`:''}`;
+    body.appendChild(hBody);
+
+    toggle.addEventListener('click',()=>{
+      const open=hBody.classList.toggle('open');
+      document.getElementById('hint-arrow').classList.toggle('open',open);
+    });
+  }
+
+  // Answer input
+  const ansWrap=document.createElement('div');
+  ansWrap.className='answer-area';
+  const unitLabel=prob.unit&&prob.unit.length<=5?prob.unit:'';
+  ansWrap.innerHTML=`
+    <div class="answer-row">
+      <input class="answer-input" id="ans-inp" type="text"
+        inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false"
+        placeholder="?">
+      <span class="answer-unit">${unitLabel}</span>
+      <button class="btn-check" id="btn-check">Ověřit</button>
+    </div>
+    <div class="answer-hint-sub">Celé číslo nebo des. číslo · čárka nebo tečka · Enter = ověřit</div>`;
+  body.appendChild(ansWrap);
+
+  const inp=document.getElementById('ans-inp');
+  const btn=document.getElementById('btn-check');
+  const submit=()=>{
+    let raw=inp.value.trim();
+    if(raw.includes('=')) raw=raw.split('=').pop().trim();
+    raw=raw.replace(',','.');
+    const val=parseFloat(raw);
+    if(isNaN(val)||!raw) return;
+    processAnswer(val, prob);
+  };
+  btn.addEventListener('click',submit);
+  inp.addEventListener('keydown',e=>{
+    if(e.key!=='Enter') return;
+    // if feedback bar is visible, let its handler take over
+    const bar=document.getElementById('feedback-bar');
+    if(bar&&bar.classList.contains('show')) return;
+    submit();
+  });
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+  setTimeout(()=>inp.focus(), 80);
+}
+
+function diffColor(d){ return d==='lehká'?'#ebfbee':d==='střední'?'#fff4e6':d==='těžká'?'#fff5f5':'#f0f2f8'; }
+function diffText(d){ return d==='lehká'?'#2f9e44':d==='střední'?'#e67700':d==='těžká'?'#c92a2a':'#6b7094'; }
+
+// ── PROCESS ANSWER ─────────────────────────────────────────
+function processAnswer(val, prob){
+  const inp=document.getElementById('ans-inp');
+  inp.className='answer-input';
+  if(numEq(val, prob.answer)){
+    inp.className='answer-input ok';
+    SES.correct++;
+    const xp=15;
+    SES.xpGained+=xp; ST.xp+=xp; ST.streak++; saveST();
+    document.getElementById('ex-xp-badge').textContent=ST.xp;
+    document.getElementById('hdr-xp').textContent=ST.xp;
+    document.getElementById('hdr-streak').textContent=ST.streak;
+    sndOk();
+    const ansInp=document.getElementById('ans-inp');
+    if(ansInp){ ansInp.disabled=true; ansInp.blur(); }
+    showSolution(prob);
+    showFeedback(true, `Správně! +${xp} XP`, `${toCz(prob.answer)} ${prob.unit}`, ()=>nextProblem());
+  } else {
+    SES.wrongCount++;
+    inp.className='answer-input err';
+    setTimeout(()=>{ inp.className='answer-input'; inp.select(); },700);
+    sndWrong();
+    ST.streak=0; saveST();
+    if(SES.wrongCount>=2){
+      const ansInp2=document.getElementById('ans-inp');
+      if(ansInp2){ ansInp2.disabled=true; ansInp2.blur(); }
+      showSolution(prob);
+      showFeedback(false, `Správně: ${toCz(prob.answer)} ${prob.unit}`, 'Podívej se na postup výše', ()=>nextProblem());
+    } else {
+      const hint2 = SES.wrongCount===1 ? `Tip: výsledek je ${Number.isInteger(prob.answer)?'celé číslo':'desetinné číslo'}` : '';
+      showFeedback(false, 'Zkus znovu', hint2, null, 1800);
+    }
+  }
+}
+
+function showSolution(prob){
+  const body=document.getElementById('ex-body');
+  const box=document.createElement('div');
+  box.className='solution-box';
+  box.innerHTML=`<div class="solution-title">📋 Postup řešení</div>
+    <div class="solution-steps">${prob.solutionSteps||''}</div>`;
+  body.appendChild(box);
+  setTimeout(()=>box.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+}
+
+// ── FEEDBACK BAR ──────────────────────────────────────────
+const CORRECT_MSGS=['Výborně!','Správně! ✓','Přesně tak!','Perfektní!','Bomba! 💥'];
+const WRONG_MSGS=['Skoro…','Zkus ještě jednou.','Ne tentokrát.'];
+
+function showFeedback(isOk, label, sub, onNext, autoMs){
+  const bar=document.getElementById('feedback-bar');
+  const lbl=document.getElementById('fb-label');
+  const subEl=document.getElementById('fb-sub');
+  const btn=document.getElementById('btn-next');
+
+  bar.className=`feedback-bar show ${isOk?'fb-correct':'fb-wrong'}`;
+  lbl.textContent=label;
+  subEl.textContent=sub||'';
+
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+
+  if(onNext){
+    btn.style.display='';
+    btn.onclick=()=>{ hideFeedback(); onNext(); };
+    setTimeout(()=>{
+      _enterHandler=e=>{ if(e.key==='Enter'){ e.preventDefault(); hideFeedback(); onNext(); } };
+      document.addEventListener('keydown',_enterHandler);
+    },150);
+  } else {
+    btn.style.display='none';
+    if(autoMs) setTimeout(hideFeedback, autoMs);
+  }
+}
+function hideFeedback(){
+  document.getElementById('feedback-bar').className='feedback-bar';
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+function nextProblem(){
+  hideFeedback();
+  SES.cur++;
+  if(SES.cur>=SES.probs.length) finishSession();
+  else renderProblem();
+}
+function exitExercise(){
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+  hideFeedback(); showHome();
+}
+function retrySession(){ startSession(SEL.topicIdx); }
+
+function finishSession(){
+  const total=SES.probs.length, correct=SES.correct, ratio=correct/total;
+  const stars=ratio>=0.9?3:ratio>=0.7?2:ratio>=0.5?1:0;
+  setStars(SEL.topicIdx, stars);
+  sndDone();
+  const shapes=['📐','🔺','🟦','⭕','📦','🥫','🍦','🔮'];
+  document.getElementById('res-shape').textContent=rFrom(shapes);
+  document.getElementById('res-stars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('res-title').textContent=['Zkus to znovu!','Dobrý výkon!','Dobře!','Perfektní!'][stars];
+  document.getElementById('res-score').textContent=`${correct} / ${total} správně`;
+  document.getElementById('res-xp').textContent=`+${SES.xpGained}`;
+  showScreen('screen-result');
+}
+
+// ── SCREENS ───────────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function showHome(){ renderHome(); showScreen('screen-home'); }
+
+function renderHome(){
+  document.getElementById('hdr-xp').textContent=ST.xp;
+  document.getElementById('hdr-streak').textContent=ST.streak;
+  const list=document.getElementById('topics-list');
+  list.innerHTML='';
+  let lastSection=null;
+
+  TOPICS.forEach((topic,idx)=>{
+    if(topic.section!==lastSection){
+      lastSection=topic.section;
+      const div=document.createElement('div');
+      div.className='section-label';
+      div.textContent=topic.section;
+      list.appendChild(div);
+    }
+    const stars=getStars(idx);
+    const starStr=stars>0?'★'.repeat(stars)+'☆'.repeat(3-stars):'';
+    const isMix=topic.diff==='mix';
+    const row=document.createElement('div');
+    row.className=`topic-row${isMix?' mix':''}`;
+    const dc=diffColor(topic.diff), dt=diffText(topic.diff);
+    row.innerHTML=`
+      <div class="tr-icon">${topic.icon}</div>
+      <div class="tr-left">
+        <div class="tr-name">${topic.name}</div>
+        <div class="tr-desc">${topic.desc}</div>
+      </div>
+      <div style="display:flex;gap:7px;align-items:center;flex-shrink:0">
+        ${!isMix?`<span style="background:${dc};color:${dt};font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:20px">${topic.diff}</span>`:''}
+        ${starStr?`<span class="tr-stars">${starStr}</span>`:''}
+        ${topic.help?`<button class="topic-help-btn">?</button>`:''}
+        <span style="color:var(--ink3);font-size:.85rem">→</span>
+      </div>`;
+    if(topic.help){
+      row.querySelector('.topic-help-btn').addEventListener('click',e=>{
+        e.stopPropagation(); openHelp(topic.help);
+      });
+    }
+    row.addEventListener('click',()=>startSession(idx));
+    list.appendChild(row);
+  });
+}
+
+// ── HELP ──────────────────────────────────────────────────
+function openHelp(help){
+  document.getElementById('help-panel-title').textContent=help.title||'Vzorce';
+  const body=document.getElementById('help-panel-body');
+  body.innerHTML='';
+  if(help.formulas?.length){
+    const div=document.createElement('div');
+    div.innerHTML=`<div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--ink3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Vzorce</div>
+      <div class="hp-formula-list">${help.formulas.map(f=>`<div class="hp-formula">${f}</div>`).join('')}</div>`;
+    body.appendChild(div);
+  }
+  if(help.steps?.length){
+    const div=document.createElement('div');
+    div.style.marginTop='14px';
+    div.innerHTML=`<div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--ink3);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Postup</div>
+      <div class="hp-steps">${help.steps.map((s,i)=>`<div class="hp-step">
+        <div class="hp-step-num">${i+1}</div>
+        <div class="hp-step-txt">${s}</div>
+      </div>`).join('')}</div>`;
+    body.appendChild(div);
+  }
+  document.getElementById('help-panel').classList.add('show');
+  document.getElementById('help-overlay').classList.add('show');
+}
+function closeHelp(){
+  document.getElementById('help-panel').classList.remove('show');
+  document.getElementById('help-overlay').classList.remove('show');
+}
+function showExHelp(){ if(_currentHelp) openHelp(_currentHelp); }
+
+// ── INIT ──────────────────────────────────────────────────
+loadST();
+renderHome();
+</script>
+
+</body>
+</html>
