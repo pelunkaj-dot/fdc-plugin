@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy House 1 🏠 Herní cvičebnice</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --r:18px; --sh:0 4px 24px rgba(0,0,0,.10); --shl:0 8px 40px rgba(0,0,0,.16);
+  --ink:#1C1917; --muted:#78716C; --white:#FFFDF7;
+  --lime:#84CC16; --sky:#38BDF8; --rose:#FB7185; --amber:#F59E0B; --amber2:#D97706;
+  --green:#22C55E; --blue:#3B82F6; --red:#EF4444; --violet:#A78BFA; --teal:#14B8A6;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+
+/* ─── BODY / BG ─── */
+body{font-family:'Nunito',sans-serif;color:var(--ink);min-height:100vh;overflow-x:hidden;transition:background .6s;}
+body.u1{background:linear-gradient(160deg,#FFFBEB 0%,#FEF3C7 100%);}
+body.u2{background:linear-gradient(160deg,#EFF6FF 0%,#DBEAFE 100%);}
+body.u3{background:linear-gradient(160deg,#FFF1F2 0%,#FCE7F3 100%);}
+body.u4{background:linear-gradient(160deg,#F5F3FF 0%,#EDE9FE 100%);}
+body.u5{background:linear-gradient(160deg,#FFF0F6 0%,#FFE4F0 100%);}
+body.u6{background:linear-gradient(160deg,#F0FDFA 0%,#CCFBF1 100%);}
+body.u7{background:linear-gradient(160deg,#F0FDF4 0%,#DCFCE7 100%);}
+body.uhome{background:linear-gradient(160deg,#FFFBEB 0%,#EFF6FF 60%,#F0FDF4 100%);}
+
+/* Floating BG emojis */
+#bg-layer{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.fl{position:absolute;bottom:-60px;font-size:2rem;opacity:.07;animation:floatUp linear infinite;}
+@keyframes floatUp{
+  0%  {transform:translateY(0) rotate(-10deg);opacity:0;}
+  5%  {opacity:.07;}
+  95% {opacity:.07;}
+  100%{transform:translateY(-110vh) rotate(20deg);opacity:0;}
+}
+
+/* ─── LAYOUT ─── */
+.app{max-width:900px;margin:0 auto;padding:14px 18px 60px;position:relative;z-index:1;}
+
+/* ─── SCREENS ─── */
+.sc{display:none;}
+.sc.on{display:block;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── HEADER ─── */
+.hd{text-align:center;padding:22px 0 14px;}
+.hd h1{font-family:'Fredoka One',cursive;font-size:clamp(1.9rem,5.5vw,2.8rem);
+  background:linear-gradient(130deg,#F59E0B,#EF4444 45%,#8B5CF6);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;}
+.hd p{color:var(--muted);font-weight:800;font-size:.88rem;margin-top:4px;}
+
+/* ─── BACK ─── */
+.back{display:inline-flex;align-items:center;gap:6px;background:white;border:2px solid #E7E5E4;
+  border-radius:50px;padding:7px 18px;font-family:'Nunito',sans-serif;font-weight:800;
+  font-size:.88rem;cursor:pointer;color:var(--ink);transition:all .2s;margin-bottom:18px;}
+.back:hover{background:#F5F5F4;transform:translateX(-3px);}
+
+/* ─── UNIT GRID ─── */
+.ugrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:13px;margin-top:14px;}
+.ucard{background:white;border-radius:20px;padding:22px 14px 17px;text-align:center;cursor:pointer;
+  box-shadow:var(--sh);transition:transform .25s,box-shadow .25s;position:relative;overflow:hidden;}
+.ucard::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;border-radius:20px 20px 0 0;}
+.ucard:hover{transform:translateY(-6px);box-shadow:var(--shl);}
+.ue{font-size:2.4rem;display:block;margin-bottom:8px;}
+.un{font-size:.7rem;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;}
+.ut{font-family:'Fredoka One',cursive;font-size:1.05rem;line-height:1.2;margin-bottom:2px;}
+.uc{font-size:.77rem;color:var(--muted);font-weight:700;}
+.us{margin-top:8px;font-size:1rem;letter-spacing:2px;}
+.uprog{height:5px;background:#F5F5F4;border-radius:50px;margin-top:9px;overflow:hidden;}
+.uprogfill{height:100%;border-radius:50px;transition:width .5s ease;}
+
+.ucard[data-u="1"]::before,.ucard[data-u="1"] .un{background:#F59E0B;color:#F59E0B;background:none;}
+.ucard[data-u="1"]::before{background:#F59E0B;} .ucard[data-u="1"] .un{color:#F59E0B;}
+.ucard[data-u="2"]::before{background:#38BDF8;} .ucard[data-u="2"] .un{color:#38BDF8;}
+.ucard[data-u="3"]::before{background:#EF4444;} .ucard[data-u="3"] .un{color:#EF4444;}
+.ucard[data-u="4"]::before{background:#A78BFA;} .ucard[data-u="4"] .un{color:#A78BFA;}
+.ucard[data-u="5"]::before{background:#FB7185;} .ucard[data-u="5"] .un{color:#FB7185;}
+.ucard[data-u="6"]::before{background:#14B8A6;} .ucard[data-u="6"] .un{color:#14B8A6;}
+.ucard[data-u="7"]::before{background:#84CC16;} .ucard[data-u="7"] .un{color:#84CC16;}
+
+/* ─── UNIT DETAIL ─── */
+.ubanner{display:flex;align-items:center;gap:16px;background:white;border-radius:var(--r);
+  padding:18px 22px;box-shadow:var(--sh);margin-bottom:20px;}
+.ubanner .be{font-size:2.6rem;}
+.ubanner .bt{font-family:'Fredoka One',cursive;font-size:1.5rem;line-height:1.2;}
+.ubanner .bs{color:var(--muted);font-weight:700;font-size:.84rem;margin-top:2px;}
+
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+.acard{background:white;border-radius:var(--r);padding:20px 12px;text-align:center;cursor:pointer;
+  box-shadow:var(--sh);transition:transform .25s,box-shadow .25s;}
+.acard:hover{transform:translateY(-5px);box-shadow:var(--shl);}
+.acard .ai{font-size:1.9rem;display:block;margin-bottom:7px;}
+.acard .an{font-family:'Fredoka One',cursive;font-size:1.05rem;margin-bottom:2px;}
+.acard .ad{font-size:.75rem;color:var(--muted);font-weight:700;}
+.acard .aw{margin-top:7px;font-size:.95rem;letter-spacing:2px;}
+
+/* ─── GAME SHELL ─── */
+.gwrap{max-width:660px;margin:0 auto;}
+.ghd{background:white;border-radius:var(--r);padding:14px 18px;box-shadow:var(--sh);
+  margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.ghd .gi{font-size:1.9rem;}
+.ghd .gt{font-family:'Fredoka One',cursive;font-size:1.25rem;flex:1;}
+.ghd .gs{font-size:.8rem;color:var(--muted);font-weight:700;width:100%;margin-top:-4px;}
+
+/* Combo badge */
+.combo{display:inline-flex;align-items:center;gap:4px;background:#FEF3C7;
+  color:#92400E;border-radius:50px;padding:4px 12px;font-weight:900;font-size:.88rem;
+  transition:all .3s;border:2px solid #FDE68A;}
+.combo.hot{background:#F59E0B;color:white;border-color:#D97706;animation:pulse .4s ease;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+/* Score badge */
+.sbadge{background:var(--amber);color:white;border-radius:50px;padding:5px 14px;
+  font-family:'Fredoka One',cursive;font-size:1.1rem;white-space:nowrap;}
+
+/* Progress dots */
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+.dot{width:10px;height:10px;border-radius:50%;background:#E7E5E4;transition:all .3s;}
+.dot.done{background:var(--amber);}
+.dot.cur{background:var(--ink);transform:scale(1.25);}
+
+/* Audio controls */
+.audio-row{display:flex;gap:8px;justify-content:center;margin:10px 0;}
+.abtn{display:inline-flex;align-items:center;gap:5px;background:none;
+  border:2px solid #BAE6FD;border-radius:50px;padding:6px 14px;cursor:pointer;
+  color:#0369A1;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;transition:all .18s;}
+.abtn:hover{background:#E0F2FE;}
+.abtn.slow{border-color:#DDD6FE;color:#7C3AED;}
+.abtn.slow:hover{background:#EDE9FE;}
+
+/* Otto mascot */
+.otto{text-align:center;font-size:2.4rem;margin:4px 0;transition:transform .2s;display:block;}
+.otto.happy{animation:jump .4s ease;}
+.otto.sad{animation:wobble .4s ease;}
+@keyframes jump{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+
+/* ─── MATCH GAME ─── */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mcol-lbl{font-family:'Fredoka One',cursive;font-size:.9rem;color:var(--muted);
+  text-align:center;margin-bottom:8px;}
+.mi{background:white;border:3px solid #E7E5E4;border-radius:var(--r);padding:13px 10px;
+  text-align:center;cursor:pointer;font-weight:800;font-size:.95rem;transition:all .18s;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:9px;}
+.mi:hover:not(.done):not(.sel){border-color:var(--amber);transform:scale(1.03);}
+.mi.sel{border-color:var(--sky);background:#E0F2FE;}
+.mi.done{border-color:var(--green);background:#F0FDF4;color:#166534;cursor:default;}
+.mi.bad{border-color:var(--red);background:#FFF1F2;animation:shake .3s;}
+.mi .me{font-size:2rem;display:block;margin-bottom:4px;}
+
+/* ─── MEMORY GAME ─── */
+.mem-grid{display:grid;gap:10px;}
+.mem-card{background:linear-gradient(135deg,#F59E0B,#EF4444);border-radius:14px;
+  aspect-ratio:3/4;cursor:pointer;perspective:800px;position:relative;}
+.mem-inner{width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s ease;position:relative;}
+.mem-card.flipped .mem-inner{transform:rotateY(180deg);}
+.mem-card.matched .mem-inner{transform:rotateY(180deg);}
+.mem-face,.mem-back{position:absolute;inset:0;backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;padding:6px;text-align:center;}
+.mem-face{background:linear-gradient(135deg,#F59E0B,#FB923C);font-size:1.6rem;color:white;font-family:'Fredoka One',cursive;}
+.mem-back{transform:rotateY(180deg);background:white;border:3px solid #E7E5E4;}
+.mem-back .mb-e{font-size:1.8rem;display:block;margin-bottom:3px;}
+.mem-back .mb-w{font-family:'Fredoka One',cursive;font-size:.85rem;line-height:1.2;color:var(--ink);}
+.mem-card.matched .mem-back{border-color:var(--green);background:#F0FDF4;}
+.mem-card.wrong .mem-inner{animation:shake .35s;}
+
+/* ─── WORD BUILDER ─── */
+.wb-hint{background:white;border-radius:20px;padding:22px;box-shadow:var(--sh);
+  text-align:center;margin-bottom:16px;}
+.wb-emoji{font-size:3.5rem;display:block;margin-bottom:8px;}
+.wb-cs{font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--muted);}
+.wb-en-hint{font-size:.82rem;color:var(--muted);font-weight:700;margin-top:4px;}
+
+.wb-answer{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  background:white;border:3px dashed #E7E5E4;border-radius:var(--r);
+  padding:16px;margin-bottom:14px;min-height:60px;align-items:center;
+  transition:border-color .3s;}
+.wb-answer.ok{border-color:var(--green);background:#F0FDF4;}
+.wb-answer.no{border-color:var(--red);background:#FFF1F2;animation:shake .3s;}
+.wb-letter{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:1.4rem;
+  background:#F59E0B;color:white;
+  box-shadow:0 3px 0 #D97706;}
+.wb-blank{width:42px;height:42px;border-radius:10px;
+  border:2px dashed #D1D5DB;display:inline-block;}
+
+.wb-keys{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;}
+.wb-key{
+  width:48px;height:48px;border-radius:12px;cursor:pointer;
+  font-family:'Fredoka One',cursive;font-size:1.3rem;
+  background:white;border:3px solid #E7E5E4;
+  box-shadow:0 3px 0 #D1D5DB;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;}
+.wb-key:hover:not(:disabled){background:#FEF3C7;border-color:var(--amber);transform:translateY(-2px);}
+.wb-key:active:not(:disabled){transform:translateY(1px);box-shadow:0 1px 0 #D1D5DB;}
+.wb-key:disabled{opacity:.3;cursor:not-allowed;}
+.wb-del{background:#FFF1F2;border-color:#FECACA;color:var(--red);}
+.wb-del:hover:not(:disabled){background:#FEE2E2 !important;border-color:var(--red) !important;}
+.wb-hint-btn{display:block;margin:0 auto;background:none;border:none;cursor:pointer;
+  color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:.8rem;
+  text-decoration:underline;}
+
+/* ─── COUNT GAME ─── */
+.count-stage{background:white;border-radius:20px;padding:22px;box-shadow:var(--sh);
+  margin-bottom:18px;min-height:120px;display:flex;flex-wrap:wrap;
+  gap:10px;align-items:center;justify-content:center;}
+.cei{font-size:2.5rem;display:inline-block;
+  animation:bob .8s ease-in-out infinite alternate;}
+.cei:nth-child(2n){animation-delay:.12s;}
+.cei:nth-child(3n){animation-delay:.22s;}
+.cei:nth-child(5n){animation-delay:.06s;}
+@keyframes bob{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-8px) rotate(4deg)}}
+.count-q{font-family:'Fredoka One',cursive;font-size:1.1rem;text-align:center;
+  color:var(--muted);margin-bottom:14px;}
+.count-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.copt{background:white;border:3px solid #E7E5E4;border-radius:var(--r);padding:12px 6px 10px;
+  text-align:center;cursor:pointer;transition:all .18s;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.copt:hover:not(.ok):not(.no){border-color:var(--amber);transform:scale(1.06);}
+.copt.ok{background:#F0FDF4;border-color:var(--green);animation:pop .3s;}
+.copt.no{background:#FFF1F2;border-color:var(--red);animation:shake .3s;}
+.cw{font-family:'Fredoka One',cursive;font-size:1.1rem;display:block;}
+.cp{font-size:.65rem;color:var(--muted);font-weight:700;display:block;margin-top:2px;}
+.copt.ok .cp,.copt.no .cp{color:inherit;}
+
+/* ─── COLOR GAME ─── */
+.color-box{width:140px;height:140px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:4.2rem;margin:0 auto 14px;background:#F5F5F4;
+  border:5px solid #E7E5E4;transition:background .5s,border-color .5s;}
+.color-instr{font-family:'Fredoka One',cursive;font-size:1.2rem;text-align:center;margin-bottom:4px;}
+.color-en{font-size:.8rem;color:var(--muted);font-weight:700;text-align:center;margin-bottom:16px;}
+.swatches{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.sw{width:54px;height:54px;border-radius:50%;cursor:pointer;
+  border:4px solid white;box-shadow:0 2px 10px rgba(0,0,0,.18);
+  transition:transform .18s,box-shadow .18s;position:relative;}
+.sw:hover{transform:scale(1.16);box-shadow:0 4px 18px rgba(0,0,0,.25);}
+.sw.ok::after{content:'✓';position:absolute;inset:0;display:flex;
+  align-items:center;justify-content:center;color:white;font-size:1.5rem;font-weight:900;}
+.sw.no{animation:shake .3s;}
+
+/* ─── SORT GAME ─── */
+.sort-chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:20px;}
+.chip{background:white;border:3px solid #E7E5E4;border-radius:50px;padding:10px 15px;
+  cursor:pointer;font-weight:800;font-size:.92rem;transition:all .18s;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:6px;}
+.chip .ce{font-size:1.4rem;}
+.chip:hover:not(.placed){border-color:var(--amber);transform:scale(1.04);}
+.chip.sel{border-color:var(--sky);background:#E0F2FE;transform:scale(1.06);}
+.chip.placed{opacity:.3;cursor:default;transform:none;}
+.sort-bins{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.sbin{background:white;border:3px dashed #D4D0CB;border-radius:var(--r);
+  padding:16px 12px;text-align:center;cursor:pointer;min-height:90px;transition:all .2s;}
+.sbin:hover{border-color:var(--amber);background:#FFFBEB;}
+.sbin.flash-ok{border-color:var(--green);background:#F0FDF4;animation:flashg .4s;}
+.sbin.flash-no{border-color:var(--red);background:#FFF1F2;animation:shake .3s;}
+.sbl{font-family:'Fredoka One',cursive;font-size:1rem;margin-bottom:6px;}
+.sbc{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:7px;}
+.sp{font-size:1.6rem;}
+@keyframes flashg{0%,100%{background:#F0FDF4}50%{background:#DCFCE7}}
+
+/* ─── YES/NO GAME ─── */
+.yn-card{background:white;border-radius:24px;padding:28px 22px;
+  box-shadow:var(--sh);text-align:center;margin-bottom:18px;}
+.yn-pic{font-size:5rem;display:block;margin-bottom:10px;}
+.yn-q{font-family:'Fredoka One',cursive;font-size:1.35rem;margin-bottom:8px;line-height:1.3;}
+.yn-btns{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.yn-btn{padding:20px;border-radius:var(--r);cursor:pointer;
+  font-family:'Fredoka One',cursive;font-size:1.4rem;border:3px solid transparent;
+  transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.yn-yes{background:#F0FDF4;border-color:var(--green);color:#166534;}
+.yn-no{background:#FFF1F2;border-color:var(--red);color:#9F1239;}
+.yn-btn:hover{transform:scale(1.05);}
+.yn-btn.flash-ok{animation:pop .35s;filter:brightness(1.1);}
+.yn-btn.flash-no{animation:shake .3s;}
+
+/* ─── RESULT ─── */
+.result{background:white;border-radius:24px;padding:36px 28px;
+  text-align:center;box-shadow:var(--shl);}
+.res-e{font-size:4rem;margin-bottom:12px;}
+.res-t{font-family:'Fredoka One',cursive;font-size:2rem;margin-bottom:6px;}
+.res-st{font-size:2.2rem;letter-spacing:6px;margin:14px 0;}
+.res-combo{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--amber);margin-bottom:8px;}
+.res-msg{color:var(--muted);font-weight:700;font-size:.9rem;margin-bottom:22px;}
+.res-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+/* ─── ACHIEVEMENTS ─── */
+.ach-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  margin:16px 0 10px;min-height:32px;}
+.ach{font-size:1.5rem;filter:grayscale(1) opacity(.3);transition:all .4s;cursor:default;}
+.ach.unlocked{filter:none;}
+.ach.new-unlock{animation:ach-pop .6s ease;filter:none;}
+@keyframes ach-pop{0%,100%{transform:scale(1)}50%{transform:scale(1.5) rotate(15deg)}}
+
+/* ─── BUTTONS ─── */
+.btn{padding:12px 26px;border-radius:50px;font-family:'Nunito',sans-serif;
+  font-weight:900;font-size:.92rem;cursor:pointer;border:none;transition:all .2s;}
+.btn-amber{background:var(--amber);color:white;box-shadow:0 4px 14px rgba(245,158,11,.35);}
+.btn-amber:hover{background:var(--amber2);transform:translateY(-2px);}
+.btn-white{background:white;color:var(--ink);box-shadow:var(--sh);border:2px solid #E7E5E4;}
+.btn-white:hover{background:#F5F5F4;transform:translateY(-2px);}
+
+/* ─── ANIMATIONS ─── */
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+/* ─── CONFETTI ─── */
+#conf-layer{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;}
+.conf{position:absolute;top:-50px;animation:fall linear forwards;}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);}}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:520px){
+  .ugrid{grid-template-columns:1fr 1fr;}
+  .match-grid{grid-template-columns:1fr 1fr;}
+  .count-opts{grid-template-columns:repeat(4,1fr);}
+  .sort-bins{grid-template-columns:1fr 1fr;}
+  .yn-btns{grid-template-columns:1fr 1fr;}
+  .ubanner{flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body class="uhome">
+<div id="bg-layer"></div>
+<div id="conf-layer"></div>
+
+<div class="app">
+
+<!-- ══════ HOME ══════ -->
+<div class="sc on" id="sc-home">
+  <div class="hd"><h1>📓 Happy House 1</h1><p>Herní cvičebnice · vyber si unit!</p></div>
+  <div class="ach-bar" id="home-ach"></div>
+  <div class="ugrid" id="ugrid"></div>
+</div>
+
+<!-- ══════ UNIT ══════ -->
+<div class="sc" id="sc-unit">
+  <button class="back" onclick="go('sc-home')">← Domů</button>
+  <div id="ubanner"></div>
+  <div class="agrid" id="agrid"></div>
+</div>
+
+<!-- ══════ GAME ══════ -->
+<div class="sc" id="sc-game">
+  <button class="back" id="game-back">← Na unit</button>
+  <div class="gwrap">
+    <div class="ghd">
+      <span class="gi" id="g-icon"></span>
+      <div>
+        <div class="gt" id="g-title"></div>
+        <div class="gs" id="g-instr"></div>
+      </div>
+      <span class="sbadge" id="g-score">⭐ 0</span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:10px;flex-wrap:wrap;">
+      <span class="otto" id="otto">🐭</span>
+      <span class="combo" id="combo-badge">🔥 0 v řadě</span>
+    </div>
+    <div class="dots" id="g-dots"></div>
+    <div id="g-body"></div>
+  </div>
+</div>
+
+<!-- ══════ RESULT ══════ -->
+<div class="sc" id="sc-result">
+  <div class="gwrap">
+    <div class="result">
+      <div class="res-e" id="r-e"></div>
+      <div class="res-t" id="r-t"></div>
+      <div class="res-st" id="r-st"></div>
+      <div class="res-combo" id="r-combo"></div>
+      <div class="res-msg" id="r-m"></div>
+      <div class="res-btns">
+        <button class="btn btn-amber" id="r-again">🔄 Znovu</button>
+        <button class="btn btn-white" id="r-unit">← Na unit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.app -->
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA – 7 unitů, plná slovní zásoba
+═══════════════════════════════════════════ */
+const UNITS=[
+{id:1,emoji:'🏫',name:'Classroom & Family',nameCz:'Třída a rodina',bg:'u1',
+ floats:['✏️','📚','📏','🖊️','🗃️','👩','👨'],
+ words:[
+  {e:'✏️',en:'pencil',   cs:'tužka',     ph:'PEN-sl'},
+  {e:'🖊️',en:'pen',      cs:'pero',       ph:'pen'},
+  {e:'📚',en:'book',     cs:'kniha',      ph:'buk'},
+  {e:'📏',en:'ruler',    cs:'pravítko',   ph:'RÚ-lér'},
+  {e:'🗃️',en:'pencil case',cs:'penál',   ph:'PEN-sl kejs'},
+  {e:'🎒',en:'bag',      cs:'taška',      ph:'beg'},
+  {e:'🧹',en:'rubber',   cs:'guma',       ph:'RAB-ér'},
+  {e:'✂️',en:'scissors', cs:'nůžky',      ph:'SI-zérz'},
+  {e:'👩',en:'mum',      cs:'maminka',    ph:'mam'},
+  {e:'👨',en:'dad',      cs:'tatínek',    ph:'ded'},
+  {e:'👧',en:'sister',   cs:'sestra',     ph:'SIS-tér'},
+  {e:'👦',en:'brother',  cs:'bratr',      ph:'BRATH-ér'},
+  {e:'👶',en:'baby',     cs:'miminko',    ph:'BEJ-bi'},
+  {e:'👵',en:'grandma',  cs:'babička',    ph:'GREND-mah'},
+  {e:'👴',en:'grandpa',  cs:'děda',       ph:'GREND-pah'},
+ ],
+ phrases:[
+  {e:'👋',en:'Hello!',      cs:'Ahoj!',         ph:'he-LOU'},
+  {e:'✋',en:'Goodbye!',    cs:'Na shledanou!',  ph:'gud-BAJ'},
+  {e:'🙏',en:'Please.',     cs:'Prosím.',        ph:'plíz'},
+  {e:'😊',en:'Thank you!',  cs:'Děkuji!',        ph:'thenk jú'},
+  {e:'❓',en:"What's your name?",cs:'Jak se jmenuješ?',ph:'wots jor nejm'},
+ ],
+ activities:[
+  {type:'match',  icon:'🔗',title:'Spoj obrázky',    instr:'Klikni na obrázek → pak na anglické slovo'},
+  {type:'memory', icon:'🃏',title:'Paměťová hra',     instr:'Najdi všechny dvojice! Otočí se vždy 2 kartičky'},
+  {type:'wordbuilder',icon:'🔤',title:'Složit slovo', instr:'Klikej na písmena ve správném pořadí'},
+  {type:'sort',   icon:'📦',title:'Roztřiď!',         instr:'Patří to do školy, nebo domů?'},
+ ]
+},
+{id:2,emoji:'🔢',name:'Numbers',nameCz:'Čísla',bg:'u2',
+ floats:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','⭐','🔢'],
+ words:[
+  {e:'1️⃣',en:'one',   cs:'jedna', ph:'van'},
+  {e:'2️⃣',en:'two',   cs:'dva',   ph:'tú'},
+  {e:'3️⃣',en:'three', cs:'tři',   ph:'thrí'},
+  {e:'4️⃣',en:'four',  cs:'čtyři', ph:'fór'},
+  {e:'5️⃣',en:'five',  cs:'pět',   ph:'fajv'},
+  {e:'6️⃣',en:'six',   cs:'šest',  ph:'siks'},
+  {e:'7️⃣',en:'seven', cs:'sedm',  ph:'sev-n'},
+  {e:'8️⃣',en:'eight', cs:'osm',   ph:'ejt'},
+  {e:'9️⃣',en:'nine',  cs:'devět', ph:'najn'},
+  {e:'🔟',en:'ten',   cs:'deset', ph:'ten'},
+ ],
+ activities:[
+  {type:'match',  icon:'🔗',title:'Číslo × slovo',   instr:'Spoj číslici s anglickým slovem'},
+  {type:'count',  icon:'🔢',title:'Kolik jich je?',   instr:'Spočítej a klikni na správné anglické slovo'},
+  {type:'memory', icon:'🃏',title:'Paměťová hra',     instr:'Najdi dvojice: číslo + slovo'},
+  {type:'wordbuilder',icon:'🔤',title:'Složit číslo', instr:'Poskládej anglické číslo z písmen'},
+ ]
+},
+{id:3,emoji:'🎨',name:'Toys, Colours & Shapes',nameCz:'Hračky, barvy a tvary',bg:'u3',
+ floats:['🚗','🎸','🎨','🔴','🟢','✈️','🔵'],
+ words:[
+  {e:'🪆',en:'doll',    cs:'panenka',    ph:'dol'},
+  {e:'🚂',en:'train',   cs:'vláček',     ph:'trejn'},
+  {e:'🚗',en:'car',     cs:'auto',       ph:'kár'},
+  {e:'✈️',en:'plane',   cs:'letadlo',    ph:'plejn'},
+  {e:'🎸',en:'guitar',  cs:'kytara',     ph:'gi-TÁR'},
+  {e:'🥁',en:'drum',    cs:'buben',      ph:'dram'},
+  {e:'⚽',en:'ball',    cs:'míč',        ph:'ból'},
+  {e:'🪁',en:'kite',    cs:'drak',       ph:'kajt'},
+  {e:'🧸',en:'teddy bear',cs:'medvídek', ph:'TED-i bér'},
+  {e:'🤖',en:'robot',   cs:'robot',      ph:'ROH-bot'},
+  {e:'🔴',en:'red',     cs:'červená',    ph:'red'},
+  {e:'🟢',en:'green',   cs:'zelená',     ph:'grín'},
+  {e:'🟡',en:'yellow',  cs:'žlutá',      ph:'JEL-ou'},
+  {e:'🟠',en:'orange',  cs:'oranžová',   ph:'OR-inž'},
+  {e:'🌸',en:'pink',    cs:'růžová',     ph:'pink'},
+  {e:'🔵',en:'blue',    cs:'modrá',      ph:'blú'},
+  {e:'🟣',en:'purple',  cs:'fialová',    ph:'PÚR-pl'},
+  {e:'⬜',en:'white',   cs:'bílá',       ph:'wajt'},
+  {e:'⬛',en:'black',   cs:'černá',      ph:'blek'},
+  {e:'🟫',en:'square',  cs:'čtverec',    ph:'skwér'},
+  {e:'⭕',en:'circle',  cs:'kruh',       ph:'SÚR-kl'},
+  {e:'🔺',en:'triangle',cs:'trojúhelník',ph:'TRAJ-eŋgl'},
+ ],
+ activities:[
+  {type:'match',  icon:'🔗',title:'Hračky a barvy',  instr:'Spoj obrázek s anglickým slovem'},
+  {type:'memory', icon:'🃏',title:'Paměťová hra',     instr:'Najdi všechny dvojice!'},
+  {type:'color',  icon:'🎨',title:'Obarvi!',          instr:'Přečti instrukci a klikni na správnou barvu'},
+  {type:'wordbuilder',icon:'🔤',title:'Složit slovo', instr:'Poskládej anglické slovo z písmen'},
+  {type:'sort',   icon:'📦',title:'Hračky nebo barvy?',instr:'Roztřiď předměty do skupin'},
+ ]
+},
+{id:4,emoji:'👕',name:'Clothes',nameCz:'Oblečení',bg:'u4',
+ floats:['👕','🧦','👟','🧢','🧥','👗','👖'],
+ words:[
+  {e:'👕',en:'T-shirt',  cs:'tričko',     ph:'tí-šurt'},
+  {e:'👗',en:'skirt',    cs:'sukně',      ph:'skúrt'},
+  {e:'🧦',en:'socks',    cs:'ponožky',    ph:'soks'},
+  {e:'👟',en:'shoes',    cs:'boty',       ph:'šúz'},
+  {e:'🧢',en:'hat',      cs:'čepice',     ph:'het'},
+  {e:'🧥',en:'jumper',   cs:'svetr',      ph:'DŽAMP-ér'},
+  {e:'👖',en:'jeans',    cs:'džíny',      ph:'džínz'},
+  {e:'👗',en:'dress',    cs:'šaty',       ph:'dres'},
+  {e:'🧣',en:'scarf',    cs:'šála',       ph:'skárf'},
+  {e:'🧤',en:'gloves',   cs:'rukavice',   ph:'glavz'},
+  {e:'👢',en:'boots',    cs:'holínky',    ph:'búts'},
+  {e:'🧶',en:'coat',     cs:'kabát',      ph:'kout'},
+ ],
+ activities:[
+  {type:'match',  icon:'🔗',title:'Oblečení',         instr:'Spoj obrázek s anglickým slovem'},
+  {type:'memory', icon:'🃏',title:'Paměťová hra',     instr:'Najdi všechny dvojice!'},
+  {type:'color',  icon:'🎨',title:'Obarvi oblečení!', instr:'Obarvi správnou barvou'},
+  {type:'wordbuilder',icon:'🔤',title:'Složit slovo', instr:'Poskládej anglické slovo z písmen'},
+  {type:'sort',   icon:'📦',title:'Léto nebo zima?',  instr:'Roztřiď oblečení do skupin'},
+ ]
+},
+{id:5,emoji:'🎂',name:'Birthday Party',nameCz:'Narozeninová oslava',bg:'u5',
+ floats:['🎂','🎈','🎉','🍦','🎊','🕯️','🍬'],
+ words:[
+  {e:'🎂',en:'birthday cake',cs:'narozeninový dort',ph:'BÚRTHdej kejk'},
+  {e:'🕯️',en:'candle',  cs:'svíčka',     ph:'KEN-dl'},
+  {e:'🎈',en:'balloon',  cs:'balónek',    ph:'be-LÚN'},
+  {e:'🎁',en:'present',  cs:'dárek',      ph:'PREZ-nt'},
+  {e:'🍇',en:'grapes',   cs:'hrozny',     ph:'grejps'},
+  {e:'🥪',en:'sandwich', cs:'sendvič',    ph:'SEND-wič'},
+  {e:'🍦',en:'ice cream',cs:'zmrzlina',   ph:'ajs krím'},
+  {e:'🍬',en:'sweets',   cs:'sladkosti',  ph:'swíts'},
+  {e:'🍪',en:'biscuits', cs:'sušenky',    ph:'BIS-kits'},
+  {e:'📻',en:'radio',    cs:'rádio',      ph:'REJ-dio'},
+  {e:'📺',en:'television',cs:'televize',  ph:'TEL-i-vižn'},
+  {e:'🎊',en:'party',    cs:'oslava',     ph:'PÁR-ti'},
+ ],
+ activities:[
+  {type:'match',  icon:'🔗',title:'Party věci',       instr:'Spoj obrázek s anglickým slovem'},
+  {type:'count',  icon:'🔢',title:'Kolik svíček?',    instr:'Spočítej a řekni anglicky'},
+  {type:'memory', icon:'🃏',title:'Paměťová hra',     instr:'Najdi všechny dvojice!'},
+  {type:'wordbuilder',icon:'🔤',title:'Složit slovo', instr:'Poskládej anglické slovo'},
+  {type:'yesno',  icon:'✅',title:'Ano nebo Ne?',     instr:'Otočí se obrázek – odpověz anglicky'},
+ ]
+},
+{id:6,emoji:'🛁',name:'Bathtime',nameCz:'Koupání',bg:'u6',
+ floats:['🛁','🦆','🧼','🪥','💧','🫧','🚿'],
+ words:[
+  {e:'🪮',en:'hairbrush', cs:'kartáč',       ph:'HÉR-braš'},
+  {e:'🪥',en:'toothbrush',cs:'kartáček zubů', ph:'TÚT-braš'},
+  {e:'🧼',en:'soap',      cs:'mýdlo',         ph:'soup'},
+  {e:'🧴',en:'shampoo',   cs:'šampon',        ph:'šem-PÚ'},
+  {e:'🧻',en:'towel',     cs:'ručník',        ph:'TAU-el'},
+  {e:'🦆',en:'duck',      cs:'kachna',        ph:'dak'},
+  {e:'😊',en:'face',      cs:'obličej',       ph:'fejs'},
+  {e:'🤲',en:'hands',     cs:'ruce',          ph:'hendz'},
+  {e:'🖐️',en:'fingers',   cs:'prsty',         ph:'FIŊG-érz'},
+  {e:'🦶',en:'toes',      cs:'prsty nožiček', ph:'touz'},
+  {e:'👁️',en:'eye',       cs:'oko',           ph:'aj'},
+  {e:'👃',en:'nose',      cs:'nos',           ph:'nouz'},
+  {e:'👄',en:'mouth',     cs:'ústa',          ph:'mauth'},
+  {e:'👂',en:'ear',       cs:'ucho',          ph:'ír'},
+ ],
+ activities:[
+  {type:'match',  icon:'🔗',title:'V koupelně',       instr:'Spoj obrázek s anglickým slovem'},
+  {type:'memory', icon:'🃏',title:'Paměťová hra',     instr:'Najdi všechny dvojice!'},
+  {type:'wordbuilder',icon:'🔤',title:'Složit slovo', instr:'Poskládej anglické slovo z písmen'},
+  {type:'sort',   icon:'📦',title:'Obličej nebo koupelna?',instr:'Roztřiď do skupin'},
+  {type:'yesno',  icon:'✅',title:'Správně nebo ne?', instr:'Přečti větu a odpověz Yes nebo No'},
+ ]
+},
+{id:7,emoji:'🐾',name:'Animal Friends',nameCz:'Zvířecí přátelé',bg:'u7',
+ floats:['🐕','🐱','🐯','🐰','🦈','🌿','🐾'],
+ words:[
+  {e:'🐕',en:'dog',       cs:'pes',        ph:'dog'},
+  {e:'🐱',en:'cat',       cs:'kočka',      ph:'ket'},
+  {e:'🐦',en:'bird',      cs:'pták',       ph:'búrd'},
+  {e:'🐍',en:'snake',     cs:'had',        ph:'snejk'},
+  {e:'🐭',en:'mouse',     cs:'myš',        ph:'maus'},
+  {e:'🐯',en:'tiger',     cs:'tygr',       ph:'TAJ-gér'},
+  {e:'🐊',en:'crocodile', cs:'krokodýl',   ph:'KROK-o-dajl'},
+  {e:'🦈',en:'shark',     cs:'žralok',     ph:'šárk'},
+  {e:'🐰',en:'rabbit',    cs:'králík',     ph:'RAB-it'},
+  {e:'🐘',en:'elephant',  cs:'slon',       ph:'EL-i-fent'},
+  {e:'🐒',en:'monkey',    cs:'opice',      ph:'MAŊK-i'},
+  {e:'🐸',en:'frog',      cs:'žába',       ph:'frog'},
+  {e:'🐟',en:'fish',      cs:'ryba',       ph:'fiš'},
+  {e:'🐴',en:'horse',     cs:'kůň',        ph:'hórs'},
+ ],
+ activities:[
+  {type:'match',  icon:'🔗',title:'Zvířata',          instr:'Spoj obrázek zvířete s anglickým slovem'},
+  {type:'count',  icon:'🔢',title:'Kolik zvířat?',    instr:'Spočítej a řekni anglicky'},
+  {type:'memory', icon:'🃏',title:'Paměťová hra',     instr:'Najdi všechny dvojice!'},
+  {type:'wordbuilder',icon:'🔤',title:'Složit slovo', instr:'Poskládej jméno zvířete'},
+  {type:'sort',   icon:'📦',title:'Souš nebo voda?',  instr:'Kde žije toto zvíře?'},
+  {type:'yesno',  icon:'✅',title:'Ano nebo Ne?',     instr:'Máš rád? Odpověz Yes nebo No'},
+ ]
+},
+];
+
+/* colour-game definitions */
+const COLOURS={
+  red:   {cs:'červená',hex:'#EF4444',sw:['#EF4444','#3B82F6','#FDE047','#22C55E']},
+  green: {cs:'zelená', hex:'#22C55E',sw:['#EF4444','#22C55E','#FDE047','#3B82F6']},
+  yellow:{cs:'žlutá',  hex:'#FDE047',sw:['#EF4444','#3B82F6','#FDE047','#EC4899']},
+  orange:{cs:'oranžová',hex:'#FB923C',sw:['#EF4444','#3B82F6','#FB923C','#22C55E']},
+  blue:  {cs:'modrá',  hex:'#3B82F6',sw:['#EF4444','#3B82F6','#FDE047','#FB923C']},
+  pink:  {cs:'růžová', hex:'#EC4899',sw:['#EC4899','#3B82F6','#FDE047','#22C55E']},
+  purple:{cs:'fialová',hex:'#A78BFA',sw:['#EF4444','#3B82F6','#A78BFA','#22C55E']},
+  white: {cs:'bílá',   hex:'#F3F4F6',sw:['#F3F4F6','#3B82F6','#FDE047','#22C55E']},
+  black: {cs:'černá',  hex:'#1F2937',sw:['#1F2937','#3B82F6','#FDE047','#22C55E']},
+};
+
+/* colour rounds per unit */
+const COLOR_DATA={
+  3:[
+    {item:'🚗',czI:'Obarvi auto',enL:'Color the car',col:'red'},
+    {item:'✈️',czI:'Obarvi letadlo',enL:'Color the plane',col:'blue'},
+    {item:'🎸',czI:'Obarvi kytaru',enL:'Color the guitar',col:'yellow'},
+    {item:'🥁',czI:'Obarvi buben',enL:'Color the drum',col:'orange'},
+    {item:'🚂',czI:'Obarvi vláček',enL:'Color the train',col:'green'},
+    {item:'⚽',czI:'Obarvi míč',enL:'Color the ball',col:'black'},
+    {item:'🪁',czI:'Obarvi drak',enL:'Color the kite',col:'purple'},
+    {item:'🤖',czI:'Obarvi robota',enL:'Color the robot',col:'pink'},
+  ],
+  4:[
+    {item:'👕',czI:'Obarvi tričko',enL:'Color the T-shirt',col:'pink'},
+    {item:'🧢',czI:'Obarvi čepici',enL:'Color the hat',col:'blue'},
+    {item:'🧦',czI:'Obarvi ponožky',enL:'Color the socks',col:'yellow'},
+    {item:'🧥',czI:'Obarvi svetr',enL:'Color the jumper',col:'green'},
+    {item:'👗',czI:'Obarvi sukni',enL:'Color the skirt',col:'purple'},
+    {item:'👢',czI:'Obarvi holínky',enL:'Color the boots',col:'red'},
+    {item:'🧣',czI:'Obarvi šálu',enL:'Color the scarf',col:'orange'},
+  ],
+};
+
+/* sort bins per unit */
+const SORT_DATA={
+  1:{bins:['🏫 Ve škole','🏠 Doma'],
+     items:[
+      {e:'✏️',l:'pencil',b:0},{e:'📚',l:'book',b:0},{e:'📏',l:'ruler',b:0},
+      {e:'🗃️',l:'pencil case',b:0},{e:'🎒',l:'bag',b:0},{e:'✂️',l:'scissors',b:0},
+      {e:'👩',l:'mum',b:1},{e:'👨',l:'dad',b:1},{e:'👧',l:'sister',b:1},
+      {e:'👦',l:'brother',b:1},{e:'👶',l:'baby',b:1},{e:'👵',l:'grandma',b:1},
+     ]},
+  3:{bins:['🧸 Hračka','🎨 Barva'],
+     items:[
+      {e:'🪆',l:'doll',b:0},{e:'🚗',l:'car',b:0},{e:'🥁',l:'drum',b:0},
+      {e:'✈️',l:'plane',b:0},{e:'⚽',l:'ball',b:0},{e:'🤖',l:'robot',b:0},
+      {e:'🔴',l:'red',b:1},{e:'🔵',l:'blue',b:1},{e:'🟡',l:'yellow',b:1},
+      {e:'🟢',l:'green',b:1},{e:'🟣',l:'purple',b:1},{e:'🟠',l:'orange',b:1},
+     ]},
+  4:{bins:['☀️ Léto','❄️ Zima'],
+     items:[
+      {e:'👕',l:'T-shirt',b:0},{e:'👗',l:'skirt',b:0},{e:'👟',l:'shoes',b:0},
+      {e:'🧥',l:'jumper',b:1},{e:'🧢',l:'hat',b:1},{e:'🧦',l:'socks',b:1},
+      {e:'🧤',l:'gloves',b:1},{e:'🧣',l:'scarf',b:1},{e:'👢',l:'boots',b:1},
+      {e:'🧶',l:'coat',b:1},
+     ]},
+  6:{bins:['🛁 Koupelna','😊 Obličej'],
+     items:[
+      {e:'🧼',l:'soap',b:0},{e:'🧴',l:'shampoo',b:0},{e:'🦆',l:'duck',b:0},
+      {e:'🪥',l:'toothbrush',b:0},{e:'🪮',l:'hairbrush',b:0},{e:'🧻',l:'towel',b:0},
+      {e:'👁️',l:'eye',b:1},{e:'👃',l:'nose',b:1},{e:'👄',l:'mouth',b:1},
+      {e:'👂',l:'ear',b:1},{e:'🤲',l:'hands',b:1},
+     ]},
+  7:{bins:['🌿 Souš','💧 Voda'],
+     items:[
+      {e:'🐕',l:'dog',b:0},{e:'🐱',l:'cat',b:0},{e:'🐯',l:'tiger',b:0},
+      {e:'🐰',l:'rabbit',b:0},{e:'🐒',l:'monkey',b:0},{e:'🐴',l:'horse',b:0},
+      {e:'🦈',l:'shark',b:1},{e:'🐊',l:'crocodile',b:1},{e:'🐟',l:'fish',b:1},
+      {e:'🐬',l:'dolphin',b:1},
+     ]},
+};
+
+/* yes/no per unit */
+const YN_DATA={
+  5:[
+    {p:'🎂',q:"Is it a birthday cake?",a:true},
+    {p:'🍕',q:"Is it ice cream?",a:false},
+    {p:'🍦',q:"Is it ice cream?",a:true},
+    {p:'🥪',q:"Is it a sandwich?",a:true},
+    {p:'🍎',q:"Is it a sweet?",a:false},
+    {p:'🎈',q:"Is it a balloon?",a:true},
+    {p:'🍬',q:"Is it a sandwich?",a:false},
+    {p:'🎁',q:"Is it a present?",a:true},
+    {p:'🍪',q:"Is it a candle?",a:false},
+    {p:'📺',q:"Is it a radio?",a:false},
+  ],
+  6:[
+    {p:'🦷',q:"Wash your teeth every day?",a:true},
+    {p:'🧼',q:"Wash your hands with soap?",a:true},
+    {p:'🍕',q:"Eat pizza in the bath?",a:false},
+    {p:'🧴',q:"Use shampoo for your hair?",a:true},
+    {p:'💧',q:"Dry your face with a towel?",a:true},
+    {p:'📺',q:"Watch TV in the bath?",a:false},
+    {p:'🦆',q:"Is a duck a bath toy?",a:true},
+    {p:'🪥',q:"Is this a toothbrush?",a:true},
+    {p:'✂️',q:"Are scissors in the bathroom?",a:false},
+    {p:'👃',q:"Is this a nose?",a:true},
+  ],
+  7:[
+    {p:'🐕',q:"Do you like dogs?",a:true},
+    {p:'🐍',q:"Is a snake a pet?",a:false},
+    {p:'🦈',q:"Does a shark live in water?",a:true},
+    {p:'🐯',q:"Is a tiger a small animal?",a:false},
+    {p:'🐰',q:"Is a rabbit fluffy?",a:true},
+    {p:'🐟',q:"Can a fish fly?",a:false},
+    {p:'🐘',q:"Is an elephant big?",a:true},
+    {p:'🐒',q:"Does a monkey live in water?",a:false},
+    {p:'🐦',q:"Can a bird fly?",a:true},
+    {p:'🐸',q:"Is a frog green?",a:true},
+  ],
+};
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let CU=null, CA=null, CAI=0;
+let gScore=0, combo=0, maxCombo=0, roundIdx=0;
+let mSel=null, sSel=null;
+let wbAnswer=[], wbTarget='', wbUsed=[];
+let memFlipped=[], memLocked=false;
+
+/* ═══════════════════════════════════════════
+   AUDIO
+═══════════════════════════════════════════ */
+let _audioCtx=null;
+function AC(){
+  if(!_audioCtx) _audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return _audioCtx;
+}
+function tone(freq,dur,type='sine',vol=0.28){
+  try{
+    const ctx=AC(), o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g);g.connect(ctx.destination);
+    o.frequency.value=freq;o.type=type;
+    g.gain.setValueAtTime(vol,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+    o.start(ctx.currentTime);o.stop(ctx.currentTime+dur);
+  }catch(e){}
+}
+function playOK(){
+  tone(523,.08);
+  setTimeout(()=>tone(659,.08),90);
+  setTimeout(()=>tone(784,.18),180);
+}
+function playWrong(){ tone(180,.25,'sawtooth',.18); }
+function playComboSound(){
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.12),i*70));
+}
+function playWin(){
+  [523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,.16),i*80));
+}
+
+function speak(text,rate=0.88){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-GB';u.rate=rate;
+  window.speechSynthesis.speak(u);
+}
+function speakSlow(text){speak(text,0.45);}
+
+function audioRow(text){
+  return `<div class="audio-row">
+    <button class="abtn" onclick="speak('${esc(text)}')">🔊 Přehrát</button>
+    <button class="abtn slow" onclick="speakSlow('${esc(text)}')">🐢 Pomalu</button>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   COMBO + OTTO
+═══════════════════════════════════════════ */
+function addCombo(){
+  combo++;
+  if(combo>maxCombo)maxCombo=combo;
+  const b=document.getElementById('combo-badge');
+  if(b){
+    b.textContent=`🔥 ${combo} v řadě`;
+    b.classList.toggle('hot',combo>=3);
+  }
+  if(combo===3||combo===5||combo===7) playComboSound();
+  ottoHappy();
+}
+function resetCombo(){
+  combo=0;
+  const b=document.getElementById('combo-badge');
+  if(b){b.textContent='🔥 0 v řadě';b.classList.remove('hot');}
+  ottoSad();
+}
+function ottoHappy(){
+  const o=document.getElementById('otto');
+  if(!o)return;
+  o.classList.remove('sad');o.classList.add('happy');
+  setTimeout(()=>o.classList.remove('happy'),450);
+}
+function ottoSad(){
+  const o=document.getElementById('otto');
+  if(!o)return;
+  o.classList.remove('happy');o.classList.add('sad');
+  setTimeout(()=>o.classList.remove('sad'),450);
+}
+
+function updScore(){
+  const s=document.getElementById('g-score');
+  if(s) s.textContent='⭐ '+gScore;
+}
+function setDots(tot,done){
+  const d=document.getElementById('g-dots');
+  if(!d)return;
+  d.innerHTML=Array(tot).fill(0).map((_,i)=>
+    `<div class="dot ${i<done?'done':i===done?'cur':''}"></div>`).join('');
+}
+
+/* ═══════════════════════════════════════════
+   SCREENS + BG
+═══════════════════════════════════════════ */
+function go(id){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setUnitBg(cls){
+  document.body.className=cls||'uhome';
+  buildFloats(cls);
+}
+function buildFloats(cls){
+  const layer=document.getElementById('bg-layer');
+  layer.innerHTML='';
+  const u=UNITS.find(u=>'u'+u.id===cls);
+  if(!u)return;
+  u.floats.forEach((f,i)=>{
+    const el=document.createElement('div');
+    el.className='fl';
+    el.textContent=f;
+    el.style.left=Math.random()*96+'vw';
+    el.style.animationDuration=(12+Math.random()*18)+'s';
+    el.style.animationDelay=(Math.random()*14)+'s';
+    layer.appendChild(el);
+    // extra copies
+    for(let k=0;k<2;k++){
+      const e2=el.cloneNode(true);
+      e2.style.left=Math.random()*96+'vw';
+      e2.style.animationDuration=(12+Math.random()*18)+'s';
+      e2.style.animationDelay=(Math.random()*14)+'s';
+      layer.appendChild(e2);
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   HOME + UNIT GRID
+═══════════════════════════════════════════ */
+function init(){
+  setUnitBg('uhome');
+  renderGrid();
+  renderAchievements('home-ach');
+}
+
+function renderGrid(){
+  document.getElementById('ugrid').innerHTML=UNITS.map(u=>{
+    const pct=unitProgress(u.id);
+    const star=getBest(u.id);
+    return `<div class="ucard" data-u="${u.id}" onclick="openUnit(${u.id})">
+      <span class="ue">${u.emoji}</span>
+      <div class="un">Unit ${u.id}</div>
+      <div class="ut">${u.name}</div>
+      <div class="uc">${u.nameCz}</div>
+      <div class="us">${'⭐'.repeat(star)}${'☆'.repeat(Math.max(0,3-star))}</div>
+      <div class="uprog"><div class="uprogfill" style="width:${pct}%;background:${unitColor(u.id)};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function unitColor(id){
+  return ['','#F59E0B','#38BDF8','#EF4444','#A78BFA','#FB7185','#14B8A6','#84CC16'][id]||'#F59E0B';
+}
+
+/* ═══════════════════════════════════════════
+   UNIT DETAIL
+═══════════════════════════════════════════ */
+function openUnit(id){
+  CU=UNITS.find(u=>u.id===id);
+  setUnitBg(CU.bg);
+
+  document.getElementById('ubanner').innerHTML=`
+    <div class="ubanner">
+      <span class="be">${CU.emoji}</span>
+      <div>
+        <div class="bt">Unit ${CU.id}: ${CU.name}</div>
+        <div class="bs">${CU.nameCz} · ${CU.words.length} slovíček · ${CU.activities.length} aktivit</div>
+      </div>
+    </div>`;
+
+  document.getElementById('agrid').innerHTML=CU.activities.map((a,i)=>{
+    const s=getStars(CU.id,i);
+    return `<div class="acard" onclick="startAct(${i})">
+      <span class="ai">${a.icon}</span>
+      <div class="an">${a.title}</div>
+      <div class="ad">${typeLabel(a.type)}</div>
+      <div class="aw">${'⭐'.repeat(s)}${'☆'.repeat(Math.max(0,3-s))}</div>
+    </div>`;
+  }).join('');
+  go('sc-unit');
+}
+
+function typeLabel(t){
+  return{match:'Přiřazování',memory:'Paměťová hra',wordbuilder:'Skládání písmen',
+    count:'Počítání',color:'Barvení',sort:'Třídění',yesno:'Ano / Ne'}[t]||t;
+}
+
+/* ═══════════════════════════════════════════
+   START ACTIVITY
+═══════════════════════════════════════════ */
+function startAct(idx){
+  CAI=idx;
+  CA=JSON.parse(JSON.stringify(CU.activities[idx]));
+  gScore=0;combo=0;maxCombo=0;roundIdx=0;
+  mSel=null;sSel=null;
+  wbAnswer=[];wbTarget='';wbUsed=[];
+  memFlipped=[];memLocked=false;
+
+  document.getElementById('g-icon').textContent=CA.icon;
+  document.getElementById('g-title').textContent=CA.title;
+  document.getElementById('g-instr').textContent=CA.instr;
+  document.getElementById('g-score').textContent='⭐ 0';
+  document.getElementById('combo-badge').textContent='🔥 0 v řadě';
+  document.getElementById('combo-badge').classList.remove('hot');
+  document.getElementById('otto').className='otto';
+  document.getElementById('game-back').onclick=()=>{go('sc-unit');openUnit(CU.id);};
+  go('sc-game');
+  renderGame();
+}
+
+function renderGame(){
+  const t=CA.type;
+  if(t==='match')       initMatch();
+  else if(t==='memory') initMemory();
+  else if(t==='wordbuilder') initWB();
+  else if(t==='count')  initCount();
+  else if(t==='color')  initColor();
+  else if(t==='sort')   initSort();
+  else if(t==='yesno')  initYN();
+}
+
+/* ═══════════════════════════════════════════
+   GAME: MATCH
+═══════════════════════════════════════════ */
+function initMatch(){
+  mSel=null;
+  const pool=shuffle([...CU.words]).slice(0,9);
+  const lefts=shuffle([...pool]);
+  const rights=shuffle([...pool]);
+  setDots(pool.length,0);
+
+  document.getElementById('g-body').innerHTML=`
+    <div class="match-grid">
+      <div>
+        <div class="mcol-lbl">🖼️ Obrázek</div>
+        ${lefts.map(p=>`
+          <div class="mi" data-id="${esc(p.en)}" data-side="L" onclick="pickMatch(this)">
+            <span class="me">${p.e}</span>
+          </div>`).join('')}
+      </div>
+      <div>
+        <div class="mcol-lbl">🔤 Slovo</div>
+        ${rights.map(p=>`
+          <div class="mi" data-id="${esc(p.en)}" data-side="R" onclick="pickMatch(this)">
+            ${p.en}
+            <div style="font-size:.65rem;color:var(--muted);font-weight:700;margin-top:2px;">/${p.ph}/</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function pickMatch(el){
+  if(el.classList.contains('done'))return;
+  if(!mSel){mSel=el;el.classList.add('sel');return;}
+  if(mSel.dataset.side===el.dataset.side){
+    mSel.classList.remove('sel');mSel=el;el.classList.add('sel');return;
+  }
+  if(mSel.dataset.id===el.dataset.id){
+    mSel.classList.remove('sel');mSel.classList.add('done');el.classList.add('done');
+    const w=CU.words.find(w=>w.en===mSel.dataset.id);
+    if(w) speak(w.en);
+    playOK();gScore++;updScore();addCombo();
+    const done=document.querySelectorAll('.mi.done').length/2;
+    const total=document.querySelectorAll('.mi').length/2;
+    setDots(total,done);
+    if(done===total) setTimeout(finishGame,600);
+  } else {
+    const ms=mSel,me=el;
+    ms.classList.remove('sel');ms.classList.add('bad');me.classList.add('bad');
+    playWrong();resetCombo();
+    setTimeout(()=>{ms.classList.remove('bad');me.classList.remove('bad');},400);
+  }
+  mSel=null;
+}
+
+/* ═══════════════════════════════════════════
+   GAME: MEMORY
+═══════════════════════════════════════════ */
+function initMemory(){
+  const pool=shuffle([...CU.words]).slice(0,8);
+  // each word appears twice: once as emoji card, once as word card
+  const cards=shuffle([
+    ...pool.map(w=>({id:w.en,type:'emoji',e:w.e,label:w.e})),
+    ...pool.map(w=>({id:w.en,type:'word', e:w.e,label:w.en, ph:w.ph})),
+  ]);
+  memFlipped=[];memLocked=false;
+  setDots(pool.length,0);
+
+  // responsive grid
+  const cols=window.innerWidth<420?4:4;
+  document.getElementById('g-body').innerHTML=`
+    <div class="mem-grid" style="grid-template-columns:repeat(${cols},1fr);">
+      ${cards.map((c,i)=>`
+        <div class="mem-card" data-id="${esc(c.id)}" data-type="${c.type}" data-idx="${i}" onclick="flipMem(this)">
+          <div class="mem-inner">
+            <div class="mem-face">?</div>
+            <div class="mem-back">
+              ${c.type==='emoji'
+                ?`<span class="mb-e">${c.e}</span>`
+                :`<span class="mb-w">${c.label}<br><small>/${c.ph}/</small></span>`}
+            </div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function flipMem(el){
+  if(memLocked)return;
+  if(el.classList.contains('flipped')||el.classList.contains('matched'))return;
+  el.classList.add('flipped');
+  memFlipped.push(el);
+  if(memFlipped.length<2)return;
+  memLocked=true;
+  const [a,b]=memFlipped;
+  if(a.dataset.id===b.dataset.id && a.dataset.type!==b.dataset.type){
+    a.classList.add('matched');b.classList.add('matched');
+    const w=CU.words.find(w=>w.en===a.dataset.id);
+    if(w) speak(w.en);
+    playOK();gScore++;updScore();addCombo();
+    const matched=document.querySelectorAll('.mem-card.matched').length/2;
+    const total=document.querySelectorAll('.mem-card').length/2;
+    setDots(total,matched);
+    memFlipped=[];memLocked=false;
+    if(matched===total) setTimeout(finishGame,700);
+  } else {
+    a.classList.add('wrong');b.classList.add('wrong');
+    playWrong();resetCombo();
+    setTimeout(()=>{
+      a.classList.remove('flipped','wrong');
+      b.classList.remove('flipped','wrong');
+      memFlipped=[];memLocked=false;
+    },1100);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GAME: WORD BUILDER
+═══════════════════════════════════════════ */
+const WB_POOL={
+  1:['pen','bag','mum','dad','book','rubber'],
+  2:['one','two','six','ten','nine','four','five'],
+  3:['red','car','doll','drum','blue','ball','kite','pink'],
+  4:['hat','coat','socks','shoes','jeans','dress','scarf'],
+  5:['cake','party','radio','grapes','candle','balloon'],
+  6:['soap','duck','nose','eye','ear','mouth','towel','hands'],
+  7:['dog','cat','bird','fish','frog','horse','mouse','shark'],
+};
+
+let wbWords=[], wbRound=0;
+
+function initWB(){
+  const pool=WB_POOL[CU.id]||CU.words.map(w=>w.en).filter(w=>w.length<=7);
+  wbWords=shuffle([...pool]).slice(0,8);
+  wbRound=0;
+  setDots(wbWords.length,0);
+  renderWBRound();
+}
+
+function renderWBRound(){
+  if(wbRound>=wbWords.length){finishGame();return;}
+  wbTarget=wbWords[wbRound].toLowerCase();
+  wbAnswer=[];
+  wbUsed=new Array(wbTarget.length).fill(false);
+  const w=CU.words.find(wd=>wd.en.toLowerCase()===wbTarget)||
+          {e:'❓',cs:'?',ph:'?',en:wbTarget};
+  const letters=shuffle([...wbTarget.split(''),...extraLetters(wbTarget)]);
+  setDots(wbWords.length,wbRound);
+
+  document.getElementById('g-body').innerHTML=`
+    <div class="wb-hint">
+      <span class="wb-emoji">${w.e}</span>
+      <div class="wb-cs">${w.cs}</div>
+      <div class="wb-en-hint">Jak se to řekne anglicky?</div>
+      ${audioRow(w.en)}
+    </div>
+    <div class="wb-answer" id="wb-ans">
+      ${Array(wbTarget.length).fill('<div class="wb-blank"></div>').join('')}
+    </div>
+    <div class="wb-keys" id="wb-keys">
+      ${letters.map((l,i)=>`
+        <button class="wb-key" id="wbk${i}" onclick="wbPress(${i},'${l}')">${l.toUpperCase()}</button>
+      `).join('')}
+      <button class="wb-key wb-del" onclick="wbDel()">⌫</button>
+    </div>
+    <button class="wb-hint-btn" onclick="wbHint()">💡 Nápověda (první písmeno)</button>`;
+}
+
+function extraLetters(word){
+  const alpha='abcdefghijklmnoprstuvwxyz';
+  const extra=[];
+  const target=word.split('');
+  let attempts=0;
+  while(extra.length<Math.max(3,word.length) && attempts<40){
+    const l=alpha[Math.floor(Math.random()*alpha.length)];
+    if(!target.includes(l)||extra.filter(x=>x===l).length<2) extra.push(l);
+    attempts++;
+  }
+  return extra;
+}
+
+function wbPress(idx,letter){
+  if(wbAnswer.length>=wbTarget.length)return;
+  const btn=document.getElementById('wbk'+idx);
+  if(!btn||btn.disabled)return;
+  btn.disabled=true;
+  wbAnswer.push({letter,keyIdx:idx});
+  renderWBAnswer();
+  if(wbAnswer.length===wbTarget.length) checkWB();
+}
+
+function wbDel(){
+  if(!wbAnswer.length)return;
+  const last=wbAnswer.pop();
+  const btn=document.getElementById('wbk'+last.keyIdx);
+  if(btn) btn.disabled=false;
+  renderWBAnswer();
+}
+
+function renderWBAnswer(){
+  const ans=document.getElementById('wb-ans');
+  if(!ans)return;
+  ans.innerHTML=wbAnswer.map(a=>
+    `<div class="wb-letter">${a.letter.toUpperCase()}</div>`
+  ).join('')+
+  Array(Math.max(0,wbTarget.length-wbAnswer.length)).fill('<div class="wb-blank"></div>').join('');
+}
+
+function checkWB(){
+  const ans=document.getElementById('wb-ans');
+  const typed=wbAnswer.map(a=>a.letter).join('').toLowerCase();
+  if(typed===wbTarget){
+    if(ans){ans.classList.add('ok');setTimeout(()=>ans.classList.remove('ok'),500);}
+    speak(wbTarget);playOK();gScore++;updScore();addCombo();
+    setTimeout(()=>{wbRound++;renderWBRound();},1000);
+  } else {
+    if(ans){ans.classList.add('no');setTimeout(()=>ans.classList.remove('no'),500);}
+    playWrong();resetCombo();
+    // clear and let try again
+    wbAnswer.forEach(a=>{
+      const b=document.getElementById('wbk'+a.keyIdx);
+      if(b) b.disabled=false;
+    });
+    wbAnswer=[];
+    renderWBAnswer();
+  }
+}
+
+function wbHint(){
+  // reveal first letter if not yet typed
+  if(wbAnswer.length===0){
+    // find a key with that letter
+    const keys=document.querySelectorAll('.wb-key:not(.wb-del):not(:disabled)');
+    for(const k of keys){
+      if(k.textContent.toLowerCase()===wbTarget[0]){
+        k.click();break;
+      }
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GAME: COUNT
+═══════════════════════════════════════════ */
+const NW={1:'one',2:'two',3:'three',4:'four',5:'five',6:'six',7:'seven',8:'eight',9:'nine',10:'ten'};
+const NP={1:'van',2:'tú',3:'thrí',4:'fór',5:'fajv',6:'siks',7:'sevn',8:'ejt',9:'najn',10:'ten'};
+
+let cRounds=[], cRound=0;
+
+function initCount(){
+  const pool=shuffle([...CU.words]).slice(0,6);
+  cRounds=pool.map(w=>({item:w.e,word:w.en,count:1+Math.floor(Math.random()*9)}));
+  cRound=0;setDots(cRounds.length,0);
+  renderCR();
+}
+
+function renderCR(){
+  if(cRound>=cRounds.length){finishGame();return;}
+  const r=cRounds[cRound];
+  setDots(cRounds.length,cRound);
+  const correct=r.count;
+  const pool=new Set([correct]);
+  let att=0;
+  while(pool.size<4&&att<40){pool.add(Math.max(1,Math.min(10,correct+Math.round((Math.random()-.5)*4))));att++;}
+  for(let i=1;pool.size<4&&i<=10;i++) pool.add(i);
+  const opts=shuffle([...pool]);
+
+  document.getElementById('g-body').innerHTML=`
+    <div class="count-stage">${Array(r.count).fill(`<span class="cei">${r.item}</span>`).join('')}</div>
+    <div class="count-q">Kolik <strong>${r.word}</strong>? Vyslov nahlas! 🔊</div>
+    ${audioRow(NW[correct]||correct)}
+    <div class="count-opts">
+      ${opts.map(n=>`
+        <button class="copt" data-n="${n}" onclick="ansC(this,${n},${correct})">
+          <span class="cw">${NW[n]||n}</span>
+          <span class="cp">/${NP[n]||''}/</span>
+        </button>`).join('')}
+    </div>`;
+}
+
+function ansC(btn,chosen,correct){
+  if(btn.parentElement.querySelector('.ok,.no'))return;
+  if(chosen===correct){
+    btn.classList.add('ok');speak(NW[correct]);playOK();gScore++;updScore();addCombo();
+    setTimeout(()=>{cRound++;renderCR();},1100);
+  } else {
+    btn.classList.add('no');
+    btn.parentElement.querySelectorAll('.copt').forEach(b=>{if(+b.dataset.n===correct)b.classList.add('ok');});
+    speak(NW[correct]);playWrong();resetCombo();
+    setTimeout(()=>{cRound++;renderCR();},1400);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GAME: COLOR
+═══════════════════════════════════════════ */
+let colRounds=[], colRound=0;
+
+function initColor(){
+  colRounds=shuffle([...(COLOR_DATA[CU.id]||[])]);
+  colRound=0;setDots(colRounds.length,0);
+  renderColR();
+}
+
+function renderColR(){
+  if(colRound>=colRounds.length){finishGame();return;}
+  const r=colRounds[colRound];
+  const ci=COLOURS[r.col]||{cs:r.col,hex:'#888',sw:['#EF4444','#22C55E','#3B82F6','#FDE047']};
+  const sw=shuffle([...ci.sw]);
+  setDots(colRounds.length,colRound);
+
+  document.getElementById('g-body').innerHTML=`
+    <div style="background:white;border-radius:24px;padding:24px 18px;box-shadow:var(--sh);margin-bottom:18px;text-align:center;">
+      <div class="color-box" id="c-box">${r.item}</div>
+      <div class="color-instr">${r.czI} <strong>${ci.cs}</strong>!</div>
+      <div class="color-en">${r.enL} <em>${r.col}</em></div>
+      ${audioRow(r.enL+' '+r.col)}
+      <div class="swatches">
+        ${sw.map(h=>`<div class="sw" style="background:${h}" data-h="${h}" data-ok="${h===ci.hex?1:0}" onclick="ansCol(this,'${h}','${ci.hex}')"></div>`).join('')}
+      </div>
+    </div>`;
+  setTimeout(()=>speak(r.enL+' '+r.col),450);
+}
+
+function ansCol(el,chosen,correct){
+  if(el.parentElement.querySelector('.ok'))return;
+  if(chosen===correct){
+    el.classList.add('ok');
+    const box=document.getElementById('c-box');
+    if(box){box.style.background=chosen;box.style.borderColor=chosen;}
+    playOK();gScore++;updScore();addCombo();
+    setTimeout(()=>{colRound++;renderColR();},1100);
+  } else {
+    el.classList.add('no');playWrong();resetCombo();
+    setTimeout(()=>el.classList.remove('no'),400);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GAME: SORT
+═══════════════════════════════════════════ */
+let sDone=0, sortItems=[];
+
+function initSort(){
+  const sd=SORT_DATA[CU.id];
+  if(!sd){document.getElementById('g-body').innerHTML='<p style="text-align:center;padding:20px;font-weight:700;color:var(--muted)">Tato aktivita se připravuje 🚧</p>';return;}
+  sSel=null;sDone=0;
+  sortItems=shuffle([...sd.items]);
+  setDots(sortItems.length,0);
+
+  document.getElementById('g-body').innerHTML=`
+    <div class="sort-chips" id="s-chips">
+      ${sortItems.map((it,i)=>`
+        <div class="chip" data-i="${i}" data-bin="${it.b}" data-label="${it.l}" onclick="pickSort(this)">
+          <span class="ce">${it.e}</span>${it.l}
+        </div>`).join('')}
+    </div>
+    <div class="sort-bins">
+      ${sd.bins.map((b,i)=>`
+        <div class="sbin" data-bin="${i}" onclick="dropSort(this)">
+          <div class="sbl">${b}</div>
+          <div class="sbc" id="sbin${i}"></div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function pickSort(el){
+  if(el.classList.contains('placed'))return;
+  document.querySelectorAll('.chip.sel').forEach(e=>e.classList.remove('sel'));
+  sSel=el;el.classList.add('sel');
+  speak(el.dataset.label);
+}
+
+function dropSort(binEl){
+  if(!sSel)return;
+  const ib=+sSel.dataset.bin, cb=+binEl.dataset.bin;
+  if(ib===cb){
+    sSel.classList.remove('sel','placed');
+    sSel.classList.add('placed');
+    const sp=document.createElement('span');
+    sp.className='sp';sp.textContent=sSel.querySelector('.ce').textContent;
+    document.getElementById('sbin'+cb).appendChild(sp);
+    binEl.classList.add('flash-ok');
+    setTimeout(()=>binEl.classList.remove('flash-ok'),500);
+    playOK();gScore++;updScore();addCombo();sDone++;
+    setDots(sortItems.length,sDone);
+    if(sDone===sortItems.length) setTimeout(finishGame,700);
+  } else {
+    binEl.classList.add('flash-no');sSel.classList.remove('sel');
+    playWrong();resetCombo();
+    setTimeout(()=>binEl.classList.remove('flash-no'),450);
+  }
+  sSel=null;
+}
+
+/* ═══════════════════════════════════════════
+   GAME: YES/NO
+═══════════════════════════════════════════ */
+let ynQ=[], ynR=0;
+
+function initYN(){
+  ynQ=shuffle([...(YN_DATA[CU.id]||[])]);
+  ynR=0;setDots(ynQ.length,0);
+  renderYN();
+}
+
+function renderYN(){
+  if(ynR>=ynQ.length){finishGame();return;}
+  const q=ynQ[ynR];
+  setDots(ynQ.length,ynR);
+  document.getElementById('g-body').innerHTML=`
+    <div class="yn-card">
+      <span class="yn-pic">${q.p}</span>
+      <div class="yn-q">${q.q}</div>
+      ${audioRow(q.q)}
+    </div>
+    <div class="yn-btns">
+      <button class="yn-btn yn-yes" onclick="ansYN(this,true,${q.a})">✅ Yes!</button>
+      <button class="yn-btn yn-no"  onclick="ansYN(this,false,${q.a})">❌ No!</button>
+    </div>`;
+  setTimeout(()=>speak(q.q),400);
+}
+
+function ansYN(btn,chosen,correct){
+  if(document.querySelector('.yn-btn.flash-ok,.yn-btn.flash-no'))return;
+  if(chosen===correct){
+    btn.classList.add('flash-ok');speak(correct?'Yes!':'No!');
+    playOK();gScore++;updScore();addCombo();
+    setTimeout(()=>{ynR++;renderYN();},1000);
+  } else {
+    btn.classList.add('flash-no');
+    document.querySelectorAll('.yn-btn').forEach(b=>{
+      if(b.classList.contains('yn-yes')===correct)b.classList.add('flash-ok');
+    });
+    speak(correct?'Yes!':'No!');playWrong();resetCombo();
+    setTimeout(()=>{ynR++;renderYN();},1300);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   FINISH
+═══════════════════════════════════════════ */
+function finishGame(){
+  const maxS={
+    match:Math.min(9,CU.words.length),
+    memory:8,wordbuilder:8,count:6,
+    color:(COLOR_DATA[CU.id]||[]).length||6,
+    sort:(SORT_DATA[CU.id]?.items||[]).length||8,
+    yesno:(YN_DATA[CU.id]||[]).length||8,
+  }[CA.type]||8;
+  const pct=gScore/Math.max(maxS,1);
+  let emoji,title,stars;
+  if(pct===1)     {emoji='🏆';title='Perfektní!';   stars=3;}
+  else if(pct>=.7){emoji='🎉';title='Výborně!';     stars=2;}
+  else if(pct>=.4){emoji='💪';title='Dobrá práce!'; stars=1;}
+  else            {emoji='📖';title='Zkus znovu!';  stars=0;}
+
+  saveStars(CU.id,CAI,stars);
+  checkAchievements();
+  renderGrid();
+  openUnit(CU.id); // refresh unit panel stars too (but stay on result)
+
+  if(stars>=2){confetti();playWin();}
+
+  document.getElementById('r-e').textContent=emoji;
+  document.getElementById('r-t').textContent=title;
+  document.getElementById('r-st').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('r-combo').textContent=maxCombo>=3?`🔥 Nejlepší série: ${maxCombo}!`:'';
+  document.getElementById('r-m').textContent=`Skóre: ${gScore} / ${maxS}`;
+  document.getElementById('r-again').onclick=()=>startAct(CAI);
+  document.getElementById('r-unit').onclick=()=>{setUnitBg(CU.bg);go('sc-unit');openUnit(CU.id);};
+  go('sc-result');
+}
+
+/* ═══════════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════════ */
+function confetti(){
+  const layer=document.getElementById('conf-layer');
+  const em=['🎉','⭐','🌟','🎊','✨','🏆','💫','🎈','🥳'];
+  layer.innerHTML='';
+  for(let i=0;i<32;i++){
+    const el=document.createElement('div');
+    el.className='conf';el.textContent=em[i%em.length];
+    el.style.left=Math.random()*100+'vw';
+    el.style.fontSize=(1.2+Math.random())+'rem';
+    el.style.animationDuration=(1.5+Math.random()*2)+'s';
+    el.style.animationDelay=(Math.random()*.9)+'s';
+    layer.appendChild(el);
+  }
+  setTimeout(()=>layer.innerHTML='',4500);
+}
+
+/* ═══════════════════════════════════════════
+   ACHIEVEMENTS
+═══════════════════════════════════════════ */
+const ACHS=[
+  {id:'first',  icon:'⭐', name:'První hvězda',     cond:()=>totalStars()>=1},
+  {id:'fire',   icon:'🔥', name:'Na vlně (série 5)',cond:()=>maxCombo>=5},
+  {id:'perfect',icon:'🏆', name:'Perfektní skóre',  cond:()=>anyPerfect()},
+  {id:'half',   icon:'🎓', name:'Polovina splněna',  cond:()=>totalStars()>=21},
+  {id:'all7',   icon:'🌟', name:'Všech 7 unitů',     cond:()=>allUnitsStarted()},
+];
+
+function checkAchievements(){
+  const data=JSON.parse(localStorage.getItem('hh1_ach')||'{}');
+  ACHS.forEach(a=>{
+    if(!data[a.id]&&a.cond()){
+      data[a.id]=true;
+      localStorage.setItem('hh1_ach',JSON.stringify(data));
+    }
+  });
+  renderAchievements('home-ach');
+}
+
+function renderAchievements(elId){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const data=JSON.parse(localStorage.getItem('hh1_ach')||'{}');
+  el.innerHTML=ACHS.map(a=>`
+    <span class="ach ${data[a.id]?'unlocked':''}" title="${a.name}">${a.icon}</span>
+  `).join('');
+}
+
+function totalStars(){
+  let s=0;
+  UNITS.forEach(u=>u.activities.forEach((_,i)=>{s+=getStars(u.id,i);}));
+  return s;
+}
+function anyPerfect(){
+  const d=JSON.parse(localStorage.getItem('hh1_st')||'{}');
+  return Object.values(d).some(v=>v===3);
+}
+function allUnitsStarted(){
+  return UNITS.every(u=>u.activities.some((_,i)=>getStars(u.id,i)>0));
+}
+
+/* ═══════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════ */
+function saveStars(uid,aidx,stars){
+  const d=JSON.parse(localStorage.getItem('hh1_st')||'{}');
+  const k=uid+'_'+aidx;d[k]=Math.max(d[k]||0,stars);
+  localStorage.setItem('hh1_st',JSON.stringify(d));
+}
+function getStars(uid,aidx){
+  return (JSON.parse(localStorage.getItem('hh1_st')||'{}'))[uid+'_'+aidx]||0;
+}
+function getBest(uid){
+  const u=UNITS.find(x=>x.id===uid);if(!u)return 0;
+  const tot=u.activities.reduce((s,_,i)=>s+getStars(uid,i),0);
+  return Math.round(tot/u.activities.length);
+}
+function unitProgress(uid){
+  const u=UNITS.find(x=>x.id===uid);if(!u)return 0;
+  const max=u.activities.length*3;
+  const got=u.activities.reduce((s,_,i)=>s+getStars(uid,i),0);
+  return Math.round((got/max)*100);
+}
+
+/* ═══════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════ */
+function shuffle(a){
+  a=[...a];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function esc(s){return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+
+/* ═══════════════════════════════════════════
+   START
+═══════════════════════════════════════════ */
+init();
+</script>
+</body>
+</html>
