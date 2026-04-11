@@ -44,7 +44,6 @@
     overflow-x: hidden;
   }
 
-  /* Animated background dots */
   body::before {
     content: '';
     position: fixed;
@@ -65,7 +64,6 @@
     gap: 14px;
   }
 
-  /* HEADER */
   .header {
     background: linear-gradient(135deg, var(--choco-dark), var(--choco-mid));
     border-radius: var(--radius);
@@ -125,7 +123,20 @@
     gap: 4px;
   }
 
-  /* MASCOT AREA */
+  .demo-banner {
+    background: linear-gradient(135deg, #fff0b8, #ffe082);
+    color: #4f2b0e;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    box-shadow: var(--shadow);
+    border: 2px solid rgba(240,192,64,0.45);
+    line-height: 1.55;
+  }
+
+  .demo-banner strong { color: #3d1a08; }
+  .demo-banner.hidden { display: none; }
+  .demo-counter { margin-top: 6px; font-weight: 800; }
+
   .mascot-area {
     background: linear-gradient(135deg, var(--choco-cream), var(--choco-white));
     border-radius: var(--radius);
@@ -165,13 +176,8 @@
     transition: transform 0.3s ease;
   }
 
-  .mascot-svg-container.bounce svg {
-    animation: mascotBounce 0.5s ease;
-  }
-
-  .mascot-svg-container.wiggle svg {
-    animation: mascotWiggle 0.4s ease;
-  }
+  .mascot-svg-container.bounce svg { animation: mascotBounce 0.5s ease; }
+  .mascot-svg-container.wiggle svg { animation: mascotWiggle 0.4s ease; }
 
   @keyframes mascotBounce {
     0% { transform: translateY(0) scale(1); }
@@ -187,10 +193,7 @@
     100% { transform: rotate(0deg); }
   }
 
-  .mascot-speech {
-    flex: 1;
-    position: relative;
-  }
+  .mascot-speech { flex: 1; position: relative; }
 
   .speech-bubble {
     background: white;
@@ -227,20 +230,10 @@
     border-right-color: white;
   }
 
-  .speech-text {
-    transition: opacity 0.3s ease;
-  }
+  .speech-text { transition: opacity 0.3s ease; }
+  .speech-text.fade { opacity: 0; }
 
-  .speech-text.fade {
-    opacity: 0;
-  }
-
-  /* CONTROLS */
-  .controls-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
+  .controls-row { display: flex; gap: 12px; flex-wrap: wrap; }
 
   .control-group {
     background: rgba(245,230,208,0.15);
@@ -262,11 +255,7 @@
     opacity: 0.85;
   }
 
-  .btn-group {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
   .btn-toggle {
     padding: 8px 16px;
@@ -323,7 +312,6 @@
     transform: translateY(-1px);
   }
 
-  /* GAME AREA */
   .game-area {
     background: linear-gradient(135deg, var(--choco-cream), var(--choco-white));
     border-radius: var(--radius);
@@ -363,13 +351,7 @@
     min-height: 120px;
   }
 
-  .fraction {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    position: relative;
-  }
+  .fraction { display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; }
 
   .fraction-num, .fraction-den {
     font-family: 'Baloo 2', cursive;
@@ -389,23 +371,16 @@
     border-radius: 2px;
   }
 
-  .operator {
+  .operator, .equals {
     font-family: 'Baloo 2', cursive;
     font-size: 2.4rem;
     font-weight: 700;
     color: var(--choco-mid);
     line-height: 1;
-    padding: 0 4px;
   }
 
-  .equals {
-    font-family: 'Baloo 2', cursive;
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: var(--choco-mid);
-  }
+  .operator { padding: 0 4px; }
 
-  /* ANSWER INPUT */
   .answer-section {
     display: flex;
     flex-direction: column;
@@ -421,12 +396,7 @@
     letter-spacing: 0.5px;
   }
 
-  .answer-fraction {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
+  .answer-fraction { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 
   .answer-input {
     font-family: 'Baloo 2', cursive;
@@ -443,20 +413,9 @@
     padding: 4px 8px;
   }
 
-  .answer-input:focus {
-    border-bottom-color: var(--choco-dark);
-  }
-
-  .answer-input.correct {
-    border-bottom-color: var(--green);
-    color: var(--green);
-  }
-
-  .answer-input.wrong {
-    border-bottom-color: var(--red);
-    color: var(--red);
-    animation: shake 0.3s ease;
-  }
+  .answer-input:focus { border-bottom-color: var(--choco-dark); }
+  .answer-input.correct { border-bottom-color: var(--green); color: var(--green); }
+  .answer-input.wrong { border-bottom-color: var(--red); color: var(--red); animation: shake 0.3s ease; }
 
   .answer-line {
     width: 80px;
@@ -471,15 +430,8 @@
     75% { transform: translateX(8px); }
   }
 
-  .whole-number-section {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+  .whole-number-section { display: none; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
-  /* BUTTONS */
   .btn-primary {
     padding: 14px 36px;
     background: linear-gradient(135deg, var(--choco-dark), var(--choco-mid));
@@ -501,9 +453,7 @@
     background: linear-gradient(135deg, var(--choco-mid), var(--choco-light));
   }
 
-  .btn-primary:active {
-    transform: translateY(0);
-  }
+  .btn-primary:active { transform: translateY(0); }
 
   .btn-hint {
     padding: 10px 24px;
@@ -566,7 +516,6 @@
     margin-top: 8px;
   }
 
-  /* FEEDBACK */
   .feedback-area {
     background: linear-gradient(135deg, var(--choco-cream), var(--choco-white));
     border-radius: var(--radius);
@@ -582,24 +531,13 @@
   .feedback-area.wrong-fb { border-color: #ffb74d; background: linear-gradient(135deg, #fff8e1, #fff3e0); }
   .feedback-area.hint-fb { border-color: var(--blue); background: linear-gradient(135deg, #e3f2fd, #e8eaf6); }
 
-  .feedback-title {
-    font-family: 'Baloo 2', cursive;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
+  .feedback-title { font-family: 'Baloo 2', cursive; font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
   .feedback-area.correct-fb .feedback-title { color: #2e7d32; }
   .feedback-area.wrong-fb .feedback-title { color: #e65100; }
   .feedback-area.hint-fb .feedback-title { color: #1565c0; }
 
-  .feedback-text {
-    font-size: 0.97rem;
-    color: var(--text-dark);
-    line-height: 1.6;
-  }
+  .feedback-text { font-size: 0.97rem; color: var(--text-dark); line-height: 1.6; }
 
-  /* PROGRESS BAR */
   .progress-section {
     background: rgba(245,230,208,0.15);
     border-radius: var(--radius);
@@ -624,21 +562,9 @@
     opacity: 0.85;
   }
 
-  .progress-stars {
-    display: flex;
-    gap: 4px;
-  }
-
-  .star {
-    font-size: 1.3rem;
-    filter: grayscale(1) opacity(0.4);
-    transition: all 0.3s ease;
-  }
-
-  .star.earned {
-    filter: none;
-    animation: starPop 0.4s ease;
-  }
+  .progress-stars { display: flex; gap: 4px; }
+  .star { font-size: 1.3rem; filter: grayscale(1) opacity(0.4); transition: all 0.3s ease; }
+  .star.earned { filter: none; animation: starPop 0.4s ease; }
 
   @keyframes starPop {
     0% { transform: scale(1); }
@@ -661,7 +587,6 @@
     box-shadow: 0 0 10px rgba(240,192,64,0.5);
   }
 
-  /* POINTS EXPLOSION */
   .points-popup {
     position: fixed;
     font-family: 'Baloo 2', cursive;
@@ -680,7 +605,6 @@
     100% { transform: translateY(-120px) scale(1); opacity: 0; }
   }
 
-  /* CONFETTI */
   .confetti-piece {
     position: fixed;
     width: 10px;
@@ -696,7 +620,6 @@
     100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
   }
 
-  /* HINT BOX */
   .hint-box {
     background: linear-gradient(135deg, #e3f2fd, #e8eaf6);
     border: 2px solid #90caf9;
@@ -745,7 +668,6 @@
     margin-top: 2px;
   }
 
-  /* REVEAL DIALOG */
   .reveal-dialog {
     background: linear-gradient(135deg, var(--purple-light), #f3e5f5);
     border: 2px solid #ce93d8;
@@ -757,25 +679,14 @@
   }
 
   .reveal-dialog.show { display: block; }
+  .reveal-question { font-weight: 700; color: var(--purple); font-size: 1rem; margin-bottom: 12px; }
+  .reveal-btns { display: flex; gap: 10px; justify-content: center; }
 
-  .reveal-question {
-    font-weight: 700;
-    color: var(--purple);
-    font-size: 1rem;
-    margin-bottom: 12px;
-  }
-
-  .reveal-btns {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-  }
-
-  .btn-yes {
-    padding: 8px 20px;
-    background: var(--purple);
-    color: white;
-    border: none;
+  .btn-yes,
+  .btn-no,
+  .btn-demo-full,
+  .btn-demo-restart {
+    padding: 10px 20px;
     border-radius: 50px;
     font-family: 'Nunito', sans-serif;
     font-weight: 700;
@@ -783,26 +694,15 @@
     transition: all 0.2s;
   }
 
-  .btn-no {
-    padding: 8px 20px;
-    background: white;
-    color: var(--purple);
-    border: 2px solid var(--purple);
-    border-radius: 50px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .btn-yes { background: var(--purple); color: white; border: none; }
+  .btn-no { background: white; color: var(--purple); border: 2px solid var(--purple); }
+  .btn-yes:hover, .btn-no:hover, .btn-demo-full:hover, .btn-demo-restart:hover { transform: translateY(-1px); }
 
-  .btn-yes:hover, .btn-no:hover { transform: translateY(-1px); }
-
-  /* LEVEL UP OVERLAY */
-  .level-overlay {
+  .level-overlay,
+  .demo-finish-overlay {
     position: fixed;
     inset: 0;
     background: rgba(61,26,8,0.85);
-    display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
@@ -810,16 +710,17 @@
     backdrop-filter: blur(4px);
   }
 
-  .level-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
-
+  .level-overlay.show,
+  .demo-finish-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  .level-card {
+  .level-card,
+  .demo-finish-card {
     background: linear-gradient(135deg, var(--choco-cream), var(--choco-white));
     border-radius: 24px;
     padding: 40px 50px;
     text-align: center;
-    max-width: 360px;
+    max-width: 420px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     border: 3px solid var(--gold);
     animation: levelPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -833,6 +734,49 @@
   .level-emoji { font-size: 4rem; margin-bottom: 12px; }
   .level-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--choco-dark); }
   .level-sub { color: var(--text-mid); font-size: 1rem; margin: 10px 0 24px; }
+
+  .demo-finish-card h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2rem;
+    color: var(--choco-dark);
+    margin-bottom: 10px;
+  }
+
+  .demo-finish-card p {
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+
+  .demo-finish-stats {
+    background: rgba(240,192,64,0.16);
+    border: 2px solid rgba(240,192,64,0.3);
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    font-weight: 800;
+    color: var(--choco-dark);
+    line-height: 1.6;
+  }
+
+  .demo-finish-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-demo-full {
+    background: linear-gradient(135deg, var(--green), #388e3c);
+    color: white;
+    border: none;
+  }
+
+  .btn-demo-restart {
+    background: white;
+    color: var(--choco-dark);
+    border: 2px solid var(--choco-mid);
+  }
 
   .simplify-hint {
     background: #fff3e0;
@@ -848,18 +792,6 @@
 
   .simplify-hint.show { display: block; }
 
-  /* RESPONSIVE */
-  @media (max-width: 500px) {
-    .header-title { font-size: 1.3rem; }
-    .score-badge { padding: 4px 10px; font-size: 0.85rem; }
-    .fraction-num, .fraction-den { font-size: 1.7rem; }
-    .operator { font-size: 1.9rem; }
-    .answer-input { font-size: 1.6rem; width: 64px; }
-    .controls-row { gap: 8px; }
-    .game-area { padding: 18px; }
-  }
-
-  /* HELP TEXT */
   .help-text {
     text-align: center;
     color: rgba(245,230,208,0.6);
@@ -868,14 +800,7 @@
     font-style: italic;
   }
 
-  /* ATTEMPT INDICATOR */
-  .attempt-dots {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    margin-top: 8px;
-  }
-
+  .attempt-dots { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
   .attempt-dot {
     width: 10px;
     height: 10px;
@@ -884,12 +809,18 @@
     transition: background 0.3s;
   }
 
-  .attempt-dot.used {
-    background: var(--red);
-  }
+  .attempt-dot.used { background: var(--red); }
+  .attempt-dot.ok { background: var(--green); }
 
-  .attempt-dot.ok {
-    background: var(--green);
+  @media (max-width: 500px) {
+    .header-title { font-size: 1.3rem; }
+    .score-badge { padding: 4px 10px; font-size: 0.85rem; }
+    .fraction-num, .fraction-den { font-size: 1.7rem; }
+    .operator { font-size: 1.9rem; }
+    .answer-input { font-size: 1.6rem; width: 64px; }
+    .controls-row { gap: 8px; }
+    .game-area { padding: 18px; }
+    .level-card, .demo-finish-card { padding: 28px 20px; }
   }
 </style>
 </head>
@@ -897,7 +828,6 @@
 
 <div class="app-wrapper">
 
-  <!-- HEADER -->
   <div class="header">
     <div class="header-title">Fajn<span>Zlomky</span> 🍫</div>
     <div class="score-panel">
@@ -906,7 +836,12 @@
     </div>
   </div>
 
-  <!-- MASCOT -->
+  <div class="demo-banner hidden" id="demoBanner">
+    <strong>🎁 Demo verze</strong> – právě hraješ ukázku modulu FajnZlomky.
+    V demu je dostupná jen <strong>lehká obtížnost</strong>, jen <strong>sčítání</strong> a celkem <strong>8 příkladů</strong>.
+    <div class="demo-counter">Postup demem: <span id="demoCounter">0 / 8</span></div>
+  </div>
+
   <div class="mascot-area">
     <div class="mascot-svg-container" id="mascotContainer">
       <svg id="mascotSvg" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -918,7 +853,6 @@
     </div>
   </div>
 
-  <!-- CONTROLS -->
   <div class="controls-row">
     <div class="control-group">
       <div class="control-label">⚡ Obtížnost</div>
@@ -939,7 +873,6 @@
     </div>
   </div>
 
-  <!-- PROGRESS -->
   <div class="progress-section">
     <div class="progress-row">
       <div class="progress-label">Úroveň <span id="levelDisplay">1</span></div>
@@ -956,11 +889,8 @@
     </div>
   </div>
 
-  <!-- GAME AREA -->
   <div class="game-area">
-    <div class="example-display" id="exampleDisplay">
-      <!-- Generated dynamically -->
-    </div>
+    <div class="example-display" id="exampleDisplay"></div>
 
     <div class="answer-section">
       <div class="answer-label">Tvůj výsledek:</div>
@@ -1008,7 +938,6 @@
     <div class="help-text">Zadej čitatele → Enter → jmenovatele → Enter → zkontrolovat</div>
   </div>
 
-  <!-- FEEDBACK -->
   <div class="feedback-area" id="feedbackArea">
     <div class="feedback-title" id="feedbackTitle"></div>
     <div class="feedback-text" id="feedbackText"></div>
@@ -1016,7 +945,6 @@
 
 </div>
 
-<!-- LEVEL UP OVERLAY -->
 <div class="level-overlay" id="levelOverlay">
   <div class="level-card">
     <div class="level-emoji" id="levelEmoji">🎉</div>
@@ -1026,7 +954,30 @@
   </div>
 </div>
 
+<div class="demo-finish-overlay" id="demoFinishOverlay">
+  <div class="demo-finish-card">
+    <h2>🍫 Konec dema</h2>
+    <p>
+      Paráda. Demo jsi dohrál až do konce. V plné verzi jsou dostupné další operace,
+      vyšší obtížnosti a neomezené pokračování.
+    </p>
+    <div class="demo-finish-stats" id="demoFinishStats">Skóre: 0 bodů</div>
+    <div class="demo-finish-actions">
+      <button class="btn-demo-full" onclick="goToFullVersion()">Chci plnou verzi</button>
+      <button class="btn-demo-restart" onclick="restartDemo()">Zahrát demo znovu</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// ============================================================
+// MODE
+// ============================================================
+const urlParams = new URLSearchParams(window.location.search);
+const DEMO_MODE = urlParams.has('demo');
+const DEMO_MAX_EXERCISES = 8;
+const FULL_VERSION_URL = window.location.pathname;
+
 // ============================================================
 // STATE
 // ============================================================
@@ -1035,16 +986,19 @@ let activeOps = ['+'];
 let score = 0;
 let streak = 0;
 let level = 1;
-let levelProgress = 0; // 0-100
+let levelProgress = 0;
 let starsEarned = 0;
 
 let currentProblem = null;
-let attempts = 0; // attempts at current problem
+let attempts = 0;
 let hintShown = false;
 let revealDialogShown = false;
 let answered = false;
+let problemClosed = false;
 
-// Audio context
+let demoSolved = 0;
+let demoFinished = false;
+
 let audioCtx = null;
 
 function getAudioCtx() {
@@ -1058,7 +1012,6 @@ function getAudioCtx() {
 // MASCOT DEFINITIONS
 // ============================================================
 const animalHeads = [
-  // Cat
   (color) => `
     <ellipse cx="50" cy="22" rx="20" ry="18" fill="${color}"/>
     <polygon points="34,10 30,2 40,8" fill="${color}"/>
@@ -1073,7 +1026,6 @@ const animalHeads = [
     <line x1="62" y1="27" x2="75" y2="25" stroke="#555" stroke-width="1.2"/>
     <line x1="62" y1="29" x2="75" y2="31" stroke="#555" stroke-width="1.2"/>
   `,
-  // Dog
   (color) => `
     <ellipse cx="50" cy="22" rx="20" ry="17" fill="${color}"/>
     <ellipse cx="34" cy="20" rx="8" ry="12" fill="${color}"/>
@@ -1085,7 +1037,6 @@ const animalHeads = [
     <ellipse cx="50" cy="30" rx="6" ry="4" fill="#c07070"/>
     <ellipse cx="50" cy="26" rx="3" ry="2.5" fill="#e0a0a0"/>
   `,
-  // Bunny
   (color) => `
     <ellipse cx="50" cy="26" rx="18" ry="16" fill="${color}"/>
     <ellipse cx="40" cy="8" rx="5" ry="14" fill="${color}"/>
@@ -1098,7 +1049,6 @@ const animalHeads = [
     <ellipse cx="56" cy="22" rx="2" ry="3" fill="white"/>
     <ellipse cx="50" cy="31" rx="3" ry="2" fill="#ffb3c1"/>
   `,
-  // Bear
   (color) => `
     <ellipse cx="50" cy="24" rx="20" ry="18" fill="${color}"/>
     <ellipse cx="33" cy="14" rx="9" ry="9" fill="${color}"/>
@@ -1110,7 +1060,6 @@ const animalHeads = [
     <ellipse cx="50" cy="30" rx="7" ry="5" fill="${color}" opacity="0.7"/>
     <ellipse cx="50" cy="31" rx="3.5" ry="2.5" fill="#333" opacity="0.6"/>
   `,
-  // Fox
   (color) => `
     <polygon points="50,2 30,22 70,22" fill="#e86030"/>
     <ellipse cx="50" cy="24" rx="18" ry="16" fill="${color}"/>
@@ -1123,7 +1072,6 @@ const animalHeads = [
     <ellipse cx="50" cy="29" rx="5" ry="4" fill="white" opacity="0.8"/>
     <ellipse cx="50" cy="30" rx="3" ry="2" fill="#e86030" opacity="0.6"/>
   `,
-  // Owl
   (color) => `
     <ellipse cx="50" cy="22" rx="18" ry="17" fill="${color}"/>
     <polygon points="42,6 38,14 46,14" fill="${color}"/>
@@ -1136,7 +1084,6 @@ const animalHeads = [
     <circle cx="58.5" cy="19.5" r="1.5" fill="white"/>
     <polygon points="50,27 47,32 53,32" fill="#e8a030"/>
   `,
-  // Frog
   (color) => `
     <circle cx="36" cy="16" r="9" fill="${color}"/>
     <circle cx="64" cy="16" r="9" fill="${color}"/>
@@ -1149,7 +1096,6 @@ const animalHeads = [
     <circle cx="65" cy="12" r="1" fill="white"/>
     <path d="M42,33 Q50,38 58,33" stroke="#555" stroke-width="2" fill="none"/>
   `,
-  // Penguin (special - always black/white)
   (color) => `
     <ellipse cx="50" cy="22" rx="18" ry="18" fill="#2a2a2a"/>
     <ellipse cx="50" cy="26" rx="12" ry="13" fill="white"/>
@@ -1165,19 +1111,17 @@ const animalHeads = [
 ];
 
 const animalNames = ['Kočka', 'Pes', 'Zajíček', 'Medvěd', 'Liška', 'Sova', 'Žabák', 'Tučňák'];
-
 let currentAnimalIndex = 0;
 
 function drawMascot(mood = 'neutral') {
   const svg = document.getElementById('mascotSvg');
   const container = document.getElementById('mascotContainer');
 
-  // Body colors based on mood
   const bodyColor = mood === 'happy' ? '#8B4513' : mood === 'sad' ? '#a0522d' : '#6b3a1f';
   const chocoColor = mood === 'happy' ? '#c8845a' : '#a0522d';
-  const mouthPath = mood === 'happy' 
-    ? 'M43,80 Q50,88 57,80' 
-    : mood === 'sad' 
+  const mouthPath = mood === 'happy'
+    ? 'M43,80 Q50,88 57,80'
+    : mood === 'sad'
     ? 'M43,86 Q50,80 57,86'
     : 'M44,82 Q50,85 56,82';
 
@@ -1186,29 +1130,20 @@ function drawMascot(mood = 'neutral') {
   const headSvg = headFunc(headColor);
 
   svg.innerHTML = `
-    <!-- Body -->
     <rect x="30" y="50" width="40" height="45" rx="10" fill="${bodyColor}"/>
-    <!-- Chocolate segments on body -->
     <line x1="50" y1="50" x2="50" y2="95" stroke="${chocoColor}" stroke-width="2" opacity="0.5"/>
     <line x1="30" y1="65" x2="70" y2="65" stroke="${chocoColor}" stroke-width="2" opacity="0.5"/>
     <line x1="30" y1="80" x2="70" y2="80" stroke="${chocoColor}" stroke-width="2" opacity="0.5"/>
-    <!-- Arms -->
     <ellipse cx="22" cy="65" rx="9" ry="6" fill="${bodyColor}" transform="rotate(-20,22,65)"/>
     <ellipse cx="78" cy="65" rx="9" ry="6" fill="${bodyColor}" transform="rotate(20,78,65)"/>
-    <!-- Legs -->
     <ellipse cx="40" cy="98" rx="8" ry="5" fill="${bodyColor}"/>
     <ellipse cx="60" cy="98" rx="8" ry="5" fill="${bodyColor}"/>
-    <!-- Face area / neck -->
     <ellipse cx="50" cy="48" rx="16" ry="6" fill="${bodyColor}"/>
-    <!-- Animal head -->
     ${headSvg}
-    <!-- Mouth on body area (smile) -->
     <path d="${mouthPath}" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <!-- Shine on body -->
     <ellipse cx="40" cy="57" rx="5" ry="3" fill="white" opacity="0.15" transform="rotate(-20,40,57)"/>
   `;
 
-  // Animate based on mood
   container.classList.remove('bounce', 'wiggle');
   if (mood === 'happy') {
     setTimeout(() => {
@@ -1294,6 +1229,13 @@ function setSpeech(text, mood = 'neutral') {
 // DIFFICULTY & OPERATIONS
 // ============================================================
 function setDifficulty(diff, btn) {
+  if (DEMO_MODE) {
+    difficulty = 'easy';
+    lockDemoControls();
+    setSpeech("V demu je dostupná jen lehká obtížnost. 🍫", 'neutral');
+    return;
+  }
+
   difficulty = diff;
   document.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1301,6 +1243,13 @@ function setDifficulty(diff, btn) {
 }
 
 function toggleOp(op, btn) {
+  if (DEMO_MODE) {
+    activeOps = ['+'];
+    lockDemoControls();
+    setSpeech("V demu je dostupné jen sčítání zlomků. ➕", 'neutral');
+    return;
+  }
+
   activeOps = [op];
   document.querySelectorAll('.btn-op').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1406,6 +1355,7 @@ function generateProblem() {
   hintShown = false;
   revealDialogShown = false;
   answered = false;
+  problemClosed = false;
 
   renderProblem();
   resetUI();
@@ -1553,22 +1503,16 @@ function checkAnswer() {
   attempts++;
   updateAttemptDots();
 
-  // Check if answer equals correct result (possibly unsimplified)
   const isCorrectValue = fractionEqual(numVal, denVal, result.num, result.den);
 
   if (isCorrectValue) {
     const isFullySimplified = isSimplified(numVal, denVal);
-
     if (!isFullySimplified) {
-      // Partially correct - not simplified
       showSimplifyHint();
       return;
     }
-
-    // Fully correct!
     onCorrectAnswer();
   } else {
-    // Wrong
     onWrongAnswer();
   }
 }
@@ -1582,11 +1526,13 @@ function showSimplifyHint() {
 
 function onCorrectAnswer() {
   answered = true;
+  problemClosed = true;
+  recordResult(true, attempts === 1, hintShown);
+
   document.getElementById('numInput').classList.add('correct');
   document.getElementById('denInput').classList.add('correct');
   document.getElementById('simplifyHint').classList.remove('show');
 
-  // Score calculation
   let points = 10;
   if (attempts === 1) points = 15;
   if (hintShown) points = 5;
@@ -1597,11 +1543,15 @@ function onCorrectAnswer() {
   streak++;
   levelProgress += points;
 
+  if (DEMO_MODE) {
+    demoSolved++;
+    updateDemoCounter();
+  }
+
   document.getElementById('scoreDisplay').textContent = score;
   updateStreakDisplay();
   updateStarsAndLevel();
 
-  // Feedback
   const feedbackArea = document.getElementById('feedbackArea');
   feedbackArea.className = 'feedback-area correct-fb show';
   document.getElementById('feedbackTitle').textContent = '✅ Správně!';
@@ -1610,22 +1560,24 @@ function onCorrectAnswer() {
     ${attempts === 1 && !hintShown ? '<br>💎 Bonus za první pokus!' : ''}
   `;
 
-  // Speech
   let msg = randomMsg(messages.correct);
   if (streak >= 5 && streak % 3 === 0) msg = randomMsg(messages.streak);
   setSpeech(msg, 'happy');
 
-  // Effects
   showPointsPopup(points);
   if (streak >= 3) spawnConfetti();
   playSound('correct', streak);
 
-  // Next button
   document.getElementById('checkBtn').style.display = 'none';
   document.getElementById('hintBtn').style.display = 'none';
   document.getElementById('nextBtn').style.display = 'inline-flex';
 
-  // Mark attempt dot as ok
+  if (DEMO_MODE && demoSolved >= DEMO_MAX_EXERCISES) {
+    document.getElementById('nextBtn').textContent = 'Dokončit demo 🎁';
+  } else {
+    document.getElementById('nextBtn').textContent = 'Další příklad →';
+  }
+
   const dotId = attempts === 1 ? 'dot1' : 'dot2';
   document.getElementById(dotId).className = 'attempt-dot ok';
 }
@@ -1643,7 +1595,6 @@ function onWrongAnswer() {
   playSound('wrong');
 
   if (attempts === 1) {
-    // First wrong attempt
     setSpeech(randomMsg(messages.wrong1), 'sad');
     document.getElementById('hintBtn').style.display = 'inline-flex';
 
@@ -1653,7 +1604,6 @@ function onWrongAnswer() {
     document.getElementById('feedbackText').textContent = 'Zkus to ještě jednou! Zamysli se nad postupem.';
 
   } else if (attempts >= 2) {
-    // Second wrong attempt - show hint or reveal dialog
     setSpeech(randomMsg(messages.wrong2), 'sad');
 
     if (!hintShown) {
@@ -1665,7 +1615,7 @@ function onWrongAnswer() {
     const feedbackArea = document.getElementById('feedbackArea');
     feedbackArea.className = 'feedback-area wrong-fb show';
     document.getElementById('feedbackTitle').textContent = '❌ Stále nesprávně';
-    document.getElementById('feedbackText').textContent = hintShown ? 
+    document.getElementById('feedbackText').textContent = hintShown ?
       'Podívej se na nápovědu výše.' :
       'Zobrazuji ti postup řešení.';
   }
@@ -1698,8 +1648,8 @@ function generateHintSteps(f1, f2, op) {
       const m1 = l / f1.den, m2 = l / f2.den;
       const opStr = op === '+' ? 'sečteme' : 'odečteme';
       const opChar = op === '+' ? '+' : '−';
-      const resultNum = op === '+' 
-        ? f1.num * m1 + f2.num * m2 
+      const resultNum = op === '+'
+        ? f1.num * m1 + f2.num * m2
         : f1.num * m1 - f2.num * m2;
       const sim = simplifyFraction(resultNum, l);
       const steps = [
@@ -1751,6 +1701,8 @@ function showRevealDialog() {
 function revealAnswer() {
   document.getElementById('revealDialog').classList.remove('show');
   answered = true;
+  problemClosed = true;
+  recordResult(false, false, hintShown);
 
   const { result } = currentProblem;
   document.getElementById('numInput').value = result.num;
@@ -1769,6 +1721,12 @@ function revealAnswer() {
   document.getElementById('checkBtn').style.display = 'none';
   document.getElementById('hintBtn').style.display = 'none';
   document.getElementById('nextBtn').style.display = 'inline-flex';
+
+  if (DEMO_MODE && demoSolved >= DEMO_MAX_EXERCISES) {
+    document.getElementById('nextBtn').textContent = 'Dokončit demo 🎁';
+  } else {
+    document.getElementById('nextBtn').textContent = 'Další příklad →';
+  }
 }
 
 function tryAgainAfterReveal() {
@@ -1781,6 +1739,10 @@ function tryAgainAfterReveal() {
 // NEXT EXERCISE
 // ============================================================
 function nextExercise() {
+  if (DEMO_MODE && demoSolved >= DEMO_MAX_EXERCISES) {
+    showDemoFinish();
+    return;
+  }
   generateProblem();
 }
 
@@ -1789,13 +1751,12 @@ function nextExercise() {
 // ============================================================
 const levelThresholds = [0, 50, 130, 250, 420, 650, 950, 1350, 1900, 2600, 3500];
 const levelNames = [
-  '', 'Začátečník', 'Žák', 'Počtář', 'Zlomkář', 
+  '', 'Začátečník', 'Žák', 'Počtář', 'Zlomkář',
   'Expert', 'Mistr', 'Velmistr', 'Čokoládový génius', 'Legenda', 'Ultimátní Čokík'
 ];
 const levelEmojis = ['', '🍫', '📐', '🧮', '🎯', '⭐', '🏆', '👑', '🧠', '🌟', '🚀'];
 
 function updateStarsAndLevel() {
-  // Stars: 0-5 within current level
   const prevThreshold = levelThresholds[level - 1] || 0;
   const nextThreshold = levelThresholds[level] || (prevThreshold + 100);
   const range = nextThreshold - prevThreshold;
@@ -1807,9 +1768,7 @@ function updateStarsAndLevel() {
   const starsNeeded = Math.floor(pct / 20);
   for (let i = 1; i <= 5; i++) {
     const star = document.getElementById('star' + i);
-    if (i <= starsNeeded && starsNeeded > starsEarned) {
-      star.classList.add('earned');
-    } else if (i <= starsNeeded) {
+    if (i <= starsNeeded) {
       star.classList.add('earned');
     } else {
       star.classList.remove('earned');
@@ -1817,8 +1776,7 @@ function updateStarsAndLevel() {
   }
   starsEarned = starsNeeded;
 
-  // Level up?
-  const newLevel = levelThresholds.findIndex((t, i) => 
+  const newLevel = levelThresholds.findIndex((t, i) =>
     score >= t && (i === levelThresholds.length - 1 || score < levelThresholds[i + 1])
   );
   const calculatedLevel = Math.max(1, newLevel === -1 ? levelThresholds.length - 1 : newLevel);
@@ -1902,7 +1860,7 @@ function playSound(type, streakVal = 0) {
 
     switch (type) {
       case 'correct': playCorrectSound(ctx, streakVal); break;
-      case 'wrong':   playWrongSound(ctx); break;
+      case 'wrong': playWrongSound(ctx); break;
       case 'levelup': playLevelUpSound(ctx); break;
       case 'simplify': playSimplifySound(ctx); break;
     }
@@ -1924,34 +1882,22 @@ function playTone(ctx, freq, duration, type = 'sine', vol = 0.3, delay = 0) {
 }
 
 function playCorrectSound(ctx, streak) {
-  // Escalating melodies based on streak (8 levels)
-  const level = Math.min(Math.floor(streak / 1), 8);
-  
+  const levelSound = Math.min(Math.floor(streak / 1), 8);
   const melodies = [
-    // Level 0-1: Simple two notes
     [[523, 0.15, 0], [659, 0.25, 0.12]],
-    // Level 2: Three notes ascending
     [[523, 0.12, 0], [659, 0.12, 0.1], [784, 0.25, 0.2]],
-    // Level 3: Four notes
     [[523, 0.1, 0], [587, 0.1, 0.08], [659, 0.1, 0.16], [784, 0.25, 0.24]],
-    // Level 4: Happy jingle
     [[523, 0.1, 0], [659, 0.1, 0.09], [784, 0.1, 0.18], [1047, 0.3, 0.27]],
-    // Level 5: Fanfare
     [[392, 0.08, 0], [523, 0.08, 0.07], [659, 0.08, 0.14], [784, 0.08, 0.21], [1047, 0.35, 0.3]],
-    // Level 6: Victory melody
     [[523, 0.08, 0], [659, 0.08, 0.06], [784, 0.08, 0.12], [659, 0.08, 0.18], [784, 0.08, 0.24], [1047, 0.4, 0.32]],
-    // Level 7: Epic run
     [[523, 0.07, 0], [587, 0.07, 0.06], [659, 0.07, 0.12], [698, 0.07, 0.18], [784, 0.07, 0.24], [880, 0.07, 0.3], [988, 0.07, 0.36], [1047, 0.5, 0.43]],
-    // Level 8: Explosion - all notes + chord
-    [[262, 0.3, 0], [330, 0.3, 0], [392, 0.3, 0],
-     [523, 0.08, 0.1], [659, 0.08, 0.17], [784, 0.08, 0.24], [988, 0.08, 0.31], [1175, 0.08, 0.38], [1397, 0.6, 0.46]],
+    [[262, 0.3, 0], [330, 0.3, 0], [392, 0.3, 0], [523, 0.08, 0.1], [659, 0.08, 0.17], [784, 0.08, 0.24], [988, 0.08, 0.31], [1175, 0.08, 0.38], [1397, 0.6, 0.46]],
   ];
 
-  const melody = melodies[Math.min(level, melodies.length - 1)];
+  const melody = melodies[Math.min(levelSound, melodies.length - 1)];
   melody.forEach(([freq, dur, delay]) => playTone(ctx, freq, dur, 'sine', 0.28, delay));
-  
-  // Add sparkle for high levels
-  if (level >= 5) {
+
+  if (levelSound >= 5) {
     [1568, 1760, 2093].forEach((f, i) => playTone(ctx, f, 0.08, 'sine', 0.12, 0.5 + i * 0.06));
   }
 }
@@ -1969,17 +1915,7 @@ function playSimplifySound(ctx) {
 function playLevelUpSound(ctx) {
   const notes = [523, 659, 784, 1047, 1319, 1568];
   notes.forEach((freq, i) => playTone(ctx, freq, i < 5 ? 0.15 : 0.8, 'sine', 0.3, i * 0.1));
-  // Chord at end
   [1047, 1319, 1568].forEach(f => playTone(ctx, f, 0.8, 'sine', 0.2, 0.6));
-}
-
-// ============================================================
-// INIT
-// ============================================================
-function init() {
-  drawMascot('neutral');
-  generateProblem();
-  document.getElementById('levelDisplay').textContent = level;
 }
 
 // ============================================================
@@ -2012,15 +1948,100 @@ function getAccuracy() {
 }
 
 // ============================================================
+// DEMO HELPERS
+// ============================================================
+function updateDemoCounter() {
+  const el = document.getElementById('demoCounter');
+  if (el) el.textContent = `${demoSolved} / ${DEMO_MAX_EXERCISES}`;
+}
+
+function lockDemoControls() {
+  if (!DEMO_MODE) return;
+
+  difficulty = 'easy';
+  activeOps = ['+'];
+
+  document.querySelectorAll('.btn-toggle').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.diff !== 'easy') {
+      btn.disabled = true;
+      btn.style.opacity = '0.45';
+      btn.style.cursor = 'not-allowed';
+    } else {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      btn.classList.add('active');
+    }
+  });
+
+  document.querySelectorAll('.btn-op').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.op !== '+') {
+      btn.disabled = true;
+      btn.style.opacity = '0.45';
+      btn.style.cursor = 'not-allowed';
+    } else {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      btn.classList.add('active');
+    }
+  });
+}
+
+function showDemoFinish() {
+  demoFinished = true;
+  document.getElementById('demoFinishStats').innerHTML = `
+    Skóre: <strong>${score}</strong> bodů<br>
+    Správnost: <strong>${getAccuracy()} %</strong><br>
+    Vyřešeno: <strong>${demoSolved} / ${DEMO_MAX_EXERCISES}</strong>
+  `;
+  document.getElementById('demoFinishOverlay').classList.add('show');
+  setSpeech("Demo je u konce. Když chceš, otevři si plnou verzi! 🚀", 'happy');
+}
+
+function goToFullVersion() {
+  window.location.href = FULL_VERSION_URL;
+}
+
+function restartDemo() {
+  demoSolved = 0;
+  demoFinished = false;
+  score = 0;
+  streak = 0;
+  level = 1;
+  levelProgress = 0;
+  starsEarned = 0;
+  stats = {
+    total: 0,
+    correct: 0,
+    firstTry: 0,
+    hintUsed: 0,
+    byOp: { '+': {total:0,correct:0}, '-': {total:0,correct:0}, '*': {total:0,correct:0}, '/': {total:0,correct:0} },
+    byDiff: { easy:{total:0,correct:0}, medium:{total:0,correct:0}, hard:{total:0,correct:0} }
+  };
+
+  document.getElementById('scoreDisplay').textContent = '0';
+  document.getElementById('levelDisplay').textContent = '1';
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('streakBadge').style.display = 'none';
+  document.getElementById('demoFinishOverlay').classList.remove('show');
+  for (let i = 1; i <= 5; i++) document.getElementById('star' + i).classList.remove('earned');
+
+  updateDemoCounter();
+  lockDemoControls();
+  generateProblem();
+}
+
+// ============================================================
 // KEYBOARD SHORTCUTS
 // ============================================================
 document.addEventListener('keydown', function(e) {
-  // Ctrl+N = next problem (when answered)
   if (e.ctrlKey && e.key === 'n') {
     e.preventDefault();
     if (answered) nextExercise();
   }
-  // Escape = clear inputs
   if (e.key === 'Escape') {
     document.getElementById('numInput').value = '';
     document.getElementById('denInput').value = '';
@@ -2032,18 +2053,14 @@ document.addEventListener('keydown', function(e) {
 // ACCESSIBILITY & FOCUS MANAGEMENT
 // ============================================================
 function setupAccessibility() {
-  const inputs = [
-    document.getElementById('numInput'),
-    document.getElementById('denInput')
-  ];
-  
+  const inputs = [document.getElementById('numInput'), document.getElementById('denInput')];
+
   inputs.forEach(input => {
     input.setAttribute('aria-label', input.id === 'numInput' ? 'Čitatel výsledku' : 'Jmenovatel výsledku');
     input.setAttribute('inputmode', 'numeric');
     input.setAttribute('pattern', '[0-9]*');
   });
 
-  // Allow only numbers and minus sign
   inputs.forEach(input => {
     input.addEventListener('input', function() {
       const val = this.value.replace(/[^0-9\-]/g, '');
@@ -2056,133 +2073,30 @@ function setupAccessibility() {
 // TOUCH SUPPORT
 // ============================================================
 function setupTouchFeedback() {
-  document.querySelectorAll('.btn-toggle, .btn-op, .btn-primary, .btn-next, .btn-hint').forEach(btn => {
-    btn.addEventListener('touchstart', function() {
-      this.style.transform = 'scale(0.96)';
-    }, { passive: true });
-    btn.addEventListener('touchend', function() {
-      this.style.transform = '';
-    }, { passive: true });
+  document.querySelectorAll('.btn-toggle, .btn-op, .btn-primary, .btn-next, .btn-hint, .btn-demo-full, .btn-demo-restart').forEach(btn => {
+    btn.addEventListener('touchstart', function() { this.style.transform = 'scale(0.96)'; }, { passive: true });
+    btn.addEventListener('touchend', function() { this.style.transform = ''; }, { passive: true });
   });
 }
 
 // ============================================================
-// ANIMAL NAME IN WELCOME
-// ============================================================
-function updateMascotGreeting() {
-  const name = animalNames[currentAnimalIndex];
-  const greetings = [
-    `Dnes jsem ${name}! Pojďme počítat zlomky! 🍫`,
-    `${name} Čokík je připraven! Dáme příklad? 🎯`,
-    `Jsem ${name} Čokík – tvůj pomocník! Začínáme? ⭐`,
-  ];
-  return randomMsg(greetings);
-}
-
-// ============================================================
-// PROBLEM VARIETY HELPERS
-// ============================================================
-// Generate problems ensuring interesting/varied examples
-function generateVariedProblem() {
-  const params = getDiffParams();
-  const op = activeOps[Math.floor(Math.random() * activeOps.length)];
-  
-  // Special case generators for interesting problems
-  const generators = {
-    '+': generateAddProblem,
-    '-': generateSubProblem,
-    '*': generateMulProblem,
-    '/': generateDivProblem,
-  };
-  
-  return (generators[op] || generateAddProblem)(params, op);
-}
-
-function generateAddProblem(params) {
-  // Ensure the result isn't trivially simple
-  let f1, f2, result;
-  let tries = 0;
-  do {
-    f1 = generateFraction(params);
-    f2 = generateFraction(params);
-    result = computeResult(f1, '+', f2);
-    tries++;
-  } while (tries < 10 && result.num > 50);
-  return { f1, f2, op: '+', result: simplifyFraction(result.num, result.den) };
-}
-
-function generateSubProblem(params) {
-  let f1, f2, result;
-  let tries = 0;
-  do {
-    f1 = generateFraction(params);
-    f2 = generateFraction(params);
-    // For non-hard, ensure positive result
-    if (difficulty !== 'hard') {
-      const bigger = f1.num / f1.den >= f2.num / f2.den;
-      if (!bigger) [f1, f2] = [f2, f1];
-    }
-    result = computeResult(f1, '-', f2);
-    tries++;
-  } while (tries < 10 && Math.abs(result.num) > 50);
-  return { f1, f2, op: '-', result: simplifyFraction(result.num, result.den) };
-}
-
-function generateMulProblem(params) {
-  let f1, f2;
-  // For multiplication, use smaller numbers for cleaner results
-  const p = { ...params, maxNum: Math.min(params.maxNum, 8), maxDen: Math.min(params.maxDen, 8) };
-  f1 = generateFraction(p);
-  f2 = generateFraction(p);
-  const result = computeResult(f1, '*', f2);
-  return { f1, f2, op: '*', result: simplifyFraction(result.num, result.den) };
-}
-
-function generateDivProblem(params) {
-  let f1, f2;
-  const p = { ...params, maxNum: Math.min(params.maxNum, 8), maxDen: Math.min(params.maxDen, 8) };
-  f1 = generateFraction(p);
-  do {
-    f2 = generateFraction(p);
-  } while (f2.num === 0);
-  const result = computeResult(f1, '/', f2);
-  return { f1, f2, op: '/', result: simplifyFraction(result.num, result.den) };
-}
-
-// Override generateProblem to use varied generators
-const _origGenerate = generateProblem;
-
-// ============================================================
-// MOTIVATIONAL MILESTONE MESSAGES
-// ============================================================
-const milestones = {
-  5:   { msg: "5 příkladů za sebou! Ty jsi borec! 🥉", emoji: "🥉" },
-  10:  { msg: "10 správně! Neuvěřitelné! 🥈", emoji: "🥈" },
-  20:  { msg: "20 příkladů! Zlatá medaile pro tebe! 🥇", emoji: "🥇" },
-  50:  { msg: "50 příkladů! Jsi legenda zlomků! 👑", emoji: "👑" },
-  100: { msg: "100 příkladů! Absolutní šampión! 🏆", emoji: "🏆" },
-};
-
-function checkMilestone(totalCorrect) {
-  if (milestones[totalCorrect]) {
-    const m = milestones[totalCorrect];
-    setSpeech(m.msg, 'happy');
-    spawnConfetti(25);
-  }
-}
-
-// ============================================================
-// FINAL INIT WITH ALL FEATURES
+// INIT
 // ============================================================
 function init() {
   setupAccessibility();
   setupTouchFeedback();
   drawMascot('neutral');
+
+  if (DEMO_MODE) {
+    document.getElementById('demoBanner').classList.remove('hidden');
+    lockDemoControls();
+    updateDemoCounter();
+  }
+
   generateProblem();
   document.getElementById('levelDisplay').textContent = level;
 }
 
-// Start
 init();
 </script>
 </body>
