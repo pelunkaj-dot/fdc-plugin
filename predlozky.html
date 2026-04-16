@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FajnCvičebna – Předložky jako mapa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --card2:#eef4fb; --line:#cdd9e7;
+  --text:#192635; --muted:#60788f; --brand:#178c79; --brand2:#2c7de2;
+  --ok:#17824a; --bad:#c53e3e; --warn:#b78015; --gold:#c99912;
+  --shadow:0 14px 36px rgba(16,36,66,.10); --r:18px;
+}
+body.dark{
+  --bg:#0f1720; --card:#182534; --card2:#203244; --line:#33495f;
+  --text:#eef7ff; --muted:#91acc4; --brand:#2dd4bf; --brand2:#63a8ff;
+  --ok:#52db8c; --bad:#ff8d8d; --warn:#f2c45a; --gold:#f0c45a;
+  --shadow:0 18px 42px rgba(0,0,0,.34);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(44,125,226,.08), transparent 28%),
+    radial-gradient(circle at 100% 100%, rgba(23,140,121,.08), transparent 28%);
+}
+button,input{font:inherit}
+.app{max-width:1040px;margin:0 auto;padding:16px 14px 44px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.brand{display:flex;flex-direction:column;gap:3px}
+.logo{font-family:'DM Serif Display',serif;font-size:2rem;line-height:1}
+.sub{font-size:.84rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.theme{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
+.theme button{border:none;background:transparent;color:var(--muted);padding:7px 10px;border-radius:999px;cursor:pointer;font-weight:700}
+.theme button.on{background:var(--card2);color:var(--brand)}
+.chip{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);box-shadow:var(--shadow);font-weight:800;font-size:.92rem}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.strip{padding:10px 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.story-btn,.mode-btn,.ghost-btn,.choice-btn,.main-btn,.soft-btn,.tag{
+  border-radius:999px;cursor:pointer;transition:.18s ease
+}
+.story-btn,.mode-btn,.ghost-btn,.soft-btn{
+  border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:700
+}
+.story-btn{padding:8px 12px}
+.mode-btn{padding:10px 14px}
+.story-btn:hover,.mode-btn:hover,.ghost-btn:hover,.soft-btn:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px)}
+.story-btn.on{background:linear-gradient(135deg,var(--brand),var(--brand2));border-color:transparent;color:#07211c}
+.mode-btn.on{background:var(--card2);border-color:var(--brand2);color:var(--brand2)}
+.status{padding:14px;display:grid;grid-template-columns:1.15fr .85fr;gap:12px}
+.status-left,.status-right{display:flex;flex-direction:column;gap:10px}
+.progress-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.9rem}
+.track{height:10px;border-radius:999px;background:var(--card2);overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .35s ease}
+.meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.meta{padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card2)}
+.meta-k{font-size:.72rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+.meta-v{font-size:1.05rem;font-weight:800;margin-top:2px}
+.card{padding:22px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+.label{font-size:.78rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.title-row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+.small{font-size:.92rem;color:var(--muted)}
+.story-banner{
+  padding:15px 16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(135deg,rgba(201,153,18,.10),rgba(44,125,226,.06));
+  margin-bottom:14px;
+}
+.story-title{font-weight:900;margin-bottom:4px}
+.story-desc{color:var(--muted);line-height:1.55}
+.context-box{padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--card2);margin:12px 0 16px}
+.en-line{font-family:'DM Serif Display',serif;font-size:1.9rem;line-height:1.55;text-align:center}
+.cz-line{text-align:center;color:var(--muted);margin-top:8px;font-size:1rem}
+.blank{display:inline-block;min-width:82px;border-bottom:3px solid var(--brand);text-align:center;color:var(--brand);font-weight:800;padding:0 4px}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
+.choice-btn{
+  padding:14px 15px;border:1.5px solid var(--line);background:var(--card2);color:var(--text);font-weight:800;text-align:left
+}
+.choice-btn:hover:not(:disabled){transform:translateY(-1px);border-color:var(--brand2);background:rgba(99,168,255,.08)}
+.choice-btn.correct{border-color:var(--ok);background:rgba(23,130,74,.12);color:var(--ok)}
+.choice-btn.wrong{border-color:var(--bad);background:rgba(197,62,62,.12);color:var(--bad)}
+.choice-btn.partial{border-color:var(--gold);background:rgba(201,153,18,.14);color:var(--gold)}
+.choice-btn.reveal{border-color:var(--ok);background:rgba(23,130,74,.08)}
+.choice-btn:disabled{cursor:default}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.main-btn{padding:12px 20px;border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#08211d;font-weight:900}
+.ghost-btn,.soft-btn{padding:11px 16px;background:transparent;font-weight:700}
+.next-btn{display:none}
+.feedback{display:none;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card2);margin:0 0 14px}
+.feedback.show{display:block}
+.feedback.ok{background:rgba(23,130,74,.10);border-color:rgba(23,130,74,.35)}
+.feedback.bad{background:rgba(197,62,62,.10);border-color:rgba(197,62,62,.35)}
+.feedback.info{background:rgba(99,168,255,.10);border-color:rgba(99,168,255,.35)}
+.feedback.warn{background:rgba(242,196,90,.10);border-color:rgba(242,196,90,.35)}
+.fb-title{font-weight:900;margin-bottom:4px}
+.feedback.ok .fb-title{color:var(--ok)}
+.feedback.bad .fb-title{color:var(--bad)}
+.feedback.info .fb-title{color:var(--brand2)}
+.feedback.warn .fb-title{color:var(--warn)}
+.meaning-box,.hint-box{
+  display:none;padding:14px 16px;border:1px dashed var(--brand);border-radius:16px;background:rgba(99,168,255,.06);margin:10px 0 14px
+}
+.meaning-box.show,.hint-box.show{display:block}
+.meaning-box ul{margin:8px 0 0 18px;padding:0;line-height:1.6}
+.meaning-box li{margin:3px 0}
+.footer{text-align:center;color:var(--muted);font-size:.85rem;padding-top:8px}
+.review{padding:13px 15px;border-radius:15px;background:linear-gradient(135deg,rgba(242,196,90,.14),rgba(99,168,255,.08));border:1px solid rgba(242,196,90,.35);margin-bottom:14px}
+.hidden{display:none !important}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .28s}
+@media (max-width:820px){.status{grid-template-columns:1fr}.meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){
+  .choice-grid{grid-template-columns:1fr}
+  .meta-grid{grid-template-columns:1fr 1fr}
+  .en-line{font-size:1.58rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">Předložky jako mapa</div>
+      <div class="sub">FajnCvičebna · příběhy, kontext, víc správných odpovědí tam, kde dávají smysl</div>
+    </div>
+    <div class="top">
+      <div class="theme">
+        <button id="themeLight" class="on" type="button">Světlé</button>
+        <button id="themeDark" type="button">Tmavé</button>
+      </div>
+      <div class="chip">⭐ XP <span id="xpVal">0</span></div>
+      <div class="chip">🔥 Série <span id="streakVal">0</span></div>
+    </div>
+  </div>
+
+  <div class="panel strip"><div class="row" id="storyBar"></div></div>
+
+  <div class="panel strip" style="margin-top:10px">
+    <div class="row" id="modeBar">
+      <button class="mode-btn on" data-mode="learn">🌱 Příběhový režim</button>
+      <button class="mode-btn" data-mode="multi">🧭 Vyber všechny správné</button>
+      <button class="mode-btn" data-mode="mix">🎲 Mix</button>
+    </div>
+  </div>
+
+  <div class="panel status" style="margin-top:10px">
+    <div class="status-left">
+      <div class="progress-head">
+        <div><strong>Postup</strong> – <span id="progressText">1 / 1</span></div>
+        <div><span id="levelText">Rozjíždíš se</span></div>
+      </div>
+      <div class="track"><div class="fill" id="levelFill"></div></div>
+      <div class="small" id="statusDesc">Tady nejde o biflování. Tady jde o to, co si v hlavě opravdu představíš.</div>
+    </div>
+    <div class="status-right">
+      <div class="meta-grid">
+        <div class="meta"><div class="meta-k">Správně</div><div class="meta-v" id="okVal">0</div></div>
+        <div class="meta"><div class="meta-k">Chyby</div><div class="meta-v" id="errVal">0</div></div>
+        <div class="meta"><div class="meta-k">Návraty</div><div class="meta-v" id="reviewVal">0</div></div>
+        <div class="meta"><div class="meta-k">Příběh</div><div class="meta-v" id="storyStepVal">1</div></div>
+      </div>
+      <div class="actions" style="justify-content:flex-end">
+        <button class="ghost-btn" id="resetBtn" type="button">♻️ Vynulovat</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel card" id="arena"></div>
+  <div class="footer">Sušenka byla v krabici, pak na talíři, pak ve mně. A jazyk si to pamatuje lépe než tabulku.</div>
+</div>
+
+<script>
+'use strict';
+
+const SAVE_KEY = 'fdc_prepositions_map_v1';
+const THEME_KEY = 'fdc_prepositions_map_theme_v1';
+
+const STORIES = [
+  {
+    id:'cookie',
+    title:'Sušenková mise',
+    desc:'Sušenka mění polohu, ale taky osud. Nejdřív je zavřená, pak vystavená, pak ztracená v útrobách civilizace.',
+    items:[
+      {
+        id:'cookie_1',
+        sentence:'The cookie is ___ the box.',
+        cz:'Sušenka je v krabici.',
+        options:['in','on','at','under'],
+        correct:['in'],
+        hint:'The toy is in the bag.',
+        explain:{
+          in:'Správně. Sušenka je uvnitř krabice. Krabice ji drží jako malý kartonový osud.',
+          on:'Ne. Kdyby byla on, ležela by na krabici, ne v ní.',
+          at:'Ne. at by tady bylo moc neurčité. Tady víme přesně, že je uvnitř.',
+          under:'Ne. under by znamenalo pod krabicí.'
+        }
+      },
+      {
+        id:'cookie_2',
+        sentence:'Now the cookie is ___ the plate.',
+        cz:'Teď je sušenka na talíři.',
+        options:['on','in','at','under'],
+        correct:['on'],
+        hint:'The apple is on the table.',
+        explain:{
+          on:'Správně. Talíř je povrch. Sušenka na něm leží.',
+          in:'Ne. Talíř není krabice. Sušenka není uvnitř talíře.',
+          at:'Ne. at by neřeklo, že leží na povrchu.',
+          under:'Ne. To by byla schovaná pod talířem. To by byla spíš partyzánka než sušenka.'
+        }
+      },
+      {
+        id:'cookie_3',
+        sentence:'Five seconds later, the cookie is ___ me.',
+        cz:'O pět sekund později je sušenka ve mně.',
+        options:['in','on','at','with'],
+        correct:['in'],
+        hint:'The medicine is in me now.',
+        explain:{
+          in:'Správně. Sušenka je uvnitř tebe. Smutný, ale přirozený konec sušenky.',
+          on:'Ne. Na tobě by byla on me.',
+          at:'Ne. at me by znamenalo spíš směr nebo cíl pohledu.',
+          with:'Ne. with me by byla u tebe, ale ne uvnitř.'
+        }
+      },
+      {
+        id:'cookie_4',
+        sentence:'The crumbs are ___ the table.',
+        cz:'Drobky jsou na stole.',
+        options:['on','in','under','at'],
+        correct:['on'],
+        hint:'The keys are on the desk.',
+        explain:{
+          on:'Správně. Drobky leží na povrchu stolu.',
+          in:'Ne. in the table by znamenalo uvnitř stolu. To už je horor nebo truhlářství.',
+          under:'Ne. To by byly pod stolem.',
+          at:'Ne. at the table je u stolu, ne na stole.'
+        }
+      }
+    ]
+  },
+  {
+    id:'transport',
+    title:'Dopravní džungle',
+    desc:'Auto, autobus, vlak, nástupiště. Člověk se nehýbe jen jazykem, ale i prostorem. A předložky si toho všímají.',
+    items:[
+      {
+        id:'transport_1',
+        sentence:'I am ___ the car.',
+        cz:'Jsem v autě.',
+        options:['in','on','at','by'],
+        correct:['in'],
+        hint:'She is in the taxi.',
+        explain:{
+          in:'Správně. Auto je malé a uzavřené. Sedíš uvnitř.',
+          on:'Ne. on se pro auto běžně nepoužívá.',
+          at:'Ne. at the car znamená u auta, ne uvnitř.',
+          by:'Ne. by the car znamená vedle auta.'
+        }
+      },
+      {
+        id:'transport_2',
+        sentence:'I am ___ the train.',
+        cz:'Jsem ve vlaku.',
+        options:['on','in','at','by'],
+        correct:['on','in'],
+        hint:'He is on the bus.',
+        explain:{
+          on:'Správně. on the train je běžné, když vnímáš vlak jako dopravní prostředek, do kterého nastoupíš.',
+          in:'Taky správně. in the train se někdy používá, když zdůrazňuješ, že jsi uvnitř vlaku.',
+          at:'Ne. at the train znamená spíš u vlaku jako u místa.',
+          by:'Ne. by the train je vedle vlaku.'
+        }
+      },
+      {
+        id:'transport_3',
+        sentence:'I am waiting ___ the train.',
+        cz:'Čekám u vlaku.',
+        options:['at','by','in','on'],
+        correct:['at','by'],
+        hint:'She is by the door.',
+        explain:{
+          at:'Správně. at the train = jsi u vlaku jako u místa.',
+          by:'Taky správně. by the train = fyzicky vedle vlaku.',
+          in:'Ne. in the train by znamenalo, že jsi uvnitř.',
+          on:'Ne. on the train by bylo chybné.'
+        }
+      },
+      {
+        id:'transport_4',
+        sentence:'We are ___ the platform.',
+        cz:'Jsme na nástupišti.',
+        options:['on','in','at','under'],
+        correct:['on'],
+        hint:'They are on the bridge.',
+        explain:{
+          on:'Správně. Nástupiště vnímáš jako plochu, na které stojíš.',
+          in:'Ne. in the platform by znamenalo uvnitř nástupiště. To by chtělo bagr.',
+          at:'Může se říct at the station, ale tady je důraz na plochu nástupiště.',
+          under:'Ne. pod nástupištěm by ses spíš neměl pohybovat.'
+        }
+      }
+    ]
+  },
+  {
+    id:'school',
+    title:'Škola a role',
+    desc:'Ve škole se dá být jako student, jako rodič, jako někdo u budovy, nebo jako někdo uvnitř budovy. A jazyk to pozná.',
+    items:[
+      {
+        id:'school_1',
+        sentence:'The kids are ___ school.',
+        cz:'Děti jsou ve škole.',
+        options:['at','in','on','under'],
+        correct:['at'],
+        hint:'She is at work.',
+        explain:{
+          at:'Správně. at school = ve škole jako instituce, jako role, jako „jsou tam, kam patří“.',
+          in:'Tady ne. in the school by zdůraznilo budovu, ne školní roli.',
+          on:'Ne. on school neexistuje.',
+          under:'Ne. pod školou je tunel, ne děti.'
+        }
+      },
+      {
+        id:'school_2',
+        sentence:'The janitor is ___ the school.',
+        cz:'Školník je uvnitř školy.',
+        options:['in','at','on','to'],
+        correct:['in'],
+        hint:'The books are in the classroom.',
+        explain:{
+          in:'Správně. Tady jde o budovu, o prostor uvnitř.',
+          at:'at the school by bylo spíš u školy jako místo.',
+          on:'Ne. on the school by znamenalo na střeše nebo na fasádě. To už je akční film.',
+          to:'Ne. to school je směr.'
+        }
+      },
+      {
+        id:'school_3',
+        sentence:'Mum is waiting ___ the school.',
+        cz:'Maminka čeká u školy.',
+        options:['at','by','in','on'],
+        correct:['at','by'],
+        hint:'He is by the gate.',
+        explain:{
+          at:'Správně. at the school = u školy jako místo.',
+          by:'Taky správně. by the school = vedle školy, fyzicky u ní.',
+          in:'Ne. to by byla uvnitř.',
+          on:'Ne. on the school je spíš pavouk nebo opravář okapů.'
+        }
+      },
+      {
+        id:'school_4',
+        sentence:'The note is ___ the teacher’s desk.',
+        cz:'Lístek je na učitelském stole.',
+        options:['on','in','at','under'],
+        correct:['on'],
+        hint:'The phone is on the shelf.',
+        explain:{
+          on:'Správně. Leží na povrchu.',
+          in:'Ne. To by byl uvnitř stolu.',
+          at:'Ne. at the desk je u stolu.',
+          under:'Ne. To by byl pod stolem a učitel by ho nehledal rád.'
+        }
+      }
+    ]
+  },
+  {
+    id:'cat',
+    title:'Kočka s agendou',
+    desc:'Kočka není zvíře. Kočka je prostorový filozof. Je na stole, pod stolem, vedle stolu a dělá, že to všechno bylo v plánu.',
+    items:[
+      {
+        id:'cat_1',
+        sentence:'The cat is ___ the table.',
+        cz:'Kočka je na stole.',
+        options:['on','in','under','by'],
+        correct:['on'],
+        hint:'The cup is on the table.',
+        explain:{
+          on:'Správně. Kočka je na povrchu stolu. Proto jsi nervózní a hrnek taky.',
+          in:'Ne. Kočka není v zásuvce stolu. Aspoň zatím.',
+          under:'Ne. To by byla pod stolem.',
+          by:'Ne. by the table = vedle stolu.'
+        }
+      },
+      {
+        id:'cat_2',
+        sentence:'Now the cat is ___ the table.',
+        cz:'Teď je kočka pod stolem.',
+        options:['under','on','in','at'],
+        correct:['under'],
+        hint:'The shoes are under the bed.',
+        explain:{
+          under:'Správně. Teď je pod stolem.',
+          on:'Ne. to byla před chvílí.',
+          in:'Ne. uvnitř stolu by byl dost zvláštní nábytek.',
+          at:'Ne. at the table = u stolu.'
+        }
+      },
+      {
+        id:'cat_3',
+        sentence:'Now the cat is sitting ___ the table.',
+        cz:'Teď sedí kočka u stolu / vedle stolu.',
+        options:['at','by','on','under'],
+        correct:['at','by'],
+        hint:'She is sitting by the window.',
+        explain:{
+          at:'Správně. at the table = u stolu.',
+          by:'Taky správně. by the table = vedle stolu.',
+          on:'Ne. to by byla na stole.',
+          under:'Ne. to by byla pod stolem.'
+        }
+      },
+      {
+        id:'cat_4',
+        sentence:'The mouse is ___ the box. The cat is waiting ___ the box.',
+        cz:'Myš je v krabici. Kočka čeká u krabice.',
+        options:['in / at','in / by','on / at','under / in'],
+        correct:['in / at','in / by'],
+        hint:'The toy is in the box.',
+        explain:{
+          'in / at':'Správně. Myš je uvnitř. Kočka je u krabice jako u místa.',
+          'in / by':'Taky správně. by zdůrazní, že kočka čeká vedle krabice.',
+          'on / at':'Ne. Myš není na krabici.',
+          'under / in':'Ne. Myš není pod krabicí a kočka není v ní. To by byla hodně přeplněná krabice.'
+        }
+      }
+    ]
+  },
+  {
+    id:'city',
+    title:'Město po svém',
+    desc:'Město je mapa vztahů: v ulici, na rohu, u kavárny, v parku, na mostě. Kdo to necítí, ten bloudí i bez GPS.',
+    items:[
+      {
+        id:'city_1',
+        sentence:'We are ___ the park.',
+        cz:'Jsme v parku.',
+        options:['in','on','at','under'],
+        correct:['in'],
+        hint:'They are in the garden.',
+        explain:{
+          in:'Správně. Jsi uvnitř prostoru parku.',
+          on:'Ne. on the park by znělo divně, jako bys byl na mapě.',
+          at:'at the park je spíš u parku jako místo setkání.',
+          under:'Ne. pod parkem by byl bunker.'
+        }
+      },
+      {
+        id:'city_2',
+        sentence:'Let’s meet ___ the café.',
+        cz:'Sejdeme se u kavárny.',
+        options:['at','in','on','under'],
+        correct:['at'],
+        hint:'Meet me at the station.',
+        explain:{
+          at:'Správně. at the café = u kavárny jako místo setkání.',
+          in:'in the café = uvnitř kavárny. To je jiná situace.',
+          on:'Ne. na kavárně se běžně nescházíš.',
+          under:'Ne. pod kavárnou zní jako kanalizace.'
+        }
+      },
+      {
+        id:'city_3',
+        sentence:'We are sitting ___ the café.',
+        cz:'Sedíme v kavárně.',
+        options:['in','at','on','to'],
+        correct:['in'],
+        hint:'They are in the restaurant.',
+        explain:{
+          in:'Správně. Sedíš uvnitř kavárny.',
+          at:'at the café by znamenalo spíš u kavárny, ne nutně uvnitř.',
+          on:'Ne. pokud nesedíš na střeše.',
+          to:'Ne. to je směr.'
+        }
+      },
+      {
+        id:'city_4',
+        sentence:'The bus stop is ___ the corner.',
+        cz:'Zastávka je na rohu.',
+        options:['on','at','in','under'],
+        correct:['on'],
+        hint:'The shop is on the corner.',
+        explain:{
+          on:'Správně. on the corner je běžné spojení pro roh ulice.',
+          at:'at the corner se taky v angličtině používá, ale tady je nejběžnější on the corner pro umístění budovy nebo zastávky.',
+          in:'Ne. roh není uzavřený prostor.',
+          under:'Ne. pod rohem by byla geometrická tragédie.'
+        }
+      }
+    ]
+  }
+];
+
+const STORY_LABELS = STORIES.map(s => ({id:s.id, label:s.title}));
+
+const state = {
+  story:'all',
+  mode:'learn',
+  xp:0,
+  streak:0,
+  ok:0,
+  err:0,
+  reviewBook:{},
+  queue:[],
+  idx:0,
+  current:null,
+  attempts:0,
+  answered:false,
+  selected:new Set(),
+  lastIds:[]
+};
+
+const el = {
+  arena: document.getElementById('arena'),
+  storyBar: document.getElementById('storyBar'),
+  xpVal: document.getElementById('xpVal'),
+  streakVal: document.getElementById('streakVal'),
+  okVal: document.getElementById('okVal'),
+  errVal: document.getElementById('errVal'),
+  reviewVal: document.getElementById('reviewVal'),
+  progressText: document.getElementById('progressText'),
+  levelText: document.getElementById('levelText'),
+  levelFill: document.getElementById('levelFill'),
+  statusDesc: document.getElementById('statusDesc'),
+  storyStepVal: document.getElementById('storyStepVal'),
+  resetBtn: document.getElementById('resetBtn')
+};
+
+function safe(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function shuffle(arr){const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function allItems(){
+  if(state.story === 'all') return STORIES.flatMap(s => s.items.map((it,idx)=>({...it, storyId:s.id, storyTitle:s.title, storyDesc:s.desc, step:idx+1, total:s.items.length})));
+  const story = STORIES.find(s=>s.id===state.story);
+  return story ? story.items.map((it,idx)=>({...it, storyId:story.id, storyTitle:story.title, storyDesc:story.desc, step:idx+1, total:story.items.length})) : [];
+}
+function reviewCount(){return Object.values(state.reviewBook).filter(x=>x.weight>0).length}
+function levelName(xp){
+  if(xp<100) return 'Rozjíždíš se';
+  if(xp<240) return 'Začíná to sedat';
+  if(xp<420) return 'Jde ti to';
+  if(xp<660) return 'Čteš prostor';
+  return 'Mapa v hlavě';
+}
+function levelPct(xp){return Math.min(100, (xp % 220) / 2.2)}
+function save(){
+  localStorage.setItem(SAVE_KEY, JSON.stringify({
+    story:state.story, mode:state.mode, xp:state.xp, streak:state.streak, ok:state.ok, err:state.err,
+    reviewBook:state.reviewBook, lastIds:state.lastIds
+  }));
+}
+function load(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');
+    Object.assign(state,{
+      story: raw.story || 'all',
+      mode: raw.mode || 'learn',
+      xp: raw.xp || 0,
+      streak: raw.streak || 0,
+      ok: raw.ok || 0,
+      err: raw.err || 0,
+      reviewBook: raw.reviewBook || {},
+      lastIds: raw.lastIds || []
+    });
+  }catch(e){}
+}
+function saveTheme(t){
+  localStorage.setItem(THEME_KEY,t);
+  document.body.classList.toggle('dark', t==='dark');
+  document.getElementById('themeLight').classList.toggle('on', t!=='dark');
+  document.getElementById('themeDark').classList.toggle('on', t==='dark');
+}
+function loadTheme(){
+  const t = localStorage.getItem(THEME_KEY) || 'light';
+  saveTheme(t);
+}
+function updateStatus(){
+  el.xpVal.textContent = state.xp;
+  el.streakVal.textContent = state.streak;
+  el.okVal.textContent = state.ok;
+  el.errVal.textContent = state.err;
+  el.reviewVal.textContent = reviewCount();
+  el.levelText.textContent = levelName(state.xp);
+  el.levelFill.style.width = levelPct(state.xp) + '%';
+  el.progressText.textContent = `${Math.min(state.idx+1, state.queue.length || 1)} / ${Math.max(state.queue.length,1)}`;
+  el.storyStepVal.textContent = state.current ? `${state.current.step}/${state.current.total}` : '1';
+  const desc = {
+    learn:'Příběh, situace, nápověda na klik. Ne hádanka, ale malá scéna.',
+    multi:'Někdy je správně víc odpovědí. Tady se učíš rozdíl významu.',
+    mix:'Příběhy se střídají a mozek nespí.'
+  };
+  el.statusDesc.textContent = desc[state.mode];
+}
+function renderStories(){
+  const buttons = [{id:'all', label:'Všechny příběhy'}, ...STORY_LABELS];
+  el.storyBar.innerHTML = buttons.map(s=>`<button class="story-btn ${s.id===state.story?'on':''}" data-story="${s.id}">${safe(s.label)}</button>`).join('');
+  el.storyBar.querySelectorAll('.story-btn').forEach(btn=>btn.onclick=()=>{
+    state.story = btn.dataset.story;
+    buildQueue();
+    renderStories();
+    renderModes();
+    renderCard();
+    save();
+  });
+}
+function renderModes(){
+  document.querySelectorAll('.mode-btn').forEach(btn=>{
+    btn.classList.toggle('on', btn.dataset.mode===state.mode);
+    btn.onclick=()=>{
+      state.mode = btn.dataset.mode;
+      buildQueue();
+      renderModes();
+      renderCard();
+      save();
+    };
+  });
+}
+function betterDistractors(item, count=3){
+  const pool = allItems().filter(x=>x.id!==item.id);
+  const oneWordPool = pool.flatMap(x=>x.options || []);
+  let unique = [...new Set(oneWordPool)].filter(x=>!item.correct.includes(x));
+  if(item.options.some(x=>x.includes('/'))){
+    // keep mixed options for mixed tasks
+    unique = [...new Set((item.options || []).filter(x=>!item.correct.includes(x)).concat(unique))];
+  }
+  return shuffle(unique).slice(0,count);
+}
+function markWrong(item){
+  const entry = state.reviewBook[item.id] || {item, weight:0};
+  entry.weight += 2;
+  state.reviewBook[item.id] = entry;
+}
+function softenWrong(item){
+  if(!state.reviewBook[item.id]) return;
+  state.reviewBook[item.id].weight = Math.max(0, state.reviewBook[item.id].weight - 1);
+  if(state.reviewBook[item.id].weight === 0) delete state.reviewBook[item.id];
+}
+function maybeReviewItem(){
+  const entries = Object.values(state.reviewBook).filter(x=>x.weight>0).sort((a,b)=>b.weight-a.weight);
+  if(!entries.length) return null;
+  return Math.random() < 0.26 ? entries[0].item : null;
+}
+function buildQueue(){
+  const pool = allItems();
+  let base = shuffle(pool);
+  const review = maybeReviewItem();
+  if(review && !base.find(x=>x.id===review.id)) base.unshift(review);
+  state.queue = base;
+  state.idx = 0;
+}
+function nextItem(){
+  const pool = allItems();
+  if(!pool.length) return null;
+  if(state.idx >= state.queue.length) buildQueue();
+
+  let candidates = [...state.queue.slice(state.idx), ...shuffle(pool)];
+  let item = candidates.find(x=>!state.lastIds.includes(x.id)) || pick(pool);
+
+  state.current = item;
+  state.attempts = 0;
+  state.answered = false;
+  state.selected = new Set();
+  state.idx += 1;
+  state.lastIds = [item.id, ...state.lastIds].slice(0,5);
+  save();
+  return item;
+}
+function gain(points){
+  state.xp += points;
+  state.ok += 1;
+  state.streak += 1;
+  updateStatus();
+  save();
+}
+function miss(){
+  state.err += 1;
+  state.streak = 0;
+  updateStatus();
+  save();
+}
+function speak(text, rate=0.88){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='en-GB';
+  u.rate=rate;
+  const voices = speechSynthesis.getVoices();
+  const voice = voices.find(v=>v.lang==='en-GB') || voices.find(v=>v.lang.startsWith('en'));
+  if(voice) u.voice = voice;
+  speechSynthesis.speak(u);
+}
+function showFeedback(type,title,text){
+  const box = document.getElementById('feedback');
+  if(!box) return;
+  box.className = `feedback ${type} show`;
+  document.getElementById('fbTitle').innerHTML = title;
+  document.getElementById('fbText').innerHTML = text;
+}
+function renderFeedback(){
+  return `<div class="feedback" id="feedback"><div class="fb-title" id="fbTitle"></div><div id="fbText"></div></div>`;
+}
+function renderReviewBanner(item){
+  if(!state.reviewBook[item.id] || state.reviewBook[item.id].weight < 2) return '';
+  return `<div class="review">⚠️ Tohle je návrat k místu, kde to minule zaskřípalo.</div>`;
+}
+function renderStoryHeader(item){
+  return `<div class="story-banner">
+    <div class="story-title">${safe(item.storyTitle)} · krok ${item.step} z ${item.total}</div>
+    <div class="story-desc">${safe(item.storyDesc)}</div>
+  </div>`;
+}
+function renderCard(){
+  const item = nextItem();
+  updateStatus();
+  if(!item){
+    el.arena.innerHTML = '<div class="label">Žádná data</div><p>Není co zobrazit.</p>';
+    return;
+  }
+  if(state.mode==='learn') return renderLearn(item);
+  if(state.mode==='multi') return renderMulti(item);
+  return renderMix(item);
+}
+function renderLearn(item){
+  const opts = shuffle(item.options);
+  el.arena.innerHTML = `
+    <div class="label">🌱 Příběhový režim</div>
+    ${renderReviewBanner(item)}
+    ${renderStoryHeader(item)}
+    <div class="title-row">
+      <div class="small">Představ si tu situaci. Kde co je? Uvnitř, na povrchu, u něčeho, vedle něčeho?</div>
+      <button class="soft-btn" type="button" id="speakBtn">🔊 Přehrát větu</button>
+    </div>
+    <div class="context-box">
+      <div class="en-line">${safe(item.sentence).replace('___','<span class="blank">_____</span>')}</div>
+      <div class="cz-line">${safe(item.cz)}</div>
+    </div>
+    <div class="hint-box" id="hintBox"><div class="en-line" style="font-size:1.45rem">${safe(item.hint)}</div></div>
+    <div class="meaning-box" id="meaningBox"></div>
+    ${renderFeedback()}
+    <div class="choice-grid">
+      ${opts.map(opt=>`<button class="choice-btn" data-value="${safe(opt)}" type="button">${safe(opt)}</button>`).join('')}
+    </div>
+    <div class="actions">
+      <button class="ghost-btn" type="button" id="hintBtn">💡 Nápověda</button>
+      <button class="ghost-btn" type="button" id="whyBtn">🧠 Proč?</button>
+      <button class="ghost-btn next-btn" type="button" id="nextBtn">Další →</button>
+    </div>
+  `;
+  document.getElementById('speakBtn').onclick = ()=>speak(item.sentence.replace('___', item.correct[0]), .84);
+  document.getElementById('hintBtn').onclick = ()=>{
+    document.getElementById('hintBox').classList.add('show');
+    speak(item.hint, .84);
+  };
+  document.getElementById('whyBtn').onclick = ()=>showMeaning(item);
+  document.querySelectorAll('.choice-btn').forEach(btn=>btn.onclick=()=>checkSingle(item, btn.dataset.value, btn));
+  document.getElementById('nextBtn').onclick = renderCard;
+}
+function renderMulti(item){
+  const opts = shuffle(item.options);
+  el.arena.innerHTML = `
+    <div class="label">🧭 Vyber všechny správné</div>
+    ${renderReviewBanner(item)}
+    ${renderStoryHeader(item)}
+    <div class="title-row">
+      <div class="small">Někdy jazyk připustí víc odpovědí. Tady jde o význam, ne o soutěž v uhádnutí jedné ikonické varianty.</div>
+      <button class="soft-btn" type="button" id="speakBtn">🔊 Přehrát větu</button>
+    </div>
+    <div class="context-box">
+      <div class="en-line">${safe(item.sentence).replace('___','<span class="blank">_____</span>')}</div>
+      <div class="cz-line">${safe(item.cz)}</div>
+    </div>
+    <div class="hint-box" id="hintBox"><div class="en-line" style="font-size:1.45rem">${safe(item.hint)}</div></div>
+    <div class="meaning-box" id="meaningBox"></div>
+    ${renderFeedback()}
+    <div class="choice-grid">
+      ${opts.map(opt=>`<button class="choice-btn multi-btn" data-value="${safe(opt)}" type="button">${safe(opt)}</button>`).join('')}
+    </div>
+    <div class="actions">
+      <button class="ghost-btn" type="button" id="hintBtn">💡 Nápověda</button>
+      <button class="main-btn" type="button" id="checkBtn">Zkontrolovat ✓</button>
+      <button class="ghost-btn" type="button" id="whyBtn">🧠 Proč?</button>
+      <button class="ghost-btn next-btn" type="button" id="nextBtn">Další →</button>
+    </div>
+  `;
+  document.getElementById('speakBtn').onclick = ()=>speak(item.sentence.replace('___', item.correct[0]), .84);
+  document.getElementById('hintBtn').onclick = ()=>{
+    document.getElementById('hintBox').classList.add('show');
+    speak(item.hint, .84);
+  };
+  document.getElementById('whyBtn').onclick = ()=>showMeaning(item);
+  document.querySelectorAll('.multi-btn').forEach(btn=>btn.onclick=()=>{
+    if(state.answered) return;
+    const val = btn.dataset.value;
+    if(state.selected.has(val)){
+      state.selected.delete(val);
+      btn.classList.remove('partial');
+    }else{
+      state.selected.add(val);
+      btn.classList.add('partial');
+    }
+  });
+  document.getElementById('checkBtn').onclick = ()=>checkMulti(item);
+  document.getElementById('nextBtn').onclick = renderCard;
+}
+function renderMix(item){
+  if(item.correct.length > 1 || Math.random() < .35) return renderMulti(item);
+  return renderLearn(item);
+}
+function checkSingle(item, chosen, btn){
+  if(state.answered) return;
+  const good = item.correct.includes(chosen);
+  if(good){
+    state.answered = true;
+    document.querySelectorAll('.choice-btn').forEach(b=>{
+      b.disabled = true;
+      if(item.correct.includes(b.dataset.value)) b.classList.add(item.correct.length>1 ? 'partial' : 'correct');
+    });
+    const msg = item.correct.length>1
+      ? `${safe(item.explain[chosen])} Tady existuje víc správných odpovědí. Klikni na „Proč?“ a mrkni na rozdíl.`
+      : `${safe(item.explain[chosen])}`;
+    showFeedback('ok','✅ Sedí to', msg);
+    gain(state.attempts===0 ? 12 : 7);
+    softenWrong(item);
+    document.getElementById('nextBtn').style.display='inline-flex';
+    speak(chosen, .86);
+    return;
+  }
+
+  state.attempts += 1;
+  btn.classList.add('wrong','shake');
+  setTimeout(()=>btn.classList.remove('shake'),280);
+  miss();
+  markWrong(item);
+
+  if(state.attempts === 1){
+    showFeedback('warn','Ještě ne', safe(item.explain[chosen] || 'Tohle nesedí. Zkus to ještě jednou.'));
+    btn.disabled = true;
+    return;
+  }
+
+  state.answered = true;
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    b.disabled = true;
+    if(item.correct.includes(b.dataset.value)) b.classList.add('reveal');
+  });
+  const firstCorrect = item.correct[0];
+  showFeedback('bad','❌ Teď ne', `${safe(item.explain[chosen] || '')} <br><br><strong>Správně:</strong> ${item.correct.map(x=>safe(x)).join(', ')}.`);
+  document.getElementById('nextBtn').style.display='inline-flex';
+  speak(firstCorrect, .86);
+}
+function checkMulti(item){
+  if(state.answered) return;
+  const selected = [...state.selected];
+  if(!selected.length) return;
+
+  const s1 = [...selected].sort().join('|');
+  const s2 = [...item.correct].sort().join('|');
+  if(s1 === s2){
+    state.answered = true;
+    document.querySelectorAll('.multi-btn').forEach(b=>{
+      b.disabled = true;
+      if(item.correct.includes(b.dataset.value)) b.classList.add(item.correct.length>1 ? 'partial' : 'correct');
+    });
+    showFeedback('ok','✅ Přesně tak', buildContextExplanation(item));
+    gain(state.attempts===0 ? 16 : 9);
+    softenWrong(item);
+    document.getElementById('checkBtn').classList.add('hidden');
+    document.getElementById('nextBtn').style.display='inline-flex';
+    speak(item.correct[0], .86);
+    return;
+  }
+
+  state.attempts += 1;
+  miss();
+  markWrong(item);
+
+  if(state.attempts === 1){
+    showFeedback('warn','Ještě ne', 'Tady to chce promyslet ještě jednou. Někdy je správně jedna možnost, někdy dvě.');
+    return;
+  }
+
+  state.answered = true;
+  document.querySelectorAll('.multi-btn').forEach(b=>{
+    b.disabled = true;
+    if(item.correct.includes(b.dataset.value)) b.classList.add(item.correct.length>1 ? 'partial' : 'reveal');
+  });
+  showFeedback('bad','❌ Tady to ujelo', buildContextExplanation(item));
+  document.getElementById('checkBtn').classList.add('hidden');
+  document.getElementById('nextBtn').style.display='inline-flex';
+}
+function buildContextExplanation(item){
+  let lines = ['<strong>Kontext:</strong>'];
+  item.correct.forEach(ans=>{
+    if(item.explain[ans]) lines.push(`<div>• <strong>${safe(ans)}</strong> — ${safe(item.explain[ans])}</div>`);
+  });
+  item.options.filter(opt=>!item.correct.includes(opt) && item.explain[opt]).forEach(opt=>{
+    lines.push(`<div>• <strong>${safe(opt)}</strong> — ${safe(item.explain[opt])}</div>`);
+  });
+  return lines.join('');
+}
+function showMeaning(item){
+  const box = document.getElementById('meaningBox');
+  if(!box) return;
+  box.classList.add('show');
+  box.innerHTML = buildContextExplanation(item);
+}
+function init(){
+  load();
+  loadTheme();
+  renderStories();
+  renderModes();
+  buildQueue();
+  updateStatus();
+  renderCard();
+
+  document.getElementById('themeLight').onclick = ()=>saveTheme('light');
+  document.getElementById('themeDark').onclick = ()=>saveTheme('dark');
+  el.resetBtn.onclick = ()=>{
+    if(!confirm('Opravdu chceš vynulovat postup?')) return;
+    localStorage.removeItem(SAVE_KEY);
+    location.reload();
+  };
+  document.addEventListener('keydown', e=>{
+    if(e.key !== 'Enter') return;
+    const tag = document.activeElement ? document.activeElement.tagName : '';
+    if(tag === 'INPUT' || tag === 'TEXTAREA') return;
+    const nextBtn = document.getElementById('nextBtn');
+    if(nextBtn && getComputedStyle(nextBtn).display !== 'none'){
+      e.preventDefault();
+      nextBtn.click();
+      return;
+    }
+    const checkBtn = document.getElementById('checkBtn');
+    if(checkBtn && getComputedStyle(checkBtn).display !== 'none'){
+      e.preventDefault();
+      checkBtn.click();
+    }
+  });
+}
+init();
+</script>
+</body>
+</html>
