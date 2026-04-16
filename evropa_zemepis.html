@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FajnEvropa — Zeměpis Evropy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF2FA;--bg2:#DDE4F5;--card:#FFFFFF;--card2:#F4F7FD;
+  --modra:#1A3A8F;--modra2:#2B5CE6;--modra3:#5B8DEF;
+  --zluta:#E8B800;--zluta2:#FFD740;--cervena:#C0392B;
+  --text:#0E1A3A;--muted:#5A6A9A;
+  --correct:#1E7A3A;--wrong:#C0392B;--xp:#7C3AED;
+  --border:rgba(26,58,143,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
+background-image:radial-gradient(ellipse at 5% 5%,rgba(43,92,230,.09) 0%,transparent 50%),radial-gradient(ellipse at 95% 90%,rgba(232,184,0,.07) 0%,transparent 50%);}
+.screen{display:none;min-height:100vh;padding:0 16px 40px;max-width:600px;margin:0 auto;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes starPop{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes xpFloat{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}80%{transform:translate(-50%,-80%);opacity:1}100%{transform:translate(-50%,-120%) scale(.8);opacity:0}}
+@keyframes correctPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px rgba(30,122,58,.3)}}
+@keyframes wrongShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes slide{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+@keyframes flamePulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.18)}}
+
+.home-header{text-align:center;padding:28px 0 18px}
+.logo{font-family:'Righteous',cursive;font-size:3.2rem;letter-spacing:.03em;line-height:1;background:linear-gradient(135deg,var(--modra) 0%,var(--modra2) 50%,var(--zluta) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-ico{font-size:2.6rem;-webkit-text-fill-color:initial;vertical-align:middle;margin-right:6px}
+.logo-sub{font-size:.78rem;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-top:5px}
+.xp-bar{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--border);border-radius:999px;padding:8px 22px;margin-top:12px;font-weight:800;font-size:1.05rem;color:var(--xp);box-shadow:0 2px 8px rgba(26,58,143,.08);}
+.xp-lbl{font-weight:400;color:var(--muted);font-size:.8rem}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:14px 0}
+.cat-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(26,58,143,.06);}
+.cat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--modra),var(--zluta));transform:scaleX(0);transition:transform .22s;transform-origin:left}
+.cat-card:hover::after{transform:scaleX(1)}
+.cat-card:hover{border-color:var(--modra2);transform:translateY(-2px);box-shadow:0 8px 22px rgba(26,58,143,.12)}
+.cat-card:active{transform:scale(.97)}
+.cat-emoji{font-size:2rem;margin-bottom:8px;display:block}
+.cat-name{font-family:'Righteous',cursive;font-size:1.1rem;letter-spacing:.03em;color:var(--modra);line-height:1.2}
+.cat-count{font-size:.65rem;color:var(--modra2);font-weight:800;margin-top:2px;letter-spacing:.05em}
+.cat-desc{font-size:.71rem;color:var(--muted);margin-top:3px;line-height:1.4}
+.cat-stars{margin-top:8px;display:flex;gap:3px}
+.cat-star{font-size:.82rem;opacity:.16;transition:opacity .3s}
+.cat-star.on{opacity:1}
+.btn-badges{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:15px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-badges:hover{border-color:var(--modra2);color:var(--modra)}
+.badge-pill{background:var(--modra);color:#fff;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 8px}
+
+.q-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 10px}
+.q-cat{font-family:'Righteous',cursive;font-size:.95rem;letter-spacing:.03em;color:var(--modra)}
+.q-streak{display:none;align-items:center;gap:3px;font-weight:800;font-size:.9rem;color:var(--zluta)}
+.q-streak.on{display:flex}
+.streak-fire{animation:flamePulse .65s ease infinite;display:inline-block}
+.q-cnt-wrap{display:flex;align-items:center;gap:8px}
+.q-cnt{font-size:.82rem;color:var(--muted);font-weight:700}
+.back-q{background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.75rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+.back-q:hover{border-color:var(--modra2);color:var(--modra)}
+.prog-bar{height:5px;background:var(--bg2);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--modra),var(--modra3));border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.q-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:22px;margin-bottom:14px;min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:slide .25s ease;box-shadow:0 3px 12px rgba(26,58,143,.07);}
+.q-badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px;font-weight:700}
+.q-text{font-size:1.08rem;font-weight:700;line-height:1.5;color:var(--text)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.answers.solo{grid-template-columns:1fr}
+.ans-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:12px;padding:13px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:all .18s;text-align:center;line-height:1.35;}
+.ans-btn:hover:not(:disabled){border-color:var(--modra2);background:rgba(43,92,230,.07);color:var(--modra)}
+.ans-btn.correct{background:rgba(30,122,58,.12);border-color:var(--correct);color:var(--correct);animation:correctPulse .5s ease}
+.ans-btn.wrong{background:rgba(192,57,43,.09);border-color:var(--wrong);color:var(--wrong);animation:wrongShake .4s ease}
+.ans-btn.show-correct{background:rgba(30,122,58,.1);border-color:var(--correct);color:var(--correct)}
+.ans-btn:disabled{cursor:default}
+.fact-box{background:linear-gradient(135deg,rgba(43,92,230,.08),rgba(232,184,0,.04));border:1.5px solid rgba(43,92,230,.18);border-radius:12px;padding:14px;margin-bottom:13px;display:none;animation:popIn .3s ease;}
+.fact-box.on{display:block}
+.fact-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.14em;color:var(--modra);font-weight:800;margin-bottom:5px}
+.fact-text{font-size:.86rem;color:var(--text);line-height:1.6}
+.next-btn{width:100%;background:linear-gradient(135deg,var(--modra),var(--modra2));border:none;border-radius:12px;padding:16px;color:#fff;font-family:'Righteous',cursive;font-size:1.2rem;cursor:pointer;display:none;transition:all .2s;box-shadow:0 4px 14px rgba(26,58,143,.22);}
+.next-btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+.next-btn.on{display:block;animation:popIn .3s ease}
+.xp-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--xp);color:#fff;font-family:'Righteous',cursive;font-size:2rem;padding:10px 28px;border-radius:999px;pointer-events:none;z-index:200;opacity:0;white-space:nowrap;}
+.xp-popup.go{animation:xpFloat 1.7s ease forwards}
+
+.res-header{text-align:center;padding:28px 0 16px}
+.res-title{font-family:'Righteous',cursive;font-size:2.5rem;color:var(--modra)}
+.res-sub{color:var(--muted);font-size:.88rem;margin-top:3px}
+.res-stars{display:flex;justify-content:center;gap:14px;margin:18px 0}
+.res-star{font-size:2.8rem;opacity:.14;display:inline-block}
+.res-star.on{opacity:1;animation:starPop .5s cubic-bezier(.4,0,.2,1) forwards}
+.res-star:nth-child(2){animation-delay:.2s}
+.res-star:nth-child(3){animation-delay:.4s}
+.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:14px 0}
+.stat-c{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 9px;text-align:center;}
+.stat-v{font-family:'Righteous',cursive;font-size:1.75rem;color:var(--modra)}
+.stat-l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+.facts-review{margin:18px 0}
+.facts-t{font-family:'Righteous',cursive;font-size:1.1rem;color:var(--modra);margin-bottom:9px}
+.fact-item{background:var(--card);border-left:3px solid var(--modra2);border-radius:0 9px 9px 0;padding:9px 13px;margin-bottom:7px;font-size:.83rem;line-height:1.55;color:var(--text);}
+.res-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.btn-primary{background:linear-gradient(135deg,var(--modra),var(--modra2));border:none;border-radius:12px;padding:15px;color:#fff;font-family:'Righteous',cursive;font-size:1.1rem;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(26,58,143,.2);}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-sec{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:15px;color:var(--text);font-family:'Righteous',cursive;font-size:1.1rem;cursor:pointer;transition:all .2s;}
+.btn-sec:hover{border-color:var(--modra2);color:var(--modra)}
+
+.badges-top{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
+.back-btn{background:var(--card);border:1.5px solid var(--border);border-radius:9px;padding:7px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;font-size:.82rem;transition:all .2s;}
+.back-btn:hover{border-color:var(--modra2)}
+.badges-t{font-family:'Righteous',cursive;font-size:1.6rem;color:var(--modra)}
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge-c{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 9px;text-align:center;transition:all .3s;}
+.badge-c.locked{opacity:.3;filter:grayscale(.7)}
+.badge-c.unlocked{border-color:rgba(43,92,230,.4);box-shadow:0 0 12px rgba(43,92,230,.1)}
+.badge-ico{font-size:2.1rem;margin-bottom:7px;display:block}
+.badge-n{font-size:.68rem;font-weight:800;color:var(--modra);text-transform:uppercase;letter-spacing:.07em;line-height:1.25}
+.badge-d{font-size:.61rem;color:var(--muted);margin-top:3px;line-height:1.35}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--modra2);border-radius:3px}
+@media(max-width:360px){.logo{font-size:2.8rem}.cat-grid{gap:8px}.answers{gap:7px}}
+</style>
+</head>
+<body>
+<div class="xp-popup" id="xpPopup"></div>
+
+<div class="screen" id="homeScreen">
+  <div class="home-header">
+    <div class="logo"><span class="logo-ico">🌍</span>FajnEvropa</div>
+    <div class="logo-sub">Zeměpis Evropy · státy · řeky · hory · příroda</div>
+    <div class="xp-bar">⚡ <span id="xpTotal">0</span> <span class="xp-lbl">XP</span></div>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+  <button class="btn-badges" onclick="showBadges()">🏆 Odznaky &nbsp;<span class="badge-pill" id="badgePill">0/18</span></button>
+</div>
+
+<div class="screen" id="questionScreen">
+  <div class="q-topbar">
+    <div class="q-cat" id="qCat"></div>
+    <div class="q-streak" id="qStreak"><span class="streak-fire">🔥</span><span id="streakN">0</span></div>
+    <div class="q-cnt-wrap">
+      <div class="q-cnt" id="qCnt"></div>
+      <button class="back-q" onclick="goHome()">← Domů</button>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="q-card">
+    <div class="q-badge" id="qBadge"></div>
+    <div class="q-text" id="qText"></div>
+  </div>
+  <div class="answers" id="answersDiv"></div>
+  <div class="fact-box" id="factBox">
+    <div class="fact-label">🌍 Věděl/a jsi?</div>
+    <div class="fact-text" id="factTxt"></div>
+  </div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Další →</button>
+</div>
+
+<div class="screen" id="resultScreen">
+  <div class="res-header">
+    <div class="res-title" id="resTitle"></div>
+    <div class="res-sub" id="resSub"></div>
+  </div>
+  <div class="res-stars"><span class="res-star">⭐</span><span class="res-star">⭐</span><span class="res-star">⭐</span></div>
+  <div class="res-stats">
+    <div class="stat-c"><div class="stat-v" id="stCorrect">0</div><div class="stat-l">Správně</div></div>
+    <div class="stat-c"><div class="stat-v" id="stXP" style="color:var(--xp)">0</div><div class="stat-l">XP</div></div>
+    <div class="stat-c"><div class="stat-v" id="stStreak" style="color:var(--zluta)">0</div><div class="stat-l">Max série</div></div>
+  </div>
+  <div class="facts-review"><div class="facts-t">🌍 Co jsi se dozvěděl/a</div><div id="factsList"></div></div>
+  <div class="res-btns">
+    <button class="btn-primary" onclick="playAgain()">Hrát znovu</button>
+    <button class="btn-sec" onclick="goHome()">← Domů</button>
+  </div>
+</div>
+
+<div class="screen" id="badgesScreen">
+  <div class="badges-top">
+    <button class="back-btn" onclick="goHome()">← Zpět</button>
+    <div class="badges-t">Moje odznaky</div>
+  </div>
+  <div class="badge-grid" id="badgeGrid"></div>
+</div>
+
+<script>
+const CATS=[
+  {id:'hlavni',   name:'Státy a hlavní města', emoji:'🏛️', desc:'Hlavní města, vlajky, poloha'},
+  {id:'reky',     name:'Řeky a jezera',         emoji:'🌊', desc:'Nejdelší řeky, největší jezera'},
+  {id:'hory',     name:'Hory a pohoří',          emoji:'⛰️', desc:'Nejvyšší vrcholy, pohoří, průsmyky'},
+  {id:'more',     name:'Moře a ostrovy',         emoji:'🏝️', desc:'Moře, zálivy, poloostrovy, ostrovy'},
+  {id:'zajim',    name:'Zajímavosti a rekordy',  emoji:'🏆', desc:'Největší, nejmenší, nejsevernější'},
+  {id:'eu',       name:'Evropská unie',          emoji:'🇪🇺', desc:'Členové, instituce, vznik EU'},
+  {id:'priroda',  name:'Příroda Evropy',         emoji:'🌿', desc:'Klima, fauna, flora, přírodní parky'},
+];
+
+const QS=[
+// STÁTY A HLAVNÍ MĚSTA
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Francie?',
+o:['Paříž','Lyon','Marseille','Bordeaux'],a:0,
+f:'Paříž leží na řece Seině a je domovem přibližně 2,1 milionu obyvatel v samotném městě a přes 12 milionů v metropolitní oblasti. Je nejnavštěvovanějším městem světa – přivítá ročně přes 30 milionů turistů.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Německa?',
+o:['Berlín','Mnichov','Hamburg','Frankfurt'],a:0,
+f:'Berlín se stal hlavním městem sjednoceného Německa v roce 1990 po pádu Berlínské zdi. Je to největší město v Německu s přibližně 3,7 miliony obyvatel a kulturní metropolí celé střední Evropy.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Španělska?',
+o:['Madrid','Barcelona','Sevilla','Valencia'],a:0,
+f:'Madrid leží uprostřed Iberského poloostrova ve výšce přibližně 667 m n. m. – je nejvýše položeným hlavním městem Evropské unie. Barcelona je sice turisticky slavnější, ale hlavním městem je Madrid.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Itálie?',
+o:['Řím','Milán','Neapol','Florencie'],a:0,
+f:'Řím je zvaný Věčné město a byl centrem Římské říše. Leží na sedmi pahorcích na řece Tibeře. Uvnitř Říma leží nezávislý stát Vatikán – nejmenší stát světa.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Polska?',
+o:['Varšava','Krakov','Gdaňsk','Poznaň'],a:0,
+f:'Varšava leží na Visle a je největším městem Polska. Bylo téměř úplně zničeno za druhé světové války – nacisté po Varšavském povstání záměrně zbořili 80–90 % budov. Dnešní historické centrum je rekonstrukcí a je zapsáno na seznam UNESCO.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Rakouska?',
+o:['Vídeň','Salzburg','Linec','Innsbruck'],a:0,
+f:'Vídeň leží na Dunaji a byla metropolí Habsburské monarchie. Je proslulá hudební tradicí – žili a tvořili zde Mozart, Beethoven, Schubert, Brahms, Mahler. Dnes je sídlem řady mezinárodních organizací včetně OSN.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Švýcarska?',
+o:['Bern','Ženeva','Curych','Basilej'],a:0,
+f:'Bern je sídlem spolkové vlády Švýcarska, ale není největším ani nejznámějším švýcarským městem – tím jsou Curych a Ženeva. Curych je největší, Ženeva sídlem mezinárodních organizací, ale hlavním městem je Bern.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Řecka?',
+o:['Athény','Soluň','Pireus','Héraklion'],a:0,
+f:'Athény jsou jedním z nejstarších trvale obydlených měst světa – přes 3000 let. Jsou kolébkou demokracie, filosofie a olympijských her. Na athénské Akropoli stojí Parthenon, postavený v 5. stol. př. n. l.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Maďarska?',
+o:['Budapešť','Debrecín','Miskolc','Pécs'],a:0,
+f:'Budapešť vznikla roku 1873 spojením tří měst – Budína, Starého Budína (Óbudy) a Pešti. Leží na Dunaji, přičemž Budín je na pravém (západním) a Pešť na levém (východním) břehu. Dunaj tu překlenuje devět mostů.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Norska?',
+o:['Oslo','Bergen','Stavanger','Trondheim'],a:0,
+f:'Oslo leží na dně Oslofjordu a je hlavním městem Norska. Je to jedno z nejdražších měst světa. Norsko těží ropu v Severním moři a patří k nejbohatším státům světa přepočteno na obyvatele.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Dánska?',
+o:['Kodaň','Aarhus','Odense','Aalborg'],a:0,
+f:'Kodaň leží na ostrově Sjælland a na části ostrova Amager. Je spojena mostem Øresund se švédským Malmö – tento most je jedním z nejdelších v Evropě. Kodaň je pravidelně hodnocena jako jedno z nejlepších měst pro život.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Rumunska?',
+o:['Bukurešť','Kluž','Brašov','Temešvár'],a:0,
+f:'Bukurešť leží v rovině Valašska poblíž bulharských hranic. V 19. stol. se jí říkalo „malá Paříž" kvůli pařížsky inspirované architektuře. Komunistický diktátor Ceaușescu přestavěl velkou část centra a dal postavit obří Palác parlamentu.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Belgie?',
+o:['Brusel','Antverpy','Gent','Lutych'],a:0,
+f:'Brusel je sídlem Evropské komise, Evropské rady a NATO. Belgie je federativní stát se třemi jazykovými komunitami – francouzskou, vlámskou a německou. Brusel je oficiálně dvojjazyčný (francouzština a nizozemština).'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Portugalska?',
+o:['Lisabon','Porto','Faro','Coimbra'],a:0,
+f:'Lisabon je nejzápadnějším hlavním městem kontinentální Evropy. Leží na ústí řeky Tejo do Atlantského oceánu. Je proslulý tramvajemi, úzkými uličkami čtvrti Alfama a melancholickými písněmi fado.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Švédska?',
+o:['Stockholm','Göteborg','Malmö','Uppsala'],a:0,
+f:'Stockholm je postaven na 14 ostrovech, kde jezero Mälaren ústí do Baltského moře. Je nazýván „Benátkami severu". Sídlí zde Nobelova nadace a každoročně tu probíhá předávání Nobelových cen (s výjimkou Norska, kde se udílí Nobelova cena míru).'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Finska?',
+o:['Helsinky','Tampere','Turku','Espoo'],a:0,
+f:'Helsinky leží na poloostrově u Finského zálivu a jsou nejsevernějším hlavním městem státu EU. Finsko je zemí tisíce jezer – má přes 188 000 jezer. Je také zemí se světově nejlepším školstvím a velmi vysokou kvalitou života.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Nizozemska?',
+o:['Amsterdam','Haag','Rotterdam','Utrecht'],a:0,
+f:'Amsterdam je hlavním městem a největším městem Nizozemska, ale vláda a parlament sídlí v Haagu. Amsterdam je proslulý sítí kanálů, úzkými domy podél nich a tolerantní kulturou. Přes 70 % území Nizozemska leží pod úrovní moře.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Slovenska?',
+o:['Bratislava','Košice','Banská Bystrica','Prešov'],a:0,
+f:'Bratislava leží na Dunaji přímo na trojmezí Slovenska, Rakouska a Maďarska. Je to jedno z mála hlavních měst světa hraničících se dvěma jinými státy. Do Vídně je to pouhých 60 km – nejblíže stojící hlavní města v Evropě.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Chorvatska?',
+o:['Záhřeb','Split','Dubrovník','Rijeka'],a:0,
+f:'Záhřeb je vnitrozemské hlavní město, přestože Chorvatsko je zemí s dlouhým jadranským pobřežím. Dubrovník a Split jsou turisticky slavnější, ale správním centrem je Záhřeb v kontinentální části země.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Srbska?',
+o:['Bělehrad','Novi Sad','Niš','Kragujevac'],a:0,
+f:'Bělehrad leží na soutoku Sávy a Dunaje a je jedním z nejstarších trvale obydlených míst v Evropě – přes 7 000 let. Byl hlavním městem Jugoslávie a dnes je největším městem na západním Balkáně.'},
+
+{c:'hlavni',t:'q',q:'Jaké je hlavní město Irska?',
+o:['Dublin','Cork','Galway','Limerick'],a:0,
+f:'Dublin leží na ústí řeky Liffey do Irského moře. Je centrem irské kultury a hospodářství. Irsko je jednou z nejmladších populací v EU a patří k nejrychleji rostoucím ekonomikám Evropy po vstupu do EU v roce 1973.'},
+
+// ŘEKY A JEZERA
+{c:'reky',t:'q',q:'Která je nejdelší řeka Evropy?',
+o:['Volha','Dunaj','Rýn','Dněpr'],a:0,
+f:'Volha měří přibližně 3 530 km a je nejdelší řekou Evropy. Pramení na Valdajské vysočině a ústí do Kaspického jezera. Je páteří evropského Ruska a po celou historii klíčovou dopravní tepnou.'},
+
+{c:'reky',t:'q',q:'Kolika státy protéká řeka Dunaj?',
+o:['10 státy','8 státy','6 státy','12 státy'],a:0,
+f:'Dunaj protéká 10 státy – Německem, Rakouskem, Slovenskem, Maďarskem, Chorvatskem, Srbskem, Bulharskem, Rumunskem, Moldavskem a Ukrajinou. Navíc tvoří hranici dalších států. Je to nejinternacionálnější řeka světa.'},
+
+{c:'reky',t:'q',q:'Kde pramení řeka Rýn?',
+o:['Ve Švýcarských Alpách u Reichenau','V Schwarzwaldu v Německu','V Vogézách ve Francii','U Bodamského jezera'],a:0,
+f:'Rýn pramení ve Švýcarsku, kde se u Reichenau spojují Přední a Zadní Rýn. Teče přes Bodamské jezero, pak tvoří hranici Švýcarska s Německem a Německa s Francií, než vstoupí do Nizozemska a ústí do Severního moře.'},
+
+{c:'reky',t:'q',q:'Které je největší jezero Evropy ležící zcela na jejím území?',
+o:['Ladožské jezero','Oněžské jezero','Balaton','Vänern'],a:0,
+f:'Ladožské jezero v severozápadním Rusku má rozlohu přibližně 17 700 km² a je největším jezerem zcela v Evropě. Za druhé světové války byla „Cesta života" přes zamrzlé Ladogo jedinou zásobovací trasou obléhaného Leningradu.'},
+
+{c:'reky',t:'q',q:'Kde pramení a kde ústí řeka Temže?',
+o:['Pramení v Cotswolds v Anglii, ústí do Severního moře u Southend','Pramení ve Walesu, ústí do Lamanšského průlivu','Pramení ve skotských Highland, ústí do Irského moře','Pramení v Anglii, ústí do Atlantiku'],a:0,
+f:'Temže pramení v Gloucestershire a protéká Londýnem. Její protipovodňová bariéra Thames Barrier z roku 1982 chrání Londýn před bouřkovými přívaly z Severního moře. Temže je obchodně nejdůležitější britskou řekou.'},
+
+{c:'reky',t:'q',q:'Která řeka protéká Paříží?',
+o:['Seina','Loira','Rhôna','Garonnu'],a:0,
+f:'Seina pramení na Burgundské plošině a měří přibližně 775 km. V Paříži tvoří ostrovy Cité a Saint-Louis, na nichž stojí katedrála Notre-Dame. Ústí do Lamanšského průlivu u Le Havre.'},
+
+{c:'reky',t:'q',q:'Které jezero leží na hranici Švýcarska a Francie a je druhé největší v Alpách?',
+o:['Ženevské jezero','Bodamské jezero','Lugánské jezero','Lago Maggiore'],a:0,
+f:'Ženevské jezero (Lac Léman) leží z větší části ve Švýcarsku, menší část patří Francii. Je na něm slavný vodotrysk Jet d\'Eau v Ženevě, stříkající vodu do výšky 140 metrů. Bodamské jezero leží na hranici Německa, Švýcarska a Rakouska.'},
+
+{c:'reky',t:'q',q:'Která řeka tvoří přirozenou hranici mezi Španělskem a Portugalskem?',
+o:['Guadiana','Ebro','Tagus','Douro'],a:0,
+f:'Guadiana tvoří část španělsko-portugalské hranice na jihu. Řeka Douro (španělsky Duero) a Tagus (Tejo) přitékají ze Španělska do Portugalska, ale hranici netvoří. Celkem sdílejí Španělsko a Portugalsko přibližně 1 200 km hranice.'},
+
+{c:'reky',t:'q',q:'Které italské jezero je největší v Itálii?',
+o:['Lago di Garda','Lago Maggiore','Lago di Como','Lago di Bolsena'],a:0,
+f:'Lago di Garda (Gardské jezero) je největším italským jezerem s rozlohou přibližně 370 km². Leží u úpatí Alp a má středomořské klima – rostou zde citrusy a olivy. Je oblíbenou turistickou destinací.'},
+
+{c:'reky',t:'q',q:'Která řeka protéká Budapeští a je páteří střední Evropy?',
+o:['Dunaj','Tisa','Sava','Dráva'],a:0,
+f:'Dunaj protéká Budapeští a odděluje historický Budín od moderní Pešti. Je to druhá nejdelší řeka Evropy po Volze. Pramení v Černém lese v Německu a ústí do Černého moře v Rumunsku deltou o rozloze přes 5 000 km².'},
+
+{c:'reky',t:'q',q:'Kde se nachází Balaton a proč je výjimečný?',
+o:['V Maďarsku; je největším jezerem střední Evropy','V Rakousku; je největší alpské jezero','Ve Slovinsku; je nejčistším jezerem Evropy','V Chorvatsku; je největší jezero Balkánu'],a:0,
+f:'Balaton v Maďarsku má rozlohu přibližně 594 km² a je největším jezerem střední Evropy. Průměrná hloubka je ale jen asi 3,2 m, takže se rychle ohřeje. Je to klíčové letovisko pro Maďary i turisty ze sousedních zemí.'},
+
+// HORY A POHOŘÍ
+{c:'hory',t:'q',q:'Který je nejvyšší vrchol Evropy?',
+o:['Mont Blanc','Elbrus','Dufourspitze','Matterhorn'],a:0,
+f:'Záleží na definici Evropy. Mont Blanc (4 808 m) na hranici Francie a Itálie je nejvyšším vrcholem Alp a bývá označován za nejvyšší horu Evropy. Elbrus (5 642 m) na Kavkaze je vyšší, ale zda Kavkaz patří do Evropy, je geografická diskuse.'},
+
+{c:'hory',t:'q',q:'Ve kterých zemích leží Alpy?',
+o:['Francie, Švýcarsko, Itálie, Německo, Rakousko, Lichtenštejnsko, Slovinsko, Monako','Jen Švýcarsko a Francie','Švýcarsko, Francie, Itálie, Německo','Švýcarsko, Francie, Itálie, Rakousko'],a:0,
+f:'Alpy jsou nejvyšším pohořím Evropy a rozkládají se přes osm států. Jsou zdrojem vody pro velkou část kontinentu – pramení zde Rýn, Rhôna, Inn, Etsch a další řeky. V Alpách se nachází přes 1 000 ledovců.'},
+
+{c:'hory',t:'q',q:'Co jsou Pyreneje a které státy oddělují?',
+o:['Pohoří oddělující Španělsko od Francie a Andorry','Pohoří na severu Španělska','Pohoří na jihu Francie','Hory oddělující Itálii od Francie'],a:0,
+f:'Pyreneje táhnou od Atlantiku po Středozemní moře v délce přibližně 430 km. Jsou přirozenou hranicí mezi Španělskem a Francií. Uprostřed leží trpasličí stát Andorra. Nejvyšší bod je Pico d\'Aneto (3 404 m) na španělské straně.'},
+
+{c:'hory',t:'q',q:'Které pohoří leží na Skandinávském poloostrově a tvoří páteř Norska?',
+o:['Skandinávské hory','Fjeldové hory','Laponské hory','Kaledonské hory'],a:0,
+f:'Skandinávské hory (norsky Skanderne) tvoří páteř Norska a část Švédska. Nejvyšší vrchol je Galdhøpiggen (2 469 m). Tyto hory způsobují, že Norsko má na západ déšť a fjordy, zatímco Švédsko na východ je sušší.'},
+
+{c:'hory',t:'q',q:'Ve kterém pohoří leží Matterhorn?',
+o:['Alpy, na hranici Švýcarska a Itálie','Pyreneje','Apeniny','Karpaty'],a:0,
+f:'Matterhorn (4 478 m) je jednou z nejikoničtějších hor světa díky svému pyramidovému tvaru. Leží na hranici švýcarského kantonu Valais a italského Piemontu. Byl poprvé zdolán v roce 1865 – ale čtyři ze sedmi členů výpravy při sestupu zahynuli.'},
+
+{c:'hory',t:'q',q:'Které pohoří tvoří přirozenou hranici mezi Evropou a Asií na území Ruska?',
+o:['Ural','Kavkaz','Altaj','Sibiřská vrchovina'],a:0,
+f:'Ural je tradičně považován za hranici Evropy a Asie. Táhne se přibližně 2 500 km od severu na jih. Je poměrně nízký – nejvyšší bod Narodnaja dosahuje jen 1 895 m. Kavkaz tuto roli také hraje v některých definicích.'},
+
+{c:'hory',t:'q',q:'Kde leží Karpaty a jakými státy procházejí?',
+o:['Střední a východní Evropa: Slovensko, Polsko, Ukrajina, Rumunsko, Maďarsko, Česko (okraj)','Jen Rumunsko a Slovensko','Balkánský poloostrov','Polsko a Maďarsko'],a:0,
+f:'Karpaty jsou druhým největším pohořím Evropy po Alpách. Nejvyšším bodem je Gerlachovský štít na Slovensku (2 655 m). Rumunské Karpaty jsou rozsáhlé a hustě zalesněné – domov posledních velkých populací medvědů a vlků v Evropě.'},
+
+{c:'hory',t:'q',q:'Jak se jmenuje nejvyšší hora Velké Británie?',
+o:['Ben Nevis','Scafell Pike','Snowdon','Cairn Gorm'],a:0,
+f:'Ben Nevis (1 345 m) ve Skotsku je nejvyšší horou Britských ostrovů. Je to vyhaslý vulkán. Scafell Pike je nejvyšší hora Anglie a Snowdon nejvyšší hora Walesu.'},
+
+{c:'hory',t:'q',q:'Kde leží Dolomity a čím jsou proslulé?',
+o:['V severovýchodní Itálii; světové dědictví UNESCO pro unikátní skalní věže','Ve Švýcarsku; jsou centrem alpského lyžování','V Rakousku; jsou nejvyšší částí Alp','Ve Slovinsku; jsou přírodní rezervací'],a:0,
+f:'Dolomity leží v italské autonomní oblasti Jižní Tyrolsko (Alto Adige) a Trentino. Jsou zapsány na seznam UNESCO (2009) pro svůj unikátní geologický a krajinný charakter. Jejich skalní věže a stěny jsou Mekkou skalních lezců.'},
+
+// MOŘE A OSTROVY
+{c:'more',t:'q',q:'Která moře omývají Itálský poloostrov?',
+o:['Tyrhénské, Jaderské a Středozemní','Jónské, Tyrhénské a Ligurské','Středozemní a Jónské','Jaderské, Tyrhénské, Jónské, Ligurské a Středozemní'],a:0,
+f:'Italský poloostrov omývají na západ Tyrhénské moře, na východ Jaderské moře a na jihu Jónské moře. Všechna jsou součástí Středozemního moře. Itálie má pobřeží dlouhé přibližně 7 600 km.'},
+
+{c:'more',t:'q',q:'Které je největší ostrovní souostroví Evropy?',
+o:['Britské ostrovy','Kanárské ostrovy','Baleárské ostrovy','Azory'],a:0,
+f:'Britské ostrovy jsou největším ostrovním souostrovím Evropy. Skládají se z Velké Británie, Irska a stovek menších ostrovů. Velká Británie je největším ostrovem Evropy s rozlohou přibližně 209 000 km².'},
+
+{c:'more',t:'q',q:'Kde leží Sicílie a která země ji spravuje?',
+o:['Největší ostrov Středomoří; autonomní oblast Itálie','Španělský ostrov ve Středomoří','Řecký ostrov na Jaderském moři','Nezávislý stát'],a:0,
+f:'Sicílie je největším ostrovem Středozemního moře s rozlohou přibližně 25 000 km². Je to autonomní oblast Itálie. Leží na ní Etna – nejvyšší a nejaktivnější sopka Evropy (přes 3 300 m). Sicílie je místem střetu kultur – řecké, římské, arabské i normanské.'},
+
+{c:'more',t:'q',q:'Kde se nachází Finský záliv a která města leží na jeho březích?',
+o:['Část Baltského moře; na březích leží Helsinky, Tallinn a Petrohrad','Část Severního moře; leží na něm Stockholm','Část Barentsova moře; leží na něm Murmansk','Část Baltského moře; leží na něm jen Helsinky'],a:0,
+f:'Finský záliv leží mezi Finskem, Estonskem a Ruskem. Na jeho březích stojí tři státní hlavní města: Helsinky (Finsko), Tallinn (Estonsko) a Petrohrad (Rusko – největší evropské město nehlásící se k hlavnímu městu). Záliv v zimě zamrzá.'},
+
+{c:'more',t:'q',q:'Kde se nachází Jadranské moře a které státy ho obklopují?',
+o:['Mezi Itálií a Balkánským poloostrovem; Itálie, Slovinsko, Chorvatsko, Bosna, Černá Hora, Albánie','Mezi Řeckem a Tureckem','Část Středomoří u Španělska','Mezi Francií a Itálií'],a:0,
+f:'Jadranské moře je ramenem Středozemního moře. Na jeho východním pobřeží leží šest států. Chorvatsko má nejdelší jadranské pobřeží s přibližně 1800 ostrovy. Nejhlubší místo Jadranu dosahuje přes 1200 m.'},
+
+{c:'more',t:'q',q:'Co je Lamanšský průplav a co odděluje?',
+o:['Průliv oddělující Velkou Británii od Francie; v nejužším místě je široký 34 km','Průliv oddělující Irsko od Anglie','Mořský průliv u Dánska','Fjord oddělující Norsko od Švédska'],a:0,
+f:'Lamanšský průplav (anglicky English Channel, francouzsky La Manche) je nejrušnějším námořním průlivem světa. V nejužším místě – u Doveru a Calais – je široký jen 34 km. Podvodní tunel Eurotunnel pod ním byl otevřen roku 1994.'},
+
+{c:'more',t:'q',q:'Kde leží Krym a komu patřil do roku 2014?',
+o:['Poloostrov na Černém moři; do roku 2014 součást Ukrajiny','Ostrov v Egejském moři; součást Řecka','Poloostrov v Baltském moři; součást Polska','Ostrov v Jadranském moři; součást Chorvatska'],a:0,
+f:'Krym je poloostrov v Černém moři, který byl součástí Ukrajiny od roku 1954. V roce 2014 ho Rusko anektovalo, což mezinárodní společenství vesměs neuznalo. Historicky byl domovem Tatarů, pak Řeků, pak Rusů. Sevastopol byl sídlem ruské Černomořské flotily.'},
+
+{c:'more',t:'q',q:'Které souostroví leží na severu Atlantiku a patří Norsku, přestože je poblíž Severního pólu?',
+o:['Špicberky','Faerské ostrovy','Jan Mayen','Svalbard a Faerské ostrovy'],a:0,
+f:'Špicberky (norsky Svalbard) leží ve Arktickém oceánu přibližně 1 300 km od severního pólu. Patří Norsku, ale podle Špicberské smlouvy z roku 1920 mohou všechny signatářské státy (včetně ČR) v oblasti podnikat. Žije tu více ledních medvědů než lidí.'},
+
+// ZAJÍMAVOSTI A REKORDY
+{c:'zajim',t:'q',q:'Který je nejmenší stát Evropy?',
+o:['Vatikán','Monako','San Marino','Lichtenštejnsko'],a:0,
+f:'Vatikán má rozlohu pouhých 0,44 km² a je nejmenším státem světa. Leží uvnitř Říma a je sídlem papeže. Monako je druhé nejmenší – 2,02 km². San Marino je nejstarší republika světa, existuje nepřetržitě od roku 301.'},
+
+{c:'zajim',t:'q',q:'Které je největší město Evropy?',
+o:['Moskva','Londýn','Paříž','Istanbul'],a:0,
+f:'Záleží na definici. Istanbul je největší město Evropy co do počtu obyvatel v metropolitní oblasti (přes 15 milionů), ale leží z části v Asii. Z hlavních měst zcela v Evropě je největší Moskva (přes 12 milionů). Londýn má přibližně 9 milionů.'},
+
+{c:'zajim',t:'q',q:'Které je nejvýše položené hlavní město Evropské unie?',
+o:['Madrid','Vilnius','Sofia','Tallinn'],a:0,
+f:'Madrid leží ve výšce přibližně 667 m n. m. a je nejvýše položeným hlavním městem EU. Leží uprostřed Iberské plošiny. Pro srovnání – Praha leží přibližně ve 200 m n. m., Berlín ve 34 m n. m.'},
+
+{c:'zajim',t:'q',q:'Která evropská země má největší plochu?',
+o:['Rusko','Ukrajina','Francie','Španělsko'],a:0,
+f:'Rusko je s přibližně 17 miliony km² největší zemí světa, přičemž přibližně 3,9 milionu km² leží v Evropě. Bez Ruska je největší evropskou zemí Ukrajina (604 000 km²), pak Francie (551 000 km²).'},
+
+{c:'zajim',t:'q',q:'Kde leží nejsevernější bod kontinentální Evropy?',
+o:['Nordkapp v Norsku','Knivskjellodden v Norsku','Nordkyn v Norsku','Magerøya v Norsku'],a:0,
+f:'Turisticky slavný Nordkapp je sice nejnavštěvovanějším bodem, ale skutečně nejsevernějším místem kontinentální Evropy je Knivskjellodden – o 1 500 metrů severněji než Nordkapp, ale dostupný jen pěšky. Oba leží v Norsku za polárním kruhem.'},
+
+{c:'zajim',t:'q',q:'Kde se nachází nejdelší řeka tekoucí jen na území Evropské unie?',
+o:['Dunaj','Rýn','Loira','Ebro'],a:0,
+f:'Loira ve Francii měří přibližně 1 013 km a je nejdelší řekou zcela na území Francie a celé EU. Její povodí je zapsáno na seznam UNESCO jako kulturní krajina. Rýn a Dunaj protékají i nečlenskými státy EU.'},
+
+{c:'zajim',t:'q',q:'Která země má v Evropě nejdelší pobřeží (bez ostrovů)?',
+o:['Norsko','Řecko','Chorvatsko','Finsko'],a:0,
+f:'Norsko má díky fjordům nejdelší pobřeží v Evropě i ve světě – přibližně 25 000 km základní linie a přes 100 000 km včetně všech ostrovů. Fjordy jsou zalité ledovcová údolí, hluboká až 1 300 m.'},
+
+{c:'zajim',t:'q',q:'Které jsou tři státy Beneluxu?',
+o:['Belgie, Nizozemsko, Lucembursko','Belgie, Německo, Nizozemsko','Belgie, Nizozemsko, Francie','Dánsko, Belgie, Nizozemsko'],a:0,
+f:'Název Benelux vznikl z prvních slabik belgického, nederlandského (nizozemského) a lucemburského jména. Benelux byl hospodářskou unií již od roku 1944 – dřív než vzniklo Evropské společenství. Je to jedna z nejhustěji osídlených oblastí světa.'},
+
+{c:'zajim',t:'q',q:'Kde leží Gibraltar a komu patří?',
+o:['Skalnatý poloostrov na jihu Španělska; britské zámořské území','Španělský ostrov u afrického pobřeží','Část Maroka spravovaná Španělskem','Nezávislé miniaturní území'],a:0,
+f:'Gibraltar je britské zámořské území na jižním cípu Španělska. Kontroluje vstup do Středozemního moře ze Atlantiku. Španělsko ho požaduje zpět od roku 1713. V referendu roku 2006 se 98,5 % Gibraltarčanů vyslovilo pro setrvání pod britskou správou.'},
+
+// EVROPSKÁ UNIE
+{c:'eu',t:'q',q:'Kdy a kde byla podepsána zakladatelská smlouva Evropského hospodářského společenství?',
+o:['1957 v Římě (Římské smlouvy)','1951 v Paříži','1993 v Maastrichtu','1957 v Bruselu'],a:0,
+f:'Římské smlouvy podepsalo 25. března 1957 šest států: Francie, Německo, Itálie, Belgie, Nizozemsko a Lucembursko. Vzniklo EHS a Euratom. Maastrichtská smlouva z roku 1993 přejmenovala společenství na Evropskou unii a zavedla euro.'},
+
+{c:'eu',t:'q',q:'Kolik členských států má Evropská unie?',
+o:['27 členů','28 členů','26 členů','30 členů'],a:0,
+f:'Po odchodu Velké Británie (Brexit, leden 2020) má EU 27 členů. Největším rozšířením bylo přistoupení 10 států v roce 2004, mezi nimi i ČR a Slovensko. Kandidátskými zeměmi jsou mimo jiné Ukrajina, Moldavsko a západobalkánské státy.'},
+
+{c:'eu',t:'q',q:'Kde sídlí Evropský parlament?',
+o:['Ve Štrasburku (plenární zasedání) a Bruselu (výbory a administrativa)','Pouze v Bruselu','Pouze ve Štrasburku','V Bruselu, Štrasburku a Lucemburku'],a:0,
+f:'Evropský parlament má tři sídla – což je historický kompromis. Plenární zasedání jsou ve Štrasburku, výbory a většina práce probíhá v Bruselu, sekretariát sídlí v Lucemburku. Tento rozptyl stojí ročně přibližně 200 milionů eur navíc.'},
+
+{c:'eu',t:'q',q:'Které státy používají euro jako svou měnu?',
+o:['20 členů EU a několik nečlenů','Všech 27 členů EU','Pouze původních 6 zakladatelů','15 členů EU'],a:0,
+f:'Eurozona má od roku 2023 dvacet členů EU. Mimo EU používají euro i Monako, San Marino, Vatikán a Andorra (smluvně) a Kosovo a Černá Hora (jednostranně). Česko, Polsko, Maďarsko, Švédsko a Dánsko euro nemají, přestože jsou členy EU.'},
+
+{c:'eu',t:'q',q:'Co je Schengenský prostor?',
+o:['Oblast bez kontrol na vnitřních hranicích; zahrnuje i nečleny EU (Norsko, Island, Švýcarsko)','Pouze státy eurozóny','Celé území EU','Obranné seskupení zemí EU'],a:0,
+f:'Schengenská dohoda byla podepsána roku 1985 v lucemburském Schengenu. Dnes zahrnuje 29 evropských zemí – ne všechny jsou v EU (Norsko, Island, Švýcarsko, Lichtenštejnsko jsou členy Schengenu, ale ne EU). Bulharsko a Rumunsko vstoupily v roce 2024.'},
+
+{c:'eu',t:'q',q:'Kde sídlí Evropský soudní dvůr?',
+o:['V Lucemburku','V Haagu','V Bruselu','Ve Štrasburku'],a:0,
+f:'Soudní dvůr EU sídlí v Lucemburku. Je třeba ho odlišovat od Evropského soudu pro lidská práva, který sídlí ve Štrasburku a není institucí EU, ale Rady Evropy (do níž patří i nečlenové EU).'},
+
+{c:'eu',t:'q',q:'Která je největší ekonomika Evropské unie?',
+o:['Německo','Francie','Itálie','Španělsko'],a:0,
+f:'Německo je největší ekonomikou EU a čtvrtou největší na světě (za USA, Čínou a Japonskem). Je největším exportérem v EU. Německý průmysl – automobily (BMW, Mercedes, Volkswagen), strojírenství a chemie – je páteří evropské ekonomiky.'},
+
+// PŘÍRODA EVROPY
+{c:'priroda',t:'q',q:'Kde se nachází největší prales v Evropě?',
+o:['Bělověžský prales na hranici Polska a Běloruska','Taiga v evropském Rusku','Lesy Skandinávie','Bavorský les'],a:0,
+f:'Bělověžský prales (Białowieża) je posledním zbytkem původního nížinného pralesa, který pokrýval velkou část Evropy. Žijí zde poslední volně žijící zubři evropští. Je zapsán na seznam UNESCO. Sporný kácení v polské části vzbudilo mezinárodní kontroverze.'},
+
+{c:'priroda',t:'q',q:'Kde se nachází největší aktivní sopka Evropy?',
+o:['Etna na Sicílii','Vesuv v Itálii','Stromboli','Santorini'],a:0,
+f:'Etna na Sicílii je s výškou přes 3 300 m nejvyšší a nejaktivnější sopkou Evropy. Eruptuje téměř nepřetržitě. Vesuv u Neapole je slavnější pro erupci z roku 79 n. l., která zasypala Pompeje, ale v současnosti je klidnější.'},
+
+{c:'priroda',t:'q',q:'Co jsou norské fjordy a jak vznikly?',
+o:['Hluboká úzká mořská zátoka vyhloubená ledovcem; dnes zaplavená mořem','Říční delty na norském pobřeží','Sopečné průrvy v pobřežních horách','Přírodní přístavy vzniklé erozí moře'],a:0,
+f:'Fjordy jsou ledovcová údolí, která se po ústupu ledovců zaplavila mořem. Norský Sognefjord je nejdelší (204 km) a nejhlubší (1 308 m) fjord světa. Norské fjordy jsou zapsány na seznam UNESCO a každoročně přilákají miliony turistů.'},
+
+{c:'priroda',t:'q',q:'Kde se nachází pláž, která je v létě nejnavštěvovanějším místem Evropy?',
+o:['Costa del Sol ve Španělsku','Côte d\'Azur ve Francii','Rimini v Itálii','Mykonos v Řecku'],a:0,
+f:'Costa del Sol je řetězec pláží v Andalusii na jihu Španělska. Přijíždí sem každoročně přes 12 milionů turistů. Málaga, Marbella a Torremolinos jsou centra tohoto turistického regionu. Španělsko je celkově třetí nejnavštěvovanější zemí světa.'},
+
+{c:'priroda',t:'q',q:'Kde se nachází Plitvická jezera a co je dělá unikátními?',
+o:['V Chorvatsku; 16 propojených jezer s vodopády, světové dědictví UNESCO','V Slovinsku; horská jezera v Julských Alpách','Ve Slovinsku; krasová jezera v Dinárském pohoří','V Bosně; jezera vzniklá sesuvy půdy'],a:0,
+f:'Plitvická jezera v Chorvatsku jsou zapsána na seznam UNESCO od roku 1979. Seize jezer je propojeno vodopády a je stále aktivně přetvářeno usazováním vápence – travertinu. Barvy jezer se mění od smaragdové po tyrkysovou.'},
+
+{c:'priroda',t:'q',q:'Kde leží Delta Dunaje a proč je biologicky výjimečná?',
+o:['Na pobřeží Rumunska a Ukrajiny u Černého moře; největší mokřad v Evropě, UNESCO','U ústí Dunaje v Bulharsku','Na hranici Rumunska a Moldavska','U Bělehradu, kde se Sáva vlévá do Dunaje'],a:0,
+f:'Delta Dunaje je největší a nejzachovalejší dunajskou deltou v Evropě s rozlohou přes 5 000 km². Je domovem přibližně 300 druhů ptáků a 160 druhů ryb. Je zapsána na seznam UNESCO a Ramsarskou konvenci. Žijí tu pelikáni bílí a různé druhy orlů.'},
+];
+
+const BADGES=[
+  {id:'first',  ico:'🗺️',n:'První cesta',        d:'Odpoviň na první otázku',             ok:s=>s.ta>=1},
+  {id:'str3',   ico:'🔥',n:'Série 3',             d:'3 správné za sebou',                  ok:s=>s.ms>=3},
+  {id:'str5',   ico:'🌍',n:'Série 5',             d:'5 správných za sebou',                ok:s=>s.ms>=5},
+  {id:'str10',  ico:'🏆',n:'Série 10!',           d:'10 správných za sebou',               ok:s=>s.ms>=10},
+  {id:'str15',  ico:'⭐',n:'Evropský znalec',     d:'15 správných za sebou',               ok:s=>s.ms>=15},
+  {id:'c_hla',  ico:'🏛️',n:'Diplomat',           d:'Dokonči Státy a hlavní města',        ok:s=>(s.cb.hlavni||0)>0},
+  {id:'c_rek',  ico:'🌊',n:'Hydrograf',           d:'Dokonči Řeky a jezera',               ok:s=>(s.cb.reky||0)>0},
+  {id:'c_hor',  ico:'⛰️',n:'Alpinista',          d:'Dokonči Hory a pohoří',               ok:s=>(s.cb.hory||0)>0},
+  {id:'c_mor',  ico:'🏝️',n:'Mořeplavec',         d:'Dokonči Moře a ostrovy',              ok:s=>(s.cb.more||0)>0},
+  {id:'c_zaj',  ico:'🏆',n:'Rekordman',           d:'Dokonči Zajímavosti a rekordy',       ok:s=>(s.cb.zajim||0)>0},
+  {id:'c_eu',   ico:'🇪🇺',n:'Euroobčan',         d:'Dokonči Evropská unie',               ok:s=>(s.cb.eu||0)>0},
+  {id:'c_pri',  ico:'🌿',n:'Přírodovědec',        d:'Dokonči Příroda Evropy',              ok:s=>(s.cb.priroda||0)>0},
+  {id:'perfect',ico:'⭐',n:'Perfektní!',          d:'3 hvězdy v jakékoliv kategorii',      ok:s=>Object.values(s.cb).some(v=>v===3)},
+  {id:'allcat', ico:'🌍',n:'Průzkumník Evropy',   d:'Dokonči všech 7 kategorií',           ok:s=>CATS.every(c=>(s.cb[c.id]||0)>0)},
+  {id:'q50',    ico:'✈️',n:'Cestovatel',          d:'Zodpověz 50 otázek',                  ok:s=>s.ta>=50},
+  {id:'xp500',  ico:'💎',n:'500 XP',              d:'Získej 500 XP',                       ok:s=>s.xp>=500},
+  {id:'xp1000', ico:'🗺️',n:'Geograf',            d:'Získej 1000 XP',                      ok:s=>s.xp>=1000},
+  {id:'allstar',ico:'🌍',n:'Mistr Evropy',        d:'3 hvězdy ve všech 7 kategoriích',     ok:s=>CATS.every(c=>(s.cb[c.id]||0)>=3)},
+];
+
+// ── STATE ──
+let ST=load(),SES={};
+function load(){try{const s=JSON.parse(localStorage.getItem('fajnevropa1')||'{}');return{xp:s.xp||0,cb:s.cb||{},ta:s.ta||0,ms:s.ms||0,bd:s.bd||[]};}catch(e){return{xp:0,cb:{},ta:0,ms:0,bd:[]};}}
+function save(){localStorage.setItem('fajnevropa1',JSON.stringify(ST));}
+
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t,d,v=.24){try{const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.start();o.stop(ac.currentTime+d);}catch(e){}}
+function sndCorrect(){tone(523,'sine',.1);setTimeout(()=>tone(659,'sine',.12),70);setTimeout(()=>tone(784,'sine',.18),140);}
+function sndWrong(){tone(220,'sawtooth',.14);setTimeout(()=>tone(180,'sawtooth',.18),90);}
+function sndStreak(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'sine',.15,.28),i*60));}
+function sndFinish(){[523,659,784,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.17,.26),i*75));}
+
+function showXP(xp,streak){const el=document.getElementById('xpPopup');el.textContent=`+${xp} XP${streak>=3?' 🌍×'+streak:''}`;el.className='xp-popup go';setTimeout(()=>el.className='xp-popup',1800);}
+
+function renderHome(){
+  document.getElementById('xpTotal').textContent=ST.xp;
+  const earned=BADGES.filter(b=>ST.bd.includes(b.id)).length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  document.getElementById('catGrid').innerHTML=CATS.map(cat=>{
+    const cnt=QS.filter(q=>q.c===cat.id).length,best=ST.cb[cat.id]||0;
+    const stars=[1,2,3].map(s=>`<span class="cat-star ${s<=best?'on':''}">${s<=best?'⭐':'☆'}</span>`).join('');
+    return`<div class="cat-card" onclick="startCat('${cat.id}')"><span class="cat-emoji">${cat.emoji}</span><div class="cat-name">${cat.name}</div><div class="cat-count">${cnt} otázek</div><div class="cat-desc">${cat.desc}</div><div class="cat-stars">${stars}</div></div>`;
+  }).join('');
+  show('homeScreen');
+}
+
+function startCat(id){
+  getAC();
+  const pool=[...QS.filter(q=>q.c===id)].sort(()=>Math.random()-.5);
+  SES={cat:id,qs:pool,idx:0,ok:0,streak:0,ms:0,xp:0,answered:false,facts:[]};
+  show('questionScreen');renderQ();
+}
+
+function renderQ(){
+  const cat=CATS.find(c=>c.id===SES.cat),q=SES.qs[SES.idx],tot=SES.qs.length;
+  SES.answered=false;
+  document.getElementById('qCat').textContent=cat.emoji+' '+cat.name;
+  document.getElementById('qCnt').textContent=`${SES.idx+1} / ${tot}`;
+  document.getElementById('progFill').style.width=`${(SES.idx/tot)*100}%`;
+  const strEl=document.getElementById('qStreak');
+  if(SES.streak>=2){strEl.className='q-streak on';document.getElementById('streakN').textContent=SES.streak;}
+  else strEl.className='q-streak';
+  document.getElementById('qBadge').textContent='🌍 Zeměpisná otázka';
+  document.getElementById('qText').textContent=q.q;
+  const shuffled=[...Array(q.o.length).keys()].sort(()=>Math.random()-.5);
+  q._newA=shuffled.indexOf(q.a);
+  const adiv=document.getElementById('answersDiv');
+  adiv.className='answers'+(q.o.length<=2?' solo':'');
+  adiv.innerHTML=shuffled.map((orig,i)=>`<button class="ans-btn" onclick="checkAns(${i})">${q.o[orig]}</button>`).join('');
+  document.getElementById('factBox').className='fact-box';
+  document.getElementById('nextBtn').className='next-btn';
+}
+
+function checkAns(idx){
+  if(SES.answered)return;
+  SES.answered=true;
+  const q=SES.qs[SES.idx],btns=document.querySelectorAll('.ans-btn'),ok=idx===q._newA;
+  btns.forEach(b=>b.disabled=true);
+  btns[q._newA].classList.add('show-correct');
+  if(ok){
+    btns[idx].classList.add('correct');
+    SES.streak++;SES.ms=Math.max(SES.ms,SES.streak);SES.ok++;
+    const xp=SES.streak>=15?35:SES.streak>=10?25:SES.streak>=5?18:SES.streak>=3?14:10;
+    SES.xp+=xp;sndCorrect();if(SES.streak>=3)setTimeout(sndStreak,220);showXP(xp,SES.streak);
+    const strEl=document.getElementById('qStreak');strEl.className='q-streak on';document.getElementById('streakN').textContent=SES.streak;
+  }else{btns[idx].classList.add('wrong');SES.streak=0;document.getElementById('qStreak').className='q-streak';sndWrong();}
+  ST.ta++;save();
+  if(q.f){document.getElementById('factTxt').textContent=q.f;document.getElementById('factBox').className='fact-box on';if(ok&&SES.facts.length<6)SES.facts.push(q.f);}
+  document.getElementById('nextBtn').className='next-btn on';
+}
+
+function nextQ(){SES.idx++;if(SES.idx>=SES.qs.length)showResult();else renderQ();}
+
+function showResult(){
+  sndFinish();
+  const tot=SES.qs.length,pct=SES.ok/tot,stars=pct>=.9?3:pct>=.6?2:1;
+  const prev=ST.cb[SES.cat]||0;if(stars>prev)ST.cb[SES.cat]=stars;
+  ST.xp+=SES.xp;ST.ms=Math.max(ST.ms,SES.ms);save();checkBadges();
+  const t={
+    3:['Výborně!','Skvělý geograf!','Perfektní!','Mistr Evropy!'],
+    2:['Dobrá práce!','Solidní znalost!','Téměř perfektní!','Šikovný/á!'],
+    1:['Evropa čeká!','Zkus to znovu!','Dobrý začátek!','Naučíš se!']
+  };
+  document.getElementById('resTitle').textContent=t[stars][Math.floor(Math.random()*4)];
+  document.getElementById('resSub').textContent=`${SES.ok} z ${tot} správně — ${Math.round(pct*100)} %`;
+  document.querySelectorAll('.res-star').forEach((s,i)=>{s.className='res-star';if(i<stars)setTimeout(()=>s.className='res-star on',i*200+100);});
+  document.getElementById('stCorrect').textContent=`${SES.ok}/${tot}`;
+  document.getElementById('stXP').textContent=SES.xp;
+  document.getElementById('stStreak').textContent=SES.ms;
+  document.getElementById('factsList').innerHTML=SES.facts.length>0
+    ?SES.facts.map(f=>`<div class="fact-item">${f}</div>`).join('')
+    :'<div class="fact-item" style="color:var(--muted)">Odpovídej správně a dozvíš se zajímavosti o Evropě!</div>';
+  show('resultScreen');
+}
+
+function checkBadges(){BADGES.forEach(b=>{if(!ST.bd.includes(b.id)&&b.ok(ST))ST.bd.push(b.id);});save();}
+function showBadges(){
+  const earned=ST.bd.length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  document.getElementById('badgeGrid').innerHTML=BADGES.map(b=>`<div class="badge-c${ST.bd.includes(b.id)?' unlocked':' locked'}"><span class="badge-ico">${b.ico}</span><div class="badge-n">${b.n}</div><div class="badge-d">${b.d}</div></div>`).join('');
+  show('badgesScreen');
+}
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function goHome(){renderHome();}
+function playAgain(){startCat(SES.cat);}
+renderHome();
+
+</script>
+</body>
+</html>
