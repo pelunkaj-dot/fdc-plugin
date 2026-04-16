@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desetinná čísla – plný modul</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --bg-soft: #ffffff;
+      --panel: #ffffff;
+      --panel-2: #eef3ff;
+      --text: #182033;
+      --muted: #5b6885;
+      --accent: #315efb;
+      --accent-2: #5f8bff;
+      --success: #0d9d5b;
+      --danger: #d53a4a;
+      --warning: #d48b09;
+      --info: #2b7bbb;
+      --border: #d8e1f0;
+      --shadow: 0 14px 38px rgba(22, 37, 77, 0.12);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --input-bg: #ffffff;
+      --hero-grad-1: rgba(49, 94, 251, 0.13);
+      --hero-grad-2: rgba(95, 139, 255, 0.08);
+      --theme-name: "Světlý";
+    }
+
+    body.theme-dark {
+      --bg: #0e1321;
+      --bg-soft: #131b2d;
+      --panel: #182137;
+      --panel-2: #1e2944;
+      --text: #eef4ff;
+      --muted: #b3bfdb;
+      --accent: #79a4ff;
+      --accent-2: #aac5ff;
+      --success: #58d692;
+      --danger: #ff7a92;
+      --warning: #f1bd5a;
+      --info: #7ec5ff;
+      --border: #2d3a5d;
+      --shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+      --input-bg: #101828;
+      --hero-grad-1: rgba(121, 164, 255, 0.18);
+      --hero-grad-2: rgba(170, 197, 255, 0.08);
+      --theme-name: "Tmavý";
+    }
+
+    body.theme-girly {
+      --bg: #fff5fb;
+      --bg-soft: #fff9fd;
+      --panel: #ffffff;
+      --panel-2: #fff0f8;
+      --text: #4a2441;
+      --muted: #875c7e;
+      --accent: #e1509d;
+      --accent-2: #f48abe;
+      --success: #2aa868;
+      --danger: #dd4279;
+      --warning: #d98a1d;
+      --info: #8b4fd4;
+      --border: #f0cadf;
+      --shadow: 0 14px 36px rgba(190, 78, 137, 0.16);
+      --input-bg: #fffefe;
+      --hero-grad-1: rgba(225, 80, 157, 0.14);
+      --hero-grad-2: rgba(244, 138, 190, 0.08);
+      --theme-name: "Holčičí";
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 5%, var(--hero-grad-1), transparent 28%),
+        radial-gradient(circle at 90% 12%, var(--hero-grad-2), transparent 26%),
+        linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
+      color: var(--text);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app-shell {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.4fr) minmax(280px, 1.1fr) minmax(240px, 0.9fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .card {
+      background: linear-gradient(180deg, var(--panel) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .brand-card {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .brand-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-badge {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.7rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      font-size: clamp(1.55rem, 2vw, 2.3rem);
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .mascot-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .dekacek {
+      font-size: 1.25rem;
+    }
+
+    .mascot-speech {
+      padding: 14px 16px;
+      border-radius: var(--radius-lg);
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      min-height: 74px;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .stats-card,
+    .quick-card {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .section-label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat-pill {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      padding: 12px;
+    }
+
+    .stat-pill strong {
+      display: block;
+      font-size: 1.35rem;
+      margin-top: 4px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip,
+    .btn,
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      user-select: none;
+    }
+
+    .chip:hover,
+    .btn:hover,
+    .icon-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .chip.active,
+    .btn.primary,
+    .icon-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      border-color: transparent;
+    }
+
+    .btn.secondary {
+      background: var(--panel-2);
+    }
+
+    .btn.success {
+      background: rgba(13, 157, 91, 0.14);
+      border-color: rgba(13, 157, 91, 0.28);
+      color: var(--success);
+    }
+
+    .btn.danger {
+      background: rgba(213, 58, 74, 0.12);
+      border-color: rgba(213, 58, 74, 0.28);
+      color: var(--danger);
+    }
+
+    .btn.warning {
+      background: rgba(212, 139, 9, 0.12);
+      border-color: rgba(212, 139, 9, 0.28);
+      color: var(--warning);
+    }
+
+    .btn.info {
+      background: rgba(43, 123, 187, 0.12);
+      border-color: rgba(43, 123, 187, 0.28);
+      color: var(--info);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr) 310px;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .rightbar,
+    .workspace {
+      min-width: 0;
+    }
+
+    .panel {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .menu-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .menu-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .menu-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      border-color: transparent;
+    }
+
+    .menu-btn small {
+      display: block;
+      margin-top: 6px;
+      opacity: 0.88;
+      line-height: 1.35;
+    }
+
+    .workspace .hero {
+      padding: 20px;
+    }
+
+    .hero-top {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(1.3rem, 1.7vw, 1.9rem);
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .exercise-card {
+      padding: 20px;
+    }
+
+    .exercise-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .exercise-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .question-box {
+      padding: 20px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, var(--panel-2) 0%, rgba(255,255,255,0.03) 100%);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .question-main {
+      font-size: clamp(1.5rem, 2.9vw, 2.6rem);
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      word-break: break-word;
+    }
+
+    .question-note,
+    .question-context {
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    input.answer-input {
+      width: 100%;
+      border-radius: 18px;
+      border: 2px solid var(--border);
+      background: var(--input-bg);
+      color: var(--text);
+      padding: 18px 18px;
+      font-size: 1.18rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input.answer-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(49, 94, 251, 0.12);
+    }
+
+    .action-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .feedback-box,
+    .hint-box,
+    .solution-box,
+    .steps-box,
+    .history-box,
+    .legend-box,
+    .achievement-box,
+    .memory-box,
+    .teacher-box {
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      line-height: 1.5;
+    }
+
+    .feedback-box.success {
+      background: rgba(13, 157, 91, 0.12);
+      border-color: rgba(13, 157, 91, 0.25);
+      color: var(--success);
+    }
+
+    .feedback-box.error {
+      background: rgba(213, 58, 74, 0.11);
+      border-color: rgba(213, 58, 74, 0.24);
+      color: var(--danger);
+    }
+
+    .feedback-box.info {
+      background: rgba(43, 123, 187, 0.11);
+      border-color: rgba(43, 123, 187, 0.24);
+      color: var(--info);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .inline-strong {
+      font-weight: 700;
+    }
+
+    .tiny {
+      font-size: 0.88rem;
+    }
+
+    .stats-table {
+      display: grid;
+      gap: 8px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      align-items: center;
+    }
+
+    .bar-wrap {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.08);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .bar {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .list-plain {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .history-list,
+    .achievement-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .history-item,
+    .achievement-item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+    }
+
+    .achievement-item.locked {
+      opacity: 0.62;
+      filter: grayscale(0.18);
+    }
+
+    .keyboard-note {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .footer-controls {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .danger-zone {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px dashed rgba(213, 58, 74, 0.35);
+      background: rgba(213, 58, 74, 0.05);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-pill {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      font-size: 0.9rem;
+    }
+
+    .mode-banner {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(49, 94, 251, 0.15), rgba(95, 139, 255, 0.08));
+      border: 1px solid var(--border);
+      line-height: 1.45;
+    }
+
+    .timer {
+      font-weight: 700;
+      color: var(--warning);
+    }
+
+    @media (max-width: 1240px) {
+      .topbar,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-shell {
+        padding: 12px;
+      }
+
+      .brand-card,
+      .stats-card,
+      .quick-card,
+      .panel,
+      .hero,
+      .exercise-card {
+        padding: 16px;
+      }
+
+      .question-main {
+        font-size: 1.6rem;
+      }
+
+      .input-row {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="theme-light">
+  <div class="app-shell">
+    <div class="topbar">
+      <section class="card brand-card">
+        <div class="brand-line">
+          <div class="brand-title">
+            <div class="logo-badge">𝟘.𝟙</div>
+            <div>
+              <h1>Desetinná čísla</h1>
+              <p class="subtitle">Poctivý modul pro procvičování, vysvětlování, herní postup a ukládání pokroku.</p>
+            </div>
+          </div>
+          <div class="mascot-inline"><span class="dekacek">✨</span> Dekáček</div>
+        </div>
+        <div id="mascotSpeech" class="mascot-speech"></div>
+      </section>
+
+      <section class="card stats-card">
+        <p class="section-label">Přehled výkonu</p>
+        <div class="stat-grid">
+          <div class="stat-pill"><span>Body</span><strong id="statPoints">0</strong></div>
+          <div class="stat-pill"><span>Série</span><strong id="statStreak">0</strong></div>
+          <div class="stat-pill"><span>Úspěšnost</span><strong id="statAccuracy">0 %</strong></div>
+          <div class="stat-pill"><span>Hvězdy</span><strong id="statStars">0</strong></div>
+        </div>
+        <div class="mode-banner" id="modeBanner"></div>
+      </section>
+
+      <section class="card quick-card">
+        <p class="section-label">Rychlé přepínače</p>
+        <div>
+          <div class="tiny muted">Motiv</div>
+          <div class="control-group" id="themeControls"></div>
+        </div>
+        <div>
+          <div class="tiny muted">Obtížnost</div>
+          <div class="control-group" id="difficultyControls"></div>
+        </div>
+        <div>
+          <div class="tiny muted">Režim</div>
+          <div class="control-group" id="modeControls"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="card panel">
+          <p class="section-label">Sekce</p>
+          <div class="menu-list" id="sectionMenu"></div>
+        </section>
+
+        <section class="card panel">
+          <p class="section-label">Užitečné zásady</p>
+          <div class="legend-box">
+            <ul class="list-plain tiny">
+              <li>Používej desetinnou čárku nebo tečku. Modul si s tím poradí.</li>
+              <li>Po každé chybě můžeš odpověď opravit.</li>
+              <li>Nápověda je dostupná u každého příkladu.</li>
+              <li>Žádný příklad nezmizí, dokud neuvidíš správný výsledek.</li>
+              <li>V těžké obtížnosti se u převodů řeší i periodický rozvoj.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <p class="section-label">Paměť a pokrok</p>
+          <div class="memory-box" id="memorySummary"></div>
+          <div class="danger-zone">
+            <div class="tiny muted" style="margin-bottom:10px;">Smaže body, historii, odznaky i poslední nastavení.</div>
+            <button class="btn danger" id="resetProgressBtn">Vymazat celý pokrok</button>
+          </div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <section class="card hero">
+          <div class="hero-top">
+            <div>
+              <h2 id="heroTitle">Sčítání desetinných čísel</h2>
+              <div class="subtitle" id="heroSubtitle"></div>
+            </div>
+            <div class="hero-meta" id="heroMeta"></div>
+          </div>
+        </section>
+
+        <section class="card exercise-card">
+          <div class="exercise-header">
+            <div class="exercise-type" id="exerciseType"></div>
+            <div class="pill-row" id="roundPills"></div>
+          </div>
+
+          <div class="question-box">
+            <div class="question-context" id="questionContext"></div>
+            <div class="question-main" id="questionMain"></div>
+            <div class="question-note" id="questionNote"></div>
+          </div>
+
+          <div class="input-row">
+            <input id="answerInput" class="answer-input" type="text" autocomplete="off" inputmode="decimal" placeholder="Sem napiš odpověď" />
+            <button class="btn primary" id="submitBtn">Potvrdit odpověď</button>
+          </div>
+          <div class="keyboard-note">Tip: Enter potvrzuje odpověď. Pokud ses uklikl, klid, Dekáček tě nenechá spadnout ze schodů didaktiky.</div>
+
+          <div class="action-grid">
+            <button class="btn secondary" id="showHintBtn">Zobrazit nápovědu</button>
+            <button class="btn info" id="showStepsBtn">Ukázat postup</button>
+            <button class="btn warning" id="retryBtn" disabled>Opravit odpověď</button>
+            <button class="btn danger" id="revealBtn" disabled>Prozradit výsledek</button>
+            <button class="btn success" id="nextBtn" disabled>Další příklad</button>
+            <button class="btn secondary" id="newExerciseBtn">Nový podobný příklad</button>
+          </div>
+
+          <div style="display:grid; gap:12px; margin-top:16px;">
+            <div id="feedbackBox" class="feedback-box info">Vyber správnou odpověď pečlivě. Modul hlídá správnost, smysl i zaokrouhlení.</div>
+            <div id="hintBox" class="hint-box" hidden></div>
+            <div id="stepsBox" class="steps-box" hidden></div>
+            <div id="solutionBox" class="solution-box" hidden></div>
+          </div>
+
+          <div class="footer-controls">
+            <div class="muted tiny" id="footerStatus"></div>
+            <div class="pill-row">
+              <div class="mini-pill" id="smallMode"></div>
+              <div class="mini-pill" id="smallDifficulty"></div>
+              <div class="mini-pill" id="smallTheme"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="rightbar">
+        <section class="card panel">
+          <p class="section-label">Statistiky podle sekcí</p>
+          <div class="stats-table" id="sectionStats"></div>
+        </section>
+
+        <section class="card panel">
+          <p class="section-label">Odznaky a úspěchy</p>
+          <div class="achievement-box">
+            <div class="achievement-list" id="achievementList"></div>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <p class="section-label">Poslední výsledky</p>
+          <div class="history-box">
+            <div class="history-list" id="historyList"></div>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <p class="section-label">Didaktická poznámka</p>
+          <div class="teacher-box" id="teacherNote"></div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const STORAGE_KEYS = {
+        state: 'decimal-module-state-v1',
+      };
+
+      const THEMES = {
+        light: { label: 'Světlý', className: 'theme-light' },
+        dark: { label: 'Tmavý', className: 'theme-dark' },
+        girly: { label: 'Holčičí', className: 'theme-girly' },
+      };
+
+      const DIFFICULTIES = {
+        easy: {
+          label: 'Lehká',
+          mascot: 'Dnes jedeme přehledně, čistě a bez zbytečných chytáků. Dobře rozumět je víc než zběsile klikat.',
+        },
+        medium: {
+          label: 'Střední',
+          mascot: 'Teď už může desetinná čárka trochu zlobit. Ale jen trochu. Pořád ji máme pod kontrolou.',
+        },
+        hard: {
+          label: 'Těžká',
+          mascot: 'Těžká obtížnost už chce rozum, ne jen rychlou ruku. Tady se pozná, kdo čárku opravdu chápe.',
+        },
+      };
+
+      const MODES = {
+        practice: { label: 'Procvičování', description: 'Klidný režim bez časového tlaku. Důraz na pochopení, nápovědy a postup.' },
+        game: { label: 'Herní režim', description: 'Body, série, hvězdy, medaile a lehký tlak na svižnější řešení.' },
+      };
+
+      const SECTIONS = {
+        addition: {
+          key: 'addition',
+          label: 'Sčítání',
+          icon: '➕',
+          blurb: 'Skládání čísel s desetinnou čárkou bez zmatku a bez ztracených řádů.',
+          title: 'Sčítání desetinných čísel',
+        },
+        subtraction: {
+          key: 'subtraction',
+          label: 'Odčítání',
+          icon: '➖',
+          blurb: 'Pozor na správné zarovnání a na to, co se opravdu od čeho odčítá.',
+          title: 'Odčítání desetinných čísel',
+        },
+        multiplication: {
+          key: 'multiplication',
+          label: 'Násobení',
+          icon: '✖️',
+          blurb: 'Násobení celých i desetinných čísel a práce s posunem desetinné čárky.',
+          title: 'Násobení desetinných čísel',
+        },
+        division: {
+          key: 'division',
+          label: 'Dělení',
+          icon: '➗',
+          blurb: 'Dělení jednoduché i delší, s rozumem, zaokrouhlením a kontrolou smyslu výsledku.',
+          title: 'Dělení desetinných čísel',
+        },
+        conversion: {
+          key: 'conversion',
+          label: 'Převody',
+          icon: '🔁',
+          blurb: 'Převody mezi zlomky a desetinnými čísly, konečný i periodický rozvoj.',
+          title: 'Převody mezi zlomkem a desetinným číslem',
+        },
+      };
+
+      const ACHIEVEMENTS = [
+        { id: 'first-blood', name: 'První přesný zásah', desc: 'Vyřešil jsi první příklad správně.', test: s => s.totalCorrect >= 1 },
+        { id: 'streak-5', name: 'Pět bez zaváhání', desc: 'Získal jsi sérii 5 správných odpovědí.', test: s => s.bestStreak >= 5 },
+        { id: 'streak-12', name: 'Dvanáctka jako z praku', desc: 'Získal jsi sérii 12 správných odpovědí.', test: s => s.bestStreak >= 12 },
+        { id: 'hundred-points', name: 'Stovka bodů', desc: 'Nasbíral jsi alespoň 100 bodů.', test: s => s.points >= 100 },
+        { id: 'all-sections', name: 'Všech pět komnat', desc: 'Navštívil jsi všechny sekce modulu.', test: s => Object.values(s.sectionStats).every(row => row.seen > 0) },
+        { id: 'fraction-hero', name: 'Pán převodů', desc: 'Správně jsi vyřešil alespoň 12 převodů.', test: s => s.sectionStats.conversion.correct >= 12 },
+        { id: 'hard-worker', name: 'Těžká váha', desc: 'Správně jsi vyřešil alespoň 10 příkladů v těžké obtížnosti.', test: s => s.difficultyStats.hard.correct >= 10 },
+        { id: 'patient-thinker', name: 'Trpělivý myslitel', desc: 'Pětkrát jsi využil nápovědu a přesto došel ke správnému výsledku.', test: s => s.helpedWins >= 5 },
+        { id: 'game-runner', name: 'Herní jezdec', desc: 'V herním režimu jsi získal alespoň 150 bodů.', test: s => s.modeStats.game.points >= 150 },
+        { id: 'accuracy-master', name: 'Přesnost nade vše', desc: 'Při alespoň 25 vyhodnocených pokusech máš úspěšnost 85 % nebo vyšší.', test: s => s.totalAttempts >= 25 && (s.totalCorrect / s.totalAttempts) >= 0.85 },
+      ];
+
+      const DEFAULT_STATE = {
+        theme: 'light',
+        difficulty: 'easy',
+        mode: 'practice',
+        section: 'addition',
+        soundEnabled: true,
+        points: 0,
+        stars: 0,
+        streak: 0,
+        bestStreak: 0,
+        totalAttempts: 0,
+        totalCorrect: 0,
+        helpedWins: 0,
+        medals: [],
+        visitedSections: [],
+        unlockedAchievements: [],
+        timerValue: 90,
+        history: [],
+        sectionStats: createStatsMap(),
+        difficultyStats: createDifficultyStats(),
+        modeStats: createModeStats(),
+        lastSession: {
+          section: 'addition',
+          difficulty: 'easy',
+          theme: 'light',
+          mode: 'practice',
+        },
+      };
+
+      const ui = {
+        mascotSpeech: document.getElementById('mascotSpeech'),
+        statPoints: document.getElementById('statPoints'),
+        statStreak: document.getElementById('statStreak'),
+        statAccuracy: document.getElementById('statAccuracy'),
+        statStars: document.getElementById('statStars'),
+        modeBanner: document.getElementById('modeBanner'),
+        themeControls: document.getElementById('themeControls'),
+        difficultyControls: document.getElementById('difficultyControls'),
+        modeControls: document.getElementById('modeControls'),
+        sectionMenu: document.getElementById('sectionMenu'),
+        memorySummary: document.getElementById('memorySummary'),
+        heroTitle: document.getElementById('heroTitle'),
+        heroSubtitle: document.getElementById('heroSubtitle'),
+        heroMeta: document.getElementById('heroMeta'),
+        exerciseType: document.getElementById('exerciseType'),
+        roundPills: document.getElementById('roundPills'),
+        questionContext: document.getElementById('questionContext'),
+        questionMain: document.getElementById('questionMain'),
+        questionNote: document.getElementById('questionNote'),
+        answerInput: document.getElementById('answerInput'),
+        submitBtn: document.getElementById('submitBtn'),
+        showHintBtn: document.getElementById('showHintBtn'),
+        showStepsBtn: document.getElementById('showStepsBtn'),
+        retryBtn: document.getElementById('retryBtn'),
+        revealBtn: document.getElementById('revealBtn'),
+        nextBtn: document.getElementById('nextBtn'),
+        newExerciseBtn: document.getElementById('newExerciseBtn'),
+        feedbackBox: document.getElementById('feedbackBox'),
+        hintBox: document.getElementById('hintBox'),
+        stepsBox: document.getElementById('stepsBox'),
+        solutionBox: document.getElementById('solutionBox'),
+        footerStatus: document.getElementById('footerStatus'),
+        smallMode: document.getElementById('smallMode'),
+        smallDifficulty: document.getElementById('smallDifficulty'),
+        smallTheme: document.getElementById('smallTheme'),
+        sectionStats: document.getElementById('sectionStats'),
+        achievementList: document.getElementById('achievementList'),
+        historyList: document.getElementById('historyList'),
+        teacherNote: document.getElementById('teacherNote'),
+        resetProgressBtn: document.getElementById('resetProgressBtn'),
+      };
+
+      let state = loadState();
+      let currentExercise = null;
+      let roundTimer = null;
+      let roundSecondsLeft = state.timerValue || 90;
+
+      init();
+
+      function init() {
+        buildControls();
+        applyTheme(state.theme);
+        bindEvents();
+        refreshAllUI();
+        generateExercise();
+      }
+
+      function createStatsMap() {
+        const stats = {};
+        Object.keys(SECTIONS).forEach(key => {
+          stats[key] = { seen: 0, attempts: 0, correct: 0 };
+        });
+        return stats;
+      }
+
+      function createDifficultyStats() {
+        return {
+          easy: { attempts: 0, correct: 0 },
+          medium: { attempts: 0, correct: 0 },
+          hard: { attempts: 0, correct: 0 },
+        };
+      }
+
+      function createModeStats() {
+        return {
+          practice: { attempts: 0, correct: 0, points: 0 },
+          game: { attempts: 0, correct: 0, points: 0 },
+        };
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.state);
+          if (!raw) return structuredClone(DEFAULT_STATE);
+          const parsed = JSON.parse(raw);
+          return mergeState(structuredClone(DEFAULT_STATE), parsed);
+        } catch (err) {
+          return structuredClone(DEFAULT_STATE);
+        }
+      }
+
+      function mergeState(base, incoming) {
+        const merged = { ...base, ...incoming };
+        merged.lastSession = { ...base.lastSession, ...(incoming.lastSession || {}) };
+        merged.sectionStats = { ...createStatsMap(), ...(incoming.sectionStats || {}) };
+        merged.difficultyStats = { ...createDifficultyStats(), ...(incoming.difficultyStats || {}) };
+        merged.modeStats = { ...createModeStats(), ...(incoming.modeStats || {}) };
+        merged.history = Array.isArray(incoming.history) ? incoming.history.slice(0, 25) : [];
+        merged.unlockedAchievements = Array.isArray(incoming.unlockedAchievements) ? incoming.unlockedAchievements : [];
+        merged.visitedSections = Array.isArray(incoming.visitedSections) ? incoming.visitedSections : [];
+        return merged;
+      }
+
+      function saveState() {
+        localStorage.setItem(STORAGE_KEYS.state, JSON.stringify(state));
+      }
+
+      function buildControls() {
+        buildThemeControls();
+        buildDifficultyControls();
+        buildModeControls();
+        buildSectionMenu();
+      }
+
+      function buildThemeControls() {
+        ui.themeControls.innerHTML = '';
+        Object.entries(THEMES).forEach(([key, value]) => {
+          const btn = document.createElement('button');
+          btn.className = 'chip';
+          btn.textContent = value.label;
+          btn.dataset.key = key;
+          btn.addEventListener('click', () => {
+            state.theme = key;
+            state.lastSession.theme = key;
+            applyTheme(key);
+            saveState();
+            refreshAllUI();
+            speakMascot(themeLine());
+          });
+          ui.themeControls.appendChild(btn);
+        });
+      }
+
+      function buildDifficultyControls() {
+        ui.difficultyControls.innerHTML = '';
+        Object.entries(DIFFICULTIES).forEach(([key, value]) => {
+          const btn = document.createElement('button');
+          btn.className = 'chip';
+          btn.textContent = value.label;
+          btn.dataset.key = key;
+          btn.addEventListener('click', () => {
+            state.difficulty = key;
+            state.lastSession.difficulty = key;
+            saveState();
+            refreshAllUI();
+            generateExercise();
+            speakMascot(value.mascot);
+          });
+          ui.difficultyControls.appendChild(btn);
+        });
+      }
+
+      function buildModeControls() {
+        ui.modeControls.innerHTML = '';
+        Object.entries(MODES).forEach(([key, value]) => {
+          const btn = document.createElement('button');
+          btn.className = 'chip';
+          btn.textContent = value.label;
+          btn.dataset.key = key;
+          btn.addEventListener('click', () => {
+            state.mode = key;
+            state.lastSession.mode = key;
+            saveState();
+            refreshAllUI();
+            generateExercise();
+            speakMascot(key === 'game'
+              ? 'Herní režim zapnut. Body, série a hvězdy se těší na práci.'
+              : 'Procvičování zapnuto. Tady jde hlavně o klid, pochopení a čistou matematiku.');
+          });
+          ui.modeControls.appendChild(btn);
+        });
+      }
+
+      function buildSectionMenu() {
+        ui.sectionMenu.innerHTML = '';
+        Object.values(SECTIONS).forEach(section => {
+          const btn = document.createElement('button');
+          btn.className = 'menu-btn';
+          btn.dataset.section = section.key;
+          btn.innerHTML = `<strong>${section.icon} ${section.label}</strong><small>${section.blurb}</small>`;
+          btn.addEventListener('click', () => {
+            state.section = section.key;
+            state.lastSession.section = section.key;
+            if (!state.visitedSections.includes(section.key)) {
+              state.visitedSections.push(section.key);
+            }
+            saveState();
+            refreshAllUI();
+            generateExercise();
+            speakMascot(sectionIntro(section.key));
+          });
+          ui.sectionMenu.appendChild(btn);
+        });
+      }
+
+      function bindEvents() {
+        ui.submitBtn.addEventListener('click', submitAnswer);
+        ui.showHintBtn.addEventListener('click', showHintManual);
+        ui.showStepsBtn.addEventListener('click', showStepsManual);
+        ui.retryBtn.addEventListener('click', enableRetryMode);
+        ui.revealBtn.addEventListener('click', revealSolution);
+        ui.nextBtn.addEventListener('click', () => {
+          generateExercise();
+        });
+        ui.newExerciseBtn.addEventListener('click', () => {
+          speakMascot('Dobře. Připravuji nový příklad stejného typu, aby ses mohl rozjet bez čekání.');
+          generateExercise();
+        });
+        ui.answerInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            handleLogicalEnter();
+          }
+        });
+        ui.resetProgressBtn.addEventListener('click', resetProgress);
+      }
+
+      function handleLogicalEnter() {
+        if (!currentExercise) return;
+        if (currentExercise.canAdvance) {
+          generateExercise();
+          return;
+        }
+        if (!ui.answerInput.disabled) {
+          submitAnswer();
+        }
+      }
+
+      function refreshAllUI() {
+        refreshButtonsState();
+        refreshSummary();
+        refreshControlHighlight();
+        renderSectionStats();
+        renderAchievements();
+        renderHistory();
+        renderTeacherNote();
+        renderHeroMeta();
+      }
+
+      function refreshButtonsState() {
+        const retryDisabled = !currentExercise || !currentExercise.canRetry;
+        const revealDisabled = !currentExercise || !currentExercise.canReveal;
+        const nextDisabled = !currentExercise || !currentExercise.canAdvance;
+        ui.retryBtn.disabled = retryDisabled;
+        ui.revealBtn.disabled = revealDisabled;
+        ui.nextBtn.disabled = nextDisabled;
+      }
+
+      function refreshSummary() {
+        ui.statPoints.textContent = String(state.points);
+        ui.statStreak.textContent = String(state.streak);
+        ui.statStars.textContent = String(state.stars);
+        ui.statAccuracy.textContent = `${formatPercent(accuracyValue())} %`;
+        ui.modeBanner.innerHTML = `<strong>${MODES[state.mode].label}</strong><br>${MODES[state.mode].description}${state.mode === 'game' ? `<br><span class="timer">Zbývající čas kola: ${roundSecondsLeft} s</span>` : ''}`;
+        ui.memorySummary.innerHTML = `
+          <div><strong>Poslední sekce:</strong> ${SECTIONS[state.lastSession.section].label}</div>
+          <div><strong>Poslední obtížnost:</strong> ${DIFFICULTIES[state.lastSession.difficulty].label}</div>
+          <div><strong>Poslední motiv:</strong> ${THEMES[state.lastSession.theme].label}</div>
+          <div><strong>Vyřešených správně:</strong> ${state.totalCorrect}</div>
+          <div><strong>Nejlepší série:</strong> ${state.bestStreak}</div>
+          <div><strong>Odemčené odznaky:</strong> ${state.unlockedAchievements.length}/${ACHIEVEMENTS.length}</div>
+        `;
+        ui.smallMode.textContent = `Režim: ${MODES[state.mode].label}`;
+        ui.smallDifficulty.textContent = `Obtížnost: ${DIFFICULTIES[state.difficulty].label}`;
+        ui.smallTheme.textContent = `Motiv: ${THEMES[state.theme].label}`;
+      }
+
+      function renderHeroMeta() {
+        const section = SECTIONS[state.section];
+        ui.heroTitle.textContent = section.title;
+        ui.heroSubtitle.textContent = section.blurb;
+        ui.heroMeta.innerHTML = '';
+        [
+          `${section.icon} ${section.label}`,
+          `Obtížnost: ${DIFFICULTIES[state.difficulty].label}`,
+          `Motiv: ${THEMES[state.theme].label}`,
+          `${state.mode === 'game' ? '🎮 Herní režim' : '📘 Procvičování'}`,
+        ].forEach(text => {
+          const div = document.createElement('div');
+          div.className = 'hero-pill';
+          div.textContent = text;
+          ui.heroMeta.appendChild(div);
+        });
+      }
+
+      function refreshControlHighlight() {
+        highlightGroup(ui.themeControls, state.theme, 'key');
+        highlightGroup(ui.difficultyControls, state.difficulty, 'key');
+        highlightGroup(ui.modeControls, state.mode, 'key');
+        Array.from(ui.sectionMenu.children).forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.section === state.section);
+        });
+      }
+
+      function highlightGroup(wrapper, activeValue, datasetKey) {
+        Array.from(wrapper.children).forEach(btn => {
+          btn.classList.toggle('active', btn.dataset[datasetKey] === activeValue);
+        });
+      }
+
+      function renderSectionStats() {
+        ui.sectionStats.innerHTML = '';
+        Object.keys(SECTIONS).forEach(key => {
+          const row = state.sectionStats[key];
+          const accuracy = row.attempts ? Math.round((row.correct / row.attempts) * 100) : 0;
+          const wrap = document.createElement('div');
+          wrap.className = 'stats-row';
+          wrap.innerHTML = `
+            <div>
+              <strong>${SECTIONS[key].label}</strong>
+              <div class="bar-wrap"><div class="bar" style="width:${accuracy}%"></div></div>
+            </div>
+            <div class="tiny muted">${row.correct}/${row.attempts}</div>
+            <div><strong>${accuracy} %</strong></div>
+          `;
+          ui.sectionStats.appendChild(wrap);
+        });
+      }
+
+      function renderAchievements() {
+        ui.achievementList.innerHTML = '';
+        ACHIEVEMENTS.forEach(a => {
+          const unlocked = state.unlockedAchievements.includes(a.id);
+          const item = document.createElement('div');
+          item.className = `achievement-item${unlocked ? '' : ' locked'}`;
+          item.innerHTML = `<strong>${unlocked ? '🏅' : '🔒'} ${a.name}</strong><div class="tiny muted">${a.desc}</div>`;
+          ui.achievementList.appendChild(item);
+        });
+      }
+
+      function renderHistory() {
+        ui.historyList.innerHTML = '';
+        if (!state.history.length) {
+          const empty = document.createElement('div');
+          empty.className = 'history-item';
+          empty.textContent = 'Zatím tu není žádný výsledek. To se napraví rychleji než ztracená desetinná čárka.';
+          ui.historyList.appendChild(empty);
+          return;
+        }
+        state.history.slice(0, 8).forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'history-item';
+          row.innerHTML = `<strong>${item.badge} ${item.section}</strong><div class="tiny muted">${item.text}</div>`;
+          ui.historyList.appendChild(row);
+        });
+      }
+
+      function renderTeacherNote() {
+        const section = state.section;
+        const notes = {
+          addition: 'Při sčítání je klíčové správné zarovnání desetinných míst. Žák musí rozumět, že desetiny se sčítají s desetinami a setiny se setinami.',
+          subtraction: 'U odčítání je nutné hlídat, co je menšenec a co menšitel. Nestačí jen technicky přepsat čísla pod sebe.',
+          multiplication: 'Při násobení desetinných čísel nejde o kouzelný posun čárky. Čárka souvisí s počtem desetinných míst ve vstupních číslech.',
+          division: 'Dělení má vždy dávat smysl. Žák by měl odhadnout, jestli má být výsledek menší nebo větší než dělenec.',
+          conversion: 'U převodů je důležité chápat vztah mezi zlomkem a desetinným rozvojem. V těžké obtížnosti se proto rozlišuje konečný a periodický rozvoj.',
+        };
+        ui.teacherNote.textContent = notes[section];
+      }
+
+      function generateExercise() {
+        stopTimer();
+        currentExercise = makeExercise(state.section, state.difficulty);
+        currentExercise.attemptNumber = 0;
+        currentExercise.canRetry = false;
+        currentExercise.canReveal = false;
+        currentExercise.canAdvance = false;
+        currentExercise.hintShown = false;
+        currentExercise.stepsShown = false;
+        currentExercise.solutionShown = false;
+        currentExercise.retryMode = false;
+        state.sectionStats[state.section].seen += 1;
+        if (!state.visitedSections.includes(state.section)) {
+          state.visitedSections.push(state.section);
+        }
+        saveState();
+        renderExercise();
+        updateFeedback('info', 'Nový příklad je připravený. Čti zadání pečlivě a až potom útoč.', false);
+        resetBoxes();
+        if (state.mode === 'game') {
+          roundSecondsLeft = timerForDifficulty(state.difficulty);
+          startTimer();
+        } else {
+          roundSecondsLeft = timerForDifficulty(state.difficulty);
+        }
+        refreshAllUI();
+        ui.answerInput.focus();
+      }
+
+      function renderExercise() {
+        const ex = currentExercise;
+        ui.exerciseType.textContent = `${SECTIONS[state.section].icon} ${SECTIONS[state.section].label} · ${DIFFICULTIES[state.difficulty].label}`;
+        ui.questionContext.textContent = ex.context || '';
+        ui.questionMain.textContent = ex.prompt;
+        ui.questionNote.textContent = ex.note || '';
+        ui.answerInput.value = '';
+        ui.answerInput.disabled = false;
+        ui.submitBtn.disabled = false;
+        ui.showHintBtn.disabled = false;
+        ui.showStepsBtn.disabled = false;
+        ui.roundPills.innerHTML = '';
+        const pills = [
+          ex.tag,
+          ex.roundingNote || 'Bez zvláštní poznámky k zaokrouhlení',
+          state.mode === 'game' ? 'Body aktivní' : 'Klidný režim',
+        ];
+        pills.forEach(text => {
+          const div = document.createElement('div');
+          div.className = 'mini-pill';
+          div.textContent = text;
+          ui.roundPills.appendChild(div);
+        });
+        ui.footerStatus.textContent = 'Příklad čeká na první pokus.';
+      }
+
+      function submitAnswer() {
+        if (!currentExercise || currentExercise.canAdvance) return;
+        const raw = ui.answerInput.value.trim();
+        if (!raw) {
+          updateFeedback('error', 'Bez odpovědi to dnes nepůjde. Zkus něco napsat.', true);
+          playSound('error');
+          speakMascot('Chápu, že některé příklady umí mlčet nahlas. Ale odpověď tam stejně musí přijít.');
+          return;
+        }
+
+        currentExercise.attemptNumber += 1;
+        state.totalAttempts += 1;
+        state.sectionStats[state.section].attempts += 1;
+        state.difficultyStats[state.difficulty].attempts += 1;
+        state.modeStats[state.mode].attempts += 1;
+
+        const verdict = currentExercise.check(raw);
+        if (verdict.correct) {
+          handleCorrectAnswer(raw, verdict);
+        } else {
+          handleIncorrectAnswer(raw, verdict);
+        }
+        checkAchievements();
+        saveState();
+        refreshAllUI();
+      }
+
+      function handleCorrectAnswer(raw, verdict) {
+        stopTimer();
+        state.totalCorrect += 1;
+        state.sectionStats[state.section].correct += 1;
+        state.difficultyStats[state.difficulty].correct += 1;
+        state.modeStats[state.mode].correct += 1;
+        state.streak += 1;
+        state.bestStreak = Math.max(state.bestStreak, state.streak);
+
+        let gained = pointsForCurrentExercise(currentExercise, verdict);
+        state.points += gained;
+        state.modeStats[state.mode].points += gained;
+        const starsEarned = starsForPoints(gained);
+        state.stars += starsEarned;
+        if (currentExercise.hintShown || currentExercise.stepsShown) {
+          state.helpedWins += 1;
+        }
+
+        currentExercise.canAdvance = true;
+        currentExercise.canRetry = false;
+        currentExercise.canReveal = false;
+        ui.answerInput.disabled = true;
+        ui.submitBtn.disabled = true;
+        ui.retryBtn.disabled = true;
+        ui.revealBtn.disabled = true;
+        ui.nextBtn.disabled = false;
+
+        const praise = verdict.message || 'Správně.';
+        updateFeedback('success', `${praise} Získáváš ${gained} bodů a ${starsEarned} ${starsEarned === 1 ? 'hvězdu' : starsEarned < 5 ? 'hvězdy' : 'hvězd'}.`, true);
+        ui.solutionBox.hidden = false;
+        ui.solutionBox.innerHTML = `<strong>Správný výsledek:</strong> ${currentExercise.solutionHtml}`;
+        ui.footerStatus.textContent = `Správně na ${ordinal(currentExercise.attemptNumber)} pokus.`;
+        speakMascot(successSpeech());
+        playSound('success');
+        pushHistory({
+          badge: '✅',
+          section: SECTIONS[state.section].label,
+          text: `${currentExercise.prompt} → správně (${raw})`,
+        });
+      }
+
+      function handleIncorrectAnswer(raw, verdict) {
+        playSound('error');
+        state.streak = 0;
+        pushHistory({
+          badge: '❌',
+          section: SECTIONS[state.section].label,
+          text: `${currentExercise.prompt} → nepřesně (${raw})`,
+        });
+
+        if (currentExercise.attemptNumber === 1) {
+          currentExercise.canRetry = true;
+          currentExercise.canReveal = false;
+          updateFeedback('error', `${verdict.message} Zkus opravu. U první chyby dávám prostor na klidné přehodnocení.`, true);
+          ui.footerStatus.textContent = 'První pokus nevyšel. Oprava je otevřená.';
+          speakMascot('Tohle ještě není průšvih. První chyba je často jen uklouznutí ruky nebo čárky.');
+        } else if (currentExercise.attemptNumber === 2) {
+          currentExercise.canRetry = true;
+          currentExercise.canReveal = true;
+          if (!currentExercise.hintShown) {
+            currentExercise.hintShown = true;
+            ui.hintBox.hidden = false;
+            ui.hintBox.innerHTML = `<strong>Nápověda:</strong> ${currentExercise.hint}`;
+          }
+          updateFeedback('error', `${verdict.message} Teď už jsem odhrnul záclonu: nápověda je venku.`, true);
+          ui.footerStatus.textContent = 'Druhý pokus nevyšel. Nápověda je zobrazená.';
+          speakMascot('Druhá chyba už prosí o pomoc. Tady máš nápovědu, ať nejdeš poslepu.');
+        } else {
+          currentExercise.canRetry = true;
+          currentExercise.canReveal = true;
+          updateFeedback('error', `${verdict.message} Teď si můžeš vybrat: ještě jedna oprava, nebo prozradit správný výsledek.`, true);
+          ui.footerStatus.textContent = 'Další pokus nevyšel. Výsledek musí být nakonec ukázán.';
+          speakMascot('Teď už hrajeme fér. Buď to zkusíš znovu, nebo ti výsledek ukážu. Bez správného výsledku nikam nejdeme.');
+        }
+        refreshButtonsState();
+      }
+
+      function showHintManual() {
+        if (!currentExercise) return;
+        currentExercise.hintShown = true;
+        ui.hintBox.hidden = false;
+        ui.hintBox.innerHTML = `<strong>Nápověda:</strong> ${currentExercise.hint}`;
+        updateFeedback('info', 'Nápověda je zobrazená. Není to podvod, je to řízená pomoc.', true);
+        playSound('info');
+        speakMascot('Nápověda je venku. Teď už se zkus opřít o smysl příkladu, ne jen o odhad.');
+        refreshButtonsState();
+      }
+
+      function showStepsManual() {
+        if (!currentExercise) return;
+        currentExercise.stepsShown = true;
+        ui.stepsBox.hidden = false;
+        ui.stepsBox.innerHTML = `<strong>Postup:</strong><br>${currentExercise.steps}`;
+        updateFeedback('info', 'Postup je zobrazený. Teď si všímej, proč jednotlivé kroky dávají smysl.', true);
+        playSound('info');
+        speakMascot('Postup je tvůj tichý průvodce. Nepiš ho jen očima. Zkus rozumět každému kroku.');
+      }
+
+      function enableRetryMode() {
+        if (!currentExercise || !currentExercise.canRetry) return;
+        currentExercise.retryMode = true;
+        ui.answerInput.disabled = false;
+        ui.submitBtn.disabled = false;
+        ui.answerInput.focus();
+        ui.answerInput.select();
+        updateFeedback('info', 'Pole je otevřené pro opravu. Teď si dej pozor hlavně na čárku, řád a smysl výsledku.', true);
+        playSound('info');
+      }
+
+      function revealSolution() {
+        if (!currentExercise) return;
+        stopTimer();
+        currentExercise.solutionShown = true;
+        currentExercise.canAdvance = true;
+        currentExercise.canRetry = false;
+        currentExercise.canReveal = false;
+        ui.answerInput.disabled = true;
+        ui.submitBtn.disabled = true;
+        ui.retryBtn.disabled = true;
+        ui.revealBtn.disabled = true;
+        ui.nextBtn.disabled = false;
+        ui.solutionBox.hidden = false;
+        ui.solutionBox.innerHTML = `<strong>Správný výsledek:</strong> ${currentExercise.solutionHtml}<br><span class="tiny muted">Dekáček tě nepustí dál bez správného výsledku. Tady ho máš černé na bílém, nebo růžové, podle motivu.</span>`;
+        if (!currentExercise.stepsShown) {
+          ui.stepsBox.hidden = false;
+          ui.stepsBox.innerHTML = `<strong>Postup:</strong><br>${currentExercise.steps}`;
+        }
+        updateFeedback('info', 'Výsledek je zobrazený. Přečti si ho a pokračuj až potom.', true);
+        speakMascot('Správný výsledek je venku. Teď se zastav a všimni si, proč vyšel právě takto.');
+        playSound('info');
+        ui.footerStatus.textContent = 'Výsledek byl prozrazen. Další příklad je odemčený.';
+        refreshButtonsState();
+      }
+
+      function resetBoxes() {
+        ui.hintBox.hidden = true;
+        ui.stepsBox.hidden = true;
+        ui.solutionBox.hidden = true;
+        ui.hintBox.innerHTML = '';
+        ui.stepsBox.innerHTML = '';
+        ui.solutionBox.innerHTML = '';
+        refreshButtonsState();
+      }
+
+      function updateFeedback(kind, text, shouldScroll) {
+        ui.feedbackBox.className = `feedback-box ${kind}`;
+        ui.feedbackBox.textContent = text;
+        if (shouldScroll) {
+          ui.feedbackBox.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      }
+
+      function applyTheme(themeKey) {
+        document.body.classList.remove('theme-light', 'theme-dark', 'theme-girly');
+        document.body.classList.add(THEMES[themeKey].className);
+      }
+
+      function accuracyValue() {
+        if (!state.totalAttempts) return 0;
+        return (state.totalCorrect / state.totalAttempts) * 100;
+      }
+
+      function formatPercent(value) {
+        return Math.round(value);
+      }
+
+      function pushHistory(item) {
+        state.history.unshift(item);
+        state.history = state.history.slice(0, 18);
+      }
+
+      function timerForDifficulty(difficulty) {
+        return difficulty === 'easy' ? 90 : difficulty === 'medium' ? 75 : 60;
+      }
+
+      function startTimer() {
+        stopTimer();
+        roundTimer = setInterval(() => {
+          roundSecondsLeft -= 1;
+          if (roundSecondsLeft <= 0) {
+            roundSecondsLeft = 0;
+            stopTimer();
+            if (currentExercise && !currentExercise.canAdvance) {
+              updateFeedback('info', 'Čas kola vypršel. To nevadí: matematika není kasino. Můžeš pokračovat dál, jen bez časového bonusu.', true);
+              currentExercise.timeBonusLost = true;
+              speakMascot('Čas utekl. Nevadí. Teď už pracuj hlavně přesně.');
+              playSound('info');
+            }
+          }
+          refreshSummary();
+        }, 1000);
+      }
+
+      function stopTimer() {
+        if (roundTimer) {
+          clearInterval(roundTimer);
+          roundTimer = null;
+        }
+      }
+
+      function pointsForCurrentExercise(exercise, verdict) {
+        let base = state.difficulty === 'easy' ? 8 : state.difficulty === 'medium' ? 12 : 18;
+        if (state.mode === 'game') base += 6;
+        if (exercise.attemptNumber === 1) base += 6;
+        if (exercise.attemptNumber === 2) base += 2;
+        if (exercise.hintShown) base -= 2;
+        if (exercise.stepsShown) base -= 2;
+        if (exercise.timeBonusLost) base -= 3;
+        if (exercise.section === 'conversion' && state.difficulty === 'hard') base += 4;
+        return Math.max(3, base);
+      }
+
+      function starsForPoints(points) {
+        if (points >= 20) return 3;
+        if (points >= 12) return 2;
+        return 1;
+      }
+
+      function checkAchievements() {
+        ACHIEVEMENTS.forEach(a => {
+          if (!state.unlockedAchievements.includes(a.id) && a.test(state)) {
+            state.unlockedAchievements.push(a.id);
+            speakMascot(`Nový odznak: ${a.name}. ${a.desc}`);
+            playSound('success');
+            pushHistory({
+              badge: '🏅',
+              section: 'Odznak',
+              text: `${a.name} – ${a.desc}`,
+            });
+          }
+        });
+      }
+
+      function resetProgress() {
+        const ok = window.confirm('Opravdu chceš vymazat celý pokrok, body, historii i odznaky?');
+        if (!ok) return;
+        stopTimer();
+        state = structuredClone(DEFAULT_STATE);
+        saveState();
+        applyTheme(state.theme);
+        refreshAllUI();
+        generateExercise();
+        speakMascot('Hotovo. Tabule je smazaná a jedeme od začátku. Aspoň nikde nestraší staré chyby.');
+      }
+
+      function themeLine() {
+        return `Přepnul ses na motiv ${THEMES[state.theme].label}. Důležité je, že matematika zůstává stejně přesná v každé barvě.`;
+      }
+
+      function sectionIntro(key) {
+        const lines = {
+          addition: 'Vítej v sčítání. Tady se rozhoduje hlavně o tom, jestli držíš stejné řády pod sebou.',
+          subtraction: 'Vítej v odčítání. Teď si dej pozor, co je nahoře a co dole, ať z výsledku není komická nehoda.',
+          multiplication: 'Vítej v násobení. Desetinná čárka se neposouvá kouzlem, ale logikou počtu desetinných míst.',
+          division: 'Vítej v dělení. Než odpovíš, zkus si aspoň odhadnout, zda má být výsledek větší, nebo menší.',
+          conversion: 'Vítej v převodech. Tady jde o smysl zápisu, ne jen o holé číslo bez duše.',
+        };
+        return lines[key];
+      }
+
+      function successSpeech() {
+        const speeches = [
+          'Pěkné. Tohle už je čistá práce.',
+          'Výborně. Desetinná čárka dnes poslouchá.',
+          'Ano. Přesně takhle má výsledek vypadat.',
+          'Dobrá práce. Žádná zbytečná divočina, jen poctivý výsledek.',
+          'Tohle sedí. Můžeš jít dál s hlavou nahoře.',
+          'Správně. Přesnost a klid, dobrá dvojice.',
+        ];
+        return randomFrom(speeches);
+      }
+
+      function ordinal(n) {
+        if (n === 1) return 'první';
+        if (n === 2) return 'druhý';
+        if (n === 3) return 'třetí';
+        return `${n}.`;
+      }
+
+      function makeExercise(section, difficulty) {
+        switch (section) {
+          case 'addition': return makeAddition(difficulty);
+          case 'subtraction': return makeSubtraction(difficulty);
+          case 'multiplication': return makeMultiplication(difficulty);
+          case 'division': return makeDivision(difficulty);
+          case 'conversion': return makeConversion(difficulty);
+          default: return makeAddition('easy');
+        }
+      }
+
+      function makeAddition(difficulty) {
+        const variant = randomInt(1, difficulty === 'hard' ? 4 : 3);
+        if (variant === 1) return additionBasic(difficulty);
+        if (variant === 2) return additionMulti(difficulty);
+        if (variant === 3) return additionMissingAddend(difficulty);
+        return additionContext(difficulty);
+      }
+
+      function additionBasic(difficulty) {
+        const config = {
+          easy: { max: 25, places: [1, 2] },
+          medium: { max: 180, places: [1, 2, 3] },
+          hard: { max: 950, places: [2, 3, 4] },
+        }[difficulty];
+        const a = randomDecimal(config.max, randomFrom(config.places));
+        const b = randomDecimal(config.max, randomFrom(config.places));
+        const result = roundTo(a + b, 5);
+        return buildStandardExercise({
+          section: 'addition',
+          tag: 'Dvě desetinná čísla',
+          prompt: `${fmt(a)} + ${fmt(b)} = ?`,
+          note: 'Zarovnej si v hlavě nebo na papíře desetinná místa.',
+          result,
+          hint: `Sečti zvlášť celé části a zvlášť desetinné části. Dávej pozor, aby desetiny šly k desetinám a setiny k setinám.`,
+          steps: `1. Zapiš si čísla pod sebe podle desetinné čárky.<br>2. Doplň si případné nuly, aby obě čísla měla stejný počet desetinných míst.<br>3. Sečti od nejnižšího řádu.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function additionMulti(difficulty) {
+        const count = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 4 : 5;
+        const max = difficulty === 'easy' ? 20 : difficulty === 'medium' ? 90 : 250;
+        const placesPool = difficulty === 'easy' ? [1] : difficulty === 'medium' ? [1, 2] : [1, 2, 3];
+        const nums = Array.from({ length: count }, () => randomDecimal(max, randomFrom(placesPool)));
+        const result = roundTo(nums.reduce((sum, n) => sum + n, 0), 5);
+        return buildStandardExercise({
+          section: 'addition',
+          tag: 'Více sčítanců',
+          prompt: `${nums.map(fmt).join(' + ')} = ?`,
+          note: 'Někdy je výhodné sečíst si nejprve čísla, která dohromady tvoří „hezčí“ celek.',
+          result,
+          hint: 'Zkus si čísla vhodně seskupit. Například dvě čísla mohou dát celé číslo nebo hezký desetinný výsledek.',
+          steps: `1. Máš ${count} sčítanců.<br>2. Všímej si, která čísla se dobře skládají dohromady.<br>3. Postupně je sečti a hlídej stejná desetinná místa.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function additionMissingAddend(difficulty) {
+        const max = difficulty === 'easy' ? 35 : difficulty === 'medium' ? 120 : 450;
+        const places = difficulty === 'easy' ? 1 : difficulty === 'medium' ? 2 : 3;
+        const known = randomDecimal(max, places);
+        const missing = randomDecimal(max, places);
+        const total = roundTo(known + missing, 5);
+        return buildStandardExercise({
+          section: 'addition',
+          tag: 'Doplň chybějící sčítanec',
+          prompt: `${fmt(known)} + ? = ${fmt(total)}`,
+          note: 'Když neznáš sčítanec, odečti známé číslo od součtu.',
+          result: missing,
+          hint: `Neznámý sčítanec zjistíš tak, že od součtu ${fmt(total)} odečteš známý sčítanec ${fmt(known)}.`,
+          steps: `1. Máš rovnici ${fmt(known)} + x = ${fmt(total)}.<br>2. Odtud plyne x = ${fmt(total)} − ${fmt(known)}.<br>3. Po odčítání dostaneš <strong>${fmt(missing)}</strong>.`,
+        });
+      }
+
+      function additionContext(difficulty) {
+        const litersA = randomDecimal(difficulty === 'hard' ? 14 : 8, difficulty === 'easy' ? 1 : 2);
+        const litersB = randomDecimal(difficulty === 'hard' ? 14 : 8, difficulty === 'easy' ? 1 : 2);
+        const litersC = randomDecimal(difficulty === 'hard' ? 14 : 8, difficulty === 'easy' ? 1 : 2);
+        const result = roundTo(litersA + litersB + litersC, 5);
+        return buildStandardExercise({
+          section: 'addition',
+          tag: 'Mini slovní úloha',
+          context: 'Do nádoby se postupně dolévala voda ze tří odměrek.',
+          prompt: `Kolik litrů vody je celkem, když odměrky mají ${fmt(litersA)} l, ${fmt(litersB)} l a ${fmt(litersC)} l?`,
+          note: 'Odpověď zapiš jen číslem v litrech, bez jednotky.',
+          result,
+          hint: 'Sečti objemy všech tří odměrek.',
+          steps: `1. Sečti ${fmt(litersA)} + ${fmt(litersB)} + ${fmt(litersC)}.<br>2. Nejprve můžeš spojit dvě odměrky, které se lépe počítají.<br>3. Celkem dostaneš <strong>${fmt(result)}</strong> litru.`,
+        });
+      }
+
+      function makeSubtraction(difficulty) {
+        const variant = randomInt(1, difficulty === 'hard' ? 4 : 3);
+        if (variant === 1) return subtractionBasic(difficulty);
+        if (variant === 2) return subtractionMissing(difficulty);
+        if (variant === 3) return subtractionContext(difficulty);
+        return subtractionOrdering(difficulty);
+      }
+
+      function subtractionBasic(difficulty) {
+        const max = difficulty === 'easy' ? 40 : difficulty === 'medium' ? 150 : 600;
+        const placesPool = difficulty === 'easy' ? [1, 2] : difficulty === 'medium' ? [1, 2, 3] : [2, 3, 4];
+        let a = randomDecimal(max, randomFrom(placesPool));
+        let b = randomDecimal(max, randomFrom(placesPool));
+        if (a < b) [a, b] = [b, a];
+        const result = roundTo(a - b, 5);
+        return buildStandardExercise({
+          section: 'subtraction',
+          tag: 'Běžné odčítání',
+          prompt: `${fmt(a)} − ${fmt(b)} = ?`,
+          note: 'Když mají čísla různý počet desetinných míst, můžeš si doplnit nuly.',
+          result,
+          hint: 'Odčítáš po řádech. Nejdřív si srovnej čísla podle desetinné čárky.',
+          steps: `1. Zapiš čísla pod sebe podle desetinné čárky.<br>2. Doplň případné nuly, aby řády seděly.<br>3. Odečítej zprava doleva.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function subtractionMissing(difficulty) {
+        const max = difficulty === 'easy' ? 30 : difficulty === 'medium' ? 120 : 320;
+        const places = difficulty === 'easy' ? 1 : difficulty === 'medium' ? 2 : 3;
+        const top = randomDecimal(max, places);
+        const result = randomDecimal(max / 2, places);
+        const missing = roundTo(top - result, 5);
+        return buildStandardExercise({
+          section: 'subtraction',
+          tag: 'Najdi odčítané číslo',
+          prompt: `${fmt(top)} − ? = ${fmt(result)}`,
+          note: 'Když neznáš odčítané číslo, odečti výsledek od menšence.',
+          result: missing,
+          hint: `Neznámé odčítané číslo získáš: ${fmt(top)} − ${fmt(result)}.`,
+          steps: `1. Máš rovnici ${fmt(top)} − x = ${fmt(result)}.<br>2. Odtud plyne x = ${fmt(top)} − ${fmt(result)}.<br>3. Po výpočtu dostaneš <strong>${fmt(missing)}</strong>.`,
+        });
+      }
+
+      function subtractionContext(difficulty) {
+        const total = randomDecimal(difficulty === 'hard' ? 900 : 180, difficulty === 'easy' ? 1 : 2);
+        const used = randomDecimal(total, difficulty === 'easy' ? 1 : 2);
+        const remaining = roundTo(Math.max(0, total - used), 5);
+        return buildStandardExercise({
+          section: 'subtraction',
+          tag: 'Zbývající množství',
+          context: 'Na účtu, v zásobníku nebo v nádrži něco ubývá. Potřebujeme zjistit, kolik zbyde.',
+          prompt: `Z původního množství ${fmt(total)} zbylo po odečtení ${fmt(used)} kolik?`,
+          note: 'Odpověď zapiš jen číslem.',
+          result: remaining,
+          hint: `Od původního množství ${fmt(total)} odečti spotřebované množství ${fmt(used)}.`,
+          steps: `1. Najdi rozdíl ${fmt(total)} − ${fmt(used)}.<br>2. Pohlídej si správné zarovnání desetinných míst.<br>3. Zbývá <strong>${fmt(remaining)}</strong>.`,
+        });
+      }
+
+      function subtractionOrdering(difficulty) {
+        const max = difficulty === 'hard' ? 500 : 140;
+        const places = difficulty === 'hard' ? 3 : 2;
+        const a = randomDecimal(max, places);
+        const b = randomDecimal(max, places);
+        const higher = Math.max(a, b);
+        const lower = Math.min(a, b);
+        const result = roundTo(higher - lower, 5);
+        return buildStandardExercise({
+          section: 'subtraction',
+          tag: 'Nejprve porovnej',
+          prompt: `Vypočítej rozdíl většího a menšího čísla: ${fmt(a)} a ${fmt(b)}.`,
+          note: 'Nejdřív zjisti, které číslo je větší. Až potom odečítej.',
+          result,
+          hint: `${fmt(higher)} je větší než ${fmt(lower)}. Rozdíl tedy bude ${fmt(higher)} − ${fmt(lower)}.`,
+          steps: `1. Porovnej čísla ${fmt(a)} a ${fmt(b)}.<br>2. Větší číslo je ${fmt(higher)}.<br>3. Menší číslo je ${fmt(lower)}.<br>4. Rozdíl je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function makeMultiplication(difficulty) {
+        const variant = randomInt(1, difficulty === 'hard' ? 5 : 4);
+        if (variant === 1) return multiplicationBasic(difficulty);
+        if (variant === 2) return multiplicationPower10(difficulty);
+        if (variant === 3) return multiplicationMissingFactor(difficulty);
+        if (variant === 4) return multiplicationContext(difficulty);
+        return multiplicationWithZeros(difficulty);
+      }
+
+      function multiplicationBasic(difficulty) {
+        const max = difficulty === 'easy' ? 20 : difficulty === 'medium' ? 60 : 180;
+        const placesA = difficulty === 'easy' ? 1 : difficulty === 'medium' ? randomFrom([1, 2]) : randomFrom([2, 3]);
+        const placesB = difficulty === 'easy' ? 1 : difficulty === 'medium' ? randomFrom([1, 2]) : randomFrom([1, 2, 3]);
+        const a = randomDecimal(max, placesA);
+        const b = randomDecimal(max, placesB);
+        const result = roundTo(a * b, 5);
+        return buildStandardExercise({
+          section: 'multiplication',
+          tag: 'Násobení dvou čísel',
+          prompt: `${fmt(a)} × ${fmt(b)} = ?`,
+          note: difficulty === 'hard' ? 'V těžké úrovni sleduj i celkový počet desetinných míst.' : 'Nejdřív můžeš násobit bez čárky a tu doplnit až nakonec.',
+          result,
+          roundingNote: 'Případný delší výsledek zaokrouhli na 5 desetinných míst.',
+          hint: 'Nejprve násob, jako by šlo o celá čísla. Pak dopočítej, kam patří desetinná čárka podle počtu desetinných míst obou činitelů.',
+          steps: `1. Vynásob čísla bez ohledu na čárku.<br>2. Spočítej celkový počet desetinných míst v obou činitelích.<br>3. Podle tohoto počtu umísti čárku do výsledku.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function multiplicationPower10(difficulty) {
+        const factors = difficulty === 'easy' ? [10, 100] : difficulty === 'medium' ? [10, 100, 1000] : [0.1, 10, 100, 1000];
+        const factor = randomFrom(factors);
+        const a = randomDecimal(difficulty === 'hard' ? 500 : 90, difficulty === 'easy' ? 1 : difficulty === 'medium' ? 2 : 3);
+        const result = roundTo(a * factor, 5);
+        return buildStandardExercise({
+          section: 'multiplication',
+          tag: 'Násobení 10, 100, 1000',
+          prompt: `${fmt(a)} × ${fmt(factor)} = ?`,
+          note: 'Nepřemýšlej mechanicky. Ptej se, zda se číslo zvětší, nebo zmenší.',
+          result,
+          hint: factor >= 10 ? 'Při násobení 10, 100 nebo 1000 se hodnota zvětšuje.' : 'Při násobení 0,1 se hodnota zmenšuje desetkrát.',
+          steps: `1. Uvědom si, že násobení ${fmt(factor)} mění velikost čísla.<br>2. Při násobení 10, 100 nebo 1000 se číslo zvětšuje; při násobení 0,1 se zmenšuje.<br>3. Výsledek je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function multiplicationMissingFactor(difficulty) {
+        const a = randomDecimal(difficulty === 'hard' ? 100 : 40, difficulty === 'easy' ? 1 : 2);
+        const b = randomDecimal(difficulty === 'hard' ? 25 : 12, difficulty === 'easy' ? 1 : 2);
+        const product = roundTo(a * b, 5);
+        return buildStandardExercise({
+          section: 'multiplication',
+          tag: 'Najdi chybějící činitel',
+          prompt: `${fmt(a)} × ? = ${fmt(product)}`,
+          note: 'Neznámý činitel získáš dělením.',
+          result: b,
+          hint: `Když neznáš jeden činitel, vyděl součin známým činitelem: ${fmt(product)} ÷ ${fmt(a)}.`,
+          steps: `1. Máš rovnici ${fmt(a)} × x = ${fmt(product)}.<br>2. Odtud plyne x = ${fmt(product)} ÷ ${fmt(a)}.<br>3. Výsledkem je <strong>${fmt(b)}</strong>.`,
+        });
+      }
+
+      function multiplicationContext(difficulty) {
+        const price = randomDecimal(difficulty === 'hard' ? 35 : 12, 2);
+        const weight = randomDecimal(difficulty === 'hard' ? 18 : 7, difficulty === 'easy' ? 1 : 2);
+        const result = roundTo(price * weight, 5);
+        return buildStandardExercise({
+          section: 'multiplication',
+          tag: 'Cena a množství',
+          context: 'Cena za kilogram nebo litr se násobí počtem kilogramů či litrů.',
+          prompt: `Kolik stojí nákup, když 1 kg stojí ${fmt(price)} Kč a koupíš ${fmt(weight)} kg?`,
+          note: 'Odpověď zapiš jen číslem, bez jednotky.',
+          result,
+          roundingNote: 'Počítej přesně, případně zaokrouhli na 5 desetinných míst.',
+          hint: 'Celkovou cenu získáš vynásobením ceny za 1 kg a hmotnosti.',
+          steps: `1. Cena za 1 kg je ${fmt(price)} a hmotnost ${fmt(weight)} kg.<br>2. Vypočítej ${fmt(price)} × ${fmt(weight)}.<br>3. Celková cena je <strong>${fmt(result)}</strong> Kč.`,
+        });
+      }
+
+      function multiplicationWithZeros(difficulty) {
+        const a = randomDecimal(60, difficulty === 'hard' ? 3 : 2);
+        const bOptions = [0.05, 0.2, 0.25, 0.4, 0.08, 0.125];
+        const b = randomFrom(bOptions);
+        const result = roundTo(a * b, 5);
+        return buildStandardExercise({
+          section: 'multiplication',
+          tag: 'Čísla s nulami a setinami',
+          prompt: `${fmt(a)} × ${fmt(b)} = ?`,
+          note: 'Chyták bývá v nulách. Neignoruj je.',
+          result,
+          hint: 'Počítej pozorně. Nuly v desetinné části nejsou ozdoba, ale informace o řádu.',
+          steps: `1. Vynásob čísla bez ohledu na čárku.<br>2. Započítej všechna desetinná místa včetně nul.<br>3. Výsledek je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function makeDivision(difficulty) {
+        const variant = randomInt(1, difficulty === 'hard' ? 5 : 4);
+        if (variant === 1) return divisionBasic(difficulty);
+        if (variant === 2) return divisionPower10(difficulty);
+        if (variant === 3) return divisionWithRounding(difficulty);
+        if (variant === 4) return divisionContext(difficulty);
+        return divisionMissingDividend(difficulty);
+      }
+
+      function divisionBasic(difficulty) {
+        const divisor = difficulty === 'easy'
+          ? randomFrom([0.5, 2, 4, 5, 10])
+          : difficulty === 'medium'
+            ? randomFrom([0.25, 0.5, 2.5, 4, 5, 8])
+            : randomFrom([0.125, 0.2, 0.25, 1.6, 2.5, 4.8, 7.5]);
+        const quotient = randomDecimal(difficulty === 'hard' ? 60 : 20, difficulty === 'easy' ? 1 : 2);
+        const dividend = roundTo(divisor * quotient, 5);
+        return buildStandardExercise({
+          section: 'division',
+          tag: 'Přímé dělení',
+          prompt: `${fmt(dividend)} ÷ ${fmt(divisor)} = ?`,
+          note: 'Před výpočtem odhadni, zda má být výsledek větší, nebo menší než dělenec.',
+          result: quotient,
+          hint: 'Můžeš si upravit dělitele tak, aby byl celé číslo. Dělenec i dělitele přenásob stejným číslem.',
+          steps: `1. Máš ${fmt(dividend)} ÷ ${fmt(divisor)}.<br>2. Uprav si dělitele na celé číslo, pokud je to potřeba.<br>3. Pak normálně vyděl.<br>4. Výsledek je <strong>${fmt(quotient)}</strong>.`,
+        });
+      }
+
+      function divisionPower10(difficulty) {
+        const divisor = randomFrom(difficulty === 'easy' ? [10, 100] : [10, 100, 1000]);
+        const a = randomDecimal(difficulty === 'hard' ? 800 : 140, difficulty === 'easy' ? 1 : difficulty === 'medium' ? 2 : 3);
+        const result = roundTo(a / divisor, 5);
+        return buildStandardExercise({
+          section: 'division',
+          tag: 'Dělení 10, 100, 1000',
+          prompt: `${fmt(a)} ÷ ${fmt(divisor)} = ?`,
+          note: 'Při dělení 10, 100 a 1000 se hodnota zmenšuje.',
+          result,
+          hint: 'Zkus si představit, že číslo rozděluješ na 10, 100 nebo 1000 stejných částí.',
+          steps: `1. Dělení ${fmt(divisor)} znamená zmenšení čísla.<br>2. Sleduj, jak se mění řády jednotlivých číslic.<br>3. Výsledek je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function divisionWithRounding(difficulty) {
+        const divisor = randomFrom([3, 6, 7, 9, 11, 12]);
+        const dividend = randomDecimal(difficulty === 'hard' ? 120 : 40, difficulty === 'easy' ? 1 : 2);
+        const result = roundTo(dividend / divisor, 5);
+        return buildStandardExercise({
+          section: 'division',
+          tag: 'Zaokrouhlený podíl',
+          prompt: `${fmt(dividend)} ÷ ${fmt(divisor)} = ?`,
+          note: 'Výsledek zaokrouhli na 5 desetinných míst.',
+          result,
+          roundingNote: 'Zaokrouhli na 5 desetinných míst.',
+          hint: 'Pokud vychází delší desetinný rozvoj, napiš výsledek zaokrouhlený na 5 desetinných míst.',
+          steps: `1. Vyděl ${fmt(dividend)} číslem ${fmt(divisor)}.<br>2. Pokud vyjde delší rozvoj, pokračuj aspoň na šest desetinných míst.<br>3. Potom výsledek zaokrouhli na pět desetinných míst.<br>4. Správný výsledek je <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function divisionContext(difficulty) {
+        const total = randomDecimal(difficulty === 'hard' ? 220 : 80, 2);
+        const people = randomFrom(difficulty === 'easy' ? [2, 4, 5, 10] : [3, 4, 6, 8, 12]);
+        const result = roundTo(total / people, 5);
+        return buildStandardExercise({
+          section: 'division',
+          tag: 'Rozdělení na stejné díly',
+          context: 'Něco rozdělujeme spravedlivě na stejný počet dílů.',
+          prompt: `Kolik připadne na jednoho, když se ${fmt(total)} rozdělí mezi ${people} lidí?`,
+          note: 'Výsledek případně zaokrouhli na 5 desetinných míst.',
+          result,
+          roundingNote: 'Případně zaokrouhli na 5 desetinných míst.',
+          hint: 'Celkové množství vyděl počtem lidí.',
+          steps: `1. Dělíš ${fmt(total)} počtem ${people}.<br>2. Výsledek vyjadřuje jeden stejný díl.<br>3. Na jednoho připadne <strong>${fmt(result)}</strong>.`,
+        });
+      }
+
+      function divisionMissingDividend(difficulty) {
+        const divisor = randomDecimal(20, difficulty === 'hard' ? 2 : 1);
+        const quotient = randomDecimal(40, difficulty === 'hard' ? 2 : 1);
+        const dividend = roundTo(divisor * quotient, 5);
+        return buildStandardExercise({
+          section: 'division',
+          tag: 'Najdi dělenec',
+          prompt: `? ÷ ${fmt(divisor)} = ${fmt(quotient)}`,
+          note: 'Neznámý dělenec zjistíš násobením.',
+          result: dividend,
+          hint: `Když neznáš dělenec, vynásob dělitele a podíl: ${fmt(divisor)} × ${fmt(quotient)}.`,
+          steps: `1. Máš rovnici x ÷ ${fmt(divisor)} = ${fmt(quotient)}.<br>2. Odtud plyne x = ${fmt(divisor)} × ${fmt(quotient)}.<br>3. Dělenec je <strong>${fmt(dividend)}</strong>.`,
+        });
+      }
+
+      function makeConversion(difficulty) {
+        if (difficulty === 'easy') {
+          return randomFrom([conversionDecimalToFractionEasy(), conversionFractionToDecimalEasy()]);
+        }
+        if (difficulty === 'medium') {
+          return randomFrom([
+            conversionDecimalToFractionMedium(),
+            conversionFractionToDecimalMedium(),
+            conversionMixedReasoning(),
+          ]);
+        }
+        return randomFrom([
+          conversionFiniteOrRepeating(),
+          conversionFractionToDecimalHard(),
+          conversionDecimalToFractionHard(),
+          conversionReasoningHard(),
+        ]);
+      }
+
+      function conversionDecimalToFractionEasy() {
+        const items = [
+          { decimal: 0.5, fraction: '1/2' },
+          { decimal: 0.25, fraction: '1/4' },
+          { decimal: 0.75, fraction: '3/4' },
+          { decimal: 1.2, fraction: '6/5' },
+          { decimal: 2.5, fraction: '5/2' },
+          { decimal: 0.2, fraction: '1/5' },
+          { decimal: 0.4, fraction: '2/5' },
+        ];
+        const item = randomFrom(items);
+        return buildFractionExercise({
+          section: 'conversion',
+          tag: 'Desetinné číslo na zlomek',
+          prompt: `Převeď ${fmt(item.decimal)} na základní tvar zlomku.`,
+          note: 'Použij tvar a/b, například 3/4.',
+          acceptedFraction: item.fraction,
+          canonicalValue: item.decimal,
+          solutionHtml: `${fmt(item.decimal)} = <strong>${item.fraction}</strong>`,
+          hint: 'Napiš desetinné číslo jako zlomek se jmenovatelem 10, 100 nebo 1000 a potom ho zkrať.',
+          steps: `1. ${fmt(item.decimal)} napiš jako zlomek podle počtu desetinných míst.<br>2. Například 0,25 = 25/100.<br>3. Zlomek zkrať na základní tvar.<br>4. Dostaneš <strong>${item.fraction}</strong>.`,
+        });
+      }
+
+      function conversionFractionToDecimalEasy() {
+        const items = [
+          { fraction: '1/2', decimal: 0.5 },
+          { fraction: '1/4', decimal: 0.25 },
+          { fraction: '3/4', decimal: 0.75 },
+          { fraction: '1/5', decimal: 0.2 },
+          { fraction: '3/5', decimal: 0.6 },
+          { fraction: '7/10', decimal: 0.7 },
+          { fraction: '9/20', decimal: 0.45 },
+        ];
+        const item = randomFrom(items);
+        return buildStandardExercise({
+          section: 'conversion',
+          tag: 'Zlomek na desetinné číslo',
+          prompt: `Převeď zlomek ${item.fraction} na desetinné číslo.`,
+          note: 'Zapiš výsledek jen číslem.',
+          result: item.decimal,
+          hint: 'Zlomek můžeš převést rozšířením na jmenovatel 10, 100 nebo 1000, případně dělením čitatele jmenovatelem.',
+          steps: `1. Rozšiř nebo vypočítej dělení čitatele jmenovatelem.<br>2. Například 1/4 = 25/100 = 0,25.<br>3. Tady vyjde <strong>${fmt(item.decimal)}</strong>.`,
+        });
+      }
+
+      function conversionDecimalToFractionMedium() {
+        const decimals = [0.125, 0.375, 1.75, 2.125, 0.875, 3.625, 4.05, 0.625];
+        const value = randomFrom(decimals);
+        const fraction = toReducedFraction(value);
+        return buildFractionExercise({
+          section: 'conversion',
+          tag: 'Krácení zlomku',
+          prompt: `Převeď ${fmt(value)} na základní tvar zlomku.`,
+          note: 'Požadujeme základní tvar. Nesnaž se to ošidit obludou typu 125/1000, když jde zlomek zkrátit.',
+          acceptedFraction: `${fraction.n}/${fraction.d}`,
+          canonicalValue: value,
+          solutionHtml: `${fmt(value)} = <strong>${fraction.n}/${fraction.d}</strong>`,
+          hint: 'Napiš číslo jako zlomek podle počtu desetinných míst a potom krátíš největším společným dělitelem.',
+          steps: `1. ${fmt(value)} zapiš jako zlomek se jmenovatelem 10, 100 nebo 1000.<br>2. Pak najdi největší společný dělitel čitatele a jmenovatele.<br>3. Po zkrácení dostaneš <strong>${fraction.n}/${fraction.d}</strong>.`,
+        });
+      }
+
+      function conversionFractionToDecimalMedium() {
+        const items = [
+          { fraction: '5/8', decimal: 0.625 },
+          { fraction: '7/20', decimal: 0.35 },
+          { fraction: '9/40', decimal: 0.225 },
+          { fraction: '17/8', decimal: 2.125 },
+          { fraction: '13/25', decimal: 0.52 },
+          { fraction: '29/50', decimal: 0.58 },
+        ];
+        const item = randomFrom(items);
+        return buildStandardExercise({
+          section: 'conversion',
+          tag: 'Rozšíření nebo dělení',
+          prompt: `Převeď zlomek ${item.fraction} na desetinné číslo.`,
+          note: 'Výsledek zapiš přesně.',
+          result: item.decimal,
+          hint: 'Někdy je výhodné rozšířit na jmenovatel 10, 100 nebo 1000. Jindy je rychlejší dělení.',
+          steps: `1. Zkus zjistit, zda lze jmenovatel rozšířit na 10, 100 nebo 1000.<br>2. Pokud ano, udělej to. Pokud ne, děl čitatele jmenovatelem.<br>3. Vyjde <strong>${fmt(item.decimal)}</strong>.`,
+        });
+      }
+
+      function conversionMixedReasoning() {
+        const items = [
+          { prompt: 'Které desetinné číslo odpovídá zlomku 3/8?', result: 0.375, hint: 'Buď děl 3 : 8, nebo si uvědom, že 1/8 = 0,125.' },
+          { prompt: 'Které desetinné číslo odpovídá zlomku 7/16?', result: 0.4375, hint: 'Vyděl 7 : 16 nebo si zkus pomocný krok přes 1/16.' },
+          { prompt: 'Které desetinné číslo odpovídá zlomku 11/20?', result: 0.55, hint: 'Rozšiř jmenovatel 20 na 100.' },
+        ];
+        const item = randomFrom(items);
+        return buildStandardExercise({
+          section: 'conversion',
+          tag: 'Smysluplná volba postupu',
+          prompt: item.prompt,
+          note: 'Výsledek zapiš číslem.',
+          result: item.result,
+          hint: item.hint,
+          steps: `1. Zvol vhodný postup: rozšíření nebo dělení.<br>2. Nehledej jednu jedinou svatou cestu. Jde o smysl a přehlednost.<br>3. Výsledek je <strong>${fmt(item.result)}</strong>.`,
+        });
+      }
+
+      function conversionFiniteOrRepeating() {
+        const items = [
+          { fraction: '1/3', value: roundTo(1/3, 5), repeating: true },
+          { fraction: '2/9', value: roundTo(2/9, 5), repeating: true },
+          { fraction: '5/6', value: roundTo(5/6, 5), repeating: true },
+          { fraction: '7/12', value: roundTo(7/12, 5), repeating: true },
+          { fraction: '3/25', value: 0.12, repeating: false },
+          { fraction: '7/40', value: 0.175, repeating: false },
+          { fraction: '9/16', value: 0.5625, repeating: false },
+        ];
+        const item = randomFrom(items);
+        return buildStandardExercise({
+          section: 'conversion',
+          tag: item.repeating ? 'Periodický rozvoj' : 'Konečný rozvoj',
+          prompt: `Převeď zlomek ${item.fraction} na desetinné číslo. Výsledek zapiš ${item.repeating ? 'zaokrouhlený' : ''} na 5 desetinných míst.`,
+          note: item.repeating
+            ? 'Tady je důležité vědět, že výsledek je periodický. Proto zapisujeme zaokrouhlenou podobu.'
+            : 'Tady vychází konečný desetinný rozvoj.',
+          result: item.value,
+          roundingNote: 'V těžké obtížnosti pracuj u delších výsledků se zaokrouhlením na 5 desetinných míst.',
+          hint: item.repeating
+            ? 'Jmenovatel obsahuje i jiná prvočísla než 2 a 5, takže desetinný rozvoj nebude konečný.'
+            : 'Jmenovatel po zkrácení obsahuje jen faktory 2 a 5, takže desetinný rozvoj je konečný.',
+          steps: item.repeating
+            ? `1. Zkus si uvědomit, zda jde o konečný, nebo periodický rozvoj.<br>2. U zlomku ${item.fraction} vychází periodický rozvoj.<br>3. Proto zapíšeme hodnotu zaokrouhlenou na 5 desetinných míst: <strong>${fmt(item.value)}</strong>.`
+            : `1. Po zkrácení sleduj jmenovatel.<br>2. Obsahuje jen faktory 2 a 5, proto vyjde konečný desetinný rozvoj.<br>3. Výsledek je <strong>${fmt(item.value)}</strong>.`,
+        });
+      }
+
+      function conversionFractionToDecimalHard() {
+        const numerator = randomFrom([7, 11, 13, 17, 19, 23]);
+        const denominator = randomFrom([6, 12, 15, 18, 24, 28]);
+        const value = roundTo(numerator / denominator, 5);
+        return buildStandardExercise({
+          section: 'conversion',
+          tag: 'Těžší zlomek na desetinné číslo',
+          prompt: `Převeď zlomek ${numerator}/${denominator} na desetinné číslo. Výsledek zaokrouhli na 5 desetinných míst.`,
+          note: 'Nejde o závod. Tady je důležitá přesnost a smysluplné zaokrouhlení.',
+          result: value,
+          roundingNote: 'Zaokrouhli na 5 desetinných míst.',
+          hint: 'Proveď dělení a pokračuj dost dlouho, aby šlo správně zaokrouhlit.',
+          steps: `1. Vyděl ${numerator} : ${denominator}.<br>2. Pokračuj alespoň na šest desetinných míst.<br>3. Potom výsledek zaokrouhli na pět desetinných míst.<br>4. Dostaneš <strong>${fmt(value)}</strong>.`,
+        });
+      }
+
+      function conversionDecimalToFractionHard() {
+        const values = [0.875, 1.125, 2.625, 3.3125, 0.4375, 5.0625, 1.875];
+        const value = randomFrom(values);
+        const fraction = toReducedFraction(value);
+        return buildFractionExercise({
+          section: 'conversion',
+          tag: 'Těžší převod na zlomek',
+          prompt: `Převeď ${fmt(value)} na základní tvar zlomku.`,
+          note: 'Pečlivě krátíme. V těžké obtížnosti se na ledabylé tvary nehraje.',
+          acceptedFraction: `${fraction.n}/${fraction.d}`,
+          canonicalValue: value,
+          solutionHtml: `${fmt(value)} = <strong>${fraction.n}/${fraction.d}</strong>`,
+          hint: 'Napiš číslo jako zlomek s vhodným jmenovatelem a potom krátíš až na základní tvar.',
+          steps: `1. ${fmt(value)} zapiš jako zlomek podle počtu desetinných míst.<br>2. Najdi největší společný dělitel čitatele a jmenovatele.<br>3. Po zkrácení dostaneš <strong>${fraction.n}/${fraction.d}</strong>.`,
+        });
+      }
+
+      function conversionReasoningHard() {
+        const cases = [
+          {
+            prompt: 'Rozhodni a vypočítej: má zlomek 7/20 konečný, nebo periodický desetinný rozvoj? Zapiš desetinné číslo.',
+            result: 0.35,
+            hint: 'Po zkrácení je ve jmenovateli jen 2 a 5, proto vyjde konečný desetinný rozvoj.',
+            steps: '1. Prohlédni si jmenovatel po případném zkrácení.<br>2. Jsou v něm jen faktory 2 a 5.<br>3. Rozvoj je konečný a hodnota je <strong>0,35</strong>.',
+          },
+          {
+            prompt: 'Rozhodni a vypočítej: má zlomek 2/15 konečný, nebo periodický desetinný rozvoj? Zapiš výsledek zaokrouhlený na 5 desetinných míst.',
+            result: roundTo(2/15, 5),
+            hint: 'Ve jmenovateli je po zkrácení i 3, proto rozvoj nebude konečný.',
+            steps: `1. Sleduj jmenovatel 15 = 3 × 5.<br>2. Proto jde o periodický rozvoj.<br>3. Zaokrouhlená hodnota na 5 desetinných míst je <strong>${fmt(roundTo(2/15, 5))}</strong>.`,
+          },
+          {
+            prompt: 'Převeď 0,33333 na zlomek, který smysluplně vyjadřuje periodický charakter čísla.',
+            fractionOnly: '1/3',
+            value: roundTo(1/3, 5),
+            hint: 'Číslo 0,33333 je zaokrouhlené přiblížení známého periodického čísla.',
+            steps: '1. Číslo 0,33333 je zjevné přiblížení periodického čísla 0,(3).<br>2. To odpovídá zlomku <strong>1/3</strong>.<br>3. Tady jde o smysluplný matematický zápis, ne o slepé čtení pěti cifer.',
+          },
+        ];
+        const chosen = randomFrom(cases);
+        if (chosen.fractionOnly) {
+          return buildFractionExercise({
+            section: 'conversion',
+            tag: 'Smysl převodu a aproximace',
+            prompt: chosen.prompt,
+            note: 'Tady se hodnotí smysluplný matematický zápis, ne bezduché opisování číslic.',
+            acceptedFraction: chosen.fractionOnly,
+            canonicalValue: chosen.value,
+            solutionHtml: `Smysluplný zlomek je <strong>${chosen.fractionOnly}</strong>.`,
+            hint: chosen.hint,
+            steps: chosen.steps,
+          });
+        }
+        return buildStandardExercise({
+          section: 'conversion',
+          tag: 'Rozhodni typ rozvoje',
+          prompt: chosen.prompt,
+          note: 'Nejprve uvažuj, až potom počítej.',
+          result: chosen.result,
+          roundingNote: 'V těžké obtížnosti zapisujeme delší rozvoje zaokrouhlené na 5 desetinných míst.',
+          hint: chosen.hint,
+          steps: chosen.steps,
+        });
+      }
+
+      function buildStandardExercise(config) {
+        return {
+          section: config.section,
+          tag: config.tag,
+          context: config.context || '',
+          prompt: config.prompt,
+          note: config.note || '',
+          hint: config.hint,
+          steps: config.steps,
+          solutionHtml: config.solutionHtml || `<strong>${fmt(config.result)}</strong>`,
+          roundingNote: config.roundingNote || '',
+          result: config.result,
+          check(raw) {
+            const parsed = parseNumericInput(raw);
+            if (Number.isNaN(parsed)) {
+              return { correct: false, message: 'Tohle nevypadá jako číslo.' };
+            }
+            const ok = almostEqual(parsed, config.result);
+            return ok
+              ? { correct: true, message: 'Správně.' }
+              : { correct: false, message: `To nesedí.` };
+          },
+        };
+      }
+
+      function buildFractionExercise(config) {
+        const canonical = normalizeFractionString(config.acceptedFraction);
+        return {
+          section: config.section,
+          tag: config.tag,
+          context: config.context || '',
+          prompt: config.prompt,
+          note: config.note || '',
+          hint: config.hint,
+          steps: config.steps,
+          solutionHtml: config.solutionHtml,
+          roundingNote: config.roundingNote || '',
+          result: config.canonicalValue,
+          check(raw) {
+            const normalized = normalizeFractionString(raw);
+            if (!normalized) {
+              return { correct: false, message: 'Zapiš zlomek ve tvaru a/b.' };
+            }
+            if (normalized === canonical) {
+              return { correct: true, message: 'Správně. Tohle je základní tvar.' };
+            }
+            const fractionValue = fractionToNumber(normalized);
+            if (fractionValue !== null && almostEqual(fractionValue, config.canonicalValue)) {
+              return { correct: false, message: 'Hodnota je sice stejná, ale není to požadovaný základní tvar.' };
+            }
+            return { correct: false, message: 'Tento zlomek neodpovídá správnému výsledku.' };
+          },
+        };
+      }
+
+      function parseNumericInput(input) {
+        const cleaned = input
+          .replace(/\s+/g, '')
+          .replace(',', '.')
+          .replace(/[^0-9.\-]/g, '');
+        if (!cleaned) return NaN;
+        return Number(cleaned);
+      }
+
+      function normalizeFractionString(input) {
+        if (!input) return '';
+        const cleaned = input.replace(/\s+/g, '');
+        const match = cleaned.match(/^(-?\d+)\/(-?\d+)$/);
+        if (!match) return '';
+        let n = Number(match[1]);
+        let d = Number(match[2]);
+        if (!Number.isFinite(n) || !Number.isFinite(d) || d === 0) return '';
+        if (d < 0) {
+          n *= -1;
+          d *= -1;
+        }
+        const g = gcd(Math.abs(n), Math.abs(d));
+        return `${n / g}/${d / g}`;
+      }
+
+      function fractionToNumber(fracString) {
+        const match = fracString.match(/^(-?\d+)\/(-?\d+)$/);
+        if (!match) return null;
+        const n = Number(match[1]);
+        const d = Number(match[2]);
+        if (!Number.isFinite(n) || !Number.isFinite(d) || d === 0) return null;
+        return n / d;
+      }
+
+      function toReducedFraction(value) {
+        const str = value.toString();
+        const decimals = str.includes('.') ? str.split('.')[1].length : 0;
+        const scale = 10 ** decimals;
+        const n = Math.round(value * scale);
+        const d = scale;
+        const g = gcd(Math.abs(n), Math.abs(d));
+        return { n: n / g, d: d / g };
+      }
+
+      function gcd(a, b) {
+        while (b !== 0) {
+          [a, b] = [b, a % b];
+        }
+        return a || 1;
+      }
+
+      function randomDecimal(max, decimalPlaces) {
+        const scale = 10 ** decimalPlaces;
+        return roundTo(randomInt(1, Math.max(2, Math.floor(max * scale))) / scale, decimalPlaces);
+      }
+
+      function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function randomFrom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function roundTo(value, places) {
+        const factor = 10 ** places;
+        return Math.round((value + Number.EPSILON) * factor) / factor;
+      }
+
+      function fmt(value) {
+        if (typeof value === 'number') {
+          const rounded = roundTo(value, 5);
+          let text = rounded.toString();
+          if (text.includes('e')) {
+            text = rounded.toFixed(5);
+          }
+          text = text.replace('.', ',');
+          if (text.includes(',')) {
+            text = text.replace(/0+$/, '').replace(/,$/, '');
+          }
+          return text;
+        }
+        return String(value).replace('.', ',');
+      }
+
+      function almostEqual(a, b) {
+        return Math.abs(a - b) < 1e-6;
+      }
+
+      function playSound(type) {
+        if (!state.soundEnabled) return;
+        try {
+          soundEngine.play(type);
+        } catch (err) {
+          // tiše pokračujeme
+        }
+      }
+
+      function speakMascot(text) {
+        ui.mascotSpeech.textContent = text;
+      }
+
+      const soundEngine = {
+        ctx: null,
+        counters: {
+          success: 0,
+          error: 0,
+          info: 0,
+        },
+        palettes: {
+          success: [523, 587, 659, 698, 784, 880, 988, 1047, 1175, 1319],
+          error: [180, 160, 140, 150, 170, 155, 145, 135, 165, 175],
+          info: [262, 294, 330, 349, 392, 440, 494, 523, 554, 622],
+        },
+        ensure() {
+          if (!this.ctx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) this.ctx = new AC();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+          }
+        },
+        play(type) {
+          this.ensure();
+          if (!this.ctx) return;
+          const freq = this.palettes[type][this.counters[type] % this.palettes[type].length];
+          this.counters[type] += 1;
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type === 'error' ? 'sawtooth' : type === 'info' ? 'triangle' : 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(type === 'error' ? 0.035 : 0.05, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + (type === 'error' ? 0.18 : 0.24));
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + (type === 'error' ? 0.2 : 0.27));
+        },
+      };
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+          const active = document.activeElement;
+          const tag = active ? active.tagName : '';
+          const isInteractive = active && (
+            active.isContentEditable ||
+            tag === 'TEXTAREA' ||
+            tag === 'SELECT' ||
+            tag === 'BUTTON' ||
+            tag === 'A'
+          );
+          if (!isInteractive) {
+            event.preventDefault();
+            handleLogicalEnter();
+            return;
+          }
+        }
+        if (event.key.toLowerCase() === 'm' && event.altKey) {
+          state.soundEnabled = !state.soundEnabled;
+          saveState();
+          refreshAllUI();
+          speakMascot(state.soundEnabled ? 'Zvuk je znovu zapnutý.' : 'Zvuk je vypnutý. Teď je tu ticho jak ve sborovně po poradě.');
+        }
+      });
+
+      const soundToggle = document.createElement('button');
+      soundToggle.className = 'chip';
+      soundToggle.style.marginLeft = '0';
+      soundToggle.addEventListener('click', () => {
+        state.soundEnabled = !state.soundEnabled;
+        saveState();
+        refreshAllUI();
+        if (state.soundEnabled) playSound('info');
+        speakMascot(state.soundEnabled ? 'Zvuky jsou zapnuté.' : 'Zvuky jsou vypnuté. Kdo chce ticho, ten ho má mít.');
+      });
+      ui.quickCardInjected = false;
+      ui.quickCard = document.querySelector('.quick-card');
+      ui.quickCard.appendChild(soundToggle);
+
+      const soundHelp = document.createElement('div');
+      soundHelp.className = 'tiny muted';
+      soundHelp.textContent = 'Zvuk můžeš přepnout i klávesovou zkratkou Alt+M.';
+      ui.quickCard.appendChild(soundHelp);
+
+      function updateSoundToggle() {
+        soundToggle.className = `chip ${state.soundEnabled ? 'active' : ''}`;
+        soundToggle.textContent = state.soundEnabled ? 'Zvuk: zapnutý' : 'Zvuk: vypnutý';
+      }
+
+      const originalRefreshAllUI = refreshAllUI;
+      refreshAllUI = function wrappedRefreshAllUI() {
+        originalRefreshAllUI();
+        updateSoundToggle();
+      };
+
+      function structuredClone(obj) {
+        return JSON.parse(JSON.stringify(obj));
+      }
+
+      speakMascot('Ahoj. Jsem Dekáček. Budu hlídat desetinnou čárku, nápovědy i to, aby žádný příklad neutekl bez správného výsledku.');
+      refreshAllUI();
+    })();
+  </script>
+</body>
+</html>
