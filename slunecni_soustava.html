@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FajnSoustava — Sluneční soustava</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0D0E2A;--bg2:#141630;--card:rgba(20,24,60,.75);--card2:rgba(16,20,50,.8);--blue:#5BB8FF;--blue2:#90D4FF;--blue3:#2E6EC4;--gold:#FFD166;--ember:#FF7A40;--text:#EEF4FF;--muted:#7A90C0;--correct:#3AD48A;--wrong:#FF5555;--xp:#C084FC;--border:rgba(100,160,255,.18);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* Vrstvené vesmírné pozadí */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    /* Mlhovina fialová vlevo nahoře */
+    radial-gradient(ellipse 70% 50% at 5% 10%, rgba(120,60,220,.28) 0%, transparent 60%),
+    /* Mlhovina modrá vpravo */
+    radial-gradient(ellipse 60% 60% at 95% 30%, rgba(30,100,220,.22) 0%, transparent 55%),
+    /* Mlhovina tyrkysová uprostřed */
+    radial-gradient(ellipse 80% 40% at 50% 55%, rgba(20,180,180,.1) 0%, transparent 60%),
+    /* Mlhovina růžová dole */
+    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(200,60,160,.18) 0%, transparent 55%),
+    /* Mlhovina zlatá dole vlevo */
+    radial-gradient(ellipse 50% 40% at 15% 85%, rgba(180,120,20,.12) 0%, transparent 55%),
+    /* Základ — hluboká noční modř */
+    linear-gradient(160deg, #0A0C24 0%, #0D1035 35%, #080A20 65%, #0C0D28 100%);
+}
+
+/* Hvězdy — tři vrstvy různých velikostí */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    /* Drobné hvězdy */
+    radial-gradient(1px 1px at 8% 12%, rgba(255,255,255,.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 18% 35%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 28% 8%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 38% 55%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 48% 22%, rgba(255,255,255,.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 58% 78%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 68% 14%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 78% 45%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 62%, rgba(255,255,255,.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 93% 28%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 3% 68%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 13% 82%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 33% 92%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 53% 40%, rgba(255,255,255,.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 73% 88%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 83% 5%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 22% 58%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 42% 72%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 62% 32%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 96% 75%, rgba(255,255,255,.7) 0%, transparent 100%),
+    /* Střední hvězdy */
+    radial-gradient(1.8px 1.8px at 15% 25%, rgba(200,225,255,.95) 0%, transparent 100%),
+    radial-gradient(1.8px 1.8px at 45% 18%, rgba(255,240,200,.9) 0%, transparent 100%),
+    radial-gradient(2px 2px at 72% 60%, rgba(200,225,255,.95) 0%, transparent 100%),
+    radial-gradient(1.8px 1.8px at 90% 42%, rgba(255,220,220,.85) 0%, transparent 100%),
+    radial-gradient(2px 2px at 30% 75%, rgba(220,240,255,.9) 0%, transparent 100%),
+    radial-gradient(1.8px 1.8px at 60% 88%, rgba(255,240,200,.85) 0%, transparent 100%),
+    radial-gradient(2px 2px at 7% 48%, rgba(200,225,255,.9) 0%, transparent 100%),
+    radial-gradient(1.8px 1.8px at 85% 18%, rgba(255,220,180,.85) 0%, transparent 100%),
+    /* Jasné hvězdy */
+    radial-gradient(2.5px 2.5px at 25% 15%, rgba(255,255,255,1) 0%, transparent 100%),
+    radial-gradient(2.5px 2.5px at 75% 35%, rgba(255,255,240,1) 0%, transparent 100%),
+    radial-gradient(3px 3px at 50% 70%, rgba(255,240,255,1) 0%, transparent 100%),
+    radial-gradient(2.5px 2.5px at 10% 90%, rgba(255,255,255,1) 0%, transparent 100%),
+    radial-gradient(2.5px 2.5px at 92% 85%, rgba(200,230,255,1) 0%, transparent 100%);
+}
+.screen{display:none;min-height:100vh;padding:0 16px 40px;max-width:600px;margin:0 auto;animation:fadeIn .3s ease;position:relative;z-index:1;}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes starPop{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes orbit{from{transform:rotate(0deg) translateX(22px) rotate(0deg)}to{transform:rotate(360deg) translateX(22px) rotate(-360deg)}}
+@keyframes twinkle{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes xpFloat{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}80%{transform:translate(-50%,-80%);opacity:1}100%{transform:translate(-50%,-120%) scale(.8);opacity:0}}
+@keyframes correctPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px rgba(58,184,122,.35)}}
+@keyframes wrongShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes slide{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+@keyframes flamePulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.2)}}
+
+/* HOME */
+.home-header{text-align:center;padding:28px 0 18px}
+.logo{font-family:'Bebas Neue',cursive;font-size:3.6rem;letter-spacing:.06em;line-height:1;background:linear-gradient(135deg,var(--blue2) 0%,var(--blue) 45%,var(--xp) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-ico{font-size:2.8rem;-webkit-text-fill-color:initial;vertical-align:middle;margin-right:6px}
+.logo-sub{font-size:.78rem;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-top:5px}
+.planet-orbit{display:flex;justify-content:center;align-items:center;margin:10px 0 16px;height:56px;position:relative}
+.orbit-ring{width:50px;height:50px;border:1px solid rgba(74,158,232,.2);border-radius:50%;position:relative;display:inline-flex;align-items:center;justify-content:center;margin:0 4px}
+.orbit-dot{position:absolute;font-size:.9rem;animation:orbit 3s linear infinite;animation-delay:var(--d,0s)}
+.sun-ico{font-size:2rem}
+.xp-bar{display:inline-flex;align-items:center;gap:8px;background:rgba(20,28,72,.8);border:1px solid rgba(100,160,255,.25);border-radius:999px;padding:8px 22px;margin-top:10px;font-weight:800;font-size:1.05rem;color:var(--xp);backdrop-filter:blur(10px);}
+.xp-lbl{font-weight:400;color:var(--muted);font-size:.8rem}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:14px 0}
+.cat-card{background:rgba(20,28,72,.7);border:1px solid rgba(100,160,255,.2);border-radius:16px;padding:16px 14px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.cat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(100,160,255,.06) 0%,transparent 60%);opacity:0;transition:opacity .22s;}
+.cat-card:hover::before{opacity:1}
+.cat-card:hover{border-color:rgba(100,160,255,.4);transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.5),0 0 20px rgba(80,140,255,.12)}
+.cat-card:active{transform:scale(.97)}
+.cat-emoji{font-size:2rem;margin-bottom:8px;display:block}
+.cat-name{font-family:'Bebas Neue',cursive;font-size:1.15rem;letter-spacing:.06em;color:var(--blue2);line-height:1.2}
+.cat-count{font-size:.65rem;color:var(--blue3);font-weight:800;margin-top:2px;letter-spacing:.05em}
+.cat-desc{font-size:.71rem;color:var(--muted);margin-top:3px;line-height:1.4}
+.cat-stars{margin-top:8px;display:flex;gap:3px}
+.cat-star{font-size:.82rem;opacity:.16;transition:opacity .3s}
+.cat-star.on{opacity:1}
+.btn-badges{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:15px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-badges:hover{border-color:var(--blue3);color:var(--blue2)}
+.badge-pill{background:var(--blue3);color:#fff;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 8px}
+
+/* PLANET DISPLAY */
+.planet-display{width:100%;display:flex;justify-content:center;margin:4px 0 14px}
+.planet-display svg{width:100%;max-width:240px;height:auto}
+
+/* QUESTION */
+.q-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 10px}
+.q-cat{font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:.1em;color:var(--blue)}
+.q-streak{display:none;align-items:center;gap:3px;font-weight:800;font-size:.9rem;color:var(--gold)}
+.q-streak.on{display:flex}
+.streak-fire{animation:flamePulse .65s ease infinite;display:inline-block}
+.q-cnt-wrap{display:flex;align-items:center;gap:8px}
+.q-cnt{font-size:.82rem;color:var(--muted);font-weight:700}
+.back-q{background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.75rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+.back-q:hover{border-color:var(--blue3);color:var(--blue2)}
+.prog-bar{height:5px;background:var(--card2);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue3),var(--blue2));border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.q-card{background:rgba(16,22,60,.72);border:1px solid rgba(100,160,255,.2);border-radius:20px;padding:22px;margin-bottom:14px;min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:slide .25s ease;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.q-badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px;font-weight:700}
+.q-text{font-size:1.08rem;font-weight:700;line-height:1.48;color:var(--text)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.answers.solo{grid-template-columns:1fr}
+.ans-btn{background:rgba(20,28,72,.65);border:1.5px solid rgba(100,160,255,.18);border-radius:13px;padding:13px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:all .18s;text-align:center;line-height:1.35;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.ans-btn:hover:not(:disabled){border-color:var(--blue);background:rgba(74,158,232,.09);color:var(--blue2)}
+.ans-btn.correct{background:rgba(58,184,122,.18);border-color:var(--correct);color:var(--correct);animation:correctPulse .5s ease}
+.ans-btn.wrong{background:rgba(232,76,76,.15);border-color:var(--wrong);color:var(--wrong);animation:wrongShake .4s ease}
+.ans-btn.show-correct{background:rgba(58,184,122,.12);border-color:var(--correct);color:var(--correct)}
+.ans-btn:disabled{cursor:default}
+.fact-box{background:rgba(20,50,90,.7);border:1px solid rgba(100,180,255,.25);border-radius:13px;padding:14px;margin-bottom:13px;display:none;animation:popIn .3s ease;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.fact-box.on{display:block}
+.fact-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.14em;color:var(--blue);font-weight:800;margin-bottom:5px}
+.fact-text{font-size:.86rem;color:var(--text);line-height:1.58}
+.next-btn{width:100%;background:linear-gradient(135deg,var(--blue3),var(--blue));border:none;border-radius:13px;padding:16px;color:#fff;font-family:'Bebas Neue',cursive;font-size:1.25rem;letter-spacing:.1em;cursor:pointer;display:none;transition:all .2s;}
+.next-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.next-btn.on{display:block;animation:popIn .3s ease}
+.xp-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--xp);color:#fff;font-family:'Bebas Neue',cursive;font-size:2rem;padding:10px 28px;border-radius:999px;pointer-events:none;z-index:200;opacity:0;white-space:nowrap;}
+.xp-popup.go{animation:xpFloat 1.7s ease forwards}
+
+/* RESULT */
+.res-header{text-align:center;padding:28px 0 16px}
+.res-title{font-family:'Bebas Neue',cursive;font-size:2.6rem;letter-spacing:.05em;color:var(--blue2)}
+.res-sub{color:var(--muted);font-size:.88rem;margin-top:3px}
+.res-stars{display:flex;justify-content:center;gap:14px;margin:18px 0}
+.res-star{font-size:2.8rem;opacity:.14;display:inline-block}
+.res-star.on{opacity:1;animation:starPop .5s cubic-bezier(.4,0,.2,1) forwards}
+.res-star:nth-child(2){animation-delay:.2s}
+.res-star:nth-child(3){animation-delay:.4s}
+.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:14px 0}
+.stat-c{background:rgba(16,22,60,.72);border:1px solid rgba(100,160,255,.18);border-radius:13px;padding:14px 9px;text-align:center;backdrop-filter:blur(10px);}
+.stat-v{font-family:'Bebas Neue',cursive;font-size:1.75rem;color:var(--blue)}
+.stat-l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+.facts-review{margin:18px 0}
+.facts-t{font-family:'Bebas Neue',cursive;font-size:1.15rem;color:var(--blue);letter-spacing:.08em;margin-bottom:9px}
+.fact-item{background:var(--card);border-left:3px solid var(--blue3);border-radius:0 9px 9px 0;padding:9px 13px;margin-bottom:7px;font-size:.83rem;line-height:1.52;color:var(--text);}
+.res-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.btn-primary{background:linear-gradient(135deg,var(--blue3),var(--blue));border:none;border-radius:13px;padding:15px;color:#fff;font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.08em;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-sec{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:15px;color:var(--text);font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.08em;cursor:pointer;transition:all .2s;}
+.btn-sec:hover{border-color:var(--blue3);color:var(--blue2)}
+
+/* BADGES */
+.badges-top{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
+.back-btn{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:7px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;font-size:.82rem;transition:all .2s;}
+.back-btn:hover{border-color:var(--blue3)}
+.badges-t{font-family:'Bebas Neue',cursive;font-size:1.7rem;color:var(--blue2);letter-spacing:.05em}
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge-c{background:rgba(16,22,60,.72);border:1px solid rgba(100,160,255,.16);border-radius:14px;padding:14px 9px;text-align:center;transition:all .3s;backdrop-filter:blur(10px);}
+.badge-c.locked{opacity:.3;filter:grayscale(.8)}
+.badge-c.unlocked{border-color:rgba(100,180,255,.4);box-shadow:0 0 12px rgba(80,140,255,.15)}
+.badge-ico{font-size:2.1rem;margin-bottom:7px;display:block}
+.badge-n{font-size:.68rem;font-weight:800;color:var(--blue2);text-transform:uppercase;letter-spacing:.07em;line-height:1.25}
+.badge-d{font-size:.61rem;color:var(--muted);margin-top:3px;line-height:1.35}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--blue3);border-radius:3px}
+@media(max-width:360px){.logo{font-size:3rem}.cat-grid{gap:8px}.answers{gap:7px}}
+</style>
+</head>
+<body>
+<div class="xp-popup" id="xpPopup"></div>
+
+<!-- HOME -->
+<div class="screen" id="homeScreen">
+  <div class="home-header">
+    <div class="logo"><span class="logo-ico">🪐</span>FajnSoustava</div>
+    <div class="logo-sub">Sluneční soustava · planety · mise</div>
+    <div class="xp-bar">⚡ <span id="xpTotal">0</span> <span class="xp-lbl">XP</span></div>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+  <button class="btn-badges" onclick="showBadges()">🏆 Odznaky &nbsp;<span class="badge-pill" id="badgePill">0/18</span></button>
+</div>
+
+<!-- QUESTION -->
+<div class="screen" id="questionScreen">
+  <div class="q-topbar">
+    <div class="q-cat" id="qCat"></div>
+    <div class="q-streak" id="qStreak"><span class="streak-fire">⭐</span><span id="streakN">0</span></div>
+    <div class="q-cnt-wrap">
+      <div class="q-cnt" id="qCnt"></div>
+      <button class="back-q" onclick="goHome()">← Domů</button>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="q-card">
+    <div class="q-badge" id="qBadge"></div>
+    <div class="planet-display" id="planetDisplay" style="display:none"></div>
+    <div class="q-text" id="qText"></div>
+  </div>
+  <div class="answers" id="answersDiv"></div>
+  <div class="fact-box" id="factBox">
+    <div class="fact-label">🔭 Věděl/a jsi?</div>
+    <div class="fact-text" id="factTxt"></div>
+  </div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Další →</button>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="resultScreen">
+  <div class="res-header">
+    <div class="res-title" id="resTitle"></div>
+    <div class="res-sub" id="resSub"></div>
+  </div>
+  <div class="res-stars">
+    <span class="res-star">⭐</span><span class="res-star">⭐</span><span class="res-star">⭐</span>
+  </div>
+  <div class="res-stats">
+    <div class="stat-c"><div class="stat-v" id="stCorrect">0</div><div class="stat-l">Správně</div></div>
+    <div class="stat-c"><div class="stat-v" id="stXP" style="color:var(--xp)">0</div><div class="stat-l">XP</div></div>
+    <div class="stat-c"><div class="stat-v" id="stStreak" style="color:var(--gold)">0</div><div class="stat-l">Max série</div></div>
+  </div>
+  <div class="facts-review">
+    <div class="facts-t">🔭 Co jsi se dozvěděl/a</div>
+    <div id="factsList"></div>
+  </div>
+  <div class="res-btns">
+    <button class="btn-primary" onclick="playAgain()">Hrát znovu</button>
+    <button class="btn-sec" onclick="goHome()">← Domů</button>
+  </div>
+</div>
+
+<!-- BADGES -->
+<div class="screen" id="badgesScreen">
+  <div class="badges-top">
+    <button class="back-btn" onclick="goHome()">← Zpět</button>
+    <div class="badges-t">Moje odznaky</div>
+  </div>
+  <div class="badge-grid" id="badgeGrid"></div>
+</div>
+
+<script>
+// ── PLANET SVG DISPLEJE ──
+const PLANETS = {
+slunce:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="sg" cx="40%" cy="35%"><stop offset="0%" stop-color="#FFF176"/><stop offset="40%" stop-color="#FFD600"/><stop offset="80%" stop-color="#FF8F00"/><stop offset="100%" stop-color="#E65100"/></radialGradient></defs>
+<circle cx="100" cy="100" r="72" fill="url(#sg)"/>
+<ellipse cx="100" cy="100" rx="72" ry="72" fill="none" stroke="#FFF176" stroke-width="1" opacity=".3"/>
+<circle cx="100" cy="100" r="72" fill="none" stroke="#FFD600" stroke-width="28" opacity=".06"/>
+<line x1="100" y1="10" x2="100" y2="26" stroke="#FFD600" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+<line x1="100" y1="174" x2="100" y2="190" stroke="#FFD600" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+<line x1="10" y1="100" x2="26" y2="100" stroke="#FFD600" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+<line x1="174" y1="100" x2="190" y2="100" stroke="#FFD600" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+<line x1="33" y1="33" x2="44" y2="44" stroke="#FFD600" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>
+<line x1="156" y1="156" x2="167" y2="167" stroke="#FFD600" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>
+<line x1="167" y1="33" x2="156" y2="44" stroke="#FFD600" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>
+<line x1="33" y1="167" x2="44" y2="156" stroke="#FFD600" stroke-width="2.5" stroke-linecap="round" opacity=".6"/>
+</svg>`,
+
+merkur:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="mg" cx="38%" cy="32%"><stop offset="0%" stop-color="#D4B896"/><stop offset="50%" stop-color="#9E7E5E"/><stop offset="100%" stop-color="#6B4E35"/></radialGradient></defs>
+<circle cx="100" cy="100" r="55" fill="url(#mg)"/>
+<circle cx="78" cy="76" r="8" fill="#7A5E42" opacity=".6"/>
+<circle cx="118" cy="92" r="5" fill="#7A5E42" opacity=".5"/>
+<circle cx="95" cy="120" r="10" fill="#7A5E42" opacity=".5"/>
+<circle cx="125" cy="68" r="6" fill="#7A5E42" opacity=".4"/>
+<circle cx="72" cy="112" r="7" fill="#7A5E42" opacity=".45"/>
+</svg>`,
+
+venuse:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="vg" cx="38%" cy="30%"><stop offset="0%" stop-color="#FFF9C4"/><stop offset="40%" stop-color="#F9A825"/><stop offset="80%" stop-color="#E65100"/><stop offset="100%" stop-color="#BF360C"/></radialGradient></defs>
+<circle cx="100" cy="100" r="62" fill="url(#vg)"/>
+<ellipse cx="85" cy="88" rx="28" ry="8" fill="#F57F17" opacity=".35" transform="rotate(-20 85 88)"/>
+<ellipse cx="115" cy="115" rx="32" ry="7" fill="#E65100" opacity=".3" transform="rotate(15 115 115)"/>
+<ellipse cx="100" cy="100" rx="62" ry="62" fill="none" stroke="#FFF9C4" stroke-width="1" opacity=".15"/>
+</svg>`,
+
+zeme:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="zg" cx="35%" cy="30%"><stop offset="0%" stop-color="#81D4FA"/><stop offset="50%" stop-color="#1976D2"/><stop offset="100%" stop-color="#0D47A1"/></radialGradient></defs>
+<circle cx="100" cy="100" r="64" fill="url(#zg)"/>
+<path d="M68,65 C75,60 90,58 95,68 C100,78 88,85 80,90 C72,95 60,88 62,78 Z" fill="#388E3C" opacity=".9"/>
+<path d="M110,55 C120,50 135,55 138,68 C141,81 128,88 118,85 C108,82 105,68 110,55 Z" fill="#388E3C" opacity=".85"/>
+<path d="M115,105 C125,100 140,108 142,122 C144,136 130,143 120,140 C110,137 108,120 115,105 Z" fill="#388E3C" opacity=".8"/>
+<path d="M72,110 C80,106 92,112 90,124 C88,136 75,138 68,130 C61,122 64,114 72,110 Z" fill="#2E7D32" opacity=".8"/>
+<ellipse cx="85" cy="52" rx="22" ry="6" fill="white" opacity=".6" transform="rotate(-15 85 52)"/>
+<ellipse cx="130" cy="78" rx="18" ry="5" fill="white" opacity=".5" transform="rotate(10 130 78)"/>
+</svg>`,
+
+mars:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="mrg" cx="38%" cy="32%"><stop offset="0%" stop-color="#FFCCBC"/><stop offset="45%" stop-color="#E64A19"/><stop offset="100%" stop-color="#8D2400"/></radialGradient></defs>
+<circle cx="100" cy="100" r="58" fill="url(#mrg)"/>
+<ellipse cx="88" cy="78" rx="24" ry="10" fill="#C62828" opacity=".4" transform="rotate(-10 88 78)"/>
+<circle cx="112" cy="58" r="10" fill="white" opacity=".75"/>
+<circle cx="100" cy="135" r="6" fill="#C62828" opacity=".3"/>
+<ellipse cx="115" cy="115" rx="18" ry="6" fill="#BF360C" opacity=".35" transform="rotate(20 115 115)"/>
+</svg>`,
+
+jupiter:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="jg" cx="38%" cy="32%"><stop offset="0%" stop-color="#FFF8E1"/><stop offset="30%" stop-color="#FFE0B2"/><stop offset="70%" stop-color="#FFAB40"/><stop offset="100%" stop-color="#E65100"/></radialGradient></defs>
+<circle cx="100" cy="100" r="72" fill="url(#jg)"/>
+<ellipse cx="100" cy="72" rx="68" ry="7" fill="#BF360C" opacity=".45"/>
+<ellipse cx="100" cy="86" rx="70" ry="5" fill="#E8D5B0" opacity=".55"/>
+<ellipse cx="100" cy="100" rx="70" ry="6" fill="#BF360C" opacity=".4"/>
+<ellipse cx="100" cy="114" rx="68" ry="5" fill="#E8D5B0" opacity=".5"/>
+<ellipse cx="100" cy="128" rx="66" ry="7" fill="#BF360C" opacity=".4"/>
+<ellipse cx="72" cy="108" rx="14" ry="10" fill="#E53935" opacity=".8"/>
+</svg>`,
+
+saturn:`<svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="satg" cx="38%" cy="32%"><stop offset="0%" stop-color="#FFF9C4"/><stop offset="40%" stop-color="#F9A825"/><stop offset="80%" stop-color="#E65100"/><stop offset="100%" stop-color="#BF360C"/></radialGradient>
+<linearGradient id="ring1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#D4A017" stop-opacity=".7"/><stop offset="100%" stop-color="#8B6914" stop-opacity=".4"/></linearGradient>
+<linearGradient id="ring2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#C49A14" stop-opacity=".5"/><stop offset="100%" stop-color="#7A5C10" stop-opacity=".3"/></linearGradient></defs>
+<ellipse cx="110" cy="112" rx="95" ry="18" fill="url(#ring2)" opacity=".6"/>
+<ellipse cx="110" cy="108" rx="82" ry="14" fill="url(#ring1)" opacity=".7"/>
+<circle cx="110" cy="100" r="58" fill="url(#satg)"/>
+<ellipse cx="110" cy="82" rx="55" ry="6" fill="#E65100" opacity=".35"/>
+<ellipse cx="110" cy="95" rx="56" ry="5" fill="#F9A825" opacity=".3"/>
+<ellipse cx="110" cy="108" rx="54" ry="5" fill="#E65100" opacity=".3"/>
+<ellipse cx="110" cy="112" rx="95" ry="18" fill="none" stroke="#C49A14" stroke-width="1" opacity=".4"/>
+</svg>`,
+
+uran:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="ug" cx="38%" cy="32%"><stop offset="0%" stop-color="#E0F7FA"/><stop offset="50%" stop-color="#4DD0E1"/><stop offset="100%" stop-color="#006064"/></radialGradient></defs>
+<circle cx="100" cy="100" r="62" fill="url(#ug)"/>
+<ellipse cx="100" cy="100" rx="90" ry="14" fill="none" stroke="#80DEEA" stroke-width="3" opacity=".5" transform="rotate(98 100 100)"/>
+<ellipse cx="100" cy="100" rx="80" ry="11" fill="none" stroke="#80DEEA" stroke-width="2" opacity=".35" transform="rotate(98 100 100)"/>
+<ellipse cx="88" cy="88" rx="30" ry="8" fill="#80DEEA" opacity=".2" transform="rotate(-15 88 88)"/>
+</svg>`,
+
+neptun:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="ng" cx="38%" cy="32%"><stop offset="0%" stop-color="#BBDEFB"/><stop offset="40%" stop-color="#1565C0"/><stop offset="100%" stop-color="#0D2B6B"/></radialGradient></defs>
+<circle cx="100" cy="100" r="60" fill="url(#ng)"/>
+<ellipse cx="80" cy="85" rx="22" ry="8" fill="#1976D2" opacity=".5" transform="rotate(-20 80 85)"/>
+<ellipse cx="118" cy="108" rx="18" ry="6" fill="#0D47A1" opacity=".4" transform="rotate(10 118 108)"/>
+<ellipse cx="95" cy="115" rx="25" ry="7" fill="#1565C0" opacity=".35" transform="rotate(-5 95 115)"/>
+<circle cx="72" cy="92" r="10" fill="#0D47A1" opacity=".5"/>
+</svg>`,
+
+mesic:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="meg" cx="38%" cy="32%"><stop offset="0%" stop-color="#ECEFF1"/><stop offset="50%" stop-color="#B0BEC5"/><stop offset="100%" stop-color="#546E7A"/></radialGradient></defs>
+<circle cx="100" cy="100" r="60" fill="url(#meg)"/>
+<circle cx="78" cy="75" r="10" fill="#78909C" opacity=".5"/>
+<circle cx="115" cy="88" r="7" fill="#78909C" opacity=".4"/>
+<circle cx="88" cy="118" r="12" fill="#78909C" opacity=".45"/>
+<circle cx="126" cy="115" r="8" fill="#78909C" opacity=".4"/>
+<circle cx="70" cy="112" r="6" fill="#78909C" opacity=".35"/>
+<circle cx="110" cy="60" r="5" fill="#78909C" opacity=".4"/>
+</svg>`,
+
+io:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="iog" cx="38%" cy="32%"><stop offset="0%" stop-color="#FFFDE7"/><stop offset="40%" stop-color="#F9A825"/><stop offset="80%" stop-color="#E65100"/><stop offset="100%" stop-color="#8D2400"/></radialGradient></defs>
+<circle cx="100" cy="100" r="58" fill="url(#iog)"/>
+<circle cx="72" cy="78" r="12" fill="#4CAF50" opacity=".7"/>
+<circle cx="118" cy="92" r="8" fill="#212121" opacity=".5"/>
+<circle cx="88" cy="125" r="14" fill="#E53935" opacity=".6"/>
+<circle cx="128" cy="70" r="9" fill="#4CAF50" opacity=".6"/>
+<circle cx="68" cy="118" r="7" fill="#212121" opacity=".45"/>
+</svg>`,
+
+europa:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="eug" cx="38%" cy="32%"><stop offset="0%" stop-color="#E3F2FD"/><stop offset="50%" stop-color="#90CAF9"/><stop offset="100%" stop-color="#1565C0"/></radialGradient></defs>
+<circle cx="100" cy="100" r="58" fill="url(#eug)"/>
+<line x1="60" y1="80" x2="140" y2="110" stroke="#8B4513" stroke-width="2" opacity=".5"/>
+<line x1="75" y1="125" x2="135" y2="75" stroke="#8B4513" stroke-width="1.5" opacity=".4"/>
+<line x1="50" y1="100" x2="130" y2="130" stroke="#8B4513" stroke-width="1.5" opacity=".4"/>
+<line x1="80" y1="55" x2="120" y2="145" stroke="#5D4037" stroke-width="1.5" opacity=".35"/>
+</svg>`,
+
+titan:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="titg" cx="38%" cy="32%"><stop offset="0%" stop-color="#FFE0B2"/><stop offset="40%" stop-color="#FF8F00"/><stop offset="80%" stop-color="#BF360C"/><stop offset="100%" stop-color="#7B1900"/></radialGradient></defs>
+<circle cx="100" cy="100" r="60" fill="url(#titg)"/>
+<ellipse cx="100" cy="100" rx="60" ry="60" fill="none" stroke="#FF8F00" stroke-width="8" opacity=".2"/>
+<ellipse cx="85" cy="85" rx="26" ry="10" fill="#E65100" opacity=".4" transform="rotate(-15 85 85)"/>
+<ellipse cx="115" cy="118" rx="20" ry="8" fill="#BF360C" opacity=".35" transform="rotate(10 115 118)"/>
+</svg>`,
+
+pluton:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="plg" cx="38%" cy="32%"><stop offset="0%" stop-color="#EFEBE9"/><stop offset="50%" stop-color="#A1887F"/><stop offset="100%" stop-color="#4E342E"/></radialGradient></defs>
+<circle cx="100" cy="100" r="42" fill="url(#plg)"/>
+<path d="M78,88 C90,78 115,82 118,96 C121,110 105,120 92,115 C79,110 66,98 78,88 Z" fill="#F9A825" opacity=".7"/>
+<circle cx="118" cy="70" r="8" fill="#6D4C41" opacity=".5"/>
+<circle cx="76" cy="120" r="6" fill="#6D4C41" opacity=".4"/>
+</svg>`
+};
+
+// ── CATEGORIES ──
+const CATS = [
+  {id:'planety',    name:'Planety',        emoji:'🪐', desc:'8 planet sluneční soustavy'},
+  {id:'mesice',     name:'Měsíce & Prstence', emoji:'🌙', desc:'Měsíce, prstence, tajemství'},
+  {id:'slunce',     name:'Slunce & Hvězdy', emoji:'☀️', desc:'Naše hvězda a její moc'},
+  {id:'mise',       name:'Mise & Astronauti', emoji:'🚀', desc:'Průzkum vesmíru člověkem'},
+  {id:'srovnani',   name:'Kdo je větší?',  emoji:'📏', desc:'Rekordy a srovnání'},
+  {id:'zajimavosti',name:'Záhady vesmíru', emoji:'🔭', desc:'Fakta která šokují'},
+  {id:'telesa',     name:'Tělesa & Jevy',  emoji:'☄️', desc:'Asteroidy, komety, černé díry'},
+];
+
+// ── QUESTIONS (77) ──
+const QS = [
+// PLANETY
+{c:'planety',t:'planet',pid:'merkur',q:'Nejblíže Slunci, bez atmosféry, extrémní teploty. Která planeta?',o:['Merkur','Venuše','Mars','Pluto'],a:0,f:'Merkur má povrchovou teplotu od −180 °C v noci do +430 °C ve dne — největší teplotní rozdíl v celé sluneční soustavě. Přitom není nejblíže Slunci jen vzdáleností, ale i délkou roku — rok trvá 88 dní.'},
+{c:'planety',t:'planet',pid:'venuse',q:'Nejhořejší planeta sluneční soustavy — horká víc než Merkur. Která?',o:['Venuše','Merkur','Mars','Jupiter'],a:0,f:'Venuše má průměrnou teplotu +465 °C díky skleníkovému efektu CO₂. Je horčejší než Merkur přestože je dál od Slunce. Rotuje pozpátku — na Venuši vychází Slunce na západě.'},
+{c:'planety',t:'planet',pid:'zeme',q:'Jediná planeta se známým životem, tekutou vodou a kyslíkovou atmosférou. Která?',o:['Země','Mars','Europa (měsíc)','Titan'],a:0,f:'Země je na perfektní vzdálenosti od Slunce — v tzv. "obyvatelné zóně". Má magnetické pole chránící před slunečním větrem. Tato kombinace je v celé galaxii vzácná.'},
+{c:'planety',t:'planet',pid:'mars',q:'Červená planeta s největší sopkou a nejhlubším kaňonem ve sluneční soustavě. Která?',o:['Mars','Merkur','Venuše','Pluto'],a:0,f:'Olympus Mons na Marsu je 21 km vysoký — 2,5× výše než Everest. Valles Marineris je 4000 km dlouhý a 7 km hluboký — jako od Prahy na Ural!'},
+{c:'planety',t:'planet',pid:'jupiter',q:'Největší planeta sluneční soustavy s Velkou rudou skvrnou. Která?',o:['Jupiter','Saturn','Uran','Neptun'],a:0,f:'Jupiter je tak velký, že by se do něj vešly všechny ostatní planety dohromady a ještě by zbylo místo. Velká rudá skvrna je bouře trvající přes 400 let.'},
+{c:'planety',t:'planet',pid:'saturn',q:'Planeta s nejvýraznějšími prstenci ve sluneční soustavě. Která?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,f:'Saturnovy prstence jsou z ledu a kamene a sahají až 282 000 km od planety. Přesto jsou tenké jen 20–200 metrů. Saturn je tak lehký, že by plavával na vodě!'},
+{c:'planety',t:'planet',pid:'uran',q:'Planeta otočená téměř na bok, rotuje jako kutálející se míč. Která?',o:['Uran','Neptun','Saturn','Jupiter'],a:0,f:'Uran rotuje s osou nakloněnou 98° — prakticky leží na boku. Jeden pól míří ke Slunci 42 let, pak druhý. Nejchladnější atmosféra v soustavě: −224 °C.'},
+{c:'planety',t:'planet',pid:'neptun',q:'Nejvetrnější planeta s větry přes 2100 km/h. Která?',o:['Neptun','Uran','Jupiter','Saturn'],a:0,f:'Neptun nikdo nikdy neviděl okem, než byl matematicky předpovězen. Astronomové spočítali jeho polohu z gravitačních odchylek Uranu — a tam opravdu byl!'},
+{c:'planety',t:'q',q:'Kolik planet má sluneční soustava?',o:['8','9','10','12'],a:0,f:'Od roku 2006, kdy byl Pluto překlasifikován na trpasličí planetu, je planet 8. Mnohé děti protestovaly — NASA dostala dopisy plné smutku kvůli "vyhazovu Pluta".'},
+{c:'planety',t:'q',q:'Která planeta má den delší než rok?',o:['Venuše','Merkur','Mars','Jupiter'],a:0,f:'Venuše se otočí kolem své osy za 243 zemských dní, ale oběhne Slunce za 225 dní. Její den je tedy delší než rok! A rotuje pozpátku.'},
+{c:'planety',t:'q',q:'Která planeta je nejmenší v sluneční soustavě?',o:['Merkur','Mars','Venuše','Pluto'],a:0,f:'Merkur je jen o málo větší než náš Měsíc. Ztratil většinu atmosféry kvůli blízkosti Slunce a slabé gravitaci. Povrch je pokryt krátery jako Měsíc.'},
+{c:'planety',t:'q',q:'Která z planet je nejdál od Slunce?',o:['Neptun','Uran','Saturn','Pluto'],a:0,f:'Neptun je průměrně 4,5 miliardy km od Slunce. Světlo tam doputuje za 4 hodiny. Pro srovnání — na Zemi doletí za 8 minut.'},
+
+// MĚSÍCE & PRSTENCE
+{c:'mesice',t:'planet',pid:'mesic',q:'Největší přirozený satelit Země. Jak se jmenuje?',o:['Měsíc (Luna)','Phobos','Deimos','Ganymedes'],a:0,f:'Měsíc je relativně největší satelit ve srovnání s jeho planetou v celé sluneční soustavě. Způsobuje přílivy a odlivy a zpomaluje rotaci Země. Vznikl srážkou s protoplanetou Theia.'},
+{c:'mesice',t:'planet',pid:'io',q:'Tento měsíc Jupiteru je nejvulkanicky aktivní těleso sluneční soustavy. Který?',o:['Io','Europa','Ganymedes','Callisto'],a:0,f:'Io má přes 400 aktivních sopek. Některé vyvrhují síru 300 km do výšky. Gravitační přílivy Jupiteru doslova hnětou Io jako gumový míč, čímž generují ohromné teplo.'},
+{c:'mesice',t:'planet',pid:'europa',q:'Tento hladký měsíc Jupiteru má pod ledem oceán a možná život. Který?',o:['Europa','Io','Ganymedes','Titan'],a:0,f:'Europa má pod 10–30 km silnou ledovou kůrou tekutý oceán dvakrát větší než všechny pozemské oceány. Hydrotermální průduchy na dně mohou živit život podobný tomu v hloubkách Tichého oceánu.'},
+{c:'mesice',t:'planet',pid:'titan',q:'Tento měsíc Saturnu má hustou atmosféru a jezera z kapalného metanu. Který?',o:['Titan','Io','Europa','Triton'],a:0,f:'Titan je jediné těleso kromě Země se stabilními povrchových kapalinami. Jsou to ale jezera metanu při −179 °C. Sonda Huygens na něm přistála v roce 2005.'},
+{c:'mesice',t:'q',q:'Jak vznikl náš Měsíc?',o:['Srážkou Země s protoplanetou Theia','Byl zachycen gravitací','Vznikl ze stejného mračna jako Země','Odštěpil se od Slunce'],a:0,f:'Před 4,5 miliardami let se do protoZemě srazila planeta velikosti Marsu — Theia. Trosky vystřelené na oběžnou dráhu se spojily v Měsíc. Teorie je podpořena složením hornin z Apolla.'},
+{c:'mesice',t:'q',q:'Kolik měsíců má Jupiter?',o:['95','4','12','67'],a:0,f:'Jupiter má přes 95 známých měsíců — nejvíce ze všech planet. Čtyři největší (Io, Europa, Ganymedes, Callisto) objevil Galileo Galilei v roce 1610 pouhým dalekohledem.'},
+{c:'mesice',t:'q',q:'Který měsíc je největší v sluneční soustavě?',o:['Ganymedes (Jupiter)','Titan (Saturn)','Měsíc (Země)','Triton (Neptun)'],a:0,f:'Ganymedes je větší než planeta Merkur! Má dokonce vlastní magnetické pole — jako malá planeta. Je to jediný měsíc v soustavě s magnetosférou.'},
+{c:'mesice',t:'q',q:'Z čeho jsou prstence Saturnu?',o:['Z ledu a kamenných úlomků','Z prachu a plynu','Z pevného ledu','Ze zlata a stříbra'],a:0,f:'Saturnovy prstence jsou z miliard kousků ledu a kamenů od prachu po balvany. Přestože sahají stovky tisíc km, jsou tenké jen 20–200 metrů — proporčně tenčí než papír!'},
+{c:'mesice',t:'q',q:'Mají prstence jen Saturn?',o:['Ne — prstence mají Jupiter, Uran i Neptun','Ano, jen Saturn','Saturn a Jupiter','Saturn a Uran'],a:0,f:'Prstence mají všechny čtyři plynní obři. Saturny jsou ale zdaleka nejvýraznější a nejkrásnější. Jupiterovy prstence jsou velmi tenké a temné.'},
+{c:'mesice',t:'q',q:'Proč vidíme vždy jen jednu stranu Měsíce?',o:['Měsíc rotuje stejnou rychlostí jako obíhá Zemi','Měsíc nerotuje vůbec','Druhá strana je zakryta stínem','Náhoda'],a:0,f:'Tento jev se nazývá vázaná rotace. Gravitační příliv Země zpomalil rotaci Měsíce přesně na dobu jeho oběhu. Odvrácená strana je normálně osvětlená — je jen jiná, ne "temná".'},
+
+// SLUNCE & HVĚZDY
+{c:'slunce',t:'planet',pid:'slunce',q:'Naše hvězda — srdce sluneční soustavy. Co je to za hvězdu?',o:['Žlutý trpaslík (typ G)','Červený obr','Modrý veleobr','Bílý trpaslík'],a:0,f:'Slunce je průměrná hvězda. Ve vesmíru existují hvězdy milionkrát jasnější i milionkrát slabší. Přesto je naše Slunce jasnější než 85 % hvězd v Mléčné dráze — většina hvězd jsou malí červení trpaslíci.'},
+{c:'slunce',t:'q',q:'Z čeho se skládá Slunce?',o:['Vodík (73 %) a hélium (25 %)','Kyslík a dusík','Pevné horniny a kovy','Oxid uhličitý a metan'],a:0,f:'Slunce je obrovský reaktor jaderné fúze — každou sekundu přemění 600 milionů tun vodíku na hélium. Při tom vzniká energie, která k nám doputuje za 8 minut.'},
+{c:'slunce',t:'q',q:'Jak velké je Slunce ve srovnání se Zemí?',o:['Do Slunce by se vešlo 1,3 milionu Zemí','10× větší než Země','100× větší než Země','Asi stejně velké'],a:0,f:'Průměr Slunce je 1,4 milionu km — 109× průměr Země. Hmotnost Slunce tvoří 99,86 % veškeré hmoty celé sluneční soustavy.'},
+{c:'slunce',t:'q',q:'Jaká je teplota povrchu Slunce?',o:['Asi 5 500 °C','100 000 °C','500 °C','1 000 000 °C'],a:0,f:'Povrch Slunce má 5 500 °C. Paradoxně korona (vnější atmosféra) je ale miliony stupňů horká. Tento záhadný jev vědci vysvětlují magnetickými vlnami — a stále ho plně nechápou.'},
+{c:'slunce',t:'q',q:'Jak daleko je Slunce od Země?',o:['Asi 150 milionů km','15 milionů km','1,5 miliardy km','150 km'],a:0,f:'150 milionů km je tzv. 1 astronomická jednotka (AU). Světlo tam doletí za 8 minut 20 sekund. Kdybychom jeli autem 130 km/h, dorazili bychom za 130 let.'},
+{c:'slunce',t:'q',q:'Jak dlouho bude Slunce ještě svítit?',o:['Asi 5 miliard let','Zanikne za 100 let','Věčně','Zanikne za milion let'],a:0,f:'Slunce je ve středu svého života. Za 5 miliard let se rozroste v červeného obra — pohltí Merkur a Venuši, Zemi pravděpodobně spálí. Pak zkolabuje v bílého trpaslíka.'},
+{c:'slunce',t:'q',q:'Co jsou sluneční skvrny?',o:['Chladnější oblasti s silným mag. polem','Místa výbuchů na Slunci','Stíny planet','Krátery na Slunci'],a:0,f:'Sluneční skvrny jsou oblasti s extrémně silným magnetickým polem, kde je povrch o 1500 °C chladnější než okolí — proto vypadají tmavé. Jejich počet kolísá v 11letém cyklu.'},
+
+// MISE & ASTRONAUTI
+{c:'mise',t:'q',q:'Kdo byl první člověk ve vesmíru?',o:['Jurij Gagarin (1961)','Neil Armstrong (1969)','Alan Shepard (1961)','Valentina Těreškovová (1963)'],a:0,f:'Jurij Gagarin letěl 12. dubna 1961 na lodi Vostok 1 a obletěl Zemi za 108 minut. „Pali!" bylo jeho výkřik při startu. Svátek 12. dubna se slaví jako Den kosmonautiky.'},
+{c:'mise',t:'q',q:'Kdo byl první člověk na Měsíci?',o:['Neil Armstrong','Buzz Aldrin','Jurij Gagarin','Alan Shepard'],a:0,f:'"To je jeden malý krok pro člověka, obrovský skok pro lidstvo." Neil Armstrong vstoupil na Měsíc 21. července 1969. Celkem na Měsíci stálo 12 lidí v programu Apollo.'},
+{c:'mise',t:'q',q:'Která sonda jako první opustila sluneční soustavu?',o:['Voyager 1','Pioneer 10','New Horizons','Cassini'],a:0,f:'Voyager 1 byl vypuštěn v roce 1977 a v roce 2012 jako první lidský výtvor opustil heliosféru. Je nejdál od Země ze všech objektů, jaký člověk kdy vytvořil — přes 23 miliard km.'},
+{c:'mise',t:'q',q:'Která mise přistála na Marsu a hledá stopy života?',o:['Curiosity a Perseverance (NASA)','Voyager 2','Apollo 13','Cassini'],a:0,f:'Perseverance přistál na Marsu v únoru 2021 a vozí vrtulník Ingenuity — první motorové letadlo na jiné planetě. Odebírá vzorky hornin, které se snad jednou vrátí na Zemi.'},
+{c:'mise',t:'q',q:'Co je ISS?',o:['Mezinárodní vesmírná stanice','Výzkumné středisko na Marsu','Dalekohled na oběžné dráze','Raketa SpaceX'],a:0,f:'ISS obíhá Zemi ve výšce 400 km rychlostí 27 600 km/h — oběhne Zemi 16× za den. Nepřetržitě je obydlena od roku 2000 a je největší lidská stavba ve vesmíru.'},
+{c:'mise',t:'q',q:'Která sonda přeletěla kolem Pluta v roce 2015?',o:['New Horizons','Voyager 1','Cassini','Juno'],a:0,f:'New Horizons odhalil, že Pluto má srdce — obrovskou rovinu z dusíkového ledu ve tvaru srdce. Přeletěla 14. července 2015 — 9 let a 5 miliard km od Země.'},
+{c:'mise',t:'q',q:'Co byl program Apollo?',o:['Americký program přistání na Měsíci','Průzkum Marsu','Stavba ISS','Průlet kolem Saturnu'],a:0,f:'Apollo 11 byl vrchol závodu o Měsíc. Celkem 6 misí úspěšně přistálo. Apollo 13 havaroval — ale posádka se vrátila živá díky improvizaci, která je dodnes lekcí krizového managementu.'},
+{c:'mise',t:'q',q:'Která sonda studovala Saturn a jeho měsíce?',o:['Cassini-Huygens','Voyager 2','New Horizons','Juno'],a:0,f:'Cassini obíhala Saturn 13 let a odhalila gejzíry na Enceladu. Sonda Huygens se oddělila a přistála na Titanu. V roce 2017 Cassini záměrně vstoupila do Saturnovy atmosféry, aby ji neznečistila.'},
+{c:'mise',t:'q',q:'Kdo byla první žena ve vesmíru?',o:['Valentina Těreškovová','Sally Ride','Eileen Collins','Mae Jemison'],a:0,f:'Valentina Těreškovová letěla v roce 1963 na Vostoku 6 — jako nekvalifikovaný pilot, vybraný z 400 dobrovolnic. Strávila ve vesmíru 3 dny a 22 hodin.'},
+
+// SROVNÁNÍ
+{c:'srovnani',t:'q',q:'Která planeta je největší v sluneční soustavě?',o:['Jupiter','Saturn','Uran','Neptun'],a:0,f:'Jupiter je tak velký, že by se v něm vešla Země 1300×. Přitom ale Jupiter není "pevná" planeta — je to obří koule plynu bez pevného povrchu.'},
+{c:'srovnani',t:'q',q:'Která planeta je nejrychlejší — oběhne Slunce nejrychleji?',o:['Merkur','Venuše','Země','Mars'],a:0,f:'Merkur obíhá Slunce za 88 dní rychlostí 47 km/s. Čím blíže k Slunci, tím rychleji musí planeta obíhat, aby gravitace nestáhla ji dovnitř.'},
+{c:'srovnani',t:'q',q:'Která planeta je nejpomalejší — obíhá Slunce nejdéle?',o:['Neptun','Uran','Saturn','Jupiter'],a:0,f:'Neptun oběhne Slunce za 165 zemských let. Od svého objevení v roce 1846 dokončil teprve svůj první známý oběh — v roce 2011!'},
+{c:'srovnani',t:'q',q:'Která planeta má nejvíce měsíců?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,f:'Saturn má přes 146 známých měsíců — v posledních letech předstihl Jupiter. Většina jsou malé nepravidelné tělesa zachycená gravitací. Jupiter má 95 měsíců.'},
+{c:'srovnani',t:'q',q:'Jaký je průměr Slunce?',o:['1,4 milionu km','150 000 km','15 milionů km','140 000 km'],a:0,f:'Průměr Slunce 1,4 milionu km — to je 109× průměr Země. Přesto je Slunce průměrná hvězda. Betelgeuse je 1000× větší než Slunce!'},
+{c:'srovnani',t:'q',q:'Jak dlouhý je rok na Neptunu?',o:['165 zemských let','365 dní','12 let','84 let'],a:0,f:'Rok na Neptunu trvá 165 zemských let. To znamená, že od svého objevení v roce 1846 obletěl Slunce jen jednou — dokončil první oběh v roce 2011.'},
+{c:'srovnani',t:'q',q:'Jak velká je gravitace na Jupiteru oproti Zemi?',o:['2,5× silnější než na Zemi','10× silnější','Stejná','Slabší'],a:0,f:'Na Jupiteru bys vážil 2,5× více. Ale protože nemá pevný povrch, nemůžeš tam stát. Gravitace Jupiteru ale chrání Zemi — zachytává komety a asteroidy mířící dovnitř soustavy.'},
+{c:'srovnani',t:'q',q:'Která planeta má nejdelší den?',o:['Venuše','Merkur','Jupiter','Saturn'],a:0,f:'Venuše se otočí kolem osy za 243 zemských dní. Přitom oběhne Slunce za 225 dní — den je delší než rok! Jupiter se naopak otočí za necelých 10 hodin.'},
+{c:'srovnani',t:'q',q:'Kde je v sluneční soustavě nejvyšší hora?',o:['Olympus Mons na Marsu (21 km)','Everest na Zemi (8,8 km)','Na Io','Na Venuši'],a:0,f:'Olympus Mons je 21 km vysoký a 600 km v průměru — tak velký, že z vrcholu nevidíš kraj, protože planeta se za ním zakřivuje. Je to vyhaslý štítový vulkán.'},
+
+// ZÁHADY VESMÍRU
+{c:'zajimavosti',t:'q',q:'Co je to černá díra?',o:['Oblast s tak silnou gravitací, že neunikne ani světlo','Planeta bez hvězdy','Prázdný prostor','Explodující hvězda'],a:0,f:'Černé díry vznikají kolapsem obrovských hvězd. Jejich gravitace je tak silná, že deformuje samotný čas. U horizontu událostí čas pro vzdáleného pozorovatele zastaví.'},
+{c:'zajimavosti',t:'q',q:'Co je Velký třesk?',o:['Počátek vesmíru před 13,8 miliardami let','Největší supernova','Srážka dvou galaxií','Exploze na Slunci'],a:0,f:'Velký třesk nebyla exploze v prostoru — byl to vznik samotného prostoru a času. Za první sekundu vznikly základní částice, za 380 000 let první atomy vodíku a hélia.'},
+{c:'zajimavosti',t:'q',q:'Proč je noční obloha tmavá, když je plná hvězd?',o:['Vesmír je konečného věku — světlo vzdálených hvězd k nám nedorazilo','Hvězdy svítí jen přes den','Atmosféra pohlcuje světlo','Hvězdy jsou příliš malé'],a:0,f:'Toto je Olbersův paradox. Pokud by byl vesmír nekonečný a věčný, obloha by svítila jasně jako povrch hvězdy. Temná noční obloha je důkazem, že vesmír má konečný věk.'},
+{c:'zajimavosti',t:'q',q:'Co je to světelný rok?',o:['Vzdálenost, kterou světlo urazí za rok (9,46 bilionu km)','Čas, za který světlo doletí na Zemi','Rok na planetě s rychlostí světla','Hmotnost světelného paprsku'],a:0,f:'Světelný rok = 9,46 bilionu km. Nejbližší hvězda Proxima Centauri je 4,24 světelného roku. Raketa cestující 40 000 km/h by tam doletěla za 115 000 let.'},
+{c:'zajimavosti',t:'q',q:'Co je to temná hmota?',o:['Neviditelná hmota tvořící 27 % vesmíru','Černé díry','Mezihvězdný prach','Planeta bez hvězdy'],a:0,f:'Temná hmota neemituje ani neabsorbuje světlo, ale projevuje se gravitací. Tvoří 27 % vesmíru. Co to je? Nevíme. Je to jedna z největších záhad fyziky.'},
+{c:'zajimavosti',t:'q',q:'Kolik hvězd je v Mléčné dráze?',o:['100–400 miliard hvězd','Milion hvězd','Bilion hvězd','Asi 1000 hvězd'],a:0,f:'Mléčná dráha má 100–400 miliard hvězd. Kdybychom počítali hvězdu za sekundu, trvalo by to 3200 let. A to je jen naše galaxie — ve vesmíru je přes 2 biliony galaxií!'},
+{c:'zajimavosti',t:'q',q:'Co je to supernova?',o:['Exploze obrovské hvězdy na konci jejího života','Srážka dvou planet','Nová planeta','Výbuch na Slunci'],a:0,f:'Supernova je nejnásilnější jev ve vesmíru po Velkém třesku. Na zlomek sekundy svítí jasněji než celá galaxie. Všechny těžké prvky — zlato, uran, železo v tvé krvi — vznikly v supernové.'},
+{c:'zajimavosti',t:'q',q:'Proč planety obíhají Slunce?',o:['Gravitace Slunce je drží, rychlost orbity brání pádu','Magnetické pole','Odpor meziplanetárního prachu','Náhoda'],a:0,f:'Planety jsou ve stavu "volného pádu" kolem Slunce. Pohybují se dostatečnou rychlostí, aby pád vždy "minul" Slunce. Je to jako pohazovat míčem — dostatečně rychle a obleťte Zemi.'},
+{c:'zajimavosti',t:'q',q:'Co je tzv. obyvatelná zóna?',o:['Oblast kolem hvězdy kde může existovat tekutá voda','Pás asteroidů','Vzdálenost kam dosáhne satelit','Oblast bez záření'],a:0,f:'Obyvatelná zóna (Goldilocks zone) je vzdálenost od hvězdy kde planeta není ani příliš horká, ani příliš studená pro tekutou vodu. Země je na skvělém místě — ale nemusíme být sami.'},
+{c:'zajimavosti',t:'q',q:'Jak staré jsou nejstarší horniny nalezené na Měsíci?',o:['Asi 4,5 miliardy let','1 miliarda let','100 milionů let','500 milionů let'],a:0,f:'Horniny přivezené misemi Apollo jsou staré 4,5 miliardy let — stejně staré jako Sluneční soustava. Měsíc nemá tektoniku desek ani erozi, proto se horniny zachovaly jako "časová kapsle".'},
+
+// TĚLESA & JEVY
+{c:'telesa',t:'planet',pid:'pluton',q:'V roce 2006 byl překlasifikován na trpasličí planetu. Co to je?',o:['Pluto','Ceres','Eris','Makemake'],a:0,f:'Pluto bylo objeveno v roce 1930 a bylo považováno za 9. planetu. V roce 2006 astronomové vytvořili novou kategorii "trpasličích planet" — Pluto splňovalo podmínky víc pro ni.'},
+{c:'telesa',t:'q',q:'Co je to asteroid?',o:['Kamenné těleso obíhající Slunce, menší než planeta','Zmrzlá kometka','Odlomený měsíc','Miniaturní planeta s atmosférou'],a:0,f:'Asteroidy jsou zbytky ze vzniku sluneční soustavy. Většina obíhá v pásu asteroidů mezi Marsem a Jupiterem. Jsou to "stavební materiál", ze kterého by mohla vzniknout planeta — ale Jupiter to svou gravitací zabrání.'},
+{c:'telesa',t:'q',q:'Kde se nachází pás asteroidů?',o:['Mezi Marsem a Jupiterem','Za Neptunem','Mezi Zemí a Marsem','Kolem Slunce'],a:0,f:'V pásu asteroidů je miliony těles, ale dohromady by tvořily méně než 4 % hmotnosti Měsíce. Filmy lžou — pro sondu je průlet pásem asteroidů prosto bezpečný.'},
+{c:'telesa',t:'q',q:'Co je to kometa?',o:['Ledové těleso z okraje soustavy s ohon z par při přiblížení','Rychlý asteroid','Umělá družice','Odlomený kus planety'],a:0,f:'Komety jsou ze Oortova oblaku nebo Kuiperova pásu. Když se přiblíží Slunci, led se odpaří a vznikne ohon délky až 150 milionů km. Ohon vždy míří od Slunce — ne za kometou!'},
+{c:'telesa',t:'q',q:'Co je to meteorit?',o:['Kousek asteroidu nebo komety, který dopadl na Zemi','Hvězda padající z nebe','Malý měsíc','Sopečná hmota ze Slunce'],a:0,f:'"Padající hvězdy" jsou meteory — úlomky vesmíru, které shoří v atmosféře. Pokud dopadnou na zem, jsou to meteority. V Antarktidě bylo nalezeno přes 50 000 meteoritů — ideální podmínky pro zachování.'},
+{c:'telesa',t:'q',q:'Co je Kuiperův pás?',o:['Pás ledových těles za oběžnou dráhou Neptunu','Pas asteroidů mezi Marsem a Jupiterem','Oblast komet za sluneční soustavou','Gravitační pole Slunce'],a:0,f:'Kuiperův pás sahá od Neptunu na 50× vzdálenost Země-Slunce. Je tam Pluto, Eris, Makemake a stovky dalších trpasličích planet. Je 20× širší než pás asteroidů.'},
+{c:'telesa',t:'q',q:'Co je Oortův oblak?',o:['Sférický obal komet na okraji sluneční soustavy','Mezihvězdný prach','Magnetické pole soustavy','Neviditelná temná hmota'],a:0,f:'Oortův oblak je sféra bilionů ledových těles ve vzdálenosti 1–100 000 AU. Nebyl nikdy přímě pozorován — je odvozen z drah komet. Je to rezervoár komet dlouhé periody.'},
+{c:'telesa',t:'q',q:'Jak velký byl asteroid, který vyhubil dinosaury?',o:['Asi 10–15 km','1 km','100 km','500 metrů'],a:0,f:'Asteroid Chicxulub měl průměr 10–15 km. Dopad odpovídal miliardám atomových bomb. Kráter v Mexickém zálivu má průměr přes 180 km a stále je viditelný ze satelitu.'},
+{c:'telesa',t:'q',q:'Co jsou polární záře (aurora)?',o:['Světlo z interakce slunečního větru s magnetosférou','Reflexe Slunce na sněhu','Zářivé oblaka','Elektrické bouře'],a:0,f:'Aurora vzniká, když nabité částice slunečního větru vstoupí do atmosféry u magnetických pólů a rozsvítí atomy kyslíku a dusíku. Zelená = kyslík 100 km, červená = kyslík 200 km, modrá = dusík.'},
+{c:'telesa',t:'q',q:'Co je sluneční vítr?',o:['Proud nabitých částic (plazma) ze Slunce','Vzdušné proudy na Slunci','Světelné záření','Magnetické pole Slunce'],a:0,f:'Sluneční vítr je nepřetržitý proud protonů a elektronů ze Slunce rychlostí 400–800 km/s. Bez magnetického pole by Země ztratila atmosféru jako Mars.'},
+];
+
+// ── BADGES (18) ──
+const BADGES = [
+  {id:'first',    ico:'🚀', n:'První start!',      d:'Odpoviň na první otázku',             ok:s=>s.ta>=1},
+  {id:'streak3',  ico:'⭐', n:'Série 3',            d:'3 správné za sebou',                  ok:s=>s.ms>=3},
+  {id:'streak5',  ico:'🌟', n:'Série 5',            d:'5 správných za sebou',                ok:s=>s.ms>=5},
+  {id:'streak10', ico:'💫', n:'Série 10!',          d:'10 správných za sebou',               ok:s=>s.ms>=10},
+  {id:'streak15', ico:'✨', n:'Ostrý navigátor',    d:'15 správných za sebou',               ok:s=>s.ms>=15},
+  {id:'cat_pla',  ico:'🪐', n:'Planetolog',         d:'Dokonči Planety',                     ok:s=>(s.cb.planety||0)>0},
+  {id:'cat_mes',  ico:'🌙', n:'Lunární expert',     d:'Dokonči Měsíce & Prstence',           ok:s=>(s.cb.mesice||0)>0},
+  {id:'cat_slu',  ico:'☀️', n:'Sluneční vědec',    d:'Dokonči Slunce & Hvězdy',             ok:s=>(s.cb.slunce||0)>0},
+  {id:'cat_mis',  ico:'🚀', n:'Kosmonaut',          d:'Dokonči Mise & Astronauti',           ok:s=>(s.cb.mise||0)>0},
+  {id:'cat_srv',  ico:'📏', n:'Kosmický měřič',    d:'Dokonči Kdo je větší?',               ok:s=>(s.cb.srovnani||0)>0},
+  {id:'cat_zaj',  ico:'🔭', n:'Vesmírný záhadolog', d:'Dokonči Záhady vesmíru',              ok:s=>(s.cb.zajimavosti||0)>0},
+  {id:'cat_tel',  ico:'☄️', n:'Astronom',           d:'Dokonči Tělesa & Jevy',              ok:s=>(s.cb.telesa||0)>0},
+  {id:'perfect',  ico:'🌠', n:'Perfektní!',         d:'3 hvězdy v jakékoliv kategorii',      ok:s=>Object.values(s.cb).some(v=>v===3)},
+  {id:'allcat',   ico:'🏆', n:'Průzkumník vesmíru', d:'Dokonči všech 7 kategorií',           ok:s=>CATS.every(c=>(s.cb[c.id]||0)>0)},
+  {id:'q50',      ico:'🛸', n:'Vesmírný stopař',    d:'Zodpověz 50 otázek celkem',           ok:s=>s.ta>=50},
+  {id:'xp500',    ico:'💎', n:'500 XP',             d:'Získej 500 XP',                       ok:s=>s.xp>=500},
+  {id:'xp1000',   ico:'🌌', n:'1000 XP — Kosmolog', d:'Získej 1000 XP',                     ok:s=>s.xp>=1000},
+  {id:'allstar',  ico:'🪐', n:'Vesmírný mistr',     d:'3 hvězdy ve všech 7 kategoriích',     ok:s=>CATS.every(c=>(s.cb[c.id]||0)>=3)},
+];
+
+// ── STATE ──
+let ST = load();
+let SES = {};
+
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem('fajnsoustava1')||'{}');
+    return{xp:s.xp||0,cb:s.cb||{},ta:s.ta||0,ms:s.ms||0,bd:s.bd||[]};
+  }catch(e){return{xp:0,cb:{},ta:0,ms:0,bd:[]};}
+}
+function save(){localStorage.setItem('fajnsoustava1',JSON.stringify(ST));}
+
+// ── AUDIO ──
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t,d,v=.24){
+  try{const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();
+  o.connect(g);g.connect(ac.destination);o.type=t;o.frequency.value=f;
+  g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);
+  o.start();o.stop(ac.currentTime+d);}catch(e){}
+}
+function sndCorrect(){tone(659,'sine',.1);setTimeout(()=>tone(784,'sine',.12),70);setTimeout(()=>tone(988,'sine',.18),140);}
+function sndWrong(){tone(200,'sawtooth',.14);setTimeout(()=>tone(160,'sawtooth',.18),90);}
+function sndStreak(){[659,784,988,1319].forEach((f,i)=>setTimeout(()=>tone(f,'sine',.15,.28),i*60));}
+function sndFinish(){[523,659,784,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.16,.26),i*75));}
+
+// ── XP POPUP ──
+function showXP(xp,streak){
+  const el=document.getElementById('xpPopup');
+  el.textContent=`+${xp} XP${streak>=3?' ⭐×'+streak:''}`;
+  el.className='xp-popup go';
+  setTimeout(()=>el.className='xp-popup',1800);
+}
+
+// ── HOME ──
+function renderHome(){
+  document.getElementById('xpTotal').textContent=ST.xp;
+  const earned=BADGES.filter(b=>ST.bd.includes(b.id)).length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+
+  const grid=document.getElementById('catGrid');
+  grid.innerHTML=CATS.map(cat=>{
+    const cnt=QS.filter(q=>q.c===cat.id).length;
+    const best=ST.cb[cat.id]||0;
+    const stars=[1,2,3].map(s=>`<span class="cat-star ${s<=best?'on':''}">${s<=best?'⭐':'☆'}</span>`).join('');
+    return`<div class="cat-card" onclick="startCat('${cat.id}')">
+      <span class="cat-emoji">${cat.emoji}</span>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-count">${cnt} otázek</div>
+      <div class="cat-desc">${cat.desc}</div>
+      <div class="cat-stars">${stars}</div>
+    </div>`;
+  }).join('');
+  show('homeScreen');
+}
+
+// ── START CATEGORY ──
+function startCat(id){
+  getAC();
+  const pool=[...QS.filter(q=>q.c===id)].sort(()=>Math.random()-.5);
+  SES={cat:id,qs:pool,idx:0,ok:0,streak:0,ms:0,xp:0,answered:false,facts:[]};
+  show('questionScreen');
+  renderQ();
+}
+
+// ── RENDER QUESTION ──
+function renderQ(){
+  const cat=CATS.find(c=>c.id===SES.cat);
+  const q=SES.qs[SES.idx];
+  const tot=SES.qs.length;
+  SES.answered=false;
+
+  document.getElementById('qCat').textContent=cat.emoji+' '+cat.name;
+  document.getElementById('qCnt').textContent=`${SES.idx+1} / ${tot}`;
+  document.getElementById('progFill').style.width=`${(SES.idx/tot)*100}%`;
+
+  const strEl=document.getElementById('qStreak');
+  if(SES.streak>=2){strEl.className='q-streak on';document.getElementById('streakN').textContent=SES.streak;}
+  else strEl.className='q-streak';
+
+  const badges={planet:'🪐 Poznej planetu',q:'🔭 Vědomostní otázka'};
+  document.getElementById('qBadge').textContent=badges[q.t]||'🔭';
+
+  const pd=document.getElementById('planetDisplay');
+  if(q.t==='planet'&&q.pid&&PLANETS[q.pid]){
+    pd.style.display='flex';
+    pd.innerHTML=PLANETS[q.pid];
+  } else {
+    pd.style.display='none';
+  }
+
+  document.getElementById('qText').textContent=q.q;
+
+  // Zamíchat odpovědi
+  const indices=[0,1,2,3].slice(0,q.o.length);
+  const shuffled=[...indices].sort(()=>Math.random()-.5);
+  q._newA=shuffled.indexOf(q.a);
+
+  const adiv=document.getElementById('answersDiv');
+  adiv.className='answers'+(q.o.length<=2?' solo':'');
+  adiv.innerHTML=shuffled.map((orig,i)=>
+    `<button class="ans-btn" onclick="checkAns(${i})">${q.o[orig]}</button>`
+  ).join('');
+
+  document.getElementById('factBox').className='fact-box';
+  document.getElementById('nextBtn').className='next-btn';
+}
+
+// ── CHECK ANSWER ──
+function checkAns(idx){
+  if(SES.answered)return;
+  SES.answered=true;
+  const q=SES.qs[SES.idx];
+  const btns=document.querySelectorAll('.ans-btn');
+  const ok=idx===q._newA;
+  btns.forEach(b=>b.disabled=true);
+  btns[q._newA].classList.add('show-correct');
+
+  if(ok){
+    btns[idx].classList.add('correct');
+    SES.streak++;SES.ms=Math.max(SES.ms,SES.streak);SES.ok++;
+    const xp=SES.streak>=15?35:SES.streak>=10?25:SES.streak>=5?18:SES.streak>=3?14:10;
+    SES.xp+=xp;
+    sndCorrect();
+    if(SES.streak>=3)setTimeout(sndStreak,220);
+    showXP(xp,SES.streak);
+    const strEl=document.getElementById('qStreak');
+    strEl.className='q-streak on';
+    document.getElementById('streakN').textContent=SES.streak;
+  } else {
+    btns[idx].classList.add('wrong');
+    SES.streak=0;
+    document.getElementById('qStreak').className='q-streak';
+    sndWrong();
+  }
+
+  ST.ta++;save();
+
+  if(q.f){
+    document.getElementById('factTxt').textContent=q.f;
+    document.getElementById('factBox').className='fact-box on';
+    if(ok&&SES.facts.length<6)SES.facts.push(q.f);
+  }
+  document.getElementById('nextBtn').className='next-btn on';
+}
+
+// ── NEXT ──
+function nextQ(){
+  SES.idx++;
+  if(SES.idx>=SES.qs.length)showResult();
+  else renderQ();
+}
+
+// ── RESULT ──
+function showResult(){
+  sndFinish();
+  const tot=SES.qs.length;
+  const pct=SES.ok/tot;
+  const stars=pct>=.9?3:pct>=.6?2:1;
+
+  const prev=ST.cb[SES.cat]||0;
+  if(stars>prev)ST.cb[SES.cat]=stars;
+  ST.xp+=SES.xp;ST.ms=Math.max(ST.ms,SES.ms);
+  save();checkBadges();
+
+  const titles={
+    3:['Perfektní!','Kosmický génius!','Mistr astronóm!','Neuvěřitelné!'],
+    2:['Výborně!','Skvělý výsledek!','Dobrá práce!','Šikovný/á!'],
+    1:['Dobrý začátek!','Zkus to znovu!','Učíš se!','Dáš to lépe!']
+  };
+  document.getElementById('resTitle').textContent=titles[stars][Math.floor(Math.random()*4)];
+  document.getElementById('resSub').textContent=`${SES.ok} z ${tot} správně — ${Math.round(pct*100)} %`;
+
+  document.querySelectorAll('.res-star').forEach((s,i)=>{
+    s.className='res-star';
+    if(i<stars)setTimeout(()=>s.className='res-star on',i*200+100);
+  });
+
+  document.getElementById('stCorrect').textContent=`${SES.ok}/${tot}`;
+  document.getElementById('stXP').textContent=SES.xp;
+  document.getElementById('stStreak').textContent=SES.ms;
+
+  const fl=document.getElementById('factsList');
+  fl.innerHTML=SES.facts.length>0
+    ? SES.facts.map(f=>`<div class="fact-item">${f}</div>`).join('')
+    : '<div class="fact-item" style="color:var(--muted)">Odpovídej správně a dozvíš se fascinující fakta o vesmíru!</div>';
+
+  show('resultScreen');
+}
+
+// ── BADGES ──
+function checkBadges(){
+  BADGES.forEach(b=>{if(!ST.bd.includes(b.id)&&b.ok(ST))ST.bd.push(b.id);});
+  save();
+}
+function showBadges(){
+  const earned=ST.bd.length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  document.getElementById('badgeGrid').innerHTML=BADGES.map(b=>{
+    const on=ST.bd.includes(b.id);
+    return`<div class="badge-c${on?' unlocked':' locked'}">
+      <span class="badge-ico">${b.ico}</span>
+      <div class="badge-n">${b.n}</div>
+      <div class="badge-d">${b.d}</div>
+    </div>`;
+  }).join('');
+  show('badgesScreen');
+}
+
+// ── NAV ──
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){renderHome();}
+function playAgain(){startCat(SES.cat);}
+
+renderHome();
+
+</script>
+</body>
+</html>
