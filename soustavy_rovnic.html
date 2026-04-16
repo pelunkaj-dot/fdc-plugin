@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>FajnSoustavy — Soustavy rovnic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0e16;--surface:#14141f;--surface2:#1a1a28;--border:#252535;
+  --text:#f0eeff;--text2:#8880aa;--text3:#3a3555;
+  --x:#e05fff;--y:#40d9a8;
+  --correct:#3dd68c;--correct-bg:rgba(61,214,140,.1);
+  --wrong:#f7645a;--wrong-bg:rgba(247,100,90,.1);
+  --warn:#f5a623;--warn-bg:rgba(245,166,35,.08);
+  --border-x:rgba(224,95,255,.3);--border-y:rgba(64,217,168,.3);
+  --shadow:0 2px 16px rgba(0,0,0,.4);
+  --active:var(--x);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;
+  min-height:100svh;overflow-x:hidden}
+
+/* subtle grid */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(224,95,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(64,217,168,.025) 1px,transparent 1px);
+  background-size:32px 32px}
+
+.screen{display:none;min-height:100svh;flex-direction:column;position:relative;z-index:1}
+.screen.active{display:flex}
+
+/* HEADER */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;
+  border-bottom:1px solid var(--border);background:rgba(14,14,22,.93);
+  backdrop-filter:blur(14px);position:sticky;top:0;z-index:20}
+.app-logo{font-family:'Fraunces',serif;font-weight:800;font-size:1.25rem;
+  background:linear-gradient(90deg,var(--x),var(--y));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-right{display:flex;gap:8px}
+.badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;
+  padding:4px 12px;display:flex;align-items:center;gap:5px;
+  font-size:.8rem;font-weight:600;color:var(--text2)}
+.badge-fire{color:var(--warn)} .badge-xp{color:var(--x)}
+
+/* HOME */
+.home-hero{padding:30px 22px 18px;text-align:center;
+  border-bottom:1px solid var(--border)}
+.home-eyebrow{font-family:'JetBrains Mono',monospace;font-size:.62rem;
+  color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
+.home-title{font-family:'Fraunces',serif;font-weight:800;
+  font-size:clamp(1.9rem,5.5vw,2.6rem);line-height:1.1;margin-bottom:10px}
+.home-system{font-family:'JetBrains Mono',monospace;font-size:1rem;
+  color:var(--text2);margin-bottom:6px;line-height:1.8}
+.home-system .xc{color:var(--x)} .home-system .yc{color:var(--y)}
+.home-sub{color:var(--text2);font-size:.84rem;max-width:300px;margin:0 auto;line-height:1.5}
+
+/* TOPIC LIST */
+.topics-list{display:flex;flex-direction:column;padding:10px 18px 40px;
+  max-width:520px;margin:0 auto;width:100%}
+.section-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;
+  color:var(--text3);letter-spacing:2.5px;text-transform:uppercase;
+  padding:12px 2px 5px;margin-top:2px}
+.topic-row{background:var(--surface);border:1px solid var(--border);border-radius:13px;
+  padding:14px 16px;cursor:pointer;box-shadow:var(--shadow);
+  transition:transform .14s,border-color .15s;
+  display:flex;align-items:center;gap:14px;margin-bottom:8px;
+  position:relative;overflow:hidden}
+.topic-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--x),var(--y));opacity:0;transition:opacity .15s}
+.topic-row:hover::before{opacity:1}
+.topic-row:hover{border-color:var(--x);transform:translateX(3px)}
+.topic-row:active{transform:scale(.98)}
+.topic-row.mix{border-style:dashed;opacity:.75}
+.topic-row.mix:hover{opacity:1}
+.tr-eq{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;
+  color:var(--text2);min-width:90px;flex-shrink:0;line-height:1.6}
+.tr-eq .xc{color:var(--x)} .tr-eq .yc{color:var(--y)}
+.tr-left{flex:1}
+.tr-name{font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:2px}
+.tr-desc{font-size:.74rem;color:var(--text2);line-height:1.4}
+.tr-right{display:flex;gap:7px;align-items:center;flex-shrink:0}
+.tr-stars{font-size:.8rem;color:var(--warn)}
+.topic-help-btn{background:none;border:1px solid var(--border);border-radius:50%;
+  width:28px;height:28px;cursor:pointer;color:var(--text2);
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:border-color .13s,color .13s}
+.topic-help-btn:hover{border-color:var(--x);color:var(--x)}
+
+/* EXERCISE TOPBAR */
+.ex-topbar{display:flex;align-items:center;gap:10px;padding:10px 16px;
+  border-bottom:1px solid var(--border);position:sticky;top:0;
+  background:rgba(14,14,22,.93);backdrop-filter:blur(8px);z-index:10}
+.prog-bar{flex:1;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--x),var(--y));
+  border-radius:2px;transition:width .35s ease}
+.ex-count{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text2);white-space:nowrap}
+.help-btn{background:none;border:1px solid var(--border);border-radius:50%;
+  width:30px;height:30px;cursor:pointer;color:var(--text2);
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:border-color .13s,color .13s}
+.help-btn:hover{border-color:var(--x);color:var(--x)}
+
+/* EXERCISE BODY */
+.ex-body{flex:1;display:flex;flex-direction:column;padding:0 0 140px;
+  max-width:560px;margin:0 auto;width:100%;overflow-y:auto}
+
+/* SYSTEM CARD */
+.system-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;margin:16px 18px 0;box-shadow:var(--shadow);overflow:hidden}
+.system-card-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;
+  color:var(--text3);letter-spacing:2px;text-transform:uppercase;
+  padding:11px 18px 0}
+.system-display{padding:10px 18px 16px;display:flex;flex-direction:column;gap:4px}
+.eq-line{font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:clamp(1.2rem,4.5vw,1.85rem);color:var(--text);line-height:1.5}
+.eq-line .xc{color:var(--x)} .eq-line .yc{color:var(--y)}
+.eq-line .nc{color:var(--text2)} /* number color */
+.system-brace{position:relative;padding-left:16px}
+.system-brace::before{content:'';position:absolute;left:0;top:2px;bottom:2px;
+  width:3px;background:linear-gradient(180deg,var(--x),var(--y));
+  border-radius:2px}
+
+/* STATUS BAR */
+.status-bar{display:flex;gap:8px;margin:10px 18px 0;flex-wrap:wrap}
+.status-chip{display:flex;align-items:center;gap:5px;
+  border-radius:20px;padding:5px 12px;font-size:.78rem;font-weight:700;
+  border:1px solid var(--border);background:var(--surface2)}
+.status-chip.found{border-color:var(--correct);background:var(--correct-bg);color:var(--correct)}
+.status-chip.unknown{color:var(--text3)}
+.sc-x{border-color:var(--border-x)} .sc-y{border-color:var(--border-y)}
+
+/* METHOD NOTE */
+.method-note{margin:10px 18px 0;background:var(--warn-bg);border:1px solid rgba(245,166,35,.2);
+  border-radius:9px;padding:9px 14px;font-size:.77rem;color:var(--warn);line-height:1.5}
+
+/* STEPS HISTORY */
+.steps-history{margin:10px 18px 0;display:flex;flex-direction:column;gap:5px}
+.step-item{display:flex;align-items:center;gap:9px;padding:8px 14px;
+  border-radius:9px;font-family:'JetBrains Mono',monospace;font-size:.88rem;
+  font-weight:700;animation:stepIn .2s ease}
+@keyframes stepIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.step-item.step-ok{background:var(--correct-bg);color:var(--correct);border:1px solid rgba(61,214,140,.2)}
+.step-item.step-done{background:var(--correct-bg);color:var(--correct);border:1.5px solid var(--correct)}
+.step-item.step-wrong{background:var(--wrong-bg);color:var(--wrong);border:1px solid rgba(247,100,90,.2)}
+.step-item.step-found{background:rgba(224,95,255,.08);color:var(--x);border:1px solid var(--border-x)}
+.step-item.step-found.y-found{color:var(--y);background:rgba(64,217,168,.08);border-color:var(--border-y)}
+.step-icon{font-size:.9rem;flex-shrink:0}
+.step-text{flex:1;word-break:break-all}
+.step-hint{font-size:.7rem;color:var(--text2);margin-left:auto;
+  font-family:'DM Sans',sans-serif;font-weight:600;flex-shrink:0}
+
+/* INPUT AREA */
+.input-area{margin:10px 18px 0}
+.input-row{display:flex;gap:8px;align-items:stretch}
+.sys-input{flex:1;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.05rem;
+  background:var(--surface);border:1.5px solid var(--border);border-radius:11px;
+  color:var(--text);padding:12px 16px;outline:none;
+  transition:border-color .15s,box-shadow .15s}
+.sys-input:focus{border-color:var(--x);box-shadow:0 0 0 3px rgba(224,95,255,.12)}
+.sys-input.inp-ok{border-color:var(--correct)!important;box-shadow:0 0 0 3px rgba(61,214,140,.12)!important}
+.sys-input.inp-wrong{border-color:var(--wrong)!important;box-shadow:0 0 0 3px rgba(247,100,90,.1)!important}
+.btn-check{background:linear-gradient(135deg,var(--x),var(--y));color:#000;border:none;
+  border-radius:11px;padding:12px 18px;font-family:'DM Sans',sans-serif;
+  font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .13s,transform .1s;
+  white-space:nowrap}
+.btn-check:hover{opacity:.88}
+.btn-check:active{transform:scale(.97)}
+.input-hint{font-size:.71rem;color:var(--text3);margin-top:6px;line-height:1.5}
+.input-hint kbd{background:var(--surface2);border:1px solid var(--border);
+  border-radius:4px;padding:1px 5px;font-size:.68rem;font-family:'JetBrains Mono',monospace}
+.btn-skip{background:none;border:none;color:var(--text3);font-family:'DM Sans',sans-serif;
+  font-size:.76rem;cursor:pointer;padding:5px 0;margin-top:3px;
+  transition:color .13s;text-decoration:underline;text-underline-offset:3px}
+.btn-skip:hover{color:var(--text2)}
+
+/* DONE BANNER */
+.done-banner{background:var(--correct-bg);border:1.5px solid var(--correct);
+  border-radius:14px;margin:12px 18px 0;padding:16px 20px;text-align:center;
+  animation:stepIn .3s ease}
+.done-title{font-family:'Fraunces',serif;font-weight:700;font-size:1.35rem;
+  color:var(--correct);margin-bottom:4px}
+.done-sub{font-size:.8rem;color:var(--text2);margin-bottom:14px}
+.btn-next-sys{background:linear-gradient(135deg,var(--x),var(--y));color:#000;border:none;
+  border-radius:10px;padding:11px 28px;font-family:'DM Sans',sans-serif;
+  font-size:.92rem;font-weight:700;cursor:pointer;transition:opacity .13s}
+.btn-next-sys:hover{opacity:.88}
+
+/* RESULT */
+.result-body{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 20px;text-align:center;
+  max-width:420px;margin:0 auto;width:100%}
+.res-sol{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.1rem;
+  margin-bottom:10px;color:var(--text2)}
+.res-sol .xc{color:var(--x)} .res-sol .yc{color:var(--y)}
+.res-stars{font-size:2rem;letter-spacing:5px;margin-bottom:6px;color:var(--warn)}
+.res-title{font-family:'Fraunces',serif;font-weight:700;font-size:1.7rem;margin-bottom:6px}
+.res-score{color:var(--text2);margin-bottom:18px;font-size:.88rem}
+.res-xp-box{background:var(--surface);border:1px solid var(--border);border-radius:11px;
+  padding:10px 28px;margin-bottom:22px;font-size:.9rem}
+.res-xp-box span{color:var(--x);font-weight:700;font-size:1.1rem}
+.res-actions{display:flex;flex-direction:column;gap:9px;width:100%;max-width:260px}
+.btn-primary{background:linear-gradient(135deg,var(--x),var(--y));color:#000;border:none;
+  border-radius:10px;padding:14px;font-family:'DM Sans',sans-serif;
+  font-size:.95rem;font-weight:700;cursor:pointer;width:100%}
+.btn-secondary{background:none;border:1px solid var(--border);border-radius:10px;
+  padding:12px;color:var(--text2);font-family:'DM Sans',sans-serif;
+  font-size:.88rem;cursor:pointer;transition:border-color .13s,color .13s;width:100%}
+.btn-secondary:hover{border-color:var(--x);color:var(--text)}
+
+/* SCREEN HDR */
+.screen-hdr{display:flex;align-items:center;gap:12px;padding:13px 18px;
+  border-bottom:1px solid var(--border);position:sticky;top:0;
+  background:rgba(14,14,22,.93);backdrop-filter:blur(12px);z-index:10}
+.back-btn{background:none;border:none;color:var(--text2);font-size:1.35rem;
+  cursor:pointer;padding:4px 6px;border-radius:8px;transition:color .15s;line-height:1}
+.back-btn:hover{color:var(--text)}
+.scr-title{font-family:'Fraunces',serif;font-weight:700;font-size:1rem;
+  flex:1;color:var(--text)}
+
+/* HELP PANEL */
+.help-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;
+  opacity:0;pointer-events:none;transition:opacity .25s}
+.help-overlay.show{opacity:1;pointer-events:all}
+.help-panel{position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--surface);border-top:2px solid var(--x);
+  border-radius:20px 20px 0 0;padding:22px 22px;
+  padding-bottom:max(28px,env(safe-area-inset-bottom));
+  transform:translateY(100%);transition:transform .26s ease;
+  max-height:75svh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.5)}
+.help-panel.show{transform:translateY(0)}
+.help-panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.help-panel-title{font-family:'Fraunces',serif;font-weight:700;font-size:1rem;color:var(--x)}
+.help-close{background:none;border:none;color:var(--text2);font-size:1.3rem;cursor:pointer;
+  padding:2px 6px;border-radius:8px;line-height:1}
+.help-close:hover{color:var(--text)}
+.help-steps{display:flex;flex-direction:column;gap:10px}
+.help-step{display:flex;gap:11px;align-items:flex-start}
+.help-step-num{background:linear-gradient(135deg,var(--x),var(--y));color:#000;border-radius:50%;
+  width:22px;height:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;margin-top:1px}
+.help-step-txt{font-size:.85rem;line-height:1.6;color:var(--text2)}
+.help-step-txt strong{color:var(--text)}
+.help-example{background:var(--surface2);border-radius:9px;padding:12px 16px;margin-top:12px;
+  font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text);line-height:1.9}
+.help-example .xc{color:var(--x)} .help-example .yc{color:var(--y)}
+.help-example .ok{color:var(--correct)} .help-example .dim{color:var(--text2)}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="app-header">
+    <div class="app-logo">FajnSoustavy</div>
+    <div class="hdr-right">
+      <div class="badge"><span class="badge-fire">🔥</span><span id="hdr-streak">0</span></div>
+      <div class="badge"><span class="badge-xp">⚡</span><span id="hdr-xp">0</span></div>
+    </div>
+  </div>
+  <div class="home-hero">
+    <div class="home-eyebrow">soustavy rovnic</div>
+    <div class="home-title">Najdi x i y</div>
+    <div class="home-system">
+      <span class="xc">2x</span> + <span class="yc">y</span> = 7<br>
+      <span class="xc">x</span> − <span class="yc">y</span> = 2
+    </div>
+    <div class="home-sub">Piš každý krok — sám si zvol metodu</div>
+  </div>
+  <div class="topics-list" id="topics-list"></div>
+</div>
+
+<!-- EXERCISE -->
+<div id="screen-exercise" class="screen">
+  <div class="ex-topbar">
+    <button class="back-btn" onclick="exitExercise()">←</button>
+    <div class="prog-bar"><div class="prog-fill" id="ex-prog"></div></div>
+    <div class="ex-count" id="ex-count">1/8</div>
+    <div class="badge"><span class="badge-xp">⚡</span><span id="ex-xp-badge">0</span></div>
+    <button class="help-btn" id="ex-help-btn" onclick="showExHelp()" style="display:none">?</button>
+  </div>
+  <div class="ex-body" id="ex-body"></div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="screen-hdr">
+    <button class="back-btn" onclick="showHome()">←</button>
+    <div class="scr-title">Výsledek</div>
+  </div>
+  <div class="result-body">
+    <div class="res-sol" id="res-sol"></div>
+    <div class="res-stars" id="res-stars">★★★</div>
+    <div class="res-title" id="res-title">Perfektní!</div>
+    <div class="res-score" id="res-score">8/8 vyřešeno</div>
+    <div class="res-xp-box">Získáno <span id="res-xp">+160</span> XP</div>
+    <div class="res-actions">
+      <button class="btn-primary" onclick="retrySession()">Hrát znovu</button>
+      <button class="btn-secondary" onclick="showHome()">← Výběr tématu</button>
+    </div>
+  </div>
+</div>
+
+<!-- HELP -->
+<div class="help-overlay" id="help-overlay" onclick="closeHelp()"></div>
+<div class="help-panel" id="help-panel">
+  <div class="help-panel-hdr">
+    <div class="help-panel-title" id="help-panel-title">Jak postupovat</div>
+    <button class="help-close" onclick="closeHelp()">✕</button>
+  </div>
+  <div id="help-panel-body"></div>
+</div>
+
+<script>
+"use strict";
+
+// ── HELPERS ───────────────────────────────────────────────
+const ri     = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const rFrom  = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = arr => [...arr].sort(()=>Math.random()-.5);
+
+// ── STEP EVALUATOR ─────────────────────────────────────────
+// Evaluates student input against known solution (x=sx, y=sy).
+// Returns: 'x-found' | 'y-found' | 'both-found' | 'valid' | 'wrong' | 'invalid'
+
+function prepareExpr2(s, sx, sy) {
+  let e = s.trim();
+  e = e.replace(/(\d)(x)/g, `$1*${sx}`);
+  e = e.replace(/(\d)(y)/g, `$1*${sy}`);
+  e = e.replace(/\bx\b/g, String(sx));
+  e = e.replace(/\by\b/g, String(sy));
+  e = e.replace(/,/g, '.');
+  return e;
+}
+
+function safeEval2(expr) {
+  try {
+    if (!/^[\d\s\+\-\*\/\(\)\.\,]+$/.test(expr)) return NaN;
+    return Function('"use strict";return(' + expr + ')')();
+  } catch(e) { return NaN; }
+}
+
+function checkStep2(raw, sx, sy) {
+  const input = raw.trim();
+  if (!input) return 'invalid';
+
+  const eqParts = input.split('=');
+  if (eqParts.length !== 2) return 'invalid';
+  const [rawL, rawR] = eqParts.map(s => s.trim());
+  if (!rawL || !rawR) return 'invalid';
+
+  // Check for final answer patterns first
+  const lIsX = rawL.trim() === 'x';
+  const lIsY = rawL.trim() === 'y';
+  const rIsX = rawR.trim() === 'x';
+  const rIsY = rawR.trim() === 'y';
+
+  const lNum = parseFloat(rawL.replace(',','.'));
+  const rNum = parseFloat(rawR.replace(',','.'));
+  const lIsNum = isFinite(lNum) && !rawL.includes('x') && !rawL.includes('y');
+  const rIsNum = isFinite(rNum) && !rawR.includes('x') && !rawR.includes('y');
+
+  // Check x = value or value = x
+  if ((lIsX && rIsNum && Math.abs(rNum - sx) < 0.001) ||
+      (rIsX && lIsNum && Math.abs(lNum - sx) < 0.001)) return 'x-found';
+  if ((lIsY && rIsNum && Math.abs(rNum - sy) < 0.001) ||
+      (rIsY && lIsNum && Math.abs(lNum - sy) < 0.001)) return 'y-found';
+
+  // Wrong final answer for x or y
+  if ((lIsX && rIsNum) || (rIsX && lIsNum)) return 'wrong';
+  if ((lIsY && rIsNum) || (rIsY && lIsNum)) return 'wrong';
+
+  // Evaluate both sides at solution
+  const lv = safeEval2(prepareExpr2(rawL, sx, sy));
+  const rv = safeEval2(prepareExpr2(rawR, sx, sy));
+  if (!isFinite(lv) || !isFinite(rv)) return 'invalid';
+
+  return Math.abs(lv - rv) < 0.001 ? 'valid' : 'wrong';
+}
+
+// ── FORMATTING HELPERS ────────────────────────────────────
+// Format term like: coef·x (handles 0, 1, -1, negative)
+function termX(a) {
+  if (a === 0) return '';
+  if (a === 1)  return `<span class="xc">x</span>`;
+  if (a === -1) return `−<span class="xc">x</span>`;
+  if (a < 0)    return `−${Math.abs(a)}<span class="xc">x</span>`;
+  return `${a}<span class="xc">x</span>`;
+}
+function termY(b) {
+  if (b === 0) return '';
+  if (b === 1)  return `<span class="yc">y</span>`;
+  if (b === -1) return `−<span class="yc">y</span>`;
+  if (b < 0)    return `−${Math.abs(b)}<span class="yc">y</span>`;
+  return `${b}<span class="yc">y</span>`;
+}
+function termC(c) {
+  return c < 0 ? `<span class="nc">−${Math.abs(c)}</span>` : `<span class="nc">${c}</span>`;
+}
+function signTerm(val, termFn) {
+  if (val === 0) return '';
+  const str = termFn(val);
+  // prepend sign: if starts with − already, just space; else + space
+  if (str.startsWith('−')) return ` ${str}`;
+  return ` + ${str}`;
+}
+
+// Build display of ax + by = c
+function eqHTML(a, b, c) {
+  const parts = [];
+  if (a !== 0) parts.push(termX(a));
+  if (b !== 0) {
+    const yt = termY(Math.abs(b));
+    if (parts.length === 0) {
+      parts.push(b < 0 ? `−${yt}` : yt);
+    } else {
+      parts.push(b < 0 ? ` − ${yt}` : ` + ${yt}`);
+    }
+  }
+  if (parts.length === 0) parts.push('0');
+  return `${parts.join('')} = ${termC(c)}`;
+}
+
+// Plain text version for input hints
+function eqText(a, b, c) {
+  let s = '';
+  if (a !== 0) s += (a === 1 ? 'x' : a === -1 ? '-x' : `${a}x`);
+  if (b !== 0) {
+    const bt = b === 1 ? 'y' : b === -1 ? '-y' : `${b}y`;
+    s += s ? (b > 0 ? ` + ${bt}` : ` - ${Math.abs(b)}y`) : bt;
+  }
+  return `${s} = ${c}`;
+}
+
+// ── GENERATORS ────────────────────────────────────────────
+// Returns: { eq1html, eq2html, eq1text, eq2text, sx, sy,
+//            hint?, solutionHTML }
+
+// Helper: verify solution
+function verifySolution(a1,b1,c1, a2,b2,c2, sx,sy) {
+  return a1*sx+b1*sy===c1 && a2*sx+b2*sy===c2;
+}
+
+// Build solution HTML (dosazovací postup)
+function buildSolution(a1,b1,c1, a2,b2,c2, sx,sy, method) {
+  if (method === 'scit') {
+    return `Sčítací metoda:\n` +
+      `(${eqText(a1,b1,c1)}) + (${eqText(a2,b2,c2)})\n` +
+      `→ ${eqText(a1+a2,b1+b2,c1+c2)}\n` +
+      `→ x = ${sx}  nebo  y = ${sy}\n` +
+      `Dosazením: x = ${sx}, y = ${sy}`;
+  }
+  // default: dosazovací
+  return `Z rovnice (1): vyjadr x nebo y\nDosaď do (2)\n→ x = ${sx}, y = ${sy}`;
+}
+
+// ── LEHKÁ: přímé koeficienty, jedno x nebo y se rovnou zruší
+function gen_primeElim() {
+  // make system where one var has coef 1 or -1 in first eq
+  for (let t=0; t<80; t++) {
+    const sx = ri(-6,6), sy = ri(-6,6);
+    const a1 = rFrom([1,-1,1,-1]);
+    const b1 = ri(-4,4);
+    const c1 = a1*sx + b1*sy;
+    const a2 = ri(-4,4);
+    const b2 = ri(-4,4);
+    if (a2===0 && b2===0) continue;
+    if (a1*b2 === a2*b1) continue; // singular
+    const c2 = a2*sx + b2*sy;
+    if (Math.abs(c1)>20||Math.abs(c2)>20) continue;
+    return {
+      eq1html: eqHTML(a1,b1,c1), eq2html: eqHTML(a2,b2,c2),
+      eq1text: eqText(a1,b1,c1), eq2text: eqText(a2,b2,c2),
+      sx, sy, method:'dosaz',
+      solutionHTML: buildSolution(a1,b1,c1,a2,b2,c2,sx,sy,'dosaz')
+    };
+  }
+  return gen_primeElim();
+}
+
+// ── LEHKÁ: sčítací — koeficienty jsou opačné
+function gen_scitaciPrime() {
+  for (let t=0; t<80; t++) {
+    const sx = ri(-6,6), sy = ri(-6,6);
+    const a1 = ri(1,5);
+    const b1 = ri(-4,4);
+    const c1 = a1*sx + b1*sy;
+    const a2 = -a1; // eliminates x
+    const b2 = ri(-4,4);
+    if (b1+b2===0) continue; // would eliminate y too
+    const c2 = a2*sx + b2*sy;
+    if (Math.abs(c1)>20||Math.abs(c2)>20) continue;
+    return {
+      eq1html: eqHTML(a1,b1,c1), eq2html: eqHTML(a2,b2,c2),
+      eq1text: eqText(a1,b1,c1), eq2text: eqText(a2,b2,c2),
+      sx, sy, method:'scit',
+      solutionHTML: buildSolution(a1,b1,c1,a2,b2,c2,sx,sy,'scit')
+    };
+  }
+  return gen_scitaciPrime();
+}
+
+// ── STŘEDNÍ: sčítací s násobením jedné rovnice
+function gen_scitaciNasobeni() {
+  for (let t=0; t<100; t++) {
+    const sx = ri(-5,5), sy = ri(-5,5);
+    const a1 = ri(1,4), b1 = ri(-4,4);
+    const c1 = a1*sx + b1*sy;
+    const mult = rFrom([2,3,4]);
+    const a2 = ri(1,4), b2 = ri(-4,4);
+    if (a1*b2 === a2*b1) continue;
+    const c2 = a2*sx + b2*sy;
+    if (Math.abs(c1)>20||Math.abs(c2)>20) continue;
+    return {
+      eq1html: eqHTML(a1,b1,c1), eq2html: eqHTML(a2,b2,c2),
+      eq1text: eqText(a1,b1,c1), eq2text: eqText(a2,b2,c2),
+      sx, sy, method:'scit',
+      hint: `Tip: vynásob jednu rovnici vhodným číslem, aby se koeficient shodoval`,
+      solutionHTML: buildSolution(a1,b1,c1,a2,b2,c2,sx,sy,'scit')
+    };
+  }
+  return gen_scitaciNasobeni();
+}
+
+// ── STŘEDNÍ: dosazovací — explicitní tvar y = mx + n
+function gen_dosazovaci() {
+  for (let t=0; t<80; t++) {
+    const sx = ri(-5,5), sy = ri(-5,5);
+    // eq1: y = m*x + n
+    const m = ri(-3,3);
+    const n = sy - m*sx;
+    if (Math.abs(n)>15) continue;
+    // eq2: ax + by = c
+    const a2 = ri(-4,4), b2 = ri(-4,4);
+    if (b2===0 && a2===0) continue;
+    const c2 = a2*sx + b2*sy;
+    if (Math.abs(c2)>25) continue;
+    // eq1html: y = mx + n
+    const rhs = m===0 ? `${n}` : m===1 ? (n===0?'x':n>0?`x + ${n}`:`x − ${Math.abs(n)}`) :
+      m===-1 ? (n===0?'−x':n>0?`−x + ${n}`:`−x − ${Math.abs(n)}`) :
+      (n===0?`${m}x`:n>0?`${m}x + ${n}`:`${m}x − ${Math.abs(n)}`);
+    const eq1h = `<span class="yc">y</span> = <span class="xc">${rhs.replace(/x/g,'</span><span class="xc">x</span><span class="nc">').replace(/<\/span><span class="nc"><\/span>/g,'')}</span>`;
+    // simplified display
+    const mStr = m===1?'':m===-1?'−':`${m}`;
+    const nStr = n===0?'':(n>0?` + ${n}`:` − ${Math.abs(n)}`);
+    const eq1display = `<span class="yc">y</span> = ${mStr !== '' ? `${mStr}<span class="xc">x</span>` : ''}${nStr || (m===0?`${n}`:'')}`;
+    return {
+      eq1html: eq1display,
+      eq2html: eqHTML(a2,b2,c2),
+      eq1text: `y = ${m}x + ${n}`,
+      eq2text: eqText(a2,b2,c2),
+      sx, sy, method:'dosaz',
+      hint:`Tip (dosazovací): dosaď y z rovnice (1) do rovnice (2)`,
+      solutionHTML: `Dosaď y = ${m}x ${n>=0?'+':'-'} ${Math.abs(n)} do rovnice (2)\n${eqText(a2,b2,c2).replace('y',`(${m}x ${n>=0?'+':'-'} ${Math.abs(n)})`)}\n→ x = ${sx}\n→ y = ${sy}`
+    };
+  }
+  return gen_dosazovaci();
+}
+
+// ── TĚŽKÁ: oba koeficienty různé, nutno násobit obě rovnice
+function gen_obecna() {
+  for (let t=0; t<100; t++) {
+    const sx = ri(-5,5), sy = ri(-5,5);
+    const a1 = ri(2,5), b1 = ri(-4,4);
+    const a2 = ri(2,5), b2 = ri(-4,4);
+    if (a1===a2 && b1===b2) continue;
+    if (a1*b2 === a2*b1) continue;
+    const c1 = a1*sx + b1*sy;
+    const c2 = a2*sx + b2*sy;
+    if (Math.abs(c1)>25||Math.abs(c2)>25) continue;
+    return {
+      eq1html: eqHTML(a1,b1,c1), eq2html: eqHTML(a2,b2,c2),
+      eq1text: eqText(a1,b1,c1), eq2text: eqText(a2,b2,c2),
+      sx, sy, method:'scit',
+      hint:`Tip: vynásob (1) číslem ${a2} a (2) číslem ${a1}, pak odečti`,
+      solutionHTML: buildSolution(a1,b1,c1,a2,b2,c2,sx,sy,'scit')
+    };
+  }
+  return gen_obecna();
+}
+
+// ── ZLOMKOVÉ koeficienty (výsledky celá čísla)
+function gen_zlomkove() {
+  for (let t=0; t<100; t++) {
+    const sx = ri(-4,4)*2, sy = ri(-4,4)*2; // multiples of 2
+    // eq1: x/2 + y/3 = c  → multiply by 6: 3x + 2y = 6c
+    const d1=rFrom([2,3,4]), d2=rFrom([2,3,4,6].filter(v=>v!==d1));
+    if (sx%d1!==0 || sy%d2!==0) continue;
+    const cFrac1 = sx/d1 + sy/d2;
+    if (!Number.isInteger(cFrac1)) continue;
+    // eq2: normal
+    const a2=ri(-3,3), b2=ri(-3,3);
+    if (a2===0&&b2===0) continue;
+    const c2 = a2*sx + b2*sy;
+    if (Math.abs(c2)>25||Math.abs(cFrac1)>20) continue;
+    const eq1h = `${frac('x',d1)} + ${frac('y',d2)} = ${termC(cFrac1)}`;
+    return {
+      eq1html: eq1h, eq2html: eqHTML(a2,b2,c2),
+      eq1text: `x/${d1} + y/${d2} = ${cFrac1}`,
+      eq2text: eqText(a2,b2,c2),
+      sx, sy, method:'scit',
+      hint:`Tip: vynásob rovnici (1) číslem ${d1*d2} — zlomky zmizí`,
+      solutionHTML: `Vynásob (1) číslem ${d1*d2}:\n${eqText(d1*d2/d1,d1*d2/d2,cFrac1*d1*d2)}\n+ (2): ${eqText(a2,b2,c2)}\n→ x = ${sx}, y = ${sy}`
+    };
+  }
+  return gen_zlomkove();
+}
+
+// fraction helper for display
+function frac(num,den) {
+  return `<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.72em;line-height:1.1"><span style="border-bottom:2px solid currentColor;padding:0 3px 1px">${num}</span><span style="padding:1px 3px 0">${den}</span></span>`;
+}
+
+// ── SLOVNÍ ÚLOHY vedoucí na soustavu ──────────────────────
+function gen_slovni_vek() {
+  for (let t=0; t<60; t++) {
+    const diff = ri(2,15);
+    const sum  = ri(20,70);
+    if ((sum+diff)%2!==0) continue;
+    const older=(sum+diff)/2, younger=(sum-diff)/2;
+    if (younger<=0) continue;
+    const [A,B]=rFrom([['Pavel','Jana'],['Tomáš','Eva'],['Marek','Lucie'],['otec','syn']]);
+    return {
+      eq1html: `<span class="xc">x</span> + <span class="yc">y</span> = ${termC(sum)}`,
+      eq2html: `<span class="xc">x</span> − <span class="yc">y</span> = ${termC(diff)}`,
+      eq1text: `x + y = ${sum}`,
+      eq2text: `x - y = ${diff}`,
+      sx: older, sy: younger, method:'scit',
+      story: `Součet věků <strong>${A}e</strong> (<span class="xc">x</span>) a <strong>${B}y</strong> (<span class="yc">y</span>) je <strong>${sum}</strong>. ${A} je o <strong>${diff} let starší</strong>.`,
+      solutionHTML: `x + y = ${sum}\nx − y = ${diff}\n→ sečti: 2x = ${sum+diff} → x = ${older}\n→ y = ${sum} − ${older} = ${younger}`
+    };
+  }
+  return gen_slovni_vek();
+}
+
+function gen_slovni_ceny() {
+  for (let t=0; t<60; t++) {
+    const px = ri(10,50)*5, py = ri(10,50)*5;
+    const n1x = ri(1,5), n1y = ri(1,5);
+    const n2x = ri(1,5), n2y = ri(1,5);
+    if (n1x===n2x && n1y===n2y) continue;
+    if (n1x*py===n2x*px && n1y*px===n2y*py) continue;
+    const c1 = n1x*px + n1y*py;
+    const c2 = n2x*px + n2y*py;
+    if (c1>5000||c2>5000) continue;
+    const [item1,item2] = rFrom([['káva','čaj'],['rohlík','houska'],
+      ['lístek A','lístek B'],['tužka','pero'],['notebook','myš']]);
+    return {
+      eq1html: eqHTML(n1x,n1y,c1), eq2html: eqHTML(n2x,n2y,c2),
+      eq1text: eqText(n1x,n1y,c1), eq2text: eqText(n2x,n2y,c2),
+      sx: px, sy: py, method:'scit',
+      story: `<strong>${n1x} ${item1}</strong> (<span class="xc">x Kč</span>) a <strong>${n1y} ${item2}</strong> (<span class="yc">y Kč</span>) stojí <strong>${c1} Kč</strong>. Druhý nákup: ${n2x} ${item1} a ${n2y} ${item2} stojí <strong>${c2} Kč</strong>.`,
+      solutionHTML: `(1): ${eqText(n1x,n1y,c1)}\n(2): ${eqText(n2x,n2y,c2)}\n→ x = ${px} Kč (${item1}), y = ${py} Kč (${item2})`
+    };
+  }
+  return gen_slovni_ceny();
+}
+
+function gen_slovni_pohyb() {
+  for (let t=0; t<60; t++) {
+    const vx = rFrom([30,40,50,60,70,80,90,100]);
+    const vy = rFrom([20,30,40,50,60,70,80]);
+    if (vx===vy) continue;
+    const t1 = ri(1,4), t2 = ri(1,4);
+    const d1 = vx*t1 + vy*t1; // together t1 hours
+    const d2 = vx*t2 - vy*t2; // difference
+    if (d2<=0||d1>1000||d2>500) continue;
+    return {
+      eq1html: eqHTML(t1,t1,d1), eq2html: eqHTML(t2,-t2,d2),
+      eq1text: eqText(t1,t1,d1), eq2text: eqText(t2,-t2,d2),
+      sx: vx, sy: vy, method:'scit',
+      story: `Dvě auta jedou vstříc sobě. Za <strong>${t1} h</strong> ujedou dohromady <strong>${d1} km</strong>. Rozdíl jejich rychlostí je takový, že za <strong>${t2} h</strong> je rozdíl ujetých drah <strong>${d2} km</strong>. <span class="xc">x</span> = rychlost 1. auta, <span class="yc">y</span> = rychlost 2. auta.`,
+      solutionHTML: `(1): ${eqText(t1,t1,d1)} → x+y = ${d1/t1}\n(2): ${eqText(t2,-t2,d2)} → x−y = ${d2/t2}\n→ x = ${vx} km/h, y = ${vy} km/h`
+    };
+  }
+  return gen_slovni_pohyb();
+}
+
+// ── TOPICS CONFIG ──────────────────────────────────────────
+const TOPICS = [
+  // DOSAZOVACÍ
+  { name:'Jedno y = … (dosazovací)',
+    eq:`<span class="yc">y</span>=m<span class="xc">x</span>+n`,
+    desc:'Rovnice (1) dává y přímo — dosaď do (2)',
+    section:'Dosazovací metoda', gen:[gen_dosazovaci],
+    help:{ title:'Dosazovací metoda',
+      steps:[
+        'Z jedné rovnice vyjádři <strong>jednu neznámou</strong> (ideálně kde koeficient = 1).',
+        'Výraz <strong>dosaď</strong> do druhé rovnice — vznikne rovnice s jednou neznámou.',
+        'Vyřeš ji, výsledek dosaď zpět pro druhou neznámou.',
+        'Ověř v obou rovnicích.'
+      ],
+      example:`(1): y = 2x + 1\n(2): 3x + y = 11\n→ 3x + (2x+1) = 11\n→ 5x = 10  →  x = 2\n→ y = 2·2+1 = 5`
+    }},
+  { name:'Přímá eliminace',
+    eq:`<span class="xc">x</span>+<span class="yc">y</span>=…`,
+    desc:'Koef. 1 nebo -1 — jedna neznámá se vyloučí přímo',
+    section:'Dosazovací metoda', gen:[gen_primeElim]},
+
+  // SČÍTACÍ
+  { name:'Opačné koeficienty',
+    eq:`<span class="xc">2x</span>+<span class="yc">y</span>=…`,
+    desc:'Koeficienty jedné neznámé jsou navzájem opačné — rovnice sečti',
+    section:'Sčítací metoda', gen:[gen_scitaciPrime],
+    help:{ title:'Sčítací (eliminační) metoda',
+      steps:[
+        'Zkontroluj, zda mají koeficienty jedné neznámé opačná znaménka.',
+        'Pokud ano — rovnice <strong>sečti</strong>. Neznámá zmizí.',
+        'Pokud ne — vynásob jednu (nebo obě) rovnice tak, aby koeficienty byly opačné.',
+        'Po eliminaci vyřeš jednu rovnici, výsledek dosaď.'
+      ],
+      example:`(1): 2x + y = 7\n(2): x − y = 2\n→ součet: 3x = 9  →  x = 3\n→ y = 7 − 2·3 = 1`
+    }},
+  { name:'Násobení jedné rovnice',
+    eq:`<span class="xc">2x</span>+<span class="yc">3y</span>=…`,
+    desc:'Vynásob jednu rovnici aby se koeficienty shodovaly',
+    section:'Sčítací metoda', gen:[gen_scitaciNasobeni]},
+  { name:'Násobení obou rovnic',
+    eq:`<span class="xc">3x</span>+<span class="yc">4y</span>=…`,
+    desc:'Koeficienty se neshodují — nutno násobit obě rovnice',
+    section:'Sčítací metoda', gen:[gen_obecna]},
+
+  // ZLOMKY
+  { name:'Zlomkové koeficienty',
+    eq:`<span class="xc">x</span>/2+<span class="yc">y</span>/3=…`,
+    desc:'Nejdřív vynásob rovnici aby zmizely zlomky, pak řeš',
+    section:'Zlomky v soustavě', gen:[gen_zlomkove],
+    help:{ title:'Zlomky v soustavě',
+      steps:[
+        'Vynásob celou rovnici NSJ jmenovatelů — zlomky zmizí.',
+        'Vznikne soustava s celými koeficienty — řeš standardně.',
+      ],
+      example:`x/2 + y/3 = 5  (×6)\n→ 3x + 2y = 30\n+ druhá rovnice → řeš sčítací metodou`
+    }},
+
+  // SLOVNÍ ÚLOHY
+  { name:'Věkové úlohy',
+    eq:`<span class="xc">x</span>+<span class="yc">y</span>=… · <span class="xc">x</span>−<span class="yc">y</span>=…`,
+    desc:'Součet a rozdíl — sestav soustavu ze zadání',
+    section:'Slovní úlohy', gen:[gen_slovni_vek],
+    help:{ title:'Slovní úlohy — jak sestavit soustavu',
+      steps:[
+        '<strong>Krok 1:</strong> přiřaď neznámé — co je x a co je y.',
+        '<strong>Krok 2:</strong> každá podmínka ze zadání = jedna rovnice.',
+        '<strong>Krok 3:</strong> řeš soustavu a zkontroluj výsledky v zadání.'
+      ],
+      example:`Součet: x + y = S\nRozdíl: x − y = D\n→ sečti: 2x = S+D`
+    }},
+  { name:'Ceny a nákupy',
+    eq:`n₁·<span class="xc">x</span>+n₂·<span class="yc">y</span>=c`,
+    desc:'Dva různé nákupy — sestav dvě rovnice',
+    section:'Slovní úlohy', gen:[gen_slovni_ceny]},
+  { name:'Pohyb — rychlosti',
+    eq:`v₁·t+v₂·t=d`,
+    desc:'Dvě neznámé rychlosti — dvě podmínky',
+    section:'Slovní úlohy', gen:[gen_slovni_pohyb]},
+
+  // MIX
+  { name:'Náhodný mix — vše',
+    eq:'∼', desc:'Soustavy ze všech kategorií náhodně',
+    section:'Mix',
+    gen:[gen_primeElim, gen_scitaciPrime, gen_scitaciNasobeni,
+         gen_dosazovaci, gen_obecna, gen_zlomkove,
+         gen_slovni_vek, gen_slovni_ceny]}
+];
+</script>
+<script>
+"use strict";
+
+// ── STATE ─────────────────────────────────────────────────
+let ST = { xp:0, streak:0, progress:{} };
+function loadST(){ try{ const s=localStorage.getItem('fajnsoustavy_v1'); if(s) ST={...ST,...JSON.parse(s)}; }catch(e){} }
+function saveST(){ try{ localStorage.setItem('fajnsoustavy_v1',JSON.stringify(ST)); }catch(e){} }
+const getStars = idx => ST.progress?.[idx]?.stars ?? 0;
+function setStars(idx, stars){
+  if(!ST.progress[idx]) ST.progress[idx]={};
+  ST.progress[idx] = { stars: Math.max(ST.progress[idx]?.stars??0, stars) };
+  saveST();
+}
+
+// ── AUDIO ─────────────────────────────────────────────────
+let actx=null;
+function getCtx(){ if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)(); return actx; }
+function beep(f,t,d,g=0.18){ try{ const c=getCtx(),o=c.createOscillator(),gn=c.createGain();
+  o.connect(gn);gn.connect(c.destination);o.type=t;o.frequency.value=f;
+  gn.gain.setValueAtTime(g,c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);
+  o.start();o.stop(c.currentTime+d); }catch(e){} }
+const sndValid    = () => beep(523,'sine',.1);
+const sndFound    = () => { beep(523,'sine',.08); setTimeout(()=>beep(784,'sine',.12),80); };
+const sndDone     = () => { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.15,.22),i*80)); };
+const sndWrong    = () => { beep(220,'sawtooth',.14); setTimeout(()=>beep(196,'sawtooth',.14),80); };
+const sndComplete = () => { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',.2,.26),i*100)); };
+
+// ── SESSION ───────────────────────────────────────────────
+const SYS_PER_SESSION = 8;
+let SEL = { topicIdx:null };
+let SES = null;
+let _enterHandler = null;
+let _currentHelp  = null;
+
+function buildSystems(gens){
+  const sys=[]; let pool=[];
+  while(sys.length < SYS_PER_SESSION){
+    if(!pool.length) pool=shuffle(gens);
+    const gen=pool.shift();
+    let s=null, tries=0;
+    while(!s && tries++<25){
+      try{ const c=gen(); if(c&&isFinite(c.sx)&&isFinite(c.sy)) s=c; }catch(e){}
+    }
+    if(s) sys.push(s);
+  }
+  return sys;
+}
+
+function startSession(topicIdx){
+  SEL = { topicIdx };
+  const topic = TOPICS[topicIdx];
+  _currentHelp = topic.help||null;
+  const hBtn = document.getElementById('ex-help-btn');
+  if(hBtn) hBtn.style.display = _currentHelp?'flex':'none';
+  SES = {
+    topicIdx,
+    systems: buildSystems(topic.gen),
+    cur:0, solved:0, skipped:0, xpGained:0,
+    xFound:false, yFound:false,
+    wrongCount:0, done:false
+  };
+  showScreen('screen-exercise');
+  renderSystem();
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderSystem(){
+  const sys   = SES.systems[SES.cur];
+  const total = SES.systems.length;
+  SES.xFound=false; SES.yFound=false;
+  SES.wrongCount=0; SES.done=false;
+
+  document.getElementById('ex-prog').style.width=`${(SES.cur/total)*100}%`;
+  document.getElementById('ex-count').textContent=`${SES.cur+1}/${total}`;
+  document.getElementById('ex-xp-badge').textContent=ST.xp;
+
+  const body=document.getElementById('ex-body');
+  body.innerHTML='';
+
+  // Optional story (word problems)
+  if(sys.story){
+    const story=document.createElement('div');
+    story.style.cssText='background:var(--surface);border:1px solid var(--border);'+
+      'border-radius:13px;margin:14px 18px 0;padding:14px 16px;'+
+      'font-size:.88rem;line-height:1.7;color:var(--text2)';
+    story.innerHTML=`<div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Zadání</div>${sys.story}`;
+    body.appendChild(story);
+  }
+
+  // System card
+  const card=document.createElement('div');
+  card.className='system-card';
+  card.innerHTML=`
+    <div class="system-card-label">Soustava ${SES.cur+1} / ${total}</div>
+    <div class="system-display system-brace">
+      <div class="eq-line" id="eq1">${sys.eq1html}</div>
+      <div class="eq-line" id="eq2">${sys.eq2html}</div>
+    </div>`;
+  body.appendChild(card);
+
+  // Status bar
+  const statusBar=document.createElement('div');
+  statusBar.className='status-bar';
+  statusBar.id='status-bar';
+  statusBar.innerHTML=`
+    <div class="status-chip sc-x unknown" id="chip-x">x = ?</div>
+    <div class="status-chip sc-y unknown" id="chip-y">y = ?</div>`;
+  body.appendChild(statusBar);
+
+  // Method hint
+  if(sys.hint){
+    const mn=document.createElement('div');
+    mn.className='method-note';
+    mn.textContent=sys.hint;
+    body.appendChild(mn);
+  }
+
+  // Steps history
+  const hist=document.createElement('div');
+  hist.className='steps-history';
+  hist.id='steps-history';
+  body.appendChild(hist);
+
+  // Input area
+  const inputWrap=document.createElement('div');
+  inputWrap.className='input-area';
+  inputWrap.id='input-area';
+  inputWrap.innerHTML=`
+    <div class="input-row">
+      <input class="sys-input" id="sys-input" type="text"
+        placeholder="napi&scaron; n&aacute;sleduj&iacute;c&iacute; krok&hellip;"
+        autocomplete="off" autocorrect="off" spellcheck="false">
+      <button class="btn-check" id="btn-check">Ověřit</button>
+    </div>
+    <div class="input-hint">
+      Piš každý krok: <kbd>3x = 9</kbd> nebo <kbd>x = 3</kbd> nebo <kbd>y = 4</kbd><br>
+      Potvrdit: <kbd>Enter</kbd> · Zobrazit řešení: klikni níže
+    </div>
+    <button class="btn-skip" onclick="skipSystem()">Zobrazit řešení</button>`;
+  body.appendChild(inputWrap);
+
+  const inp=document.getElementById('sys-input');
+  const btn=document.getElementById('btn-check');
+  const submit=()=>{
+    const val=inp.value.trim();
+    if(!val||SES.done) return;
+    processStep(val, sys);
+    inp.value='';
+    inp.focus();
+  };
+  btn.addEventListener('click',submit);
+  inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submit(); } });
+
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+  setTimeout(()=>inp.focus(), 80);
+}
+
+// ── PROCESS STEP ──────────────────────────────────────────
+function processStep(raw, sys){
+  if(SES.done) return;
+  const inp=document.getElementById('sys-input');
+  const result=checkStep2(raw, sys.sx, sys.sy);
+
+  inp.className='sys-input';
+
+  if(result==='invalid'){
+    inp.className='sys-input inp-wrong';
+    addStepItem('wrong', raw, 'Nerozumím — zkus formát: 2x + y = 5');
+    setTimeout(()=>{ inp.className='sys-input'; },800);
+    return;
+  }
+
+  if(result==='wrong'){
+    SES.wrongCount++;
+    ST.streak=0; saveST();
+    sndWrong();
+    inp.className='sys-input inp-wrong';
+    setTimeout(()=>{ inp.className='sys-input'; },600);
+    const hint=SES.wrongCount>=2?`Zkontroluj: x=${sys.sx}, y=${sys.sy}`:null;
+    addStepItem('wrong', raw, hint);
+    return;
+  }
+
+  if(result==='x-found'){
+    if(SES.xFound){ addStepItem('found', raw, 'x už bylo nalezeno'); return; }
+    SES.xFound=true;
+    sndFound();
+    inp.className='sys-input inp-ok';
+    setTimeout(()=>{ inp.className='sys-input'; },400);
+    addStepItem('found-x', raw, '← x nalezeno!');
+    updateChip('x', sys.sx);
+    if(SES.yFound) completeSolution(sys);
+    return;
+  }
+
+  if(result==='y-found'){
+    if(SES.yFound){ addStepItem('found', raw, 'y už bylo nalezeno'); return; }
+    SES.yFound=true;
+    sndFound();
+    inp.className='sys-input inp-ok';
+    setTimeout(()=>{ inp.className='sys-input'; },400);
+    addStepItem('found-y', raw, '← y nalezeno!');
+    updateChip('y', sys.sy);
+    if(SES.xFound) completeSolution(sys);
+    return;
+  }
+
+  if(result==='valid'){
+    sndValid();
+    inp.className='sys-input inp-ok';
+    setTimeout(()=>{ inp.className='sys-input'; },400);
+    addStepItem('ok', raw, 'Správný krok');
+    return;
+  }
+}
+
+function updateChip(varName, val){
+  const chip=document.getElementById(`chip-${varName}`);
+  if(!chip) return;
+  const color = varName==='x' ? 'var(--x)' : 'var(--y)';
+  chip.className=`status-chip sc-${varName} found`;
+  chip.textContent=`${varName} = ${val}`;
+}
+
+function completeSolution(sys){
+  SES.done=true;
+  SES.solved++;
+  const xp=Math.max(5, 25-SES.wrongCount*5);
+  SES.xpGained+=xp; ST.xp+=xp; ST.streak++; saveST();
+  document.getElementById('ex-xp-badge').textContent=ST.xp;
+  document.getElementById('hdr-xp').textContent=ST.xp;
+  document.getElementById('hdr-streak').textContent=ST.streak;
+  sndDone();
+  const ia=document.getElementById('input-area');
+  if(ia) ia.style.display='none';
+  showDoneBanner(xp, sys);
+}
+
+function addStepItem(type, raw, hint){
+  const hist=document.getElementById('steps-history');
+  if(!hist) return;
+  const icons={'ok':'✓','found-x':'★','found-y':'★','wrong':'✗','skip':'→'};
+  const classes={'ok':'step-ok','found-x':'step-found','found-y':'step-found y-found',
+    'wrong':'step-wrong','skip':'step-ok'};
+  const item=document.createElement('div');
+  item.className=`step-item ${classes[type]||'step-ok'}`;
+  item.innerHTML=`
+    <span class="step-icon">${icons[type]||'✓'}</span>
+    <span class="step-text">${escHtml(raw)}</span>
+    ${hint?`<span class="step-hint">${hint}</span>`:''}`;
+  hist.appendChild(item);
+  setTimeout(()=>item.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showDoneBanner(xp, sys){
+  const body=document.getElementById('ex-body');
+  const isLast=SES.cur>=SES.systems.length-1;
+  const banner=document.createElement('div');
+  banner.className='done-banner';
+  banner.innerHTML=`
+    <div class="done-title">Soustava vyřešena! 🎉</div>
+    <div class="done-sub">x = ${sys.sx} · y = ${sys.sy} · +${xp} XP${SES.wrongCount===0?' · Čistý postup!':''}</div>
+    <button class="btn-next-sys" onclick="nextSystem()">${isLast?'Zobrazit výsledky →':'Další soustava →'}</button>`;
+  body.appendChild(banner);
+  setTimeout(()=>banner.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+
+  if(_enterHandler) document.removeEventListener('keydown',_enterHandler);
+  _enterHandler=e=>{ if(e.key==='Enter'){ e.preventDefault(); nextSystem(); } };
+  setTimeout(()=>document.addEventListener('keydown',_enterHandler), 150);
+}
+
+function skipSystem(){
+  if(SES.done) return;
+  SES.done=true;
+  SES.skipped++;
+  ST.streak=0; saveST();
+  const sys=SES.systems[SES.cur];
+  const ia=document.getElementById('input-area');
+  if(ia) ia.style.display='none';
+  // show solution
+  const body=document.getElementById('ex-body');
+  const sol=document.createElement('div');
+  sol.style.cssText='background:var(--warn-bg);border:1px solid rgba(245,166,35,.2);'+
+    'border-radius:12px;margin:10px 18px 0;padding:14px 16px';
+  sol.innerHTML=`<div style="font-weight:700;font-size:.8rem;color:var(--warn);margin-bottom:6px">Řešení</div>`+
+    `<pre style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text);line-height:1.8;white-space:pre-wrap">${sys.solutionHTML||`x = ${sys.sx}, y = ${sys.sy}`}</pre>`;
+  body.appendChild(sol);
+  const isLast=SES.cur>=SES.systems.length-1;
+  const banner=document.createElement('div');
+  banner.style.cssText='background:var(--warn-bg);border:1.5px solid var(--warn);border-radius:14px;'+
+    'margin:10px 18px 0;padding:14px 20px;text-align:center';
+  banner.innerHTML=`<div style="font-weight:700;color:var(--warn);margin-bottom:8px">Řešení zobrazeno — příště to zkus sám</div>
+    <button class="btn-next-sys" style="background:var(--warn)" onclick="nextSystem()">${isLast?'Zobrazit výsledky →':'Další soustava →'}</button>`;
+  body.appendChild(banner);
+  setTimeout(()=>banner.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+
+  if(_enterHandler) document.removeEventListener('keydown',_enterHandler);
+  _enterHandler=e=>{ if(e.key==='Enter'){ e.preventDefault(); nextSystem(); } };
+  setTimeout(()=>document.addEventListener('keydown',_enterHandler),150);
+}
+
+function nextSystem(){
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+  SES.cur++;
+  if(SES.cur>=SES.systems.length) finishSession();
+  else renderSystem();
+}
+
+function exitExercise(){
+  if(_enterHandler){ document.removeEventListener('keydown',_enterHandler); _enterHandler=null; }
+  showHome();
+}
+function retrySession(){ startSession(SEL.topicIdx); }
+
+// ── FINISH ────────────────────────────────────────────────
+function finishSession(){
+  const total=SES.systems.length, solved=SES.solved;
+  const ratio=solved/total;
+  const stars=ratio>=1?3:ratio>=0.75?2:ratio>=0.5?1:0;
+  setStars(SEL.topicIdx, stars);
+  sndComplete();
+  const sys=SES.systems[SES.cur-1]||SES.systems[0];
+  document.getElementById('res-sol').innerHTML=
+    `<span class="xc">x</span> a <span class="yc">y</span> nalezeny`;
+  document.getElementById('res-stars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('res-title').textContent=
+    ['Zkus to znovu!','Dobrý výkon!','Dobře!','Perfektní!'][stars];
+  document.getElementById('res-score').textContent=`${solved} / ${total} vyřešeno`;
+  document.getElementById('res-xp').textContent=`+${SES.xpGained}`;
+  showScreen('screen-result');
+}
+
+// ── SCREENS ───────────────────────────────────────────────
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showHome(){ renderHome(); showScreen('screen-home'); }
+
+function renderHome(){
+  document.getElementById('hdr-xp').textContent=ST.xp;
+  document.getElementById('hdr-streak').textContent=ST.streak;
+  const list=document.getElementById('topics-list');
+  list.innerHTML='';
+  let lastSection=null;
+  TOPICS.forEach((topic,idx)=>{
+    if(topic.section!==lastSection){
+      lastSection=topic.section;
+      const div=document.createElement('div');
+      div.className='section-label';
+      div.textContent=topic.section;
+      list.appendChild(div);
+    }
+    const stars=getStars(idx);
+    const starStr=stars>0?'★'.repeat(stars)+'☆'.repeat(3-stars):'';
+    const isMix=topic.eq==='∼';
+    const row=document.createElement('div');
+    row.className=`topic-row${isMix?' mix':''}`;
+    row.innerHTML=`
+      <div class="tr-eq">${topic.eq}</div>
+      <div class="tr-left">
+        <div class="tr-name">${topic.name}</div>
+        <div class="tr-desc">${topic.desc}</div>
+      </div>
+      <div class="tr-right">
+        ${starStr?`<span class="tr-stars">${starStr}</span>`:''}
+        ${topic.help?`<button class="topic-help-btn">?</button>`:''}
+        <span style="color:var(--text3);font-size:.85rem">→</span>
+      </div>`;
+    if(topic.help){
+      row.querySelector('.topic-help-btn').addEventListener('click',e=>{
+        e.stopPropagation(); openHelp(topic.help);
+      });
+    }
+    row.addEventListener('click',()=>startSession(idx));
+    list.appendChild(row);
+  });
+}
+
+// ── HELP ──────────────────────────────────────────────────
+function openHelp(help){
+  document.getElementById('help-panel-title').textContent=help.title||'Jak postupovat';
+  const body=document.getElementById('help-panel-body');
+  body.innerHTML='';
+  if(help.steps?.length){
+    const sec=document.createElement('div');
+    sec.innerHTML=`<div class="help-steps">${
+      help.steps.map((s,i)=>`<div class="help-step">
+        <div class="help-step-num">${i+1}</div>
+        <div class="help-step-txt">${s}</div>
+      </div>`).join('')
+    }</div>`;
+    body.appendChild(sec);
+  }
+  if(help.example){
+    const ex=document.createElement('div');
+    ex.className='help-example';
+    ex.innerHTML=`<pre style="white-space:pre-wrap;font-family:'JetBrains Mono',monospace;font-size:.8rem">${help.example}</pre>`;
+    body.appendChild(ex);
+  }
+  document.getElementById('help-panel').classList.add('show');
+  document.getElementById('help-overlay').classList.add('show');
+}
+function closeHelp(){
+  document.getElementById('help-panel').classList.remove('show');
+  document.getElementById('help-overlay').classList.remove('show');
+}
+function showExHelp(){ if(_currentHelp) openHelp(_currentHelp); }
+
+// ── INIT ──────────────────────────────────────────────────
+loadST();
+renderHome();
+</script>
+
+</body>
+</html>
