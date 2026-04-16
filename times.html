@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FajnCvičebna – Čas, dny a měsíce</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f7fa;--bg2:#e9f0f6;--card:#ffffff;--card2:#f5f8fb;--line:#c9d8e7;
+  --text:#1a2a3a;--muted:#537088;--teal:#00a79d;--blue:#2a7de1;--violet:#7757d8;
+  --gold:#c58a00;--green:#1f8f50;--red:#d24545;--shadow:0 10px 28px rgba(18,45,80,.10);--r:18px;
+}
+body.mid{
+  --bg:#1d2b39;--bg2:#273847;--card:#223344;--card2:#2b4054;--line:#3f5b72;
+  --text:#e8f2fb;--muted:#91b0c6;--teal:#27d1c6;--blue:#63a8ff;--violet:#ad8cff;
+  --gold:#f3bf3c;--green:#43d17d;--red:#ff7474;--shadow:0 14px 34px rgba(0,0,0,.28);
+}
+body.dark{
+  --bg:#0d1720;--bg2:#13212d;--card:#172633;--card2:#1d3040;--line:#2c455a;
+  --text:#edf7ff;--muted:#85a7bf;--teal:#23dac1;--blue:#64b0ff;--violet:#b48eff;
+  --gold:#f0c04e;--green:#53dd89;--red:#ff7d7d;--shadow:0 18px 40px rgba(0,0,0,.42);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;background-image:
+ radial-gradient(circle at 0% 0%, rgba(35,218,193,.08), transparent 28%),
+ radial-gradient(circle at 100% 100%, rgba(100,176,255,.08), transparent 32%);}
+button,input{font:inherit}
+.app{max-width:860px;margin:0 auto;padding:14px 12px 42px;display:flex;flex-direction:column;gap:10px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:2px}
+.logo{font-family:'DM Serif Display',serif;font-size:1.72rem;line-height:1.05}
+.sub{font-size:.80rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.topbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-weight:800;box-shadow:var(--shadow);font-size:.92rem}
+.chip small{font-size:.72rem;color:var(--muted);font-weight:700}
+.theme{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(0,0,0,.06);border:1px solid var(--line)}
+body.dark .theme, body.mid .theme{background:rgba(255,255,255,.04)}
+.theme button{width:25px;height:25px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.theme .on{border-color:var(--teal);box-shadow:0 0 0 3px rgba(35,218,193,.16)}
+.tl{background:#f4f7fa;border-color:#c9d8e7}.tm{background:#294056}.td{background:#0d1720}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.strip{padding:10px 12px}
+.sections{display:flex;flex-wrap:wrap;gap:7px;padding:2px 0 4px}
+.sec-btn,.mode-btn,.ghost-btn,.mini-btn{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;cursor:pointer;transition:.18s ease;white-space:nowrap}
+.sec-btn{padding:8px 13px;font-weight:700;font-size:.90rem}
+.sec-btn:hover,.mode-btn:hover,.ghost-btn:hover,.mini-btn:hover{border-color:var(--teal);color:var(--teal);transform:translateY(-1px)}
+.sec-btn.on{background:linear-gradient(135deg,var(--teal),var(--blue));border-color:transparent;color:#092127}
+.modes{display:flex;flex-wrap:wrap;gap:7px}
+.mode-btn{padding:8px 14px;font-weight:700;font-size:.92rem}
+.mode-btn.on{background:var(--card2);color:var(--blue);border-color:var(--blue)}
+.status{padding:12px 14px;display:grid;grid-template-columns:1.2fr .9fr;gap:10px}
+.status-left,.status-right{display:flex;flex-direction:column;gap:8px}
+.progress-head{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.86rem;flex-wrap:wrap}
+.progress-head strong{font-size:.94rem}
+.track{height:10px;border-radius:999px;background:var(--bg2);overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--blue),var(--violet));transition:width .35s ease}
+.meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.meta-box{padding:10px 12px;border-radius:14px;background:var(--card2);border:1px solid var(--line)}
+.meta-k{font-size:.73rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.meta-v{font-size:1.05rem;font-weight:800;margin-top:2px}
+.card{padding:18px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--blue),var(--violet))}
+.label{font-size:.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}
+.title-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+.title-row .small-note{color:var(--muted);font-size:.88rem}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px 0 2px}
+.hero-big{font-family:'DM Serif Display',serif;font-size:4rem;line-height:1;letter-spacing:-.03em;word-break:break-word}
+.hero-sub{font-size:.92rem;color:var(--muted);margin-top:6px}
+.speech-row,.actions,.sub-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.speech-row{margin:14px 0 16px}
+.speak-btn,.check-btn,.next-btn,.hint-btn,.ghost-btn,.mini-btn{border-radius:999px;cursor:pointer;transition:.18s ease}
+.speak-btn{padding:10px 16px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-weight:700}
+.speak-btn:hover{border-color:var(--teal);color:var(--teal)}
+.speak-btn.speaking{background:rgba(35,218,193,.12);border-color:var(--teal);color:var(--teal);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.grid-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 0 14px}
+.opt{padding:13px 14px;text-align:left;border-radius:14px;border:1.5px solid var(--line);background:var(--card2);color:var(--text);cursor:pointer;transition:.16s ease;font-weight:700}
+.opt:hover{transform:translateY(-1px);border-color:var(--blue);background:rgba(99,168,255,.08)}
+.opt.correct{border-color:var(--green);background:rgba(83,221,137,.12);color:var(--green)}
+.opt.wrong{border-color:var(--red);background:rgba(255,125,125,.12);color:var(--red);animation:shake .28s}
+.opt.reveal{border-color:var(--green);background:rgba(83,221,137,.08)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.input-wrap{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+.answer-input{width:min(100%,360px);padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--card2);color:var(--text);font-size:1.1rem;font-weight:800;text-align:center;outline:none}
+.answer-input:focus{border-color:var(--teal)}
+.answer-input.good{border-color:var(--green);color:var(--green)}
+.answer-input.bad{border-color:var(--red);color:var(--red)}
+.check-btn{padding:12px 24px;border:none;background:linear-gradient(135deg,var(--teal),var(--blue));color:#08232a;font-weight:800;box-shadow:0 10px 22px rgba(35,218,193,.2)}
+.next-btn{padding:12px 24px;border:1px solid var(--blue);background:var(--card2);color:var(--blue);font-weight:800;display:none}
+.hint-btn,.ghost-btn,.mini-btn{padding:11px 16px;background:transparent;font-weight:700}
+.feedback{display:none;padding:12px 14px;border-radius:14px;border:1px solid var(--line);margin-bottom:12px;background:var(--card2)}
+.feedback.show{display:block}
+.feedback.ok{background:rgba(83,221,137,.10);border-color:rgba(83,221,137,.35)}
+.feedback.bad{background:rgba(255,125,125,.10);border-color:rgba(255,125,125,.35)}
+.feedback.info{background:rgba(100,176,255,.10);border-color:rgba(100,176,255,.35)}
+.feedback.warn{background:rgba(240,192,78,.10);border-color:rgba(240,192,78,.35)}
+.fb-title{font-weight:800;margin-bottom:4px}
+.feedback.ok .fb-title{color:var(--green)} .feedback.bad .fb-title{color:var(--red)} .feedback.info .fb-title{color:var(--blue)} .feedback.warn .fb-title{color:var(--gold)}
+.fb-text{line-height:1.5;color:var(--text);font-size:.95rem}
+.study-grid{display:flex;flex-direction:column;gap:8px}
+.study-item{display:grid;grid-template-columns:minmax(90px,160px) 1fr auto;gap:12px;align-items:center;padding:12px 13px;border-radius:14px;background:var(--card2);border:1px solid var(--line);cursor:pointer;transition:.16s ease}
+.study-item:hover{border-color:var(--teal);transform:translateY(-1px)}
+.study-main{font-family:'DM Serif Display',serif;font-size:1.35rem;line-height:1.1}
+.study-en{font-weight:800;color:var(--teal)}
+.study-note{font-size:.84rem;color:var(--muted);margin-top:3px}
+.study-play{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:700;cursor:pointer}
+.study-play:hover{border-color:var(--teal);color:var(--teal)}
+.context-box,.tip-box,.review-banner{padding:14px 16px;border-radius:15px;background:var(--bg2);border:1px solid var(--line);margin-bottom:14px}
+.ctx-en{font-size:1.16rem;font-weight:800;line-height:1.6}
+.ctx-gap{display:inline-block;min-width:92px;border-bottom:2px solid var(--teal);text-align:center;color:var(--teal)}
+.ctx-cz{margin-top:6px;color:var(--muted);font-size:.92rem}
+.tip-box h3,.review-banner h3{margin:0 0 8px;font-size:1rem}
+.tip-box ul{margin:8px 0 0 18px;padding:0;line-height:1.55}
+.tip-box li{margin:4px 0}
+.review-banner{background:linear-gradient(135deg,rgba(240,192,78,.12),rgba(100,176,255,.08));border-color:rgba(240,192,78,.35)}
+.review-banner .tiny{font-size:.86rem;color:var(--muted)}
+.float-points{position:fixed;left:50%;top:48%;transform:translate(-50%,0);font-weight:900;font-size:1.6rem;color:var(--gold);pointer-events:none;z-index:1000;animation:floatUp 1s ease forwards}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,18px) scale(.8)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-70px) scale(1.08)}}
+.confetti{position:fixed;top:-12px;pointer-events:none;z-index:999;animation:drop linear forwards}
+@keyframes drop{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:1001;padding:18px}
+.overlay.show{display:flex}
+.pop{max-width:370px;padding:26px 24px;border-radius:24px;background:var(--card);border:2px solid rgba(240,192,78,.55);text-align:center;box-shadow:var(--shadow)}
+.pop h2{margin:.15rem 0 .35rem;font-size:1.6rem}
+.pop p{margin:.3rem 0 1rem;color:var(--muted)}
+.footer-note{color:var(--muted);font-size:.84rem;text-align:center;padding:3px 4px 0}
+.hidden{display:none !important}
+@media (max-width:720px){.status{grid-template-columns:1fr}.hero-big{font-size:3.1rem}}
+@media (max-width:520px){.grid-opts{grid-template-columns:1fr}.study-item{grid-template-columns:1fr;gap:8px}.hero-big{font-size:2.55rem}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">🕰️ Time, Days & Months English</div>
+      <div class="sub">FajnCvičebna · návrat do reálné angličtiny bez omáčky</div>
+    </div>
+    <div class="topbar">
+      <div class="theme" aria-label="Volba vzhledu">
+        <button class="tl on" data-theme="light" title="Světlé"></button>
+        <button class="tm" data-theme="mid" title="Střední"></button>
+        <button class="td" data-theme="dark" title="Tmavé"></button>
+      </div>
+      <div class="chip">🔥 <span id="streakVal">0</span> <small>série</small></div>
+      <div class="chip">⚡ <span id="comboVal">0</span> <small>combo</small></div>
+      <div class="chip">⭐ <span id="xpVal">0</span> <small>XP</small></div>
+    </div>
+  </div>
+
+  <div class="panel strip"><div class="sections" id="sectionBar"></div></div>
+  <div class="panel strip">
+    <div class="modes" id="modeBar">
+      <button class="mode-btn on" data-mode="study">📖 Připomeň si</button>
+      <button class="mode-btn" data-mode="choose">🎯 Vyber správně</button>
+      <button class="mode-btn" data-mode="listen">👂 Poslech a zápis</button>
+      <button class="mode-btn" data-mode="context">💬 Ve větě</button>
+      <button class="mode-btn" data-mode="mix">🎲 Mix</button>
+    </div>
+  </div>
+
+  <div class="panel status">
+    <div class="status-left">
+      <div class="progress-head">
+        <div><strong>Level <span id="levelNo">1</span></strong> – <span id="levelName">Rozjíždíš se</span></div>
+        <div><span id="inLevelXp">0</span> / <span id="toLevelXp">60</span> XP</div>
+      </div>
+      <div class="track"><div class="fill" id="levelFill"></div></div>
+      <div class="small-note" id="sectionMeta">Vyber si oblast a rozjeď to.</div>
+    </div>
+    <div class="status-right">
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-k">Tah na další kolo</div><div class="meta-v"><span id="goalNow">0</span>/5</div></div>
+        <div class="meta-box"><div class="meta-k">Návraty k chybám</div><div class="meta-v"><span id="reviewCount">0</span></div></div>
+      </div>
+      <div class="sub-actions">
+        <button class="ghost-btn" id="tipToggle">🧠 Jak na to</button>
+        <button class="ghost-btn" id="clearProgress">♻️ Vynulovat postup</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel card" id="gameCard"></div>
+  <div class="footer-note">Když se sekneš, modul si to pamatuje a později tě do stejného místa jemně vrátí. Teď už i s delší pamětí, aby se cvičení nelepila hned po sobě.</div>
+</div>
+
+<div class="overlay" id="levelOverlay">
+  <div class="pop">
+    <div style="font-size:2.8rem" id="levelEmoji">🎉</div>
+    <h2 id="levelTitle">Level 2</h2>
+    <p id="levelText">Výborně. Už se ti to vrací do ruky.</p>
+    <button class="check-btn" id="closeLevel">Pokračovat</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+const SAVE_KEY='fdc_time_days_months_v1';
+const THEME_KEY='fdc_time_days_months_theme_v1';
+const LEVELS=[0,60,150,280,460,700,1000,1400,1900,2500,3300,4300];
+const LEVEL_NAMES=['','Rozjíždíš se','Rozcvičený hráč','Jedeš slušně','Vrací se ti to','Stroj na procvičování','Jazykový mazák','Máš to v uchu','Tohle už je forma','Skoro legenda','Legenda'];
+const LEVEL_EMOJIS=['','🌱','📚','🎯','⭐','🔥','🏆','👑','🧠','🚀','🌟'];
+const GOAL_TARGET=5;
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function chance(n){return Math.random()<n}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function uniqBy(arr,keyFn){const seen=new Set();return arr.filter(item=>{const k=keyFn(item);if(seen.has(k))return false;seen.add(k);return true})}
+function normalizeTextInput(s){return String(s).toLowerCase().trim().replace(/[.,]/g,'').replace(/\s+/g,' ')}
+function safeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function randId(){return Math.random().toString(36).slice(2,8)}
+
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_TO_CS={Monday:'pondělí',Tuesday:'úterý',Wednesday:'středa',Thursday:'čtvrtek',Friday:'pátek',Saturday:'sobota',Sunday:'neděle'};
+const DAY_TO_CS_LOC={Monday:'pondělí',Tuesday:'úterý',Wednesday:'středu',Thursday:'čtvrtek',Friday:'pátek',Saturday:'sobotu',Sunday:'neděli'};
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTH_TO_CS={January:'leden',February:'únor',March:'březen',April:'duben',May:'květen',June:'červen',July:'červenec',August:'srpen',September:'září',October:'říjen',November:'listopad',December:'prosinec'};
+const MONTH_TO_CS_LOC={January:'lednu',February:'únoru',March:'březnu',April:'dubnu',May:'květnu',June:'červnu',July:'červenci',August:'srpnu',September:'září',October:'říjnu',November:'listopadu',December:'prosinci'};
+const SMALL_NUMBERS={0:'twelve',1:'one',2:'two',3:'three',4:'four',5:'five',6:'six',7:'seven',8:'eight',9:'nine',10:'ten',11:'eleven',12:'twelve'};
+function timeToWords(hhmm){
+  const [h,m]=hhmm.split(':').map(Number);
+  const hour12=((h+11)%12)+1;
+  const next12=((h)%12)+1;
+  if(m===0) return `${SMALL_NUMBERS[hour12]} o'clock`;
+  if(m===15) return `quarter past ${SMALL_NUMBERS[hour12]}`;
+  if(m===30) return `half past ${SMALL_NUMBERS[hour12]}`;
+  if(m===45) return `quarter to ${SMALL_NUMBERS[next12]}`;
+  const minuteWord={5:'five',10:'ten',20:'twenty',25:'twenty-five'}[m<=30?m:60-m];
+  if(m<30) return `${minuteWord} past ${SMALL_NUMBERS[hour12]}`;
+  return `${minuteWord} to ${SMALL_NUMBERS[next12]}`;
+}
+const TIME_DIGITALS=[
+  '1:00','2:00','3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00',
+  '1:05','2:10','3:15','4:20','5:25','6:30','7:35','8:40','9:45','10:50','11:55',
+  '12:05','12:15','12:30','12:45','1:20','2:25','3:35','4:40','5:45','6:50',
+  '7:05','8:15','9:30','10:35','11:40','2:45','3:50','4:55','6:05','7:10','8:25','9:40'
+];
+const TIME_ITEMS=TIME_DIGITALS.map(t=>[t,timeToWords(t)]);
+const PREP_ITEMS=[
+  ...DAYS.map(day=>({display:`__ ${day}`,answer:'on',answerLabel:'on',fullPhrase:`on ${day}`,prompt:'Doplň správnou předložku.',czHint:'předložky času',reviewKey:'prepositions',speechText:`on ${day}`,tipKey:'prepositions',listenAccept:['on']})),
+  ...MONTHS.map(month=>({display:`__ ${month}`,answer:'in',answerLabel:'in',fullPhrase:`in ${month}`,prompt:'Doplň správnou předložku.',czHint:'předložky času',reviewKey:'prepositions',speechText:`in ${month}`,tipKey:'prepositions',listenAccept:['in']})),
+  ...TIME_ITEMS.slice(0,18).map(pair=>({display:`__ ${pair[1]}`,answer:'at',answerLabel:'at',fullPhrase:`at ${pair[1]}`,prompt:'Doplň správnou předložku.',czHint:'předložky času',reviewKey:'prepositions',speechText:`at ${pair[1]}`,tipKey:'prepositions',listenAccept:['at']}))
+];
+const CONTEXT_TEMPLATES=[
+  {id:'meeting-day',tpl:'The meeting is on __.', val:()=>pick(DAYS), fill:v=>v, cz:v=>`Schůzka je v ${DAY_TO_CS_LOC[v]||v}.`, reviewKey:'days'},
+  {id:'holiday-month',tpl:'We usually travel in __.', val:()=>pick(MONTHS), fill:v=>v, cz:v=>`Obvykle cestujeme v ${MONTH_TO_CS_LOC[v]||v}.`, reviewKey:'months'},
+  {id:'start-time',tpl:'The lesson starts at __.', val:()=>pick(TIME_ITEMS), fill:v=>v[1], cz:v=>`Lekce začíná v ${v[0]}.`, reviewKey:'time'},
+  {id:'train-time',tpl:'The train leaves at __.', val:()=>pick(TIME_ITEMS), fill:v=>v[1], cz:v=>`Vlak odjíždí v ${v[0]}.`, reviewKey:'time'},
+  {id:'birthday',tpl:'Her birthday is in __.', val:()=>pick(MONTHS), fill:v=>v, cz:v=>`Její narozeniny jsou v ${MONTH_TO_CS_LOC[v]||v}.`, reviewKey:'months'},
+  {id:'free-day',tpl:'I\'m free on __.', val:()=>pick(DAYS), fill:v=>v, cz:v=>`Mám volno v ${DAY_TO_CS_LOC[v]||v}.`, reviewKey:'days'},
+  {id:'call-time',tpl:'Call me at __.', val:()=>pick(TIME_ITEMS), fill:v=>v[1], cz:v=>`Zavolej mi v ${v[0]}.`, reviewKey:'time'},
+  {id:'english-day',tpl:'English is on __.', val:()=>pick(DAYS), fill:v=>v, cz:v=>`Angličtinu máme v ${DAY_TO_CS_LOC[v]||v}.`, reviewKey:'days'},
+  {id:'exam-month',tpl:'The exam is in __.', val:()=>pick(MONTHS), fill:v=>v, cz:v=>`Zkouška je v ${MONTH_TO_CS_LOC[v]||v}.`, reviewKey:'months'},
+  {id:'breakfast-time',tpl:'We have breakfast at __.', val:()=>pick(TIME_ITEMS), fill:v=>v[1], cz:v=>`Snídáme v ${v[0]}.`, reviewKey:'time'},
+  {id:'football-day',tpl:'They play football on __.', val:()=>pick(DAYS), fill:v=>v, cz:v=>`Hrají fotbal v ${DAY_TO_CS_LOC[v]||v}.`, reviewKey:'days'},
+  {id:'summer-month',tpl:'School ends in __.', val:()=>pick(['June','July']), fill:v=>v, cz:v=>`Škola končí v ${MONTH_TO_CS_LOC[v]||v}.`, reviewKey:'months'},
+  {id:'bed-time',tpl:'The children go to bed at __.', val:()=>pick(TIME_ITEMS), fill:v=>v[1], cz:v=>`Děti chodí spát v ${v[0]}.`, reviewKey:'time'},
+  {id:'shop-day',tpl:'The shop is closed on __.', val:()=>pick(DAYS), fill:v=>v, cz:v=>`Obchod je zavřený v ${DAY_TO_CS_LOC[v]||v}.`, reviewKey:'days'},
+  {id:'concert-month',tpl:'The concert is in __.', val:()=>pick(MONTHS), fill:v=>v, cz:v=>`Koncert je v ${MONTH_TO_CS_LOC[v]||v}.`, reviewKey:'months'}
+];
+function makeDayItem(){const d=pick(DAYS);return {id:`day-${d}-${randId()}`,sectionId:'days',kind:'day',display:DAY_TO_CS[d]||d,answer:d,answerLabel:d,promptLabel:'Jak se tento den řekne anglicky?',czHint:'den v týdnu',reviewKey:'days',speechText:d,tipKey:'days',listenAccept:[d]}}
+function makeMonthItem(){const m=pick(MONTHS);return {id:`month-${m}-${randId()}`,sectionId:'months',kind:'month',display:MONTH_TO_CS[m]||m,answer:m,answerLabel:m,promptLabel:'Jak se tento měsíc řekne anglicky?',czHint:'měsíc v roce',reviewKey:'months',speechText:m,tipKey:'months',listenAccept:[m]}}
+function makeTimeItem(){const pair=pick(TIME_ITEMS);return {id:`time-${pair[0].replace(':','-')}-${randId()}`,sectionId:'time',kind:'time',display:pair[0],answer:pair[1],answerLabel:pair[1],promptLabel:'Kolik je hodin anglicky?',czHint:'čas',reviewKey:'time',speechText:pair[1],tipKey:'time',listenAccept:[pair[0]]}}
+function makePrepositionItem(){const p=pick(PREP_ITEMS);return {id:`prep-${randId()}`,sectionId:'prepositions',kind:'preposition',display:p.display,answer:p.answer,answerLabel:p.answerLabel,fullPhrase:p.fullPhrase,promptLabel:p.prompt,czHint:p.czHint,reviewKey:p.reviewKey,speechText:p.speechText,tipKey:p.tipKey,listenAccept:p.listenAccept||[p.answer]}}
+function makeContextItem(t){const val=t.val();const fill=t.fill(val);return {id:`ctx-${t.id}-${randId()}`,sectionId:'contextual',kind:'context',display:t.tpl,answer:fill,answerLabel:fill,promptLabel:'Doplň správnou odpověď do věty.',czHint:t.cz(val),reviewKey:t.reviewKey,speechText:t.tpl.replace('__',fill),fullEn:t.tpl.replace('__',fill),tipKey:'contextual',listenAccept:[],value:val}}
+
+const TIPS={
+  time:`<h3>Jak na čas</h3><ul><li><strong>5:15</strong> = quarter past five</li><li><strong>5:30</strong> = half past five</li><li><strong>5:45</strong> = quarter to six</li><li><strong>5:05</strong> = five past five</li></ul>`,
+  days:`<h3>Dny</h3><ul><li>Monday, Tuesday, Wednesday…</li><li>Pozor: <strong>Saturday ≠ Sunday</strong></li><li>S dny se často pojí <strong>on</strong>.</li></ul>`,
+  months:`<h3>Měsíce</h3><ul><li>January, February, March…</li><li>February bývá zrádný na výslovnost.</li><li>S měsíci se často pojí <strong>in</strong>.</li></ul>`,
+  prepositions:`<h3>Předložky času</h3><ul><li><strong>on Monday</strong></li><li><strong>in March</strong></li><li><strong>at 5 o'clock</strong></li></ul>`,
+  contextual:`<h3>Ve větě</h3><ul><li>Nejde jen o slovo, ale o jeho přirozené použití.</li><li>Přehrávej si celé věty.</li><li>Modul tě vrátí k tomu, co tě nachytalo.</li></ul>`
+};
+
+const SECTIONS=[
+  {id:'time',label:'Čas',emoji:'⏰',desc:'Kolik je hodin a jak se to říká.',tipKey:'time',make:()=>makeTimeItem()},
+  {id:'days',label:'Dny',emoji:'📆',desc:'Dny v týdnu bez váhání.',tipKey:'days',make:()=>makeDayItem()},
+  {id:'months',label:'Měsíce',emoji:'🗓️',desc:'Měsíce v roce a jejich použití.',tipKey:'months',make:()=>makeMonthItem()},
+  {id:'prepositions',label:'Předložky času',emoji:'🧩',desc:'On Monday, in March, at five…',tipKey:'prepositions',make:()=>makePrepositionItem()},
+  {id:'contextual',label:'Ve větě',emoji:'💬',desc:'Reálné použití v krátkých větách.',tipKey:'contextual',make:()=>makeContextItem(pick(CONTEXT_TEMPLATES))}
+];
+
+const state={sectionId:'time',mode:'study',xp:0,streak:0,combo:0,goal:0,level:1,current:null,attempts:0,answered:false,wrongBook:{},lastSerial:'',reviewCooldown:0,recentHistory:[],theme:'light'};
+const el={sectionBar:document.getElementById('sectionBar'),modeBar:document.getElementById('modeBar'),gameCard:document.getElementById('gameCard'),streakVal:document.getElementById('streakVal'),comboVal:document.getElementById('comboVal'),xpVal:document.getElementById('xpVal'),levelNo:document.getElementById('levelNo'),levelName:document.getElementById('levelName'),inLevelXp:document.getElementById('inLevelXp'),toLevelXp:document.getElementById('toLevelXp'),levelFill:document.getElementById('levelFill'),sectionMeta:document.getElementById('sectionMeta'),goalNow:document.getElementById('goalNow'),reviewCount:document.getElementById('reviewCount'),levelOverlay:document.getElementById('levelOverlay'),levelEmoji:document.getElementById('levelEmoji'),levelTitle:document.getElementById('levelTitle'),levelText:document.getElementById('levelText'),tipToggle:document.getElementById('tipToggle'),clearProgress:document.getElementById('clearProgress')};
+function sectionMeta(){return SECTIONS.find(s=>s.id===state.sectionId)||SECTIONS[0]}
+function reviewItemsCount(){return Object.values(state.wrongBook).filter(x=>x&&x.weight>0).length}
+function getLevelFromXp(xp){let lvl=1;for(let i=0;i<LEVELS.length;i++) if(xp>=LEVELS[i]) lvl=i+1; return Math.min(lvl,LEVEL_NAMES.length-1)}
+function saveState(){localStorage.setItem(SAVE_KEY,JSON.stringify({sectionId:state.sectionId,mode:state.mode,xp:state.xp,streak:state.streak,combo:state.combo,goal:state.goal,level:state.level,wrongBook:state.wrongBook,lastSerial:state.lastSerial,reviewCooldown:state.reviewCooldown,recentHistory:state.recentHistory||[]}))}
+function loadState(){try{const raw=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');Object.assign(state,{sectionId:raw.sectionId||state.sectionId,mode:raw.mode||state.mode,xp:raw.xp||0,streak:raw.streak||0,combo:raw.combo||0,goal:raw.goal||0,level:raw.level||1,wrongBook:raw.wrongBook||{},lastSerial:raw.lastSerial||'',reviewCooldown:raw.reviewCooldown||0,recentHistory:Array.isArray(raw.recentHistory)?raw.recentHistory:[]})}catch(e){}}
+function loadTheme(){try{const t=localStorage.getItem(THEME_KEY)||'light';state.theme=t;document.body.classList.remove('mid','dark');if(t==='mid')document.body.classList.add('mid');if(t==='dark')document.body.classList.add('dark');document.querySelectorAll('.theme button').forEach(b=>b.classList.toggle('on',b.dataset.theme===t||(t==='light'&&b.dataset.theme==='light')))}catch(e){}}
+function setTheme(theme){state.theme=theme;localStorage.setItem(THEME_KEY,theme);loadTheme()}
+function updateStatus(){el.streakVal.textContent=state.streak;el.comboVal.textContent=state.combo;el.xpVal.textContent=state.xp;el.goalNow.textContent=state.goal;el.reviewCount.textContent=reviewItemsCount();const lvl=getLevelFromXp(state.xp);if(lvl>state.level){state.level=lvl;showLevelUp()}else state.level=lvl;el.levelNo.textContent=state.level;el.levelName.textContent=LEVEL_NAMES[state.level]||'Rozjíždíš se';const prev=LEVELS[state.level-1]||0,next=LEVELS[state.level]||prev+500;el.inLevelXp.textContent=state.xp-prev;el.toLevelXp.textContent=next-prev;el.levelFill.style.width=Math.min(100,((state.xp-prev)/(next-prev))*100)+'%';const sec=sectionMeta();el.sectionMeta.textContent=`${sec.emoji} ${sec.label} · ${sec.desc}`}
+function showLevelUp(){el.levelEmoji.textContent=LEVEL_EMOJIS[state.level]||'🎉';el.levelTitle.textContent=`Level ${state.level} – ${LEVEL_NAMES[state.level]}`;el.levelText.textContent=pick(['Výborně. Už se ti to vrací do ucha.','Paráda. Tohle už není náhoda, ale forma.','Skvělé. Angličtina se zase probouzí.']);el.levelOverlay.classList.add('show');confettiBurst(20);soundLevel()}
+function gainXp(base){state.xp+=base;state.streak+=1;state.combo+=1;state.goal=Math.min(GOAL_TARGET,state.goal+1);if(state.goal>=GOAL_TARGET){state.xp+=10;floatPoints('+10 bonus');state.goal=0;confettiBurst(10)}updateStatus();saveState()}
+function registerMiss(){state.streak=0;state.combo=0;state.goal=0;updateStatus();saveState()}
+function serialOf(item){return `${item.kind}|${item.display}|${item.answer}`}
+function familyKeyOf(item){
+  if(!item) return '';
+  if(item.kind==='day' || item.reviewKey==='days') return `days:${item.answer}`;
+  if(item.kind==='month' || item.reviewKey==='months') return `months:${item.answer}`;
+  if(item.kind==='preposition') return `prep:${item.answer}:${item.display}`;
+  if(item.kind==='time' || item.reviewKey==='time'){
+    const base = item.kind==='time' ? item.display : (Array.isArray(item.value)?item.value[0]:'');
+    return `time:${base}`;
+  }
+  if(item.kind==='context') return `ctx:${item.display.replace('__','')}:${item.answer}`;
+  return serialOf(item);
+}
+function tooSimilarToRecent(item){
+  const family=familyKeyOf(item);
+  const recent=state.recentHistory||[];
+  if(recent.includes(family)) return true;
+  if(item.kind==='context'){
+    const stem=(item.display||'').replace('__','').trim();
+    return recent.some(x=>x.startsWith(`ctx:${stem}`));
+  }
+  return false;
+}
+function rememberItem(item){
+  const family=familyKeyOf(item);
+  state.recentHistory=[family,...(state.recentHistory||[])].slice(0,6);
+}
+function serializeReviewExample(item, confusedWith){return {kind:item.kind,display:item.display,answer:item.answer,answerLabel:item.answerLabel,sectionId:item.sectionId,promptLabel:item.promptLabel,confusedWith,speechText:item.speechText,fullEn:item.fullEn||'',czHint:item.czHint||'',tipKey:item.tipKey||item.sectionId,listenAccept:item.listenAccept||[],value:item.value||null}}
+function markWrong(item, extra={}){const key=item.reviewKey||item.sectionId||'general';const entry=state.wrongBook[key]||{key,weight:0,misses:0,repaired:0,label:item.display,sectionId:item.sectionId,example:null,updatedAt:0};entry.weight+=2;entry.misses+=1;entry.repaired=0;entry.label=item.display;entry.sectionId=item.sectionId;entry.updatedAt=Date.now();entry.example=serializeReviewExample(item, extra.confusedWith||'');state.wrongBook[key]=entry;saveState();updateStatus()}
+function softenWrong(key){const entry=state.wrongBook[key];if(!entry)return;entry.weight=Math.max(0,entry.weight-1);entry.repaired+=1;entry.updatedAt=Date.now();if(entry.weight===0&&entry.repaired>=2) delete state.wrongBook[key];saveState();updateStatus()}
+function shouldInjectReview(){const count=reviewItemsCount();if(!count)return false;if(state.mode==='study')return false;if(state.reviewCooldown>0){state.reviewCooldown-=1;return false}return chance(.32)}
+function buildReviewItem(){const entries=Object.values(state.wrongBook).filter(e=>e&&e.weight>0&&e.example);if(!entries.length)return null;entries.sort((a,b)=>(b.weight*10+b.misses)-(a.weight*10+a.misses));const top=entries[0];state.reviewCooldown=rnd(3,5);const ex=top.example;return {id:`review-${top.key}-${randId()}`,isReview:true,reviewSource:top.key,sectionId:ex.sectionId,kind:ex.kind,display:ex.display,answer:ex.answer,answerLabel:ex.answerLabel,promptLabel:ex.promptLabel,czHint:ex.czHint,reviewKey:top.key,speechText:ex.speechText,fullEn:ex.fullEn,tipKey:ex.tipKey,listenAccept:ex.listenAccept||[],value:ex.value||null}}
+function betterDistractors(item,count=3){const result=[];const add=t=>{if(t&&t!==item.answer&&!result.includes(t))result.push(t)};if(item.kind==='day'){DAYS.forEach(add)} if(item.kind==='month'){MONTHS.forEach(add)} if(item.kind==='time'){TIME_ITEMS.forEach(x=>add(x[1]))} if(item.kind==='preposition'){['on','in','at','by','for','from'].forEach(add)} if(item.kind==='context'){if(item.reviewKey==='days') DAYS.forEach(add); if(item.reviewKey==='months') MONTHS.forEach(add); if(item.reviewKey==='time') TIME_ITEMS.forEach(x=>add(x[1]))} const distractors=shuffle(uniqBy(result,x=>x)).slice(0,count);return shuffle([item.answer,...distractors])}
+function acceptableListenAnswers(item){if(item.listenAccept&&item.listenAccept.length)return item.listenAccept.map(x=>normalizeTextInput(x));return []}
+function getNextItem(){
+  if(shouldInjectReview()){
+    const review=buildReviewItem();
+    if(review && serialOf(review)!==state.lastSerial && !tooSimilarToRecent(review)) return review;
+  }
+  const mode=state.mode==='mix'?pick(['choose','listen','context']):state.mode;
+  const sec=sectionMeta();
+  let item=null;
+  for(let i=0;i<80;i++){
+    item=(mode==='context')?makeContextItem(pick(CONTEXT_TEMPLATES)):sec.make();
+    if(serialOf(item)!==state.lastSerial && !tooSimilarToRecent(item)) break;
+  }
+  item.generatedForMode=mode;
+  return item;
+}
+function renderBars(){el.sectionBar.innerHTML=SECTIONS.map(sec=>`<button class="sec-btn ${sec.id===state.sectionId?'on':''}" data-sec="${sec.id}">${sec.emoji} ${sec.label}</button>`).join('');document.querySelectorAll('.sec-btn').forEach(btn=>btn.addEventListener('click',()=>{state.sectionId=btn.dataset.sec;renderBars();updateStatus();renderCard();saveState()}));document.querySelectorAll('.mode-btn').forEach(btn=>{btn.classList.toggle('on',btn.dataset.mode===state.mode);btn.onclick=()=>{state.mode=btn.dataset.mode;renderBars();renderCard();saveState()}})}
+function renderTipBox(item){return `<div class="tip-box hidden" id="tipBox">${TIPS[item.tipKey]||TIPS[sectionMeta().tipKey]}</div>`}
+function renderReviewBanner(item){if(!item.isReview)return '';return `<div class="review-banner"><h3>⚠️ Rychlý návrat k dřívější chybě</h3><div class="tiny">Minule ses tady trochu zamotal. Tak schválně – co teď?</div></div>`}
+function renderCard(){state.current=getNextItem();state.answered=false;state.attempts=0;state.lastSerial=serialOf(state.current);rememberItem(state.current);const mode=state.current.generatedForMode||state.mode;if(mode==='study')renderStudy();else if(mode==='choose')renderChoose();else if(mode==='listen')renderListen();else if(mode==='context')renderContext();else renderChoose();saveState()}
+function renderStudy(){const sec=sectionMeta();const items=[];const seen=new Set();let tries=0;while(items.length<9&&tries<120){const it=sec.make();const s=serialOf(it);const fam=familyKeyOf(it);if(!seen.has(s)&&!seen.has(fam)&&s!==state.lastSerial&&!tooSimilarToRecent(it)){seen.add(s);seen.add(fam);items.push(it)}tries++}el.gameCard.innerHTML=`<div class="label">${sec.emoji} ${safeHtml(sec.label)} · rychlé osvěžení</div><div class="title-row"><div><strong>${safeHtml(sec.desc)}</strong><div class="small-note">Klikni na řádek nebo na přehrání. Tohle je rychlé osvěžení bez zbytečného vysvětlování.</div></div><button class="mini-btn" id="showTipBtn">🧠 Jak na to</button></div>${renderTipBox({tipKey:sec.tipKey})}<div class="study-grid">${items.map(it=>`<div class="study-item" data-speech="${safeHtml(it.speechText)}"><div class="study-main">${safeHtml(it.display)}</div><div><div class="study-en">${safeHtml(it.answerLabel)}</div><div class="study-note">${safeHtml(it.czHint||sec.desc)}</div></div><button class="study-play">▶ Přehrát</button></div>`).join('')}</div><div class="actions" style="margin-top:14px"><button class="next-btn" style="display:inline-flex" id="nextSetBtn">Další sada →</button></div>`;document.getElementById('showTipBtn').onclick=toggleTip;document.getElementById('nextSetBtn').onclick=renderCard;el.gameCard.querySelectorAll('.study-item').forEach(row=>{const text=row.dataset.speech;row.onclick=e=>{if(!e.target.classList.contains('study-play'))speak(text,1)};row.querySelector('.study-play').onclick=e=>{e.stopPropagation();speak(text,1,e.currentTarget)}})}
+function attachSpeechButtons(){document.querySelectorAll('.speak-btn').forEach(btn=>btn.onclick=()=>speak(btn.dataset.speech,Number(btn.dataset.rate||1),btn))}
+function renderChoose(){const item=state.current;const opts=betterDistractors(item,3);el.gameCard.innerHTML=`<div class="label">${safeHtml(item.promptLabel)}</div>${renderReviewBanner(item)}<div class="title-row"><div class="small-note">Vyber nejlepší odpověď. Žádná diplomka. Prostě trefa.</div><button class="mini-btn" id="showTipBtn">🧠 Jak na to</button></div>${renderTipBox(item)}<div class="hero"><div class="hero-big">${safeHtml(item.display)}</div><div class="hero-sub">${safeHtml(item.czHint||'')}</div></div><div class="speech-row"><button class="speak-btn" data-speech="${safeHtml(item.speechText)}">▶ Přehrát</button><button class="speak-btn" data-speech="${safeHtml(item.speechText)}" data-rate="0.62">🐢 Pomalu</button></div><div class="grid-opts">${shuffle(opts).map(opt=>`<button class="opt" data-opt="${safeHtml(opt)}">${safeHtml(opt)}</button>`).join('')}</div><div class="feedback" id="feedback"><div class="fb-title" id="fbTitle"></div><div class="fb-text" id="fbText"></div></div><div class="actions"><button class="hint-btn hidden" id="hintBtn">💡 Nápověda</button><button class="next-btn" id="nextBtn">Další →</button></div>`;attachSpeechButtons();document.getElementById('showTipBtn').onclick=toggleTip;document.getElementById('nextBtn').onclick=renderCard;document.getElementById('hintBtn').onclick=()=>{speak(item.speechText,0.68);showFeedback('info','💡 Malá nápověda',`Správná odpověď zní: <strong>${safeHtml(item.answerLabel)}</strong>.`);document.getElementById('hintBtn').classList.add('hidden')};document.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>chooseOption(btn))}
+function chooseOption(btn){if(state.answered)return;const item=state.current;const chosen=btn.dataset.opt;const correct=item.answer;if(chosen===correct){state.answered=true;document.querySelectorAll('.opt').forEach(b=>{if(b.dataset.opt===correct)b.classList.add('correct');b.disabled=true});const pts=state.attempts===0?12:7;gainXp(pts);if(item.isReview)softenWrong(item.reviewKey);showFeedback('ok','✅ Přesně tak',`Správně: <strong>${safeHtml(item.answerLabel)}</strong>.`);floatPoints('+'+pts);soundCorrect();if(state.streak%4===0)confettiBurst(8);speak(item.speechText,1,document.querySelector('.speak-btn'));document.getElementById('nextBtn').style.display='inline-flex';return}btn.classList.add('wrong');state.attempts+=1;if(state.attempts===1){markWrong(item,{confusedWith:chosen});registerMiss();showFeedback('warn','Ještě ne',`Tohle nebylo ono. Zkus to znovu.`);document.getElementById('hintBtn').classList.remove('hidden');soundWrong()}else{state.answered=true;document.querySelectorAll('.opt').forEach(b=>{if(b.dataset.opt===correct)b.classList.add('reveal');b.disabled=true});markWrong(item,{confusedWith:chosen});registerMiss();showFeedback('bad','❌ Teď ne',`Správná odpověď je <strong>${safeHtml(item.answerLabel)}</strong>. Příště tě modul znovu zkusí nachytat.`);soundWrong();document.getElementById('nextBtn').style.display='inline-flex';document.getElementById('hintBtn').classList.add('hidden');speak(item.speechText,.9,document.querySelector('.speak-btn'))}}
+function renderListen(){const item=state.current;const placeholder=item.kind==='time'?'napiš digitálně, např. 5:45':item.kind==='day'?'napiš den anglicky':item.kind==='month'?'napiš měsíc anglicky':item.kind==='preposition'?'napiš jen předložku':'napiš přesně, co slyšíš';el.gameCard.innerHTML=`<div class="label">👂 Poslech a zápis</div>${renderReviewBanner(item)}<div class="title-row"><div class="small-note">Poslechni si výslovnost a zapiš to, co slyšíš.</div><button class="mini-btn" id="showTipBtn">🧠 Jak na to</button></div>${renderTipBox(item)}<div class="hero"><div class="hero-big">🎧</div><div class="hero-sub">${item.kind==='time'?'Uslyšíš čas. Napiš ho digitálně.':item.kind==='day'?'Uslyšíš den. Napiš ho anglicky.':item.kind==='month'?'Uslyšíš měsíc. Napiš ho anglicky.':item.kind==='preposition'?'Uslyšíš celé spojení. Napiš jen předložku.':'Uslyšíš správný tvar. Napiš ho přesně.'}</div></div><div class="speech-row"><button class="speak-btn" data-speech="${safeHtml(item.speechText)}">▶ Přehrát</button><button class="speak-btn" data-speech="${safeHtml(item.speechText)}" data-rate="0.62">🐢 Pomalu</button></div><div class="input-wrap"><input class="answer-input" id="answerInput" autocomplete="off" inputmode="text" placeholder="${safeHtml(placeholder)}"></div><div class="feedback" id="feedback"><div class="fb-title" id="fbTitle"></div><div class="fb-text" id="fbText"></div></div><div class="actions"><button class="hint-btn hidden" id="hintBtn">💡 Nápověda</button><button class="check-btn" id="checkBtn">Zkontrolovat</button><button class="next-btn" id="nextBtn">Další →</button></div>`;attachSpeechButtons();document.getElementById('showTipBtn').onclick=toggleTip;const input=document.getElementById('answerInput');document.getElementById('checkBtn').onclick=checkListen;document.getElementById('nextBtn').onclick=renderCard;document.getElementById('hintBtn').onclick=()=>{showFeedback('info','💡 Nápověda',`Slyšíš: <strong>${safeHtml(item.answerLabel)}</strong>.`);speak(item.speechText,0.68);document.getElementById('hintBtn').classList.add('hidden')};input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();state.answered?renderCard():checkListen()}});setTimeout(()=>{input.focus();setTimeout(()=>speak(item.speechText,1,document.querySelector('.speak-btn')),350)},120)}
+function checkListen(){if(state.answered)return;const item=state.current;const input=document.getElementById('answerInput');const value=normalizeTextInput(input.value);if(!value){input.focus();return}const accepted=acceptableListenAnswers(item).map(normalizeTextInput);const ok=accepted.includes(value);if(ok){state.answered=true;input.classList.remove('bad');input.classList.add('good');const pts=state.attempts===0?14:8;gainXp(pts);if(item.isReview)softenWrong(item.reviewKey);showFeedback('ok','✅ Sedí to',item.kind==='time'?`Správně: <strong>${safeHtml(item.display)}</strong>. Anglicky: <strong>${safeHtml(item.answerLabel)}</strong>.`:item.kind==='preposition'?`Správně: <strong>${safeHtml(item.answerLabel)}</strong>. Celé spojení je <strong>${safeHtml(item.fullPhrase||item.speechText)}</strong>.`:`Správně: <strong>${safeHtml(item.answerLabel)}</strong>.`);floatPoints('+'+pts);soundCorrect();document.getElementById('checkBtn').classList.add('hidden');document.getElementById('hintBtn').classList.add('hidden');document.getElementById('nextBtn').style.display='inline-flex';return}state.attempts+=1;input.classList.remove('good');input.classList.add('bad');markWrong(item,{confusedWith:value});registerMiss();soundWrong();if(state.attempts===1){showFeedback('warn','Tohle ještě ne',`Zkus to znovu. Přehraj si to ještě jednou.`);document.getElementById('hintBtn').classList.remove('hidden');setTimeout(()=>{input.classList.remove('bad');input.select()},500);return}if(state.attempts===2){showFeedback('info','Nápověda do uší',`Slyšíš: <strong>${safeHtml(item.answerLabel)}</strong>.`);speak(item.speechText,0.62,document.querySelector('.speak-btn[data-rate="0.62"]'));setTimeout(()=>{input.classList.remove('bad');input.select()},500);return}state.answered=true;input.classList.remove('bad');input.value=acceptableListenAnswers(item)[0]||'';input.classList.add('good');showFeedback('bad','❌ Tohle ti vrátím později',item.kind==='time'?`Správně je <strong>${safeHtml(item.display)}</strong>. Anglicky: <strong>${safeHtml(item.answerLabel)}</strong>.`:item.kind==='preposition'?`Správně je <strong>${safeHtml(item.answerLabel)}</strong>. Celé spojení je <strong>${safeHtml(item.fullPhrase||item.speechText)}</strong>.`:`Správně je <strong>${safeHtml(item.answerLabel)}</strong>.`);document.getElementById('checkBtn').classList.add('hidden');document.getElementById('hintBtn').classList.add('hidden');document.getElementById('nextBtn').style.display='inline-flex'}
+function renderContext(){const item=state.current.kind==='context'?state.current:makeContextItem(pick(CONTEXT_TEMPLATES));state.current=item;const opts=betterDistractors(item,3);el.gameCard.innerHTML=`<div class="label">💬 Ve větě</div>${renderReviewBanner(item)}<div class="title-row"><div class="small-note">Doplň správný tvar do věty. Tady už jde o živou angličtinu v krátké větě.</div><button class="mini-btn" id="showTipBtn">🧠 Jak na to</button></div>${renderTipBox(item)}<div class="context-box"><div class="ctx-en">${safeHtml(item.display).replace('__','<span class="ctx-gap">_____</span>')}</div><div class="ctx-cz">🇨🇿 ${safeHtml(item.czHint)}</div></div><div class="speech-row"><button class="speak-btn" data-speech="${safeHtml(item.fullEn)}">▶ Celou větu</button><button class="speak-btn" data-speech="${safeHtml(item.answerLabel)}" data-rate="0.62">🐢 Jen odpověď</button></div><div class="grid-opts">${shuffle(opts).map(opt=>`<button class="opt" data-opt="${safeHtml(opt)}">${safeHtml(opt)}</button>`).join('')}</div><div class="feedback" id="feedback"><div class="fb-title" id="fbTitle"></div><div class="fb-text" id="fbText"></div></div><div class="actions"><button class="hint-btn hidden" id="hintBtn">💡 Nápověda</button><button class="next-btn" id="nextBtn">Další →</button></div>`;attachSpeechButtons();document.getElementById('showTipBtn').onclick=toggleTip;document.getElementById('nextBtn').onclick=renderCard;document.getElementById('hintBtn').onclick=()=>{showFeedback('info','💡 Nápověda',`Do věty patří <strong>${safeHtml(item.answerLabel)}</strong>.`);speak(item.answerLabel,0.66);document.getElementById('hintBtn').classList.add('hidden')};document.querySelectorAll('.opt').forEach(btn=>btn.onclick=()=>chooseContext(btn))}
+function chooseContext(btn){if(state.answered)return;const item=state.current;const chosen=btn.dataset.opt;const correct=item.answer;if(chosen===correct){state.answered=true;document.querySelectorAll('.opt').forEach(b=>{if(b.dataset.opt===correct)b.classList.add('correct');b.disabled=true});const pts=state.attempts===0?13:8;gainXp(pts);if(item.isReview)softenWrong(item.reviewKey);showFeedback('ok','✅ Sedlo to do věty',`${safeHtml(item.fullEn).replace(safeHtml(item.answerLabel),'<strong>'+safeHtml(item.answerLabel)+'</strong>')}`);floatPoints('+'+pts);soundCorrect();speak(item.fullEn,1,document.querySelector('.speak-btn'));document.getElementById('nextBtn').style.display='inline-flex';return}btn.classList.add('wrong');state.attempts+=1;markWrong(item,{confusedWith:chosen});registerMiss();soundWrong();if(state.attempts===1){showFeedback('warn','Ještě ne',`Tady ses netrefil. Zkus to znovu.`);document.getElementById('hintBtn').classList.remove('hidden');return}state.answered=true;document.querySelectorAll('.opt').forEach(b=>{if(b.dataset.opt===correct)b.classList.add('reveal');b.disabled=true});showFeedback('bad','❌ Správně je to jinak',`Do věty patří <strong>${safeHtml(item.answerLabel)}</strong>.`);document.getElementById('nextBtn').style.display='inline-flex';document.getElementById('hintBtn').classList.add('hidden');speak(item.fullEn,.95,document.querySelector('.speak-btn'))}
+function showFeedback(type,title,text){const fb=document.getElementById('feedback');if(!fb)return;fb.className=`feedback ${type} show`;document.getElementById('fbTitle').innerHTML=title;document.getElementById('fbText').innerHTML=text}
+function toggleTip(){const box=document.getElementById('tipBox');if(box)box.classList.toggle('hidden')}
+let voices=[];function loadVoices(){voices=speechSynthesis.getVoices();if(!voices.length)speechSynthesis.onvoiceschanged=()=>{voices=speechSynthesis.getVoices()}}
+function chooseVoice(){return voices.find(v=>v.lang==='en-GB')||voices.find(v=>v.lang.startsWith('en'))||null}
+function speak(text,rate=1,btn=null){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();document.querySelectorAll('.speak-btn').forEach(b=>b.classList.remove('speaking'));const utter=new SpeechSynthesisUtterance(text);utter.lang='en-GB';utter.rate=rate;const voice=chooseVoice();if(voice)utter.voice=voice;utter.onstart=()=>{if(btn)btn.classList.add('speaking')};utter.onend=()=>{if(btn)btn.classList.remove('speaking')};utter.onerror=()=>{if(btn)btn.classList.remove('speaking')};speechSynthesis.speak(utter)}
+let actx=null;function audioCtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}
+function tone(freq,duration=.18,type='sine',delay=0,gainValue=.06){try{const c=audioCtx(),t=c.currentTime+delay,osc=c.createOscillator(),gain=c.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,t);gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(gainValue,t+.02);gain.gain.exponentialRampToValueAtTime(.0001,t+duration);osc.connect(gain);gain.connect(c.destination);osc.start(t);osc.stop(t+duration+.02)}catch(e){}}
+function soundCorrect(){[523,659,784].forEach((f,i)=>tone(f,.22,'sine',i*.08,.07))}
+function soundWrong(){tone(300,.16,'triangle',0,.08);tone(220,.22,'triangle',.12,.06)}
+function soundLevel(){[523,659,784,1047].forEach((f,i)=>tone(f,.22,'sine',i*.08,.08))}
+function floatPoints(text){const div=document.createElement('div');div.className='float-points';div.textContent=text;document.body.appendChild(div);setTimeout(()=>div.remove(),1050)}
+function confettiBurst(n=12){const colors=['#23dac1','#64b0ff','#f0c04e','#ff7d7d','#b48eff','#53dd89'];for(let i=0;i<n;i++){const p=document.createElement('div');p.className='confetti';p.style.left=Math.random()*100+'vw';p.style.width=(6+Math.random()*8)+'px';p.style.height=(5+Math.random()*8)+'px';p.style.background=pick(colors);p.style.borderRadius=Math.random()>.5?'50%':'2px';p.style.animationDuration=(.9+Math.random()*1.6)+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),2500)}}
+function bindGlobalEvents(){document.querySelectorAll('.theme button').forEach(btn=>btn.addEventListener('click',()=>setTheme(btn.dataset.theme)));el.tipToggle.onclick=()=>{const box=document.getElementById('tipBox');if(box)box.classList.toggle('hidden')};el.clearProgress.onclick=()=>{if(!confirm('Opravdu chceš vynulovat postup, XP i uložené chyby?'))return;localStorage.removeItem(SAVE_KEY);location.reload()};document.getElementById('closeLevel').onclick=()=>el.levelOverlay.classList.remove('show');document.addEventListener('keydown',e=>{if(e.key==='Escape')el.levelOverlay.classList.remove('show');if(e.key===' '&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){const btn=document.querySelector('.speak-btn');if(btn){e.preventDefault();btn.click()}}if(e.key==='Enter'&&state.answered&&state.mode!=='study'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();renderCard()}});document.addEventListener('pointerdown',()=>{if(actx&&actx.state==='suspended')actx.resume()},{passive:true})}
+function init(){loadState();loadTheme();loadVoices();bindGlobalEvents();renderBars();updateStatus();renderCard()}init();
+</script>
+</body>
+</html>
