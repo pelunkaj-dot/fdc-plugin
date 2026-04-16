@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FajnVesmír — Galaxie, hvězdy, černé díry</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08060F;--bg2:#10091E;--card:rgba(22,14,50,.78);--card2:rgba(16,10,40,.82);--purple:#A855F7;--purple2:#D8A8FF;--purple3:#6D28D9;--gold:#FFD166;--teal:#2DD4BF;--text:#F0EAFF;--muted:#7A6A9A;--correct:#34D399;--wrong:#F87171;--xp:#F59E0B;--border:rgba(168,85,247,.16);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 80% 60% at 0% 0%,rgba(109,40,217,.32) 0%,transparent 55%),radial-gradient(ellipse 60% 70% at 100% 20%,rgba(30,20,80,.4) 0%,transparent 55%),radial-gradient(ellipse 70% 50% at 50% 50%,rgba(45,212,191,.07) 0%,transparent 60%),radial-gradient(ellipse 80% 60% at 10% 90%,rgba(168,85,247,.18) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 85%,rgba(30,10,70,.5) 0%,transparent 55%),linear-gradient(135deg,#050410 0%,#0A0620 30%,#060318 60%,#080525 100%);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1px 1px at 5% 8%,rgba(255,255,255,.95) 0%,transparent 100%),radial-gradient(1px 1px at 12% 32%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 19% 55%,rgba(255,255,255,.85) 0%,transparent 100%),radial-gradient(1px 1px at 27% 18%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1px 1px at 34% 72%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 41% 44%,rgba(255,255,255,.65) 0%,transparent 100%),radial-gradient(1px 1px at 49% 88%,rgba(255,255,255,.75) 0%,transparent 100%),radial-gradient(1px 1px at 56% 25%,rgba(255,255,255,.9) 0%,transparent 100%),radial-gradient(1px 1px at 63% 62%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1px 1px at 71% 10%,rgba(255,255,255,.85) 0%,transparent 100%),radial-gradient(1px 1px at 78% 80%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 85% 40%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 92% 58%,rgba(255,255,255,.65) 0%,transparent 100%),radial-gradient(1px 1px at 97% 22%,rgba(255,255,255,.9) 0%,transparent 100%),radial-gradient(1px 1px at 3% 68%,rgba(255,255,255,.75) 0%,transparent 100%),radial-gradient(1px 1px at 22% 92%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1px 1px at 44% 6%,rgba(255,255,255,.85) 0%,transparent 100%),radial-gradient(1px 1px at 66% 48%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 88% 15%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 31% 38%,rgba(255,255,255,.65) 0%,transparent 100%),radial-gradient(2px 2px at 16% 22%,rgba(255,180,150,.9) 0%,transparent 100%),radial-gradient(2px 2px at 38% 65%,rgba(150,200,255,.9) 0%,transparent 100%),radial-gradient(2.5px 2.5px at 62% 14%,rgba(255,220,150,.95) 0%,transparent 100%),radial-gradient(2px 2px at 74% 78%,rgba(200,150,255,.85) 0%,transparent 100%),radial-gradient(2px 2px at 90% 35%,rgba(150,230,220,.9) 0%,transparent 100%),radial-gradient(3px 3px at 23% 12%,rgba(255,255,255,1) 0%,transparent 100%),radial-gradient(3px 3px at 77% 55%,rgba(255,240,255,1) 0%,transparent 100%),radial-gradient(2.5px 2.5px at 45% 82%,rgba(255,255,220,1) 0%,transparent 100%),radial-gradient(3px 3px at 90% 8%,rgba(220,240,255,1) 0%,transparent 100%);}
+.screen{display:none;min-height:100vh;padding:0 16px 40px;max-width:600px;margin:0 auto;animation:fadeIn .3s ease;position:relative;z-index:1;}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes starPop{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes xpFloat{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}80%{transform:translate(-50%,-80%);opacity:1}100%{transform:translate(-50%,-120%) scale(.8);opacity:0}}
+@keyframes correctPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px rgba(52,211,153,.32)}}
+@keyframes wrongShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes slide{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+@keyframes flamePulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.2)}}
+.home-header{text-align:center;padding:28px 0 18px}
+.logo{font-family:'Bebas Neue',cursive;font-size:3.6rem;letter-spacing:.06em;line-height:1;background:linear-gradient(135deg,var(--purple2) 0%,var(--purple) 45%,var(--teal) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-ico{font-size:2.8rem;-webkit-text-fill-color:initial;vertical-align:middle;margin-right:6px}
+.logo-sub{font-size:.78rem;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-top:5px}
+.xp-bar{display:inline-flex;align-items:center;gap:8px;background:rgba(22,14,50,.8);border:1px solid rgba(168,85,247,.25);border-radius:999px;padding:8px 22px;margin-top:10px;font-weight:800;font-size:1.05rem;color:var(--xp);backdrop-filter:blur(10px);}
+.xp-lbl{font-weight:400;color:var(--muted);font-size:.8rem}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:14px 0}
+.cat-card{background:rgba(22,14,50,.72);border:1px solid rgba(168,85,247,.18);border-radius:16px;padding:16px 14px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.cat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(168,85,247,.07) 0%,transparent 60%);opacity:0;transition:opacity .22s;}
+.cat-card:hover::before{opacity:1}
+.cat-card:hover{border-color:rgba(168,85,247,.4);transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.55),0 0 20px rgba(120,60,220,.12)}
+.cat-card:active{transform:scale(.97)}
+.cat-emoji{font-size:2rem;margin-bottom:8px;display:block}
+.cat-name{font-family:'Bebas Neue',cursive;font-size:1.15rem;letter-spacing:.06em;color:var(--purple2);line-height:1.2}
+.cat-count{font-size:.65rem;color:var(--purple3);font-weight:800;margin-top:2px;letter-spacing:.05em}
+.cat-desc{font-size:.71rem;color:var(--muted);margin-top:3px;line-height:1.4}
+.cat-stars{margin-top:8px;display:flex;gap:3px}
+.cat-star{font-size:.82rem;opacity:.16;transition:opacity .3s}
+.cat-star.on{opacity:1}
+.btn-badges{width:100%;background:rgba(22,14,50,.72);border:1.5px solid rgba(168,85,247,.2);border-radius:14px;padding:15px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;backdrop-filter:blur(10px);}
+.btn-badges:hover{border-color:rgba(168,85,247,.45);color:var(--purple2)}
+.badge-pill{background:var(--purple3);color:#fff;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 8px}
+.q-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 10px}
+.q-cat{font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:.1em;color:var(--purple)}
+.q-streak{display:none;align-items:center;gap:3px;font-weight:800;font-size:.9rem;color:var(--gold)}
+.q-streak.on{display:flex}
+.streak-fire{animation:flamePulse .65s ease infinite;display:inline-block}
+.q-cnt-wrap{display:flex;align-items:center;gap:8px}
+.q-cnt{font-size:.82rem;color:var(--muted);font-weight:700}
+.back-q{background:none;border:1.5px solid rgba(168,85,247,.2);border-radius:8px;padding:4px 10px;font-size:.75rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+.back-q:hover{border-color:rgba(168,85,247,.45);color:var(--purple2)}
+.prog-bar{height:5px;background:rgba(22,14,50,.8);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--purple3),var(--purple));border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.q-card{background:rgba(18,10,45,.75);border:1px solid rgba(168,85,247,.18);border-radius:20px;padding:22px;margin-bottom:14px;min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:slide .25s ease;backdrop-filter:blur(14px);}
+.q-badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px;font-weight:700}
+.q-text{font-size:1.08rem;font-weight:700;line-height:1.48;color:var(--text)}
+.obj-display{width:100%;display:flex;justify-content:center;margin:4px 0 14px}
+.obj-display svg{width:100%;max-width:200px;height:auto}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.answers.solo{grid-template-columns:1fr}
+.ans-btn{background:rgba(22,14,50,.65);border:1.5px solid rgba(168,85,247,.16);border-radius:13px;padding:13px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:all .18s;text-align:center;line-height:1.35;backdrop-filter:blur(8px);}
+.ans-btn:hover:not(:disabled){border-color:rgba(168,85,247,.45);background:rgba(168,85,247,.1);color:var(--purple2)}
+.ans-btn.correct{background:rgba(52,211,153,.16);border-color:var(--correct);color:var(--correct);animation:correctPulse .5s ease}
+.ans-btn.wrong{background:rgba(248,113,113,.14);border-color:var(--wrong);color:var(--wrong);animation:wrongShake .4s ease}
+.ans-btn.show-correct{background:rgba(52,211,153,.12);border-color:var(--correct);color:var(--correct)}
+.ans-btn:disabled{cursor:default}
+.fact-box{background:rgba(60,20,100,.55);border:1px solid rgba(168,85,247,.28);border-radius:13px;padding:14px;margin-bottom:13px;display:none;animation:popIn .3s ease;backdrop-filter:blur(10px);}
+.fact-box.on{display:block}
+.fact-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.14em;color:var(--purple);font-weight:800;margin-bottom:5px}
+.fact-text{font-size:.86rem;color:var(--text);line-height:1.58}
+.next-btn{width:100%;background:linear-gradient(135deg,var(--purple3),var(--purple));border:none;border-radius:13px;padding:16px;color:#fff;font-family:'Bebas Neue',cursive;font-size:1.25rem;letter-spacing:.1em;cursor:pointer;display:none;transition:all .2s;box-shadow:0 4px 16px rgba(109,40,217,.35);}
+.next-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.next-btn.on{display:block;animation:popIn .3s ease}
+.xp-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--xp);color:#000;font-family:'Bebas Neue',cursive;font-size:2rem;padding:10px 28px;border-radius:999px;pointer-events:none;z-index:200;opacity:0;white-space:nowrap;}
+.xp-popup.go{animation:xpFloat 1.7s ease forwards}
+.res-header{text-align:center;padding:28px 0 16px}
+.res-title{font-family:'Bebas Neue',cursive;font-size:2.6rem;letter-spacing:.05em;color:var(--purple2)}
+.res-sub{color:var(--muted);font-size:.88rem;margin-top:3px}
+.res-stars{display:flex;justify-content:center;gap:14px;margin:18px 0}
+.res-star{font-size:2.8rem;opacity:.14;display:inline-block}
+.res-star.on{opacity:1;animation:starPop .5s cubic-bezier(.4,0,.2,1) forwards}
+.res-star:nth-child(2){animation-delay:.2s}
+.res-star:nth-child(3){animation-delay:.4s}
+.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:14px 0}
+.stat-c{background:rgba(18,10,45,.75);border:1px solid rgba(168,85,247,.16);border-radius:13px;padding:14px 9px;text-align:center;backdrop-filter:blur(10px);}
+.stat-v{font-family:'Bebas Neue',cursive;font-size:1.75rem;color:var(--purple)}
+.stat-l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+.facts-review{margin:18px 0}
+.facts-t{font-family:'Bebas Neue',cursive;font-size:1.15rem;color:var(--purple);letter-spacing:.08em;margin-bottom:9px}
+.fact-item{background:rgba(22,14,50,.72);border-left:3px solid var(--purple3);border-radius:0 9px 9px 0;padding:9px 13px;margin-bottom:7px;font-size:.83rem;line-height:1.52;color:var(--text);}
+.res-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.btn-primary{background:linear-gradient(135deg,var(--purple3),var(--purple));border:none;border-radius:13px;padding:15px;color:#fff;font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.08em;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-sec{background:rgba(22,14,50,.72);border:1.5px solid rgba(168,85,247,.2);border-radius:13px;padding:15px;color:var(--text);font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.08em;cursor:pointer;transition:all .2s;}
+.btn-sec:hover{border-color:rgba(168,85,247,.45);color:var(--purple2)}
+.badges-top{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
+.back-btn{background:rgba(22,14,50,.72);border:1px solid rgba(168,85,247,.18);border-radius:9px;padding:7px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;font-size:.82rem;transition:all .2s;}
+.back-btn:hover{border-color:rgba(168,85,247,.45)}
+.badges-t{font-family:'Bebas Neue',cursive;font-size:1.7rem;color:var(--purple2);letter-spacing:.05em}
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge-c{background:rgba(18,10,45,.75);border:1px solid rgba(168,85,247,.15);border-radius:14px;padding:14px 9px;text-align:center;transition:all .3s;backdrop-filter:blur(10px);}
+.badge-c.locked{opacity:.28;filter:grayscale(.8)}
+.badge-c.unlocked{border-color:rgba(168,85,247,.42);box-shadow:0 0 14px rgba(120,60,220,.18)}
+.badge-ico{font-size:2.1rem;margin-bottom:7px;display:block}
+.badge-n{font-size:.68rem;font-weight:800;color:var(--purple2);text-transform:uppercase;letter-spacing:.07em;line-height:1.25}
+.badge-d{font-size:.61rem;color:var(--muted);margin-top:3px;line-height:1.35}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--purple3);border-radius:3px}
+@media(max-width:360px){.logo{font-size:3rem}.cat-grid{gap:8px}.answers{gap:7px}}
+</style>
+</head>
+<body>
+<div class="xp-popup" id="xpPopup"></div>
+<div class="screen" id="homeScreen">
+  <div class="home-header">
+    <div class="logo"><span class="logo-ico">🌌</span>FajnVesmír</div>
+    <div class="logo-sub">Galaxie · černé díry · vznik vesmíru</div>
+    <div class="xp-bar">⚡ <span id="xpTotal">0</span> <span class="xp-lbl">XP</span></div>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+  <button class="btn-badges" onclick="showBadges()">🏆 Odznaky &nbsp;<span class="badge-pill" id="badgePill">0/18</span></button>
+</div>
+<div class="screen" id="questionScreen">
+  <div class="q-topbar">
+    <div class="q-cat" id="qCat"></div>
+    <div class="q-streak" id="qStreak"><span class="streak-fire">✨</span><span id="streakN">0</span></div>
+    <div class="q-cnt-wrap">
+      <div class="q-cnt" id="qCnt"></div>
+      <button class="back-q" onclick="goHome()">← Domů</button>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="q-card">
+    <div class="q-badge" id="qBadge"></div>
+    <div class="obj-display" id="objDisplay" style="display:none"></div>
+    <div class="q-text" id="qText"></div>
+  </div>
+  <div class="answers" id="answersDiv"></div>
+  <div class="fact-box" id="factBox">
+    <div class="fact-label">🌌 Věděl/a jsi?</div>
+    <div class="fact-text" id="factTxt"></div>
+  </div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Další →</button>
+</div>
+<div class="screen" id="resultScreen">
+  <div class="res-header">
+    <div class="res-title" id="resTitle"></div>
+    <div class="res-sub" id="resSub"></div>
+  </div>
+  <div class="res-stars"><span class="res-star">⭐</span><span class="res-star">⭐</span><span class="res-star">⭐</span></div>
+  <div class="res-stats">
+    <div class="stat-c"><div class="stat-v" id="stCorrect">0</div><div class="stat-l">Správně</div></div>
+    <div class="stat-c"><div class="stat-v" id="stXP" style="color:var(--xp)">0</div><div class="stat-l">XP</div></div>
+    <div class="stat-c"><div class="stat-v" id="stStreak" style="color:var(--gold)">0</div><div class="stat-l">Max série</div></div>
+  </div>
+  <div class="facts-review"><div class="facts-t">🌌 Co jsi se dozvěděl/a</div><div id="factsList"></div></div>
+  <div class="res-btns">
+    <button class="btn-primary" onclick="playAgain()">Hrát znovu</button>
+    <button class="btn-sec" onclick="goHome()">← Domů</button>
+  </div>
+</div>
+<div class="screen" id="badgesScreen">
+  <div class="badges-top">
+    <button class="back-btn" onclick="goHome()">← Zpět</button>
+    <div class="badges-t">Moje odznaky</div>
+  </div>
+  <div class="badge-grid" id="badgeGrid"></div>
+</div>
+<script>
+const OBJS={
+blackhole:`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bh" cx="50%" cy="50%"><stop offset="0%" stop-color="#000"/><stop offset="35%" stop-color="#0A0020"/><stop offset="55%" stop-color="#1A0040"/><stop offset="70%" stop-color="#3D0080" stop-opacity=".8"/><stop offset="85%" stop-color="#7B00CC" stop-opacity=".5"/><stop offset="100%" stop-color="#A855F7" stop-opacity="0"/></radialGradient><radialGradient id="acc" cx="50%" cy="50%"><stop offset="0%" stop-color="#FF8C00" stop-opacity=".9"/><stop offset="40%" stop-color="#FF4500" stop-opacity=".7"/><stop offset="70%" stop-color="#8B0080" stop-opacity=".4"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><ellipse cx="110" cy="110" rx="100" ry="28" fill="url(#acc)" opacity=".75"/><ellipse cx="110" cy="110" rx="88" ry="22" fill="url(#acc)" opacity=".6"/><circle cx="110" cy="110" r="75" fill="url(#bh)"/><circle cx="110" cy="110" r="36" fill="#000"/><circle cx="110" cy="110" r="28" fill="#000"/><ellipse cx="110" cy="110" rx="100" ry="28" fill="none" stroke="#FF6600" stroke-width="1.5" opacity=".4"/><ellipse cx="110" cy="110" rx="80" ry="20" fill="none" stroke="#CC4400" stroke-width="1" opacity=".3"/></svg>`,
+galaxy:`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="gc" cx="50%" cy="50%"><stop offset="0%" stop-color="#FFF9C4"/><stop offset="20%" stop-color="#FFE082"/><stop offset="50%" stop-color="#7C4DFF" stop-opacity=".7"/><stop offset="80%" stop-color="#311B92" stop-opacity=".4"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><ellipse cx="110" cy="110" rx="100" ry="60" fill="url(#gc)" opacity=".3" transform="rotate(-25 110 110)"/><path d="M110,110 C130,80 170,70 180,90 C190,110 170,140 140,150 C110,160 70,145 55,120 C40,95 60,65 90,60 C120,55 155,70 165,95" fill="none" stroke="rgba(200,180,255,.6)" stroke-width="3"/><path d="M110,110 C90,140 50,150 40,130 C30,110 50,80 80,70 C110,60 150,75 165,100 C180,125 160,155 130,160 C100,165 60,150 45,125" fill="none" stroke="rgba(180,160,255,.5)" stroke-width="2"/><circle cx="110" cy="110" r="16" fill="#FFF9C4" opacity=".9"/><circle cx="110" cy="110" r="8" fill="#FFE082"/><circle cx="155" cy="85" r="2" fill="white" opacity=".7"/><circle cx="65" cy="135" r="2" fill="white" opacity=".6"/><circle cx="145" cy="140" r="1.5" fill="white" opacity=".5"/><circle cx="75" cy="80" r="1.5" fill="white" opacity=".6"/></svg>`,
+neutron:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="ns" cx="50%" cy="50%"><stop offset="0%" stop-color="#E0F7FA"/><stop offset="40%" stop-color="#00B8D4"/><stop offset="70%" stop-color="#006064"/><stop offset="100%" stop-color="#002030"/></radialGradient></defs><circle cx="100" cy="100" r="90" fill="#000820" opacity=".5"/><line x1="100" y1="10" x2="100" y2="60" stroke="#00E5FF" stroke-width="3" opacity=".8"/><line x1="100" y1="140" x2="100" y2="190" stroke="#00E5FF" stroke-width="3" opacity=".8"/><ellipse cx="100" cy="35" rx="8" ry="25" fill="#00E5FF" opacity=".4"/><ellipse cx="100" cy="165" rx="8" ry="25" fill="#00E5FF" opacity=".4"/><circle cx="100" cy="100" r="38" fill="url(#ns)"/><ellipse cx="100" cy="100" rx="55" ry="14" fill="none" stroke="#00E5FF" stroke-width="1.5" opacity=".4" transform="rotate(30 100 100)"/></svg>`,
+supernova:`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="sn" cx="50%" cy="50%"><stop offset="0%" stop-color="#FFF"/><stop offset="15%" stop-color="#FFE57F"/><stop offset="35%" stop-color="#FF8C00"/><stop offset="55%" stop-color="#E53935" stop-opacity=".7"/><stop offset="75%" stop-color="#7B1FA2" stop-opacity=".4"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><circle cx="110" cy="110" r="100" fill="url(#sn)" opacity=".85"/><line x1="110" y1="110" x2="110" y2="15" stroke="#FFE57F" stroke-width="2.5" opacity=".6"/><line x1="110" y1="110" x2="205" y2="110" stroke="#FFE57F" stroke-width="2.5" opacity=".6"/><line x1="110" y1="110" x2="110" y2="205" stroke="#FFE57F" stroke-width="2.5" opacity=".6"/><line x1="110" y1="110" x2="15" y2="110" stroke="#FFE57F" stroke-width="2.5" opacity=".6"/><line x1="110" y1="110" x2="39" y2="39" stroke="#FF8C00" stroke-width="2" opacity=".5"/><line x1="110" y1="110" x2="181" y2="39" stroke="#FF8C00" stroke-width="2" opacity=".5"/><line x1="110" y1="110" x2="181" y2="181" stroke="#FF8C00" stroke-width="2" opacity=".5"/><line x1="110" y1="110" x2="39" y2="181" stroke="#FF8C00" stroke-width="2" opacity=".5"/><circle cx="110" cy="110" r="22" fill="white" opacity=".95"/><circle cx="110" cy="110" r="12" fill="white"/></svg>`,
+bigbang:`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bb" cx="50%" cy="50%"><stop offset="0%" stop-color="#FFF"/><stop offset="10%" stop-color="#FFD54F"/><stop offset="25%" stop-color="#FF8F00"/><stop offset="45%" stop-color="#E040FB" stop-opacity=".8"/><stop offset="65%" stop-color="#3F51B5" stop-opacity=".5"/><stop offset="85%" stop-color="#1A237E" stop-opacity=".3"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><circle cx="110" cy="110" r="105" fill="url(#bb)" opacity=".9"/><circle cx="110" cy="110" r="40" fill="none" stroke="#FF8F00" stroke-width="1.5" opacity=".5"/><circle cx="110" cy="110" r="65" fill="none" stroke="#E040FB" stroke-width="1" opacity=".35"/><circle cx="110" cy="110" r="88" fill="none" stroke="#3F51B5" stroke-width="1" opacity=".25"/><circle cx="110" cy="110" r="8" fill="white"/><circle cx="55" cy="55" r="2" fill="#FFD54F" opacity=".8"/><circle cx="165" cy="55" r="2" fill="#FFD54F" opacity=".8"/><circle cx="55" cy="165" r="2" fill="#FF8F00" opacity=".7"/><circle cx="165" cy="165" r="2" fill="#FF8F00" opacity=".7"/><circle cx="110" cy="25" r="1.5" fill="#E040FB" opacity=".7"/><circle cx="195" cy="110" r="1.5" fill="#E040FB" opacity=".7"/></svg>`,
+darkmatter:`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="dm" cx="50%" cy="50%"><stop offset="0%" stop-color="#1A0050" stop-opacity=".9"/><stop offset="50%" stop-color="#0D0030" stop-opacity=".6"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><ellipse cx="110" cy="110" rx="30" ry="12" fill="#7C4DFF" opacity=".7" transform="rotate(-20 110 110)"/><circle cx="110" cy="110" r="10" fill="#FFF9C4" opacity=".8"/><circle cx="110" cy="110" r="95" fill="url(#dm)"/><circle cx="110" cy="110" r="95" fill="none" stroke="#4A0090" stroke-width="1.5" stroke-dasharray="6 4" opacity=".5"/><circle cx="110" cy="110" r="70" fill="none" stroke="#3D0080" stroke-width="1" stroke-dasharray="4 6" opacity=".4"/><circle cx="110" cy="110" r="45" fill="none" stroke="#2D0060" stroke-width="1" stroke-dasharray="3 7" opacity=".35"/><text x="160" y="55" font-size="28" fill="#9D4EDD" opacity=".6" font-family="Nunito,sans-serif" font-weight="900">?</text><text x="42" y="170" font-size="22" fill="#7B2FBE" opacity=".5" font-family="Nunito,sans-serif" font-weight="900">?</text></svg>`
+};
+
+const CATS=[
+  {id:'galaxie',   name:'Galaxie',          emoji:'🌌', desc:'Mléčná dráha, typy, Andromeda'},
+  {id:'hvezdy',    name:'Hvězdy',            emoji:'⭐', desc:'Vznik, typy, supernovy, pulsary'},
+  {id:'bigbang',   name:'Vznik vesmíru',     emoji:'💥', desc:'Velký třesk, inflace, budoucnost'},
+  {id:'blackhole', name:'Černé díry',        emoji:'🕳️', desc:'Singularity, horizonty, záhady'},
+  {id:'exo',       name:'Exoplanety & Život',emoji:'🌍', desc:'Planety jiných hvězd, hledání života'},
+  {id:'temna',     name:'Temná hmota',       emoji:'🌑', desc:'Neviditelný vesmír, temná energie'},
+  {id:'rekordy',   name:'Vesmírné rekordy',  emoji:'🏆', desc:'Největší, nejdál, nejstarší'},
+];
+
+const QS=[
+{c:'galaxie',t:'obj',oid:'galaxy',q:'Co to je na obrázku?',o:['Spirální galaxie','Planeta s prstenci','Mlhovina','Kulová hvězdokupa'],a:0,f:'Spirální galaxie jako Mléčná dráha tvoří přibližně 70 % všech galaxií. Spirální ramena nejsou pevné struktury — jsou to vlny hustoty, kde se rodí nové hvězdy.'},
+{c:'galaxie',t:'q',q:'Jak se jmenuje naše galaxie?',o:['Mléčná dráha','Andromeda','Triangulum','Magellanův oblak'],a:0,f:'Mléčná dráha je spirální galaxie s průměrem přibližně 100 000 světelných let. Náš sluneční systém leží v jednom z menších spirálních ramen, asi 26 000 světelných let od středu.'},
+{c:'galaxie',t:'q',q:'Jak daleko je nejbližší velká galaxie Andromeda?',o:['2,5 milionu světelných let','100 000 světelných let','100 milionů světelných let','1 miliarda světelných let'],a:0,f:'Andromeda letí k nám rychlostí 110 km/s — za přibližně 4,5 miliardy let se s Mléčnou dráhou srazí a vytvoří novou eliptickou galaxii. Srážka ale neznamená kolize hvězd — galaxie jsou příliš prázdné.'},
+{c:'galaxie',t:'q',q:'Co se nachází ve středu většiny velkých galaxií?',o:['Supermasivní černá díra','Nejstarší hvězdy','Obrovská mlhovina','Centrum záření bez černé díry'],a:0,f:'Ve středu Mléčné dráhy je Sagittarius A* — černá díra s hmotností 4 milionů Sluncí. V roce 2022 byl pořízen její první přímý snímek teleskopem Event Horizon Telescope.'},
+{c:'galaxie',t:'q',q:'Kolik galaxií je ve viditelném vesmíru?',o:['Přes 2 biliony','Asi milion','Přibližně miliarda','100 miliard'],a:0,f:'Revize z roku 2016 ukázala, že ve viditelném vesmíru je přes 2 biliony galaxií — desetkrát více, než se dříve myslelo. Většina jsou malé, slabé trpasličí galaxie.'},
+{c:'galaxie',t:'q',q:'Jaké jsou hlavní typy galaxií?',o:['Spirální, eliptické a nepravidelné','Velké, střední a malé','Staré, střední a mladé','Horké, vlažné a studené'],a:0,f:'Edwin Hubble zavedl klasifikaci galaxií v roce 1926. Spirální mají ramena plná mladých hvězd. Eliptické jsou starší a klidnější. Nepravidelné vznikají srážkami.'},
+{c:'galaxie',t:'q',q:'Co jsou Magellanovy oblaky?',o:['Trpasličí galaxie obíhající Mléčnou dráhu','Mlhoviny uvnitř Mléčné dráhy','Hvězdokupy','Oblasti bez hvězd'],a:0,f:'Velký a Malý Magellanův oblak jsou trpasličí galaxie viditelné pouhým okem z jižní polokoule ve vzdálenosti 160 000 a 200 000 světelných let.'},
+{c:'galaxie',t:'q',q:'Co je to kvasar?',o:['Extrémně jasné jádro vzdálené galaxie poháněné černou dírou','Typ hvězdy','Vzdálená planeta','Záblesk záření'],a:0,f:'Kvasary jsou nejjasnější trvalé objekty ve vesmíru — aktivní galaktická jádra, kde černá díra polyká hmotu tak rychle, že září milionkrát jasněji než celá galaxie.'},
+{c:'galaxie',t:'q',q:'Proč je noční obloha tmavá, přestože je vesmír plný hvězd?',o:['Vesmír má konečný věk — světlo nedorazilo ze všech hvězd','Hvězdy svítí jen přes den','Atmosféra pohlcuje světlo','Hvězdy jsou příliš malé'],a:0,f:'Toto je Olbersův paradox. Temné nebe je důkazem, že vesmír má konečný věk a světlo z nejdál vzdálených hvězd k nám ještě nedorazilo.'},
+{c:'galaxie',t:'q',q:'Co je Místní skupina galaxií?',o:['Shluk ~80 galaxií včetně Mléčné dráhy a Andromeды','Galaxie v dosahu teleskopů','Hvězdokupy v Mléčné dráze','Cluster vzdálených galaxií'],a:0,f:'Místní skupina je gravitačně vázaný shluk asi 80 galaxií. Dvě dominantní jsou Mléčná dráha a Andromeda. Celý shluk má průměr asi 10 milionů světelných let.'},
+{c:'galaxie',t:'q',q:'Jak rychle se vesmír rozpíná?',o:['Stále rychleji — temná energie expanzi urychluje','Konstantní rychlostí','Zpomaluje se','Střídavě'],a:0,f:'Objev z roku 1998 (Nobelova cena 2011): expanze vesmíru se zrychluje. Příčinou je temná energie tvořící 68 % vesmíru. Co přesně temná energie je, stále nevíme.'},
+
+{c:'hvezdy',t:'obj',oid:'supernova',q:'Tento dramatický výbuch ukončuje život masivní hvězdy. Co to je?',o:['Supernova','Velký třesk','Srážka galaxií','Výbuch na Slunci'],a:0,f:'Supernova je nejnásilnější výbuch ve vesmíru. Na okamžik svítí jasněji než celá galaxie. V ní vznikají všechny prvky těžší než železo — zlato, uran i vápník ve tvých kostech.'},
+{c:'hvezdy',t:'obj',oid:'neutron',q:'Ultrahuetá hvězda s výtrysky záření vznikající po supernově. Co to je?',o:['Neutronová hvězda (pulsar)','Bílý trpaslík','Černá díra','Hnědý trpaslík'],a:0,f:'Neutronová hvězda má průměr 20 km, ale hmotnost 1,5× Slunce. Lžíce její hmoty váží miliardu tun. Rotuje až 700× za sekundu a vysílá pravidelné rádiové pulsy — proto pulsar.'},
+{c:'hvezdy',t:'q',q:'Jak vznikají hvězdy?',o:['Gravitačním kolapsem mračna plynu a prachu','Srážkou planet','Výbuchem černé díry','Rozdělením jiné hvězdy'],a:0,f:'Hvězdy vznikají v mlhovinách — obrovských mračnech vodíku a hélia. Gravitace stahuje plyn, tlak a teplota rostou, až se spustí jaderná fúze. Orionova mlhovina je viditelná pouhým okem.'},
+{c:'hvezdy',t:'q',q:'Z čeho hvězdy „hoří"?',o:['Jaderná fúze — vodík se mění na hélium','Chemické spalování','Radioaktivní rozpad','Srážky atomů'],a:0,f:'Ve Slunci se každou sekundu přemění 620 milionů tun vodíku na hélium. Energie odpovídá 4 milionům tun hmoty za sekundu (E=mc²). Slunce svítí takto 4,6 miliardy let.'},
+{c:'hvezdy',t:'q',q:'Co je červený trpaslík?',o:['Nejběžnější typ hvězdy — malá, chladná, extrémně dlouhověká','Umírající hvězda','Hvězda po výbuchu','Mladá hvězda'],a:0,f:'Červení trpaslíci tvoří přes 70 % hvězd v Mléčné dráze. Jsou tak úsporní, že mohou žít biliony let — stokrát déle, než je stáří vesmíru. Proxima Centauri je červený trpaslík.'},
+{c:'hvezdy',t:'q',q:'Jak skončí naše Slunce?',o:['Červený obr, pak bílý trpaslík','Exploduje jako supernova','Stane se černou dírou','Jednoduše zhasne'],a:0,f:'Slunce je příliš malé na supernovu. Za 5 miliard let pohltí Zemi jako červený obr, pak odfoukne vnější vrstvy jako planetární mlhovinu a zůstane bílý trpaslík — uhel velikosti Země.'},
+{c:'hvezdy',t:'q',q:'Jak daleko je nejbližší hvězda (kromě Slunce)?',o:['4,24 světelného roku — Proxima Centauri','1 světelný rok','100 světelných let','10 světelných let'],a:0,f:'Proxima Centauri je 4,24 světelného roku = 40 bilionů km. Raketa cestující 40 000 km/h by tam doletěla za 115 000 let. I světlo potřebuje přes 4 roky.'},
+{c:'hvezdy',t:'q',q:'Co je hvězdná mlhovina?',o:['Oblak plynu a prachu — místo zrodu nebo pozůstatek hvězd','Shluk starých hvězd','Vzdálená galaxie','Pozůstatek srážky planet'],a:0,f:'Mlhoviny jsou kosmické inkubátory hvězd. Hubbleův teleskop odhalil Sloupy Stvoření — pilíře kondenzujícího plynu v Orlí mlhovině, z nichž se rodí nové hvězdy.'},
+{c:'hvezdy',t:'q',q:'Jak se liší modré obry od červených trpaslíků?',o:['Modré: masivní, horké, krátce žijící. Červené: malé, chladné, věčné','Jen barvou','Vzdáleností od středu galaxie','Stářím'],a:0,f:'Rigel (modrý veleobrz) svítí 120 000× jasněji než Slunce, ale žije jen miliony let. Proxima Centauri svítí 0,00015× Slunce, ale vydrží biliony let.'},
+{c:'hvezdy',t:'q',q:'Co je hlavní posloupnost hvězd?',o:['Fáze, kdy hvězda spaluje vodík — trvá většinu jejího života','Pořadí hvězd dle vzdálenosti','Sekvence supernov','Typy hvězdokup'],a:0,f:'Hertzsprungův-Russellův diagram ukazuje hvězdy v hlavní posloupnosti jako jasnou diagonální linii. Slunce je typickým středem. Poloha hvězdy v diagramu předpovídá její osud.'},
+
+{c:'bigbang',t:'obj',oid:'bigbang',q:'Co zobrazuje tato vizualizace?',o:['Velký třesk — počátek vesmíru','Supernovu','Srážku galaxií','Výbuch neutronové hvězdy'],a:0,f:'Velký třesk nenastal v prostoru — byl to vznik samotného prostoru a času. Před 13,8 miliardami let byl celý vesmír stlačen do bodu menšího než atom. Co bylo „před", věda zatím neumí zodpovědět.'},
+{c:'bigbang',t:'q',q:'Jak starý je vesmír?',o:['13,8 miliard let','4,6 miliardy let','100 miliard let','1 bilion let'],a:0,f:'Stáří vesmíru bylo vypočítáno z expanzní rychlosti a kosmického mikrovlnného záření. Toto záření — záblesk z doby 380 000 let po Velkém třesku — pozorujeme dodnes.'},
+{c:'bigbang',t:'q',q:'Co je kosmické mikrovlnné záření (CMB)?',o:['Záření z doby 380 000 let po Velkém třesku','Záření ze středu galaxie','Pozůstatek supernovy','Záření temné hmoty'],a:0,f:'CMB bylo náhodně objeveno v roce 1964 Penziasem a Wilsonem — považovali ho za závadu antény. Je to fotografie vesmíru starého 380 000 let. Nobelova cena 1978.'},
+{c:'bigbang',t:'q',q:'Co je kosmická inflace?',o:['Extrémně rychlá expanze vesmíru v prvním zlomku sekundy','Trvalé zrychlování expanze','Srážka vesmírů','Teorie alternativní k Velkému třesku'],a:0,f:'V prvních 10⁻³⁶ sekundy se vesmír zvětšil faktorem 10²⁶ — z velikosti atomu na grapefruit. Inflace vysvětluje, proč je vesmír tak rovnoměrný a plochý.'},
+{c:'bigbang',t:'q',q:'Z čeho se vesmír skládá?',o:['5 % normální hmota, 27 % temná hmota, 68 % temná energie','100 % normální hmota','50 % hmota, 50 % záření','90 % vodík, zbytek ostatní'],a:0,f:'Šokující: vše, co vidíme — hvězdy, galaxie, planety, my — tvoří pouhých 5 % vesmíru. 95 % je neviditelné a záhadné.'},
+{c:'bigbang',t:'q',q:'Co se stane s vesmírem v budoucnosti?',o:['Věčně expanduje — Velký zmraz','Skolabuje zpět — Velký krach','Zůstane stejný','Exploduje znovu'],a:0,f:'Nejpravděpodobnější je Velký zmraz — vesmír expanduje donekonečna, hvězdy zhasnou, černé díry se odpaří a vesmír skončí v chladné tmě po bilionech bilionů let.'},
+{c:'bigbang',t:'q',q:'Co bylo „před" Velkým třeskem?',o:['Nevíme — čas sám vznikl s Velkým třeskem','Prázdný prostor','Jiný vesmír','Singularita existující věčně'],a:0,f:'Otázka „co bylo před" nemá smysl — čas sám vznikl s Velkým třeskem. Je to jako ptát se, co je severně od severního pólu.'},
+{c:'bigbang',t:'q',q:'Jak byl vesmír po prvních 3 minutách?',o:['Horký oceán protonů, neutronů a elektronů','Plný hvězd','Studený a temný','Pevný jako kámen'],a:0,f:'Za prvních 3 minuty vznikla jádra vodíku a hélia (nukleosyntéza). První hvězdy se ale zažehly až po 200 milionech let — tato temná éra je dnes aktivní oblastí výzkumu.'},
+
+{c:'blackhole',t:'obj',oid:'blackhole',q:'Co zobrazuje tento obrázek?',o:['Černá díra s akrečním diskem','Neutronová hvězda','Centrum galaxie','Pulsar'],a:0,f:'Záběr skutečné černé díry M87* byl pořízen v roce 2019 teleskopem EHT — sítí radioteleskopů velkou jako Země. Vzdálená 55 milionů světelných let, hmotnost 6,5 miliardy Sluncí.'},
+{c:'blackhole',t:'q',q:'Co je horizont událostí?',o:['Hranice, za níž ani světlo neunikne z černé díry','Povrch černé díry','Oblast záření kolem díry','Hranice sluneční soustavy'],a:0,f:'Horizont událostí je bod bez návratu. Pozorovatel padající do černé díry horizont nepocítí — ale pro vzdáleného pozorovatele se zdá, že čas zastavil.'},
+{c:'blackhole',t:'q',q:'Co je Hawkingovo záření?',o:['Záření černých děr — díky němuž se postupně odpařují','Záření akrečního disku','Záblesky gama záření','Záření neutronové hvězdy'],a:0,f:'Stephen Hawking předpověděl v roce 1974, že černé díry vyzařují tepelné záření kvůli kvantovým efektům. U hvězdných černých děr by odpařování trvalo déle než stáří vesmíru.'},
+{c:'blackhole',t:'q',q:'Co se stane s časem u černé díry?',o:['Čas plyne pomaleji — gravitace ho zpomaluje','Čas plyne rychleji','Čas se zastaví okamžitě','Čas se obrátí'],a:0,f:'Gravitační dilatace času je reálný efekt Einsteinovy obecné relativity. GPS satelity musí tento efekt kompenzovat — bez korekce by se chyba každý den nashromáždila na 10 km!'},
+{c:'blackhole',t:'q',q:'Jak byly černé díry poprvé přímo pozorovány?',o:['Gravitační vlny z jejich srážky (LIGO, 2015)','Hubbleovým teleskopem','Radioteleskopy','Rentgenovým teleskopem'],a:0,f:'14. září 2015 LIGO zachytil gravitační vlny ze srážky dvou černých děr 1,3 miliardy světelných let daleko. Einstein to předpověděl v roce 1916, ale sám nevěřil, že budou detekovány.'},
+{c:'blackhole',t:'q',q:'Jak velké jsou supermasivní černé díry?',o:['Miliony až miliardy hmotností Slunce','Stejně velké jako hvězdné','Větší než galaxie','Menší než hvězdné'],a:0,f:'Supermasivní černá díra M87* má 6,5 miliardy Sluncí a průměr větší než naše sluneční soustava. Každá velká galaxie má jednu v centru.'},
+{c:'blackhole',t:'q',q:'Co jsou gravitační vlny?',o:['Vlnění prostoru a času od zrychlujících se hmotných objektů','Záření z černých děr','Zvukové vlny ve vesmíru','Elektromagnetické záření'],a:0,f:'Einstein předpověděl gravitační vlny v roce 1916. LIGO je detekuje jako pohyb zrcadla o zlomek průměru protonu. Nobelova cena za fyziku 2017.'},
+{c:'blackhole',t:'q',q:'Může se Slunce stát černou dírou?',o:['Ne — je příliš malé, skončí jako bílý trpaslík','Ano, za 5 miliard let','Ano, ale malou','Ne kvůli vzdálenosti od středu galaxie'],a:0,f:'Aby hvězda skončila jako černá díra, musí mít aspoň 20–25× hmotnost Slunce. Slunce skončí jako planetární mlhovina a bílý trpaslík. Žádné nebezpečí.'},
+
+{c:'exo',t:'q',q:'Kolik exoplanet bylo k roku 2024 potvrzeno?',o:['Přes 5 500','Asi 100','Přes 100 000','Asi tisíc'],a:0,f:'Od prvního potvrzení v roce 1992 bylo nalezeno přes 5 500 exoplanet. Teleskop James Webb nyní analyzuje jejich atmosféry a hledá biosignatury — chemické stopy možného života.'},
+{c:'exo',t:'q',q:'Co je obyvatelná zóna?',o:['Vzdálenost od hvězdy kde může existovat kapalná voda','Oblast kde je vzduch','Pás s nejvíce exoplanetami','Vzdálenost kde nežhnou asteroidy'],a:0,f:'Kapalná voda je klíčem k životu jak ho známe. Obyvatelná zóna (Goldilocks zone) — ani příliš horká, ani příliš studená. Nalezeny jsou desítky potenciálně obyvatelných planet.'},
+{c:'exo',t:'q',q:'Jak hledáme exoplanety?',o:['Tranzitní metoda a radiální rychlost hvězdy','Přímým fotografováním','Radarem','Gravitační vlny'],a:0,f:'Tranzitní metoda — planeta přechází před hvězdou a mírně ji ztlumí. Kepler sledoval 150 000 hvězd najednou a nalezl přes 2 600 exoplanet.'},
+{c:'exo',t:'q',q:'Co je TRAPPIST-1 systém?',o:['7 planet podobných Zemi u malé hvězdy 39 světelných let daleko','Nejtěžší exoplaneta','Nejbližší dvojhvězda','Kvasar'],a:0,f:'TRAPPIST-1 má 7 planet podobných velikosti Zemi, z nichž 3 jsou v obyvatelné zóně. James Webb analyzuje jejich atmosféry a hledá stopy vody a kyslíku.'},
+{c:'exo',t:'q',q:'Byl prokázán život mimo Zemi?',o:['Ne — žádný přímý důkaz zatím','Ano, na Marsu bakterie','Ano, v atmosféře Venuše','Ano, signál z Proxima Centauri'],a:0,f:'Přes intenzivní hledání nebyl dosud nalezen žádný přímý důkaz mimozemského života. Podmínky pro život jsou ve vesmíru běžné — hledání pokračuje.'},
+{c:'exo',t:'q',q:'Co je projekt SETI?',o:['Hledání mimozemské inteligence pomocí rádiových signálů','Průzkum exoplanet teleskopem','Program NASA pro Mars','Projekt mapování galaxií'],a:0,f:'SETI hledá od roku 1960 umělé rádiové signály. Nejzajímavějším byl Wow! signal z roku 1977 — silný signál z vhodného směru, nikdy zopakovaný.'},
+{c:'exo',t:'q',q:'Jaká je nejbližší potenciálně obyvatelná exoplaneta?',o:['Proxima Centauri b — 4,2 světelného roku','Kepler-452b — 1400 světelných let','TRAPPIST-1e — 39 světelných let','55 Cancri e — 40 světelných let'],a:0,f:'Proxima Centauri b obíhá v obyvatelné zóně nejbližší hvězdy. Ale rok trvá 11 dní a hvězda vybuchuje zářením. Podmínky pro život jsou nejisté.'},
+{c:'exo',t:'q',q:'Co jsou horké Jupitéry?',o:['Obří planety obíhající velmi blízko své hvězdy','Jupiteru podobné planety v obyvatelné zóně','Planety s horkým jádrem','Měsíce Jupiteru'],a:0,f:'Horké Jupitéry byly jedny z prvních nalezených exoplanet — jsou velké a blízko hvězdě, takže je tranzitní metoda snadno najde. Jejich existence překvapila — modely říkaly, že tam být nemohou.'},
+
+{c:'temna',t:'obj',oid:'darkmatter',q:'Viditelná galaxie obklopená neviditelným — co symbolizují přerušované kruhy?',o:['Temná hmota — neviditelná, jen gravitačně přítomná','Magnetické pole','Zvukové vlny','Elektromagnetické záření'],a:0,f:'Temná hmota nikdy nebyla přímo detekována. Víme o ní jen z gravitačních účinků — pohyb hvězd v galaxiích, gravitační čočkování světla. Je jednou z největší záhad moderní fyziky.'},
+{c:'temna',t:'q',q:'Co je temná hmota?',o:['Neznámá forma hmoty neemitující světlo, tvoří 27 % vesmíru','Černé díry','Mezihvězdný plyn a prach','Neutriny'],a:0,f:'Temná hmota neemituje, neabsorbuje ani neodráží světlo — proto je neviditelná. Projevuje se jen gravitací. Drží galaxie pohromadě. Bez ní by se hvězdy na okraji galaxií rozletěly.'},
+{c:'temna',t:'q',q:'Jak víme, že temná hmota existuje?',o:['Hvězdy v galaxiích se točí příliš rychle pro viditelnou hmotu','Přímo ji vidíme dalekohledem','Změřili ji v laboratoři','Předpověděl ji Einstein'],a:0,f:'Vera Rubin v 70. letech změřila, že hvězdy na okraji galaxií se točí stejně rychle jako ty uprostřed. To je nemožné bez neviditelné hmoty. Nobelova cena 2024.'},
+{c:'temna',t:'q',q:'Co je temná energie?',o:['Záhadná síla urychlující expanzi vesmíru, tvoří 68 % vesmíru','Energie temné hmoty','Záření černých děr','Energie vakua'],a:0,f:'Temná energie byla objevena v roce 1998, když vědci zjistili, že expanze vesmíru se zrychluje. Je nejabundantnější složkou vesmíru, ale nevíme, co to je.'},
+{c:'temna',t:'q',q:'Co jsou kandidáti na temnou hmotu?',o:['WIMPy, axiony nebo sterilní neutriny','Černé díry','Mezihvězdný prach','Antihmota'],a:0,f:'WIMPy (Weakly Interacting Massive Particles) jsou nejpopulárnějším kandidátem. Navzdory obrovskému úsilí — LHC, hlubinné detektory — nebyly nalezeny.'},
+{c:'temna',t:'q',q:'Co je gravitační čočkování?',o:['Ohyb světla gravitací — slouží k mapování temné hmoty','Typ dalekohledu','Zákon gravitace','Typ temné hmoty'],a:0,f:'Einstein předpověděl ohyb světla gravitací. Velké hmotné objekty fungují jako čočky. Analýzou zkreslení obrazů vzdálených galaxií mapujeme rozložení temné hmoty.'},
+{c:'temna',t:'q',q:'Existuje antihmota?',o:['Ano — ale jen ve stopovém množství, vesmír je z hmoty','Ano — tvoří polovinu vesmíru','Ne — je jen teoretická','Ano, tvoří temnou hmotu'],a:0,f:'Antihmota existuje a tvoří se v urychlovačích. Při Velkém třesku měla hmota a antihmota vzniknout ve stejném množství. Z neznámého důvodu přebylo o trochu více hmoty. Jsme tím přebytkem.'},
+
+{c:'rekordy',t:'q',q:'Jaký je největší známý objekt ve vesmíru?',o:['Hercules-Corona Borealis Great Wall (10 mld. světelných let)','Největší černá díra','Největší galaxie','Největší mlhovina'],a:0,f:'Hercules-Corona Borealis Great Wall je shluk galaxií o průměru 10 miliard světelných let — asi 10 % průměru viditelného vesmíru. Je tak velký, že zpochybňuje teorii, že vesmír je homogenní.'},
+{c:'rekordy',t:'q',q:'Jaká je největší známá hvězda?',o:['UY Scuti — průměr 1700× větší než Slunce','Betelgeuse','VY Canis Majoris','Eta Carinae'],a:0,f:'UY Scuti má průměr přibližně 1700 Sluncí. Kdybychom ji dali na místo Slunce, pohltila by dráhu Jupitera. Přesto je hmotnostně jen 30× hmotnější — obrovská, ale lehká bublina.'},
+{c:'rekordy',t:'q',q:'Jaká je nejtěžší černá díra?',o:['TON 618 — 66 miliard hmotností Slunce','Sagittarius A*','M87*','Phoenix A'],a:0,f:'TON 618 je hypermasivní černá díra s hmotností 66 miliard Sluncí. Průměr jejího horizontu událostí je dvakrát větší než naše celá sluneční soustava.'},
+{c:'rekordy',t:'q',q:'Jak velký je viditelný vesmír?',o:['Průměr 93 miliard světelných let','13,8 miliard světelných let','Nekonečný','1 miliarda světelných let'],a:0,f:'Viditelný vesmír má průměr 93 miliard světelných let — větší než stáří vesmíru, protože prostor se rozpínal. Skutečný vesmír je pravděpodobně mnohem větší.'},
+{c:'rekordy',t:'q',q:'Jaká je nejhustší forma hmoty s měřitelným objemem?',o:['Neutronová hvězda (lžíce váží miliardu tun)','Bílý trpaslík','Jádro hvězdy','Hmota v akrečním disku'],a:0,f:'Neutronová hvězda je nejhustší hmota s měřitelným objemem. Černé díry jsou „hustší", ale jejich hmota je v singularitě — matematickém bodě bez normálního objemu.'},
+{c:'rekordy',t:'q',q:'Jak vzdálená je nejdál pozorovaná galaxie?',o:['Přes 13 miliard světelných let','1 miliarda světelných let','Milion světelných let','100 miliard světelných let'],a:0,f:'James Webb v roce 2022 odhalil galaxii JADES-GS-z14-0 vzdálenou přes 13 miliard světelných let — vidíme ji méně než miliardu let po Velkém třesku.'},
+{c:'rekordy',t:'q',q:'Co je nejchladnější místo ve vesmíru?',o:['Mlhovina Bumerang — −272 °C','Tmavé strany planet','Okraj vesmíru','Meziplanetární prostor'],a:0,f:'Mlhovina Bumerang je −272 °C — 1 °C nad absolutní nulou, chladnější než samotné vesmírné pozadí (−270 °C). Expanzí plynu chladí okolí pod teplotu průměrného vesmíru.'},
+{c:'rekordy',t:'q',q:'Jaký je nejrychlejší pohyb ve vesmíru?',o:['Rychlost světla — 300 000 km/s','Pohyb galaxií při expanzi','Rotace neutronové hvězdy','Proudy v černé díře'],a:0,f:'Světlo ve vakuu se pohybuje 299 792 km/s. Nic s hmotností tuto rychlost nemůže dosáhnout. Galaxie se mohou vzdalovat rychleji — ale to je expanze prostoru, ne pohyb v prostoru.'},
+{c:'rekordy',t:'q',q:'Kolik hvězd je v Mléčné dráze?',o:['100–400 miliard','Milion','Bilion','Asi 1000'],a:0,f:'Mléčná dráha má 100–400 miliard hvězd. Kdybychom počítali hvězdu za sekundu, trvalo by to 3200 let. A to je jen naše galaxie — ve vesmíru je přes 2 biliony galaxií.'},
+];
+
+const BADGES=[
+  {id:'first',   ico:'🚀',n:'První výlet!',      d:'Odpoviň na první otázku',           ok:s=>s.ta>=1},
+  {id:'str3',    ico:'✨',n:'Série 3',            d:'3 správné za sebou',                ok:s=>s.ms>=3},
+  {id:'str5',    ico:'⭐',n:'Série 5',            d:'5 správných za sebou',              ok:s=>s.ms>=5},
+  {id:'str10',   ico:'🌟',n:'Série 10!',          d:'10 správných za sebou',             ok:s=>s.ms>=10},
+  {id:'str15',   ico:'💫',n:'Kosmický sniper',    d:'15 správných za sebou',             ok:s=>s.ms>=15},
+  {id:'c_gal',   ico:'🌌',n:'Galaktolog',         d:'Dokonči Galaxie',                   ok:s=>(s.cb.galaxie||0)>0},
+  {id:'c_hve',   ico:'⭐',n:'Hvězdář',            d:'Dokonči Hvězdy',                    ok:s=>(s.cb.hvezdy||0)>0},
+  {id:'c_big',   ico:'💥',n:'Kosmogonista',       d:'Dokonči Vznik vesmíru',             ok:s=>(s.cb.bigbang||0)>0},
+  {id:'c_bh',    ico:'🕳️',n:'Za horizontem',     d:'Dokonči Černé díry',                ok:s=>(s.cb.blackhole||0)>0},
+  {id:'c_exo',   ico:'🌍',n:'Lovec planet',       d:'Dokonči Exoplanety',                ok:s=>(s.cb.exo||0)>0},
+  {id:'c_tem',   ico:'🌑',n:'Detektiv tmy',       d:'Dokonči Temná hmota',               ok:s=>(s.cb.temna||0)>0},
+  {id:'c_rek',   ico:'🏆',n:'Rekordman vesmíru',  d:'Dokonči Vesmírné rekordy',          ok:s=>(s.cb.rekordy||0)>0},
+  {id:'perfect', ico:'🌠',n:'Perfektní!',         d:'3 hvězdy v jakékoliv kategorii',    ok:s=>Object.values(s.cb).some(v=>v===3)},
+  {id:'allcat',  ico:'🌌',n:'Průzkumník',         d:'Dokonči všech 7 kategorií',         ok:s=>CATS.every(c=>(s.cb[c.id]||0)>0)},
+  {id:'q50',     ico:'🛸',n:'Vesmírný stopař',    d:'Zodpověz 50 otázek',                ok:s=>s.ta>=50},
+  {id:'xp500',   ico:'💎',n:'500 XP',             d:'Získej 500 XP',                     ok:s=>s.xp>=500},
+  {id:'xp1000',  ico:'🌌',n:'Kosmolog',           d:'Získej 1000 XP',                    ok:s=>s.xp>=1000},
+  {id:'allstar', ico:'🪐',n:'Mistr vesmíru',      d:'3 hvězdy ve všech kategoriích',     ok:s=>CATS.every(c=>(s.cb[c.id]||0)>=3)},
+];
+
+// ── STATE ──
+let ST=load(),SES={};
+function load(){try{const s=JSON.parse(localStorage.getItem('fajnvesmir1')||'{}');return{xp:s.xp||0,cb:s.cb||{},ta:s.ta||0,ms:s.ms||0,bd:s.bd||[]};}catch(e){return{xp:0,cb:{},ta:0,ms:0,bd:[]};}}
+function save(){localStorage.setItem('fajnvesmir1',JSON.stringify(ST));}
+
+// ── AUDIO ──
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t,d,v=.24){try{const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.start();o.stop(ac.currentTime+d);}catch(e){}}
+function sndCorrect(){tone(659,'sine',.1);setTimeout(()=>tone(784,'sine',.12),70);setTimeout(()=>tone(988,'sine',.18),140);}
+function sndWrong(){tone(200,'sawtooth',.14);setTimeout(()=>tone(160,'sawtooth',.18),90);}
+function sndStreak(){[659,784,988,1319].forEach((f,i)=>setTimeout(()=>tone(f,'sine',.15,.28),i*60));}
+function sndFinish(){[523,659,784,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.16,.26),i*75));}
+
+// ── XP POPUP ──
+function showXP(xp,streak){const el=document.getElementById('xpPopup');el.textContent=`+${xp} XP${streak>=3?' ✨×'+streak:''}`;el.className='xp-popup go';setTimeout(()=>el.className='xp-popup',1800);}
+
+// ── HOME ──
+function renderHome(){
+  document.getElementById('xpTotal').textContent=ST.xp;
+  const earned=BADGES.filter(b=>ST.bd.includes(b.id)).length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  document.getElementById('catGrid').innerHTML=CATS.map(cat=>{
+    const cnt=QS.filter(q=>q.c===cat.id).length;
+    const best=ST.cb[cat.id]||0;
+    const stars=[1,2,3].map(s=>`<span class="cat-star ${s<=best?'on':''}">${s<=best?'⭐':'☆'}</span>`).join('');
+    return`<div class="cat-card" onclick="startCat('${cat.id}')"><span class="cat-emoji">${cat.emoji}</span><div class="cat-name">${cat.name}</div><div class="cat-count">${cnt} otázek</div><div class="cat-desc">${cat.desc}</div><div class="cat-stars">${stars}</div></div>`;
+  }).join('');
+  show('homeScreen');
+}
+
+// ── START ──
+function startCat(id){
+  getAC();
+  const pool=[...QS.filter(q=>q.c===id)].sort(()=>Math.random()-.5);
+  SES={cat:id,qs:pool,idx:0,ok:0,streak:0,ms:0,xp:0,answered:false,facts:[]};
+  show('questionScreen');renderQ();
+}
+
+// ── RENDER QUESTION ──
+function renderQ(){
+  const cat=CATS.find(c=>c.id===SES.cat),q=SES.qs[SES.idx],tot=SES.qs.length;
+  SES.answered=false;
+  document.getElementById('qCat').textContent=cat.emoji+' '+cat.name;
+  document.getElementById('qCnt').textContent=`${SES.idx+1} / ${tot}`;
+  document.getElementById('progFill').style.width=`${(SES.idx/tot)*100}%`;
+  const strEl=document.getElementById('qStreak');
+  if(SES.streak>=2){strEl.className='q-streak on';document.getElementById('streakN').textContent=SES.streak;}
+  else strEl.className='q-streak';
+  document.getElementById('qBadge').textContent=q.t==='obj'?'🔭 Poznej objekt':'🌌 Vědomostní otázka';
+  const od=document.getElementById('objDisplay');
+  if(q.t==='obj'&&q.oid&&OBJS[q.oid]){od.style.display='flex';od.innerHTML=OBJS[q.oid];}
+  else od.style.display='none';
+  document.getElementById('qText').textContent=q.q;
+  const shuffled=[...Array(q.o.length).keys()].sort(()=>Math.random()-.5);
+  q._newA=shuffled.indexOf(q.a);
+  const adiv=document.getElementById('answersDiv');
+  adiv.className='answers'+(q.o.length<=2?' solo':'');
+  adiv.innerHTML=shuffled.map((orig,i)=>`<button class="ans-btn" onclick="checkAns(${i})">${q.o[orig]}</button>`).join('');
+  document.getElementById('factBox').className='fact-box';
+  document.getElementById('nextBtn').className='next-btn';
+}
+
+// ── CHECK ──
+function checkAns(idx){
+  if(SES.answered)return;
+  SES.answered=true;
+  const q=SES.qs[SES.idx],btns=document.querySelectorAll('.ans-btn'),ok=idx===q._newA;
+  btns.forEach(b=>b.disabled=true);
+  btns[q._newA].classList.add('show-correct');
+  if(ok){
+    btns[idx].classList.add('correct');
+    SES.streak++;SES.ms=Math.max(SES.ms,SES.streak);SES.ok++;
+    const xp=SES.streak>=15?35:SES.streak>=10?25:SES.streak>=5?18:SES.streak>=3?14:10;
+    SES.xp+=xp;sndCorrect();if(SES.streak>=3)setTimeout(sndStreak,220);showXP(xp,SES.streak);
+    const strEl=document.getElementById('qStreak');strEl.className='q-streak on';document.getElementById('streakN').textContent=SES.streak;
+  }else{btns[idx].classList.add('wrong');SES.streak=0;document.getElementById('qStreak').className='q-streak';sndWrong();}
+  ST.ta++;save();
+  if(q.f){document.getElementById('factTxt').textContent=q.f;document.getElementById('factBox').className='fact-box on';if(ok&&SES.facts.length<6)SES.facts.push(q.f);}
+  document.getElementById('nextBtn').className='next-btn on';
+}
+
+// ── NEXT ──
+function nextQ(){SES.idx++;if(SES.idx>=SES.qs.length)showResult();else renderQ();}
+
+// ── RESULT ──
+function showResult(){
+  sndFinish();
+  const tot=SES.qs.length,pct=SES.ok/tot,stars=pct>=.9?3:pct>=.6?2:1;
+  const prev=ST.cb[SES.cat]||0;if(stars>prev)ST.cb[SES.cat]=stars;
+  ST.xp+=SES.xp;ST.ms=Math.max(ST.ms,SES.ms);save();checkBadges();
+  const t={3:['Perfektní!','Kosmický génius!','Mistr astronom!','Neuvěřitelné!'],2:['Výborně!','Skvělý výsledek!','Dobrá práce!','Šikovný/á!'],1:['Dobrý začátek!','Zkus znovu!','Učíš se!','Dáš to lépe!']};
+  document.getElementById('resTitle').textContent=t[stars][Math.floor(Math.random()*4)];
+  document.getElementById('resSub').textContent=`${SES.ok} z ${tot} správně — ${Math.round(pct*100)} %`;
+  document.querySelectorAll('.res-star').forEach((s,i)=>{s.className='res-star';if(i<stars)setTimeout(()=>s.className='res-star on',i*200+100);});
+  document.getElementById('stCorrect').textContent=`${SES.ok}/${tot}`;
+  document.getElementById('stXP').textContent=SES.xp;
+  document.getElementById('stStreak').textContent=SES.ms;
+  document.getElementById('factsList').innerHTML=SES.facts.length>0?SES.facts.map(f=>`<div class="fact-item">${f}</div>`).join(''):'<div class="fact-item" style="color:var(--muted)">Odpovídej správně a dozvíš se fascinující fakta o vesmíru!</div>';
+  show('resultScreen');
+}
+
+// ── BADGES ──
+function checkBadges(){BADGES.forEach(b=>{if(!ST.bd.includes(b.id)&&b.ok(ST))ST.bd.push(b.id);});save();}
+function showBadges(){
+  const earned=ST.bd.length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  document.getElementById('badgeGrid').innerHTML=BADGES.map(b=>`<div class="badge-c${ST.bd.includes(b.id)?' unlocked':' locked'}"><span class="badge-ico">${b.ico}</span><div class="badge-n">${b.n}</div><div class="badge-d">${b.d}</div></div>`).join('');
+  show('badgesScreen');
+}
+
+// ── NAV ──
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function goHome(){renderHome();}
+function playAgain(){startCat(SES.cat);}
+renderHome();
+
+</script>
+</body>
+</html>
