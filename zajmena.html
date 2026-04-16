@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FajnCvičebna – Zájmena bez berliček v5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --card2:#eef4fb; --line:#ccd8e6;
+  --text:#182533; --muted:#61778d; --brand:#198d79; --brand2:#2b7de1;
+  --ok:#158246; --bad:#c64040; --warn:#b68115; --shadow:0 14px 36px rgba(20,40,70,.10);
+  --r:18px;
+}
+body.dark{
+  --bg:#0f1720; --card:#182534; --card2:#213244; --line:#33495f;
+  --text:#eef7ff; --muted:#92adc5; --brand:#2dd4bf; --brand2:#63a8ff;
+  --ok:#50db8a; --bad:#ff8a8a; --warn:#f2c45a; --shadow:0 18px 42px rgba(0,0,0,.34);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(43,125,225,.08), transparent 28%),
+    radial-gradient(circle at 100% 100%, rgba(25,141,121,.08), transparent 28%);
+}
+button,input{font:inherit}
+.app{max-width:980px;margin:0 auto;padding:16px 14px 44px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.brand{display:flex;flex-direction:column;gap:3px}
+.logo{font-family:'DM Serif Display',serif;font-size:1.95rem;line-height:1}
+.sub{font-size:.84rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.theme{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
+.theme button{border:none;background:transparent;color:var(--muted);padding:7px 10px;border-radius:999px;cursor:pointer;font-weight:700}
+.theme button.on{background:var(--card2);color:var(--brand)}
+.chip{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);box-shadow:var(--shadow);font-weight:800;font-size:.92rem}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.strip{padding:10px 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.cat-btn,.mode-btn,.ghost-btn,.choice-btn,.main-btn,.soft-btn{
+  border-radius:999px;cursor:pointer;transition:.18s ease
+}
+.cat-btn,.mode-btn,.ghost-btn,.soft-btn{
+  border:1px solid var(--line);background:transparent;color:var(--muted);font-weight:700
+}
+.cat-btn{padding:8px 12px}
+.mode-btn{padding:10px 14px}
+.cat-btn:hover,.mode-btn:hover,.ghost-btn:hover,.soft-btn:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px)}
+.cat-btn.on{background:linear-gradient(135deg,var(--brand),var(--brand2));border-color:transparent;color:#07211c}
+.mode-btn.on{background:var(--card2);border-color:var(--brand2);color:var(--brand2)}
+.status{padding:14px;display:grid;grid-template-columns:1.15fr .85fr;gap:12px}
+.status-left,.status-right{display:flex;flex-direction:column;gap:10px}
+.progress-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.9rem}
+.track{height:10px;border-radius:999px;background:var(--card2);overflow:hidden;border:1px solid var(--line)}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .35s ease}
+.meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.meta{padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card2)}
+.meta-k{font-size:.72rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+.meta-v{font-size:1.05rem;font-weight:800;margin-top:2px}
+.card{padding:22px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+.label{font-size:.78rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.title-row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+.small{font-size:.92rem;color:var(--muted)}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 0 2px}
+.hero-cs{font-family:'DM Serif Display',serif;font-size:3rem;line-height:1.04;letter-spacing:-.03em}
+.hero-note{margin-top:8px;color:var(--muted);font-size:.94rem}
+.context-box{padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--card2);margin:12px 0 16px}
+.en-line{font-family:'DM Serif Display',serif;font-size:1.8rem;line-height:1.5;text-align:center}
+.cz-line{text-align:center;color:var(--muted);margin-top:8px;font-size:.98rem}
+.blank{display:inline-block;min-width:82px;border-bottom:3px solid var(--brand);text-align:center;color:var(--brand);font-weight:800;padding:0 4px}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
+.choice-btn{
+  padding:14px 15px;border:1.5px solid var(--line);background:var(--card2);color:var(--text);font-weight:800;text-align:left
+}
+.choice-btn:hover:not(:disabled){transform:translateY(-1px);border-color:var(--brand2);background:rgba(99,168,255,.08)}
+.choice-btn.correct{border-color:var(--ok);background:rgba(21,130,70,.12);color:var(--ok)}
+.choice-btn.wrong{border-color:var(--bad);background:rgba(198,64,64,.12);color:var(--bad)}
+.choice-btn.reveal{border-color:var(--ok);background:rgba(21,130,70,.08)}
+.choice-btn:disabled{cursor:default}
+.type-wrap{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0 14px}
+.text-in{
+  width:min(100%,360px);padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);
+  background:var(--card2);color:var(--text);font-size:1.08rem;font-weight:800;text-align:center;outline:none
+}
+.text-in:focus{border-color:var(--brand)}
+.text-in.good{border-color:var(--ok)}
+.text-in.bad{border-color:var(--bad)}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.main-btn{padding:12px 20px;border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#08211d;font-weight:900}
+.ghost-btn,.soft-btn{padding:11px 16px;background:transparent;font-weight:700}
+.next-btn{display:none}
+.feedback{display:none;padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card2);margin:0 0 14px}
+.feedback.show{display:block}
+.feedback.ok{background:rgba(21,130,70,.10);border-color:rgba(21,130,70,.35)}
+.feedback.bad{background:rgba(198,64,64,.10);border-color:rgba(198,64,64,.35)}
+.feedback.info{background:rgba(99,168,255,.10);border-color:rgba(99,168,255,.35)}
+.feedback.warn{background:rgba(242,196,90,.10);border-color:rgba(242,196,90,.35)}
+.fb-title{font-weight:900;margin-bottom:4px}
+.feedback.ok .fb-title{color:var(--ok)}
+.feedback.bad .fb-title{color:var(--bad)}
+.feedback.info .fb-title{color:var(--brand2)}
+.feedback.warn .fb-title{color:var(--warn)}
+.review{padding:13px 15px;border-radius:15px;background:linear-gradient(135deg,rgba(242,196,90,.14),rgba(99,168,255,.08));border:1px solid rgba(242,196,90,.35);margin-bottom:14px}
+.hint-box{display:none;padding:14px 16px;border:1px dashed var(--brand);border-radius:16px;background:rgba(99,168,255,.06);margin:10px 0 14px}
+.hint-box.show{display:block}
+.hint-sentence{font-family:'DM Serif Display',serif;font-size:1.45rem;text-align:center}
+.footer{text-align:center;color:var(--muted);font-size:.85rem;padding-top:8px}
+.hidden{display:none !important}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.shake{animation:shake .28s}
+@media (max-width:760px){.status{grid-template-columns:1fr}.meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-cs{font-size:2.45rem}}
+@media (max-width:560px){.choice-grid{grid-template-columns:1fr}.meta-grid{grid-template-columns:1fr 1fr}.hero-cs{font-size:2.1rem}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">Zájmena anglicky</div>
+      <div class="sub">FajnCvičebna · učební mód s volitelnou nápovědou</div>
+    </div>
+    <div class="top">
+      <div class="theme">
+        <button id="themeLight" class="on" type="button">Světlé</button>
+        <button id="themeDark" type="button">Tmavé</button>
+      </div>
+      <div class="chip">⭐ XP <span id="xpVal">0</span></div>
+      <div class="chip">🔥 Série <span id="streakVal">0</span></div>
+    </div>
+  </div>
+
+  <div class="panel strip"><div class="row" id="catBar"></div></div>
+
+  <div class="panel strip" style="margin-top:10px">
+    <div class="row" id="modeBar">
+      <button class="mode-btn on" data-mode="learn">🌱 Učební mód</button>
+      <button class="mode-btn" data-mode="drill">🎯 Samostatně</button>
+      <button class="mode-btn" data-mode="sentence">💬 Ve větě</button>
+      <button class="mode-btn" data-mode="listen">🎧 Poslech</button>
+      <button class="mode-btn" data-mode="mix">🎲 Mix</button>
+    </div>
+  </div>
+
+  <div class="panel status" style="margin-top:10px">
+    <div class="status-left">
+      <div class="progress-head">
+        <div><strong>Postup</strong> – <span id="progressText">1 / 1</span></div>
+        <div><span id="levelText">Rozjíždíš se</span></div>
+      </div>
+      <div class="track"><div class="fill" id="levelFill"></div></div>
+      <div class="small" id="statusDesc">Zadání je čisté. Nápověda je na tlačítku.</div>
+    </div>
+    <div class="status-right">
+      <div class="meta-grid">
+        <div class="meta"><div class="meta-k">Správně</div><div class="meta-v" id="okVal">0</div></div>
+        <div class="meta"><div class="meta-k">Chyby</div><div class="meta-v" id="errVal">0</div></div>
+        <div class="meta"><div class="meta-k">Návraty</div><div class="meta-v" id="reviewVal">0</div></div>
+      </div>
+      <div class="actions" style="justify-content:flex-end">
+        <button class="ghost-btn" id="resetBtn" type="button">♻️ Vynulovat</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel card" id="arena"></div>
+  <div class="footer">Nejdřív úkol. Teprve pak pomoc, když o ni stojíš.</div>
+</div>
+
+<script>
+'use strict';
+
+const SAVE_KEY = 'fdc_pronouns_clean_v5';
+const THEME_KEY = 'fdc_pronouns_clean_theme_v5';
+
+const DATA = [
+  {id:'subj_i', cat:'personal', role:'subject', en:'I', cs:'já', explanation:'Používáme I pro „já“ jako podmět.', sentence:'___ am ready.', sentenceCs:'Jsem připravený / připravená.', sentenceAnswer:'I', hintSentence:'I like music.', speak:'I'},
+  {id:'subj_you', cat:'personal', role:'subject', en:'you', cs:'ty', explanation:'Používáme you pro „ty“ jako podmět.', sentence:'___ are late.', sentenceCs:'Ty jdeš pozdě.', sentenceAnswer:'You', hintSentence:'You are my friend.', speak:'you'},
+  {id:'subj_he', cat:'personal', role:'subject', en:'he', cs:'on', explanation:'Používáme he pro „on“.', sentence:'___ is my brother.', sentenceCs:'To je můj bratr.', sentenceAnswer:'He', hintSentence:'He plays football.', speak:'he'},
+  {id:'subj_she', cat:'personal', role:'subject', en:'she', cs:'ona', explanation:'Používáme she pro „ona“.', sentence:'___ is at home.', sentenceCs:'Ona je doma.', sentenceAnswer:'She', hintSentence:'She is my teacher.', speak:'she'},
+  {id:'subj_it', cat:'personal', role:'subject', en:'it', cs:'ono / to', explanation:'Používáme it pro věc, zvíře nebo počasí.', sentence:'___ is cold today.', sentenceCs:'Dnes je zima.', sentenceAnswer:'It', hintSentence:'It is on the table.', speak:'it'},
+  {id:'subj_we', cat:'personal', role:'subject', en:'we', cs:'my', explanation:'Používáme we pro „my“.', sentence:'___ are friends.', sentenceCs:'Jsme kamarádi.', sentenceAnswer:'We', hintSentence:'We are ready.', speak:'we'},
+  {id:'subj_they', cat:'personal', role:'subject', en:'they', cs:'oni', explanation:'Používáme they pro „oni“.', sentence:'___ live here.', sentenceCs:'Oni tu bydlí.', sentenceAnswer:'They', hintSentence:'They are at school.', speak:'they'},
+
+  {id:'obj_me', cat:'personal', role:'object', en:'me', cs:'mě / mně', explanation:'Používáme me pro „mě / mně“ jako předmět.', sentence:'Call ___ later.', sentenceCs:'Zavolej mi později.', sentenceAnswer:'me', hintSentence:'She knows me.', speak:'me'},
+  {id:'obj_you', cat:'personal', role:'object', en:'you', cs:'tebe / tě', explanation:'Používáme you pro „tebe / tě“ jako předmět.', sentence:'I can see ___.', sentenceCs:'Vidím tě.', sentenceAnswer:'you', hintSentence:'I can help you.', speak:'you'},
+  {id:'obj_him', cat:'personal', role:'object', en:'him', cs:'jeho / ho', explanation:'Používáme him pro „jeho / ho“.', sentence:'I know ___.', sentenceCs:'Znám ho.', sentenceAnswer:'him', hintSentence:'Can you see him?', speak:'him'},
+  {id:'obj_her', cat:'personal', role:'object', en:'her', cs:'ji / jí', explanation:'Používáme her pro „ji / jí“.', sentence:'Help ___, please.', sentenceCs:'Pomoz jí, prosím.', sentenceAnswer:'her', hintSentence:'I met her today.', speak:'her'},
+  {id:'obj_us', cat:'personal', role:'object', en:'us', cs:'nás / nám', explanation:'Používáme us pro „nás / nám“.', sentence:'She invited ___.', sentenceCs:'Pozvala nás.', sentenceAnswer:'us', hintSentence:'He called us.', speak:'us'},
+  {id:'obj_them', cat:'personal', role:'object', en:'them', cs:'je / jim', explanation:'Používáme them pro „je / jim“.', sentence:'I met ___ yesterday.', sentenceCs:'Včera jsem je potkal / potkala.', sentenceAnswer:'them', hintSentence:'We know them.', speak:'them'},
+
+  {id:'poss_my', cat:'possessive', role:'before_noun', en:'my', cs:'můj / moje', explanation:'Používáme my před podstatným jménem.', sentence:'This is ___ bag.', sentenceCs:'Tohle je moje taška.', sentenceAnswer:'my', hintSentence:'My car is new.', speak:'my'},
+  {id:'poss_your', cat:'possessive', role:'before_noun', en:'your', cs:'tvůj / tvoje', explanation:'Používáme your před podstatným jménem.', sentence:'Is this ___ book?', sentenceCs:'Je to tvoje kniha?', sentenceAnswer:'your', hintSentence:'Your room is nice.', speak:'your'},
+  {id:'poss_his', cat:'possessive', role:'before_noun', en:'his', cs:'jeho', explanation:'Používáme his před podstatným jménem.', sentence:'That is ___ bike.', sentenceCs:'To je jeho kolo.', sentenceAnswer:'his', hintSentence:'His dog is friendly.', speak:'his'},
+  {id:'poss_her', cat:'possessive', role:'before_noun', en:'her', cs:'její', explanation:'Používáme her před podstatným jménem.', sentence:'I like ___ dress.', sentenceCs:'Líbí se mi její šaty.', sentenceAnswer:'her', hintSentence:'Her name is Anna.', speak:'her'},
+  {id:'poss_our', cat:'possessive', role:'before_noun', en:'our', cs:'náš / naše', explanation:'Používáme our před podstatným jménem.', sentence:'___ house is small.', sentenceCs:'Náš dům je malý.', sentenceAnswer:'Our', hintSentence:'Our garden is big.', speak:'our'},
+  {id:'poss_their', cat:'possessive', role:'before_noun', en:'their', cs:'jejich', explanation:'Používáme their před podstatným jménem.', sentence:'I know ___ teacher.', sentenceCs:'Znám jejich učitele.', sentenceAnswer:'their', hintSentence:'Their children are small.', speak:'their'},
+
+  {id:'pred_mine', cat:'possessive', role:'alone', en:'mine', cs:'můj / moje', explanation:'Používáme mine samostatně, bez dalšího jména.', sentence:'This book is ___.', sentenceCs:'Ta kniha je moje.', sentenceAnswer:'mine', hintSentence:'The red bike is mine.', speak:'mine'},
+  {id:'pred_yours', cat:'possessive', role:'alone', en:'yours', cs:'tvůj / tvoje', explanation:'Používáme yours samostatně, bez dalšího jména.', sentence:'The seat is ___.', sentenceCs:'To místo je tvoje.', sentenceAnswer:'yours', hintSentence:'This pen is yours.', speak:'yours'},
+  {id:'pred_hers', cat:'possessive', role:'alone', en:'hers', cs:'její', explanation:'Používáme hers samostatně, bez dalšího jména.', sentence:'The jacket is ___.', sentenceCs:'Ta bunda je její.', sentenceAnswer:'hers', hintSentence:'The coat is hers.', speak:'hers'},
+  {id:'pred_ours', cat:'possessive', role:'alone', en:'ours', cs:'náš / naše', explanation:'Používáme ours samostatně, bez dalšího jména.', sentence:'The garden is ___.', sentenceCs:'Ta zahrada je naše.', sentenceAnswer:'ours', hintSentence:'The flat is ours.', speak:'ours'},
+  {id:'pred_theirs', cat:'possessive', role:'alone', en:'theirs', cs:'jejich', explanation:'Používáme theirs samostatně, bez dalšího jména.', sentence:'The car is ___.', sentenceCs:'To auto je jejich.', sentenceAnswer:'theirs', hintSentence:'The bags are theirs.', speak:'theirs'},
+
+  {id:'q_who', cat:'question', role:'question', en:'Who', cs:'kdo', explanation:'Používáme who, když se ptáme na osobu.', sentence:'___ is that man?', sentenceCs:'Kdo je ten muž?', sentenceAnswer:'Who', hintSentence:'Who is your mum?', speak:'who'},
+  {id:'q_what', cat:'question', role:'question', en:'What', cs:'co', explanation:'Používáme what, když se ptáme na věc nebo informaci.', sentence:'___ is this?', sentenceCs:'Co je to?', sentenceAnswer:'What', hintSentence:'What is in the box?', speak:'what'},
+  {id:'q_where', cat:'question', role:'question', en:'Where', cs:'kde', explanation:'Používáme where, když se ptáme na místo.', sentence:'_______ is the station?', sentenceCs:'Kde je nádraží?', sentenceAnswer:'Where', hintSentence:'Where is my sister?', speak:'where'},
+  {id:'q_when', cat:'question', role:'question', en:'When', cs:'kdy', explanation:'Používáme when, když se ptáme na čas.', sentence:'_______ does school start?', sentenceCs:'Kdy začíná škola?', sentenceAnswer:'When', hintSentence:'When is your lesson?', speak:'when'},
+  {id:'q_why', cat:'question', role:'question', en:'Why', cs:'proč', explanation:'Používáme why, když se ptáme na důvod.', sentence:'_______ are you sad?', sentenceCs:'Proč jsi smutný / smutná?', sentenceAnswer:'Why', hintSentence:'Why are you here?', speak:'why'},
+  {id:'q_how', cat:'question', role:'question', en:'How', cs:'jak', explanation:'Používáme how, když se ptáme na způsob.', sentence:'_______ are you?', sentenceCs:'Jak se máš?', sentenceAnswer:'How', hintSentence:'How do you feel?', speak:'how'},
+  {id:'q_which', cat:'question', role:'question', en:'Which', cs:'který', explanation:'Používáme which, když vybíráme z omezené skupiny.', sentence:'_______ colour do you want?', sentenceCs:'Kterou barvu chceš?', sentenceAnswer:'Which', hintSentence:'Which one is yours?', speak:'which'},
+  {id:'q_whose', cat:'question', role:'question', en:'Whose', cs:'čí', explanation:'Používáme whose, když se ptáme, komu něco patří.', sentence:'_______ bag is this?', sentenceCs:'Čí je to taška?', sentenceAnswer:'Whose', hintSentence:'Whose shoes are these?', speak:'whose'},
+
+  {id:'d_this', cat:'demonstrative', role:'near_one', en:'this', cs:'tohle / tento', explanation:'Používáme this pro jednu věc nebo osobu blízko.', sentence:'_______ is my room.', sentenceCs:'Tohle je můj pokoj.', sentenceAnswer:'This', hintSentence:'This is my chair.', speak:'this'},
+  {id:'d_that', cat:'demonstrative', role:'far_one', en:'that', cs:'tamto / ten', explanation:'Používáme that pro jednu věc nebo osobu dál.', sentence:'_______ is our school.', sentenceCs:'Tamto je naše škola.', sentenceAnswer:'That', hintSentence:'That is your bus.', speak:'that'},
+  {id:'d_these', cat:'demonstrative', role:'near_many', en:'these', cs:'tyhle', explanation:'Používáme these pro více věcí nebo lidí blízko.', sentence:'_______ are my keys.', sentenceCs:'Tohle jsou moje klíče.', sentenceAnswer:'These', hintSentence:'These are our books.', speak:'these'},
+  {id:'d_those', cat:'demonstrative', role:'far_many', en:'those', cs:'tamti / tamty / tamta', explanation:'Používáme those pro více věcí nebo lidí dál.', sentence:'_______ are my friends.', sentenceCs:'Tamti jsou moji kamarádi.', sentenceAnswer:'Those', hintSentence:'Those are your keys.', speak:'those'}
+];
+
+
+function validateData(){
+  const problems = [];
+  DATA.forEach(item => {
+    if(!item.id) problems.push({type:'missing id', item});
+    if(!item.en) problems.push({type:'missing en', item});
+    if(!item.cs) problems.push({type:'missing cs', item});
+    if(!item.sentenceAnswer) problems.push({type:'missing sentenceAnswer', item});
+    if(!item.speak) problems.push({type:'missing speak', item});
+
+    if(item.en && item.sentenceAnswer && item.en.toLowerCase() !== item.sentenceAnswer.toLowerCase()){
+      problems.push({type:'en/sentenceAnswer mismatch', item});
+    }
+    if(item.en && item.speak && item.en.toLowerCase() !== item.speak.toLowerCase()){
+      problems.push({type:'en/speak mismatch', item});
+    }
+    if(item.en && /[áčďéěíňóřšťúůýž]/i.test(item.en)){
+      problems.push({type:'en contains Czech diacritics', item});
+    }
+  });
+
+  if(problems.length){
+    console.error('DATA validation failed:', problems);
+  }
+  return problems;
+}
+
+
+const CATS = [
+  {id:'all', label:'Vše'},
+  {id:'personal', label:'Osobní'},
+  {id:'possessive', label:'Přivlastňovací'},
+  {id:'question', label:'Tázací'},
+  {id:'demonstrative', label:'Ukazovací'}
+];
+
+const state = {
+  cat:'all', mode:'learn', xp:0, streak:0, ok:0, err:0,
+  queue:[], idx:0, current:null, attempts:0, answered:false,
+  reviewBook:{}, lastIds:[]
+};
+
+const el = {
+  arena: document.getElementById('arena'),
+  catBar: document.getElementById('catBar'),
+  xpVal: document.getElementById('xpVal'),
+  streakVal: document.getElementById('streakVal'),
+  okVal: document.getElementById('okVal'),
+  errVal: document.getElementById('errVal'),
+  reviewVal: document.getElementById('reviewVal'),
+  progressText: document.getElementById('progressText'),
+  levelText: document.getElementById('levelText'),
+  levelFill: document.getElementById('levelFill'),
+  statusDesc: document.getElementById('statusDesc'),
+  resetBtn: document.getElementById('resetBtn')
+};
+
+function safe(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function shuffle(arr){const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function byCat(){return state.cat==='all' ? DATA : DATA.filter(x=>x.cat===state.cat)}
+function familyKey(item){return item.cat + '|' + item.role + '|' + item.en.toLowerCase().replace(/s$/,'')}
+function reviewCount(){return Object.values(state.reviewBook).filter(x=>x.weight>0).length}
+function levelName(xp){
+  if(xp<80) return 'Rozjíždíš se';
+  if(xp<180) return 'Začíná to sedat';
+  if(xp<320) return 'Jde ti to';
+  if(xp<520) return 'Máš to v ruce';
+  return 'Jazyková forma';
+}
+function levelPct(xp){return Math.min(100, (xp % 200) / 2)}
+function save(){
+  localStorage.setItem(SAVE_KEY, JSON.stringify({
+    cat:state.cat, mode:state.mode, xp:state.xp, streak:state.streak, ok:state.ok, err:state.err,
+    reviewBook:state.reviewBook, lastIds:state.lastIds
+  }));
+}
+function load(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(SAVE_KEY)||'{}');
+    Object.assign(state,{
+      cat: raw.cat || 'all',
+      mode: raw.mode || 'learn',
+      xp: raw.xp || 0,
+      streak: raw.streak || 0,
+      ok: raw.ok || 0,
+      err: raw.err || 0,
+      reviewBook: raw.reviewBook || {},
+      lastIds: raw.lastIds || []
+    });
+  }catch(e){}
+}
+function saveTheme(t){
+  localStorage.setItem(THEME_KEY,t);
+  document.body.classList.toggle('dark', t==='dark');
+  document.getElementById('themeLight').classList.toggle('on', t!=='dark');
+  document.getElementById('themeDark').classList.toggle('on', t==='dark');
+}
+function loadTheme(){
+  const t = localStorage.getItem(THEME_KEY) || 'light';
+  saveTheme(t);
+}
+function updateStatus(){
+  el.xpVal.textContent = state.xp;
+  el.streakVal.textContent = state.streak;
+  el.okVal.textContent = state.ok;
+  el.errVal.textContent = state.err;
+  el.reviewVal.textContent = reviewCount();
+  el.levelText.textContent = levelName(state.xp);
+  el.levelFill.style.width = levelPct(state.xp) + '%';
+  el.progressText.textContent = `${Math.min(state.idx+1, state.queue.length || 1)} / ${Math.max(state.queue.length,1)}`;
+  const desc = {
+    learn:'Normální zadání. Tlačítko nápověda ukáže jinou větu.',
+    drill:'Jasné zadání. Jedna správná odpověď.',
+    sentence:'Doplňuješ zájmeno do konkrétní věty.',
+    listen:'Slyšíš tvar a lovíš ho z hlavy.',
+    mix:'Míchání režimů bez berliček.'
+  };
+  el.statusDesc.textContent = desc[state.mode];
+}
+function renderCats(){
+  el.catBar.innerHTML = CATS.map(c=>`<button class="cat-btn ${c.id===state.cat?'on':''}" data-cat="${c.id}">${safe(c.label)}</button>`).join('');
+  el.catBar.querySelectorAll('.cat-btn').forEach(btn=>btn.onclick=()=>{
+    state.cat = btn.dataset.cat;
+    buildQueue();
+    renderCats();
+    renderModes();
+    renderCard();
+    save();
+  });
+}
+function renderModes(){
+  document.querySelectorAll('.mode-btn').forEach(btn=>{
+    btn.classList.toggle('on', btn.dataset.mode===state.mode);
+    btn.onclick=()=>{
+      state.mode = btn.dataset.mode;
+      buildQueue();
+      renderModes();
+      renderCard();
+      save();
+    };
+  });
+}
+function betterDistractors(item, count=3){
+  let pool = byCat().filter(x=>x.id!==item.id);
+  let sameRole = pool.filter(x=>x.role===item.role);
+  let sameCat = pool.filter(x=>x.cat===item.cat);
+  let candidates = sameRole.length >= count ? sameRole : sameCat.length >= count ? sameCat : pool;
+  candidates = candidates.filter(x=>!state.lastIds.includes(x.id));
+  if(candidates.length < count) candidates = pool;
+  return shuffle(candidates).slice(0,count);
+}
+function markWrong(item){
+  const entry = state.reviewBook[item.id] || {item, weight:0};
+  entry.weight += 2;
+  state.reviewBook[item.id] = entry;
+}
+function softenWrong(item){
+  if(!state.reviewBook[item.id]) return;
+  state.reviewBook[item.id].weight = Math.max(0, state.reviewBook[item.id].weight - 1);
+  if(state.reviewBook[item.id].weight === 0) delete state.reviewBook[item.id];
+}
+function maybeReviewItem(){
+  const entries = Object.values(state.reviewBook).filter(x=>x.weight>0).sort((a,b)=>b.weight-a.weight);
+  if(!entries.length) return null;
+  return Math.random() < 0.28 ? entries[0].item : null;
+}
+function buildQueue(){
+  const pool = byCat();
+  let base = shuffle(pool);
+  const review = maybeReviewItem();
+  if(review && !base.find(x=>x.id===review.id)) base.unshift(review);
+  state.queue = base;
+  state.idx = 0;
+}
+function nextItem(){
+  const pool = byCat();
+  if(!pool.length) return null;
+  if(state.idx >= state.queue.length) buildQueue();
+
+  let candidates = [...state.queue.slice(state.idx), ...shuffle(pool)];
+  let item = candidates.find(x=>{
+    const recent = state.lastIds.includes(x.id);
+    const recentFamily = state.lastIds.some(id=>{
+      const other = DATA.find(d=>d.id===id);
+      return other && familyKey(other) === familyKey(x);
+    });
+    return !recent && !recentFamily;
+  }) || candidates.find(x=>!state.lastIds.includes(x.id)) || pick(pool);
+
+  state.current = item;
+  state.attempts = 0;
+  state.answered = false;
+  state.idx += 1;
+  state.lastIds = [item.id, ...state.lastIds].slice(0,4);
+  save();
+  return item;
+}
+function gain(points){
+  state.xp += points;
+  state.ok += 1;
+  state.streak += 1;
+  updateStatus();
+  save();
+}
+function miss(){
+  state.err += 1;
+  state.streak = 0;
+  updateStatus();
+  save();
+}
+function speak(text, rate=0.88){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang='en-GB';
+  u.rate=rate;
+  const voices = speechSynthesis.getVoices();
+  const voice = voices.find(v=>v.lang==='en-GB') || voices.find(v=>v.lang.startsWith('en'));
+  if(voice) u.voice = voice;
+  speechSynthesis.speak(u);
+}
+function showFeedback(type,title,text){
+  const box = document.getElementById('feedback');
+  if(!box) return;
+  box.className = `feedback ${type} show`;
+  document.getElementById('fbTitle').innerHTML = title;
+  document.getElementById('fbText').innerHTML = text;
+}
+function renderFeedback(){
+  return `<div class="feedback" id="feedback"><div class="fb-title" id="fbTitle"></div><div id="fbText"></div></div>`;
+}
+function renderReviewBanner(item){
+  if(!state.reviewBook[item.id] || state.reviewBook[item.id].weight < 2) return '';
+  return `<div class="review">⚠️ Návrat k věci, která tě už jednou zlobila.</div>`;
+}
+function renderCard(){
+  const item = nextItem();
+  updateStatus();
+  if(!item){
+    el.arena.innerHTML = '<div class="label">Žádná data</div><p>Není co zobrazit.</p>';
+    return;
+  }
+  if(state.mode==='learn') return renderLearn(item);
+  if(state.mode==='drill') return renderDrill(item);
+  if(state.mode==='sentence') return renderSentence(item);
+  if(state.mode==='listen') return renderListen(item);
+  if(state.mode==='mix'){
+    const m = pick(['drill','sentence','listen']);
+    if(m==='drill') return renderDrill(item);
+    if(m==='sentence') return renderSentence(item);
+    return renderListen(item);
+  }
+}
+function renderLearn(item){
+  const choices = shuffle([item.sentenceAnswer, ...betterDistractors(item,3).map(x=>x.en)]).slice(0,4);
+  if(!choices.find(x=>x.toLowerCase()===item.sentenceAnswer.toLowerCase())){
+    choices[Math.floor(Math.random()*choices.length)] = item.sentenceAnswer;
+  }
+  const finalChoices = shuffle(choices);
+  el.arena.innerHTML = `
+    <div class="label">🌱 Učební mód</div>
+    ${renderReviewBanner(item)}
+    <div class="title-row">
+      <div class="small">Normální zadání. Dole čtyři možnosti. Nápověda je na tlačítku.</div>
+      <button class="soft-btn" type="button" id="speakBtn">🔊 Přehrát</button>
+    </div>
+    <div class="context-box">
+      <div class="en-line">${safe(item.sentence).replace(/_{3,}/,'<span class="blank">_____</span>').replace('___','<span class="blank">_____</span>')}</div>
+      <div class="cz-line">${safe(item.sentenceCs)}</div>
+    </div>
+    <div class="hint-box" id="hintBox">
+      <div class="hint-sentence">${safe(item.hintSentence)}</div>
+    </div>
+    ${renderFeedback()}
+    <div class="choice-grid">
+      ${finalChoices.map(opt=>`<button class="choice-btn" data-value="${safe(opt)}" type="button">${safe(opt)}</button>`).join('')}
+    </div>
+    <div class="actions">
+      <button class="ghost-btn" type="button" id="hintBtn">💡 Nápověda</button>
+      <button class="ghost-btn next-btn" type="button" id="nextBtn">Další →</button>
+    </div>
+  `;
+  document.getElementById('speakBtn').onclick = ()=>speak(item.sentence.replace(/_{3,}/, item.sentenceAnswer).replace('___', item.sentenceAnswer), .84);
+  document.getElementById('hintBtn').onclick = ()=>{
+    const box = document.getElementById('hintBox');
+    box.classList.add('show');
+    speak(item.hintSentence, .84);
+  };
+  document.querySelectorAll('.choice-btn').forEach(btn=>btn.onclick=()=>checkChoice(item, btn.dataset.value, btn, true));
+  document.getElementById('nextBtn').onclick = renderCard;
+}
+function renderDrill(item){
+  const choices = shuffle([item.en, ...betterDistractors(item,3).map(x=>x.en)]);
+  el.arena.innerHTML = `
+    <div class="label">🎯 Samostatně</div>
+    ${renderReviewBanner(item)}
+    <div class="title-row">
+      <div class="small">Jasné zadání. Jedna správná odpověď.</div>
+      <button class="soft-btn" type="button" id="speakBtn">🔊 Přehrát</button>
+    </div>
+    <div class="hero">
+      <div class="hero-cs">${safe(item.cs)}</div>
+      <div class="hero-note">Vyber správnou anglickou odpověď.</div>
+    </div>
+    ${renderFeedback()}
+    <div class="choice-grid">
+      ${shuffle(choices).map(opt=>`<button class="choice-btn" data-value="${safe(opt)}" type="button">${safe(opt)}</button>`).join('')}
+    </div>
+    <div class="actions">
+      <button class="ghost-btn next-btn" type="button" id="nextBtn">Další →</button>
+    </div>
+  `;
+  document.getElementById('speakBtn').onclick = ()=>speak(item.speak);
+  document.querySelectorAll('.choice-btn').forEach(btn=>btn.onclick=()=>checkChoice(item, btn.dataset.value, btn));
+  document.getElementById('nextBtn').onclick = renderCard;
+}
+function renderSentence(item){
+  const choices = shuffle([item.sentenceAnswer, ...betterDistractors(item,3).map(x=>x.en)]);
+  el.arena.innerHTML = `
+    <div class="label">💬 Ve větě</div>
+    ${renderReviewBanner(item)}
+    <div class="title-row">
+      <div class="small">Doplň do věty jedno správné zájmeno.</div>
+      <button class="soft-btn" type="button" id="speakBtn">🔊 Celá věta</button>
+    </div>
+    <div class="context-box">
+      <div class="en-line">${safe(item.sentence).replace(/_{3,}/,'<span class="blank">_____</span>').replace('___','<span class="blank">_____</span>')}</div>
+      <div class="cz-line">${safe(item.sentenceCs)}</div>
+    </div>
+    ${renderFeedback()}
+    <div class="choice-grid">
+      ${shuffle(choices).map(opt=>`<button class="choice-btn" data-value="${safe(opt)}" type="button">${safe(opt)}</button>`).join('')}
+    </div>
+    <div class="actions">
+      <button class="ghost-btn next-btn" type="button" id="nextBtn">Další →</button>
+    </div>
+  `;
+  document.getElementById('speakBtn').onclick = ()=>speak(item.sentence.replace(/_{3,}/, item.sentenceAnswer).replace('___', item.sentenceAnswer), .84);
+  document.querySelectorAll('.choice-btn').forEach(btn=>btn.onclick=()=>checkChoice(item, btn.dataset.value, btn, true));
+  document.getElementById('nextBtn').onclick = renderCard;
+}
+function renderListen(item){
+  el.arena.innerHTML = `
+    <div class="label">🎧 Poslech</div>
+    ${renderReviewBanner(item)}
+    <div class="title-row">
+      <div class="small">Poslechni a napiš přesně ten tvar, který slyšíš.</div>
+      <button class="soft-btn" type="button" id="speakBtn">🔊 Přehrát</button>
+    </div>
+    <div class="hero">
+      <div class="hero-cs">🎧</div>
+      <div class="hero-note">Po odpovědi uvidíš český význam.</div>
+    </div>
+    ${renderFeedback()}
+    <div class="type-wrap">
+      <input class="text-in" id="answerInput" autocomplete="off" spellcheck="false" placeholder="Napiš, co slyšíš...">
+    </div>
+    <div class="actions">
+      <button class="ghost-btn" type="button" id="againBtn">↺ Znovu</button>
+      <button class="main-btn" type="button" id="checkBtn">Zkontrolovat ✓</button>
+      <button class="ghost-btn next-btn" type="button" id="nextBtn">Další →</button>
+    </div>
+  `;
+  document.getElementById('speakBtn').onclick = ()=>speak(item.speak, .8);
+  document.getElementById('againBtn').onclick = ()=>speak(item.speak, .76);
+  const input = document.getElementById('answerInput');
+  setTimeout(()=>{input.focus(); speak(item.speak, .8);}, 260);
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      state.answered ? renderCard() : checkTyped(item, true);
+    }
+  });
+  document.getElementById('checkBtn').onclick = ()=>checkTyped(item, true);
+  document.getElementById('nextBtn').onclick = renderCard;
+}
+function checkChoice(item, chosen, btn, sentenceMode=false){
+  if(state.answered) return;
+  const correctAnswer = sentenceMode ? item.sentenceAnswer : item.en;
+  const correct = chosen.toLowerCase() === correctAnswer.toLowerCase();
+
+  if(correct){
+    state.answered = true;
+    document.querySelectorAll('.choice-btn').forEach(b=>{
+      b.disabled = true;
+      if(b.dataset.value.toLowerCase() === correctAnswer.toLowerCase()) b.classList.add('correct');
+    });
+    showFeedback('ok','✅ Správně', sentenceMode
+      ? `Do věty patří <strong>${safe(correctAnswer)}</strong>.`
+      : `Správná odpověď je <strong>${safe(correctAnswer)}</strong>.`);
+    gain(state.attempts===0 ? 12 : 7);
+    softenWrong(item);
+    document.getElementById('nextBtn').style.display='inline-flex';
+    if(sentenceMode){
+      speak(item.sentence.replace(/_{3,}/, item.sentenceAnswer).replace('___', item.sentenceAnswer), .84);
+    }else{
+      speak(item.speak, .84);
+    }
+    return;
+  }
+
+  state.attempts += 1;
+  btn.classList.add('wrong','shake');
+  setTimeout(()=>btn.classList.remove('shake'),280);
+  miss();
+  markWrong(item);
+
+  if(state.attempts === 1){
+    showFeedback('warn','Ještě ne', 'Tohle nesedí. Zkus to ještě jednou.');
+    btn.disabled = true;
+    return;
+  }
+
+  state.answered = true;
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    b.disabled = true;
+    if(b.dataset.value.toLowerCase() === correctAnswer.toLowerCase()) b.classList.add('reveal');
+  });
+  showFeedback('bad','❌ Teď ne', `${safe(item.explanation)} Správně je <strong>${safe(correctAnswer)}</strong>.`);
+  document.getElementById('nextBtn').style.display='inline-flex';
+}
+function checkTyped(item, listenMode=false){
+  if(state.answered) return;
+  const input = document.getElementById('answerInput');
+  const val = input.value.trim().toLowerCase();
+  const correct = item.en.toLowerCase();
+  if(!val){ input.focus(); return; }
+
+  if(val === correct){
+    state.answered = true;
+    input.classList.remove('bad');
+    input.classList.add('good');
+    showFeedback('ok','✅ Správně', listenMode
+      ? `<strong>${safe(item.en)}</strong> = ${safe(item.cs)}`
+      : `Správná odpověď je <strong>${safe(item.en)}</strong>.`);
+    gain(state.attempts===0 ? 14 : 8);
+    softenWrong(item);
+    document.getElementById('checkBtn').classList.add('hidden');
+    document.getElementById('nextBtn').style.display='inline-flex';
+    speak(item.speak, .84);
+    return;
+  }
+
+  state.attempts += 1;
+  input.classList.remove('good');
+  input.classList.add('bad','shake');
+  setTimeout(()=>input.classList.remove('shake'),280);
+  miss();
+  markWrong(item);
+
+  if(state.attempts === 1){
+    showFeedback('warn','Ještě ne', 'Tohle není správně. Zkus to ještě jednou.');
+    input.select();
+    return;
+  }
+
+  state.answered = true;
+  input.value = item.en;
+  input.classList.remove('bad');
+  input.classList.add('good');
+  showFeedback('bad','❌ Správně je to takhle', `${safe(item.explanation)} Správně je <strong>${safe(item.en)}</strong>.`);
+  document.getElementById('checkBtn').classList.add('hidden');
+  document.getElementById('nextBtn').style.display='inline-flex';
+  speak(item.speak, .84);
+}
+function init(){
+  validateData();
+  load();
+  loadTheme();
+  renderCats();
+  renderModes();
+  buildQueue();
+  updateStatus();
+  renderCard();
+
+  document.getElementById('themeLight').onclick = ()=>saveTheme('light');
+  document.getElementById('themeDark').onclick = ()=>saveTheme('dark');
+  el.resetBtn.onclick = ()=>{
+    if(!confirm('Opravdu chceš vynulovat postup?')) return;
+    localStorage.removeItem(SAVE_KEY);
+    location.reload();
+  };
+
+  document.addEventListener('keydown', (e)=>{
+    if(e.key !== 'Enter') return;
+    const tag = document.activeElement ? document.activeElement.tagName : '';
+    const isTyping = tag === 'INPUT' || tag === 'TEXTAREA';
+    if(isTyping) return;
+
+    const nextBtn = document.getElementById('nextBtn');
+    if(nextBtn && getComputedStyle(nextBtn).display !== 'none'){
+      e.preventDefault();
+      nextBtn.click();
+      return;
+    }
+
+    const nextBtn2 = document.getElementById('nextBtn2');
+    if(nextBtn2 && getComputedStyle(nextBtn2).display !== 'none'){
+      e.preventDefault();
+      nextBtn2.click();
+    }
+  });
+}
+init();
+</script>
+</body>
+</html>
