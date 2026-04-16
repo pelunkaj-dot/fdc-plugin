@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FajnČesko — České dějiny</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F0EB;--bg2:#E6E2D8;--card:#FFFFFF;--card2:#F8F6F0;
+  --cervena:#B71C1C;--cervena2:#E53935;--modra:#0D2B6B;--modra2:#1565C0;
+  --zlata:#C8860A;--zlata2:#F0B429;
+  --text:#1A1208;--muted:#7A6A50;
+  --correct:#2E6B2E;--wrong:#B71C1C;--xp:#6D28D9;
+  --border:rgba(13,43,107,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 0% 0%,   rgba(183,28,28,.07) 0%,transparent 50%),
+    radial-gradient(ellipse at 100% 100%,rgba(13,43,107,.06) 0%,transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a09070' fill-opacity='0.03'%3E%3Cpath d='M40 0 L43 14 L57 14 L46 23 L50 37 L40 29 L30 37 L34 23 L23 14 L37 14Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.screen{display:none;min-height:100vh;padding:0 16px 40px;max-width:600px;margin:0 auto;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes starPop{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes xpFloat{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}80%{transform:translate(-50%,-80%);opacity:1}100%{transform:translate(-50%,-120%) scale(.8);opacity:0}}
+@keyframes correctPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px rgba(46,107,46,.3)}}
+@keyframes wrongShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes slide{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+@keyframes flamePulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.18)}}
+
+.home-header{text-align:center;padding:28px 0 18px}
+.logo{font-family:'Playfair Display',serif;font-size:3.2rem;font-weight:900;letter-spacing:.02em;line-height:1;background:linear-gradient(135deg,var(--cervena) 0%,var(--zlata) 50%,var(--modra) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-ico{font-size:2.6rem;-webkit-text-fill-color:initial;vertical-align:middle;margin-right:6px}
+.logo-sub{font-size:.78rem;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-top:5px}
+.xp-bar{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--border);border-radius:999px;padding:8px 22px;margin-top:12px;font-weight:800;font-size:1.05rem;color:var(--xp);box-shadow:0 2px 8px rgba(13,43,107,.08);}
+.xp-lbl{font-weight:400;color:var(--muted);font-size:.8rem}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:14px 0}
+.cat-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(13,43,107,.06);}
+.cat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cervena),var(--zlata),var(--modra));transform:scaleX(0);transition:transform .22s;transform-origin:left}
+.cat-card:hover::after{transform:scaleX(1)}
+.cat-card:hover{border-color:var(--modra2);transform:translateY(-2px);box-shadow:0 8px 22px rgba(13,43,107,.12)}
+.cat-card:active{transform:scale(.97)}
+.cat-emoji{font-size:2rem;margin-bottom:8px;display:block}
+.cat-name{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--modra);line-height:1.2}
+.cat-count{font-size:.65rem;color:var(--modra2);font-weight:800;margin-top:2px;letter-spacing:.05em}
+.cat-desc{font-size:.71rem;color:var(--muted);margin-top:3px;line-height:1.4}
+.cat-stars{margin-top:8px;display:flex;gap:3px}
+.cat-star{font-size:.82rem;opacity:.16;transition:opacity .3s}
+.cat-star.on{opacity:1}
+.btn-badges{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:15px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(13,43,107,.05);}
+.btn-badges:hover{border-color:var(--modra2);color:var(--modra)}
+.badge-pill{background:var(--modra);color:#fff;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 8px}
+
+.q-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 10px}
+.q-cat{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--modra)}
+.q-streak{display:none;align-items:center;gap:3px;font-weight:800;font-size:.9rem;color:var(--zlata)}
+.q-streak.on{display:flex}
+.streak-fire{animation:flamePulse .65s ease infinite;display:inline-block}
+.q-cnt-wrap{display:flex;align-items:center;gap:8px}
+.q-cnt{font-size:.82rem;color:var(--muted);font-weight:700}
+.back-q{background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.75rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+.back-q:hover{border-color:var(--modra2);color:var(--modra)}
+.prog-bar{height:5px;background:var(--bg2);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cervena),var(--zlata),var(--modra));border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.q-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:22px;margin-bottom:14px;min-height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:slide .25s ease;box-shadow:0 3px 12px rgba(13,43,107,.08);}
+.q-badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px;font-weight:700}
+.q-text{font-size:1.08rem;font-weight:700;line-height:1.5;color:var(--text)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.answers.solo{grid-template-columns:1fr}
+.ans-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:12px;padding:13px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:all .18s;text-align:center;line-height:1.35;}
+.ans-btn:hover:not(:disabled){border-color:var(--modra2);background:rgba(13,43,107,.06);color:var(--modra)}
+.ans-btn.correct{background:rgba(46,107,46,.12);border-color:var(--correct);color:var(--correct);animation:correctPulse .5s ease}
+.ans-btn.wrong{background:rgba(183,28,28,.09);border-color:var(--wrong);color:var(--wrong);animation:wrongShake .4s ease}
+.ans-btn.show-correct{background:rgba(46,107,46,.1);border-color:var(--correct);color:var(--correct)}
+.ans-btn:disabled{cursor:default}
+.fact-box{background:linear-gradient(135deg,rgba(13,43,107,.07),rgba(200,134,10,.03));border:1.5px solid rgba(13,43,107,.18);border-radius:12px;padding:14px;margin-bottom:13px;display:none;animation:popIn .3s ease;}
+.fact-box.on{display:block}
+.fact-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.14em;color:var(--modra);font-weight:800;margin-bottom:5px}
+.fact-text{font-size:.86rem;color:var(--text);line-height:1.6}
+.next-btn{width:100%;background:linear-gradient(135deg,var(--modra),var(--modra2));border:none;border-radius:12px;padding:16px;color:#fff;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;cursor:pointer;display:none;transition:all .2s;box-shadow:0 4px 14px rgba(13,43,107,.22);}
+.next-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.next-btn.on{display:block;animation:popIn .3s ease}
+.xp-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--xp);color:#fff;font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;padding:10px 28px;border-radius:999px;pointer-events:none;z-index:200;opacity:0;white-space:nowrap;}
+.xp-popup.go{animation:xpFloat 1.7s ease forwards}
+
+.res-header{text-align:center;padding:28px 0 16px}
+.res-title{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;color:var(--modra)}
+.res-sub{color:var(--muted);font-size:.88rem;margin-top:3px}
+.res-stars{display:flex;justify-content:center;gap:14px;margin:18px 0}
+.res-star{font-size:2.8rem;opacity:.14;display:inline-block}
+.res-star.on{opacity:1;animation:starPop .5s cubic-bezier(.4,0,.2,1) forwards}
+.res-star:nth-child(2){animation-delay:.2s}
+.res-star:nth-child(3){animation-delay:.4s}
+.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:14px 0}
+.stat-c{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 9px;text-align:center;box-shadow:0 2px 8px rgba(13,43,107,.06);}
+.stat-v{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;color:var(--modra)}
+.stat-l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+.facts-review{margin:18px 0}
+.facts-t{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--modra);margin-bottom:9px}
+.fact-item{background:var(--card);border-left:3px solid var(--zlata);border-radius:0 9px 9px 0;padding:9px 13px;margin-bottom:7px;font-size:.83rem;line-height:1.55;color:var(--text);}
+.res-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.btn-primary{background:linear-gradient(135deg,var(--modra),var(--modra2));border:none;border-radius:12px;padding:15px;color:#fff;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(13,43,107,.2);}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-sec{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:15px;color:var(--text);font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-sec:hover{border-color:var(--modra2);color:var(--modra)}
+
+.badges-top{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
+.back-btn{background:var(--card);border:1.5px solid var(--border);border-radius:9px;padding:7px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;font-size:.82rem;transition:all .2s;}
+.back-btn:hover{border-color:var(--modra2)}
+.badges-t{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--modra)}
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge-c{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 9px;text-align:center;transition:all .3s;}
+.badge-c.locked{opacity:.3;filter:grayscale(.7)}
+.badge-c.unlocked{border-color:rgba(13,43,107,.35);box-shadow:0 0 12px rgba(13,43,107,.1)}
+.badge-ico{font-size:2.1rem;margin-bottom:7px;display:block}
+.badge-n{font-size:.68rem;font-weight:800;color:var(--modra);text-transform:uppercase;letter-spacing:.07em;line-height:1.25}
+.badge-d{font-size:.61rem;color:var(--muted);margin-top:3px;line-height:1.35}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--modra2);border-radius:3px}
+@media(max-width:360px){.logo{font-size:2.6rem}.cat-grid{gap:8px}.answers{gap:7px}}
+</style>
+</head>
+<body>
+<div class="xp-popup" id="xpPopup"></div>
+
+<div class="screen" id="homeScreen">
+  <div class="home-header">
+    <div class="logo"><span class="logo-ico">🏰</span>FajnČesko</div>
+    <div class="logo-sub">České a československé dějiny</div>
+    <div class="xp-bar">⚡ <span id="xpTotal">0</span> <span class="xp-lbl">XP</span></div>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+  <button class="btn-badges" onclick="showBadges()">🏆 Odznaky &nbsp;<span class="badge-pill" id="badgePill">0/18</span></button>
+</div>
+
+<div class="screen" id="questionScreen">
+  <div class="q-topbar">
+    <div class="q-cat" id="qCat"></div>
+    <div class="q-streak" id="qStreak"><span class="streak-fire">🔥</span><span id="streakN">0</span></div>
+    <div class="q-cnt-wrap">
+      <div class="q-cnt" id="qCnt"></div>
+      <button class="back-q" onclick="goHome()">← Domů</button>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="q-card">
+    <div class="q-badge" id="qBadge"></div>
+    <div class="q-text" id="qText"></div>
+  </div>
+  <div class="answers" id="answersDiv"></div>
+  <div class="fact-box" id="factBox">
+    <div class="fact-label">📜 Věděl/a jsi?</div>
+    <div class="fact-text" id="factTxt"></div>
+  </div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Další →</button>
+</div>
+
+<div class="screen" id="resultScreen">
+  <div class="res-header">
+    <div class="res-title" id="resTitle"></div>
+    <div class="res-sub" id="resSub"></div>
+  </div>
+  <div class="res-stars"><span class="res-star">⭐</span><span class="res-star">⭐</span><span class="res-star">⭐</span></div>
+  <div class="res-stats">
+    <div class="stat-c"><div class="stat-v" id="stCorrect">0</div><div class="stat-l">Správně</div></div>
+    <div class="stat-c"><div class="stat-v" id="stXP" style="color:var(--xp)">0</div><div class="stat-l">XP</div></div>
+    <div class="stat-c"><div class="stat-v" id="stStreak" style="color:var(--zlata)">0</div><div class="stat-l">Max série</div></div>
+  </div>
+  <div class="facts-review"><div class="facts-t">📜 Co jsi se dozvěděl/a</div><div id="factsList"></div></div>
+  <div class="res-btns">
+    <button class="btn-primary" onclick="playAgain()">Hrát znovu</button>
+    <button class="btn-sec" onclick="goHome()">← Domů</button>
+  </div>
+</div>
+
+<div class="screen" id="badgesScreen">
+  <div class="badges-top">
+    <button class="back-btn" onclick="goHome()">← Zpět</button>
+    <div class="badges-t">Moje odznaky</div>
+  </div>
+  <div class="badge-grid" id="badgeGrid"></div>
+</div>
+
+<script>
+const CATS=[
+  {id:'premyslovci', name:'Přemyslovci',         emoji:'👑', desc:'Počátky českého státu, 9.–14. stol.'},
+  {id:'stredovek',   name:'Středověk a Lucemburkové',emoji:'🏰',desc:'Karel IV., husitství, Jiří z Poděbrad'},
+  {id:'habsburkove', name:'Habsburkové',          emoji:'⚔️', desc:'Bílá hora, baroko, národní obrození'},
+  {id:'vznik',       name:'Vznik Československa', emoji:'🇨🇿', desc:'1918, Masaryk, první republika'},
+  {id:'valka',       name:'Válka a protektorát',  emoji:'🎖️', desc:'Mnichovská dohoda, heydrichiáda, osvobození'},
+  {id:'komunismus',  name:'Komunismus',           emoji:'⭐', desc:'Únor 1948, 50. léta, pražské jaro'},
+  {id:'svoboda',     name:'Svoboda a demokracie', emoji:'🕊️', desc:'Sametová revoluce, rozdělení ČSFR, EU'},
+];
+
+const QS=[
+// PŘEMYSLOVCI
+{c:'premyslovci',t:'q',q:'Jak se jmenuje legendární praotec Čechů, který podle pověsti přivedl svůj lid do Čech?',
+o:['Praotec Čech','Přemysl Oráč','Samo','Krok'],a:0,
+f:'Podle staré pověsti přivedl praotec Čech svůj lid na horu Říp a spatřil z ní zaslíbenou zemi. Historicky první doložená česká kmenová knížata jsou Přemyslovci, jejichž rod panoval přibližně od 9. do začátku 14. století.'},
+
+{c:'premyslovci',t:'q',q:'Kdo byl Bořivoj I. a jaký byl jeho historický přínos?',
+o:['První historicky doložený přemyslovský kníže, přijal křest od Metoděje kolem roku 883','První český král','Zakladatel Prahy','Vévoda, který porazil Sasy'],a:0,
+f:'Bořivoj I. přijal křest pravděpodobně od Metoděje na Velké Moravě kolem roku 883. Byl prvním přemyslovským knížetem, jehož existenci dokládají historické prameny. Přijetím křtu se Čechy přiklonily ke křesťanství.'},
+
+{c:'premyslovci',t:'q',q:'Sv. Václav byl zavražděn roku 935. Kdo ho nechal zabít?',
+o:['Boleslav I., jeho vlastní bratr','Němečtí rytíři','Pohanský lid','Moravané'],a:0,
+f:'Boleslav I. dal 28. září 935 zavraždit svého bratra Václava u Staré Boleslavi. Václav byl záhy uctíván jako světec a zemský patron. Datum jeho smrti, 28. září, je dnes státním svátkem České republiky.'},
+
+{c:'přemyslovci',t:'q',q:'Která přemyslovská světice je uctívána jako zakladatelka prvního ženského kláštera v Čechách?',
+o:['Sv. Anežka Česká','Sv. Ludmila','Sv. Zdislava','Sv. Hedvika'],a:0,
+f:'Anežka Česká (asi 1211–1282) odmítla sňatek s císařem Fridrichem II. a roku 1234 spoluzaložila klášter klarisek a minoritů v Praze. Kanonizována byla roku 1989 – tři dny před sametovou revolucí.'},
+
+{c:'premyslovci',t:'q',q:'Který přemyslovský panovník si jako první začal říkat „král" a od koho přijal královský titul?',
+o:['Vratislav II., titul od císaře Jindřicha IV. roku 1085','Přemysl Otakar I., zlatou bulou sicilskou roku 1212','Boleslav II. od papeže','Břetislav I. od moravských biskupů'],a:0,
+f:'Zlatá bula sicilská z roku 1212, vydaná císařem Fridrichem II. Přemyslu Otakaru I., zaručila dědičný královský titul pro český rod a zaručila autonomii Čech v rámci Říše. Je to jeden z nejdůležitějších dokumentů českých dějin.'},
+
+{c:'premyslovci',t:'q',q:'Přemysl Otakar II. byl nazýván „král zlatý a železný". Kde zahynul?',
+o:['Na Moravském poli roku 1278 v bitvě s Rudolfem Habsburským','V bitvě u Kressenbrunnu','Při obléhání Vídně','Zemřel přirozenou smrtí'],a:0,
+f:'Přemysl Otakar II. ovládal na vrcholu své moci území od Čech až po Jadran. Na Moravském poli ho porazil Rudolf I. Habsburský. Porážka zahájila habsburskou nadvládu ve střední Evropě, která trvala staletí.'},
+
+{c:'premyslovci',t:'q',q:'Jak zanikla přemyslovská dynastie?',
+o:['Vraždou Václava III. roku 1306 (vyhynutí "po meči" - bez mužských potomků','Přirozeným vymřením po Václavu II.','Svržením Janem Lucemburským','Porážkou v bitvě na Moravském poli'],a:0,
+f:'Václav III. byl zavražděn v Olomouci roku 1306 za dosud nevyjasněných okolností. Byl posledním Přemyslovcem po meči. Na trůn nastoupili nejprve Habsburkové, pak roku 1310 Jan Lucemburský.'},
+
+{c:'premyslovci',t:'q',q:'Sv. Ludmila je první českou světicí. Jak zemřela?',
+o:['Byla zavražděna na příkaz své snachy Drahomíry roku 921','Zemřela přirozenou smrtí','Zahynula při normanském nájezdu','Zemřela při morové epidemii'],a:0,
+f:'Ludmila, babička sv. Václava, vychovávala vnuka v křesťanském duchu. Drahomíra, pohanka a matka Václava, ji dala roku 921 uškrtit v Tetíně. Ludmila je uctívána jako patronka Čech, Moravy a Slovenska.'},
+
+{c:'premyslovci',t:'q',q:'Kde byl v 10. století vybudován první přemyslovský knížecí hrad, z něhož se stalo centrum Přemyslovců?',
+o:['Praha – Pražský hrad','Vyšehrad','Olomouc','Libuš'],a:0,
+f:'Pražský hrad byl budován od konce 9. století jako přemyslovské sídlo. Kostel sv. Víta na Hradě byl nejprve románskou rotundou, již dal postavit sv. Václav. Katedrála sv. Víta, Václava a Vojtěcha v dnešní podobě se stavěla od roku 1344.'},
+
+// STŘEDOVĚK A LUCEMBURCI
+{c:'stredovek',t:'q',q:'Karel IV. byl korunován císařem Svaté říše římské roku 1355. Čím je proslulý pro Čechy?',
+o:['Povznesl Prahu na sídelní město říše, založil Karlovu univerzitu a vydal Zlatou bulu','Sjednotil česká království s Polskem a Uhrami','Porazil husity a obnovil katolickou víru v Čechách','Dobyl zpět Sudety a rozšířil české území na západ'],
+a:0,
+f:'Karel IV. byl nejslavnějším českým králem. Roku 1348 založil Karlovu univerzitu – nejstarší ve střední Evropě. Zlatou bulou z roku 1356 upravil způsob volby římského císaře. Praha se za jeho vlády stala jedním z největších měst Evropy.'},
+
+{c:'stredovek',t:'q',q:'Kdy byla založena Univerzita Karlova a proč je historicky významná?',
+o:['Roku 1348; je to nejstarší univerzita ve střední Evropě','Roku 1088; je nejstarší na světě','Roku 1409; vznikla jako druhá po Vídni','Roku 1356; jako součást příprav na korunovaci Karla IV.'],a:0,
+f:'Karlova univerzita byla založena 7. dubna 1348 Karlem IV. Je nejstarší univerzitou ve střední Evropě a jednou z nejstarších na světě. Jan Hus byl jejím rektorem a magistrem a na její půdě formuloval své reformní myšlenky.'},
+
+{c:'stredovek',t:'q',q:'Co vedlo k upálení Jana Husa a kdy k němu došlo?',
+o:['Byl odsouzen kostnickým koncilem pro herezi a upálen 6. července 1415','Byl popraven v Praze za vzpouru','Zemřel přirozenou smrtí v Kostnici','Byl popraven roku 1419 po první pražské defenestraci'],a:0,
+f:'Jan Hus přišel na kostnický koncil roku 1414 s císařským glejtem, který mu zaručoval bezpečnost. Přesto byl uvězněn, souzen a upálen 6. července 1415. Jeho smrt vyvolala husitské hnutí. Toto datum je dnes státním svátkem.'},
+
+{c:'stredovek',t:'q',q:'Co byl kalich a proč byl pro husity symbolický?',
+o:['Přijímání pod obojí způsobou – víno i chléb pro laiky; husité ho prosazovali oproti katolické praxi','Válečný buben husitských vojsk','Číše jako nádoba na svěcenou vodu','Symbol, který husité ukořistili v bitvě u Sudoměře'],a:0,
+f:'Středověká katolická praxe podávala laikům při mši pouze chléb (hostii), víno bylo vyhrazeno kněžím. Husité žádali přijímání pod obojí způsobou i pro laiky, a kalich se stal jejich symbolem. Utrakvismus byl jedním z hlavních bodů jejich reformního programu.'},
+
+{c:'stredovek',t:'q',q:'Kdo byl Jan Žižka z Trocnova a čím je proslulý?',
+o:['Vojevůdce husitů, genialní taktik, který ani po oslepnutí neprohrál žádnou bitvu','Husitský kazatel a teolog','Přemyslovský rytíř','Lucemburský vojevůdce'],a:0,
+f:'Jan Žižka byl hejtmanem táborských husitů a jedním z nejoriginálnějších vojevůdců středověku. Vymyslel taktiku vozové hradby. Oslepl na obě oči, přesto dál vítězil. Zemřel roku 1424 na mor, nikoli v boji. Sám prý žádal, aby z jeho kůže udělali buben.'},
+
+{c:'stredovek',t:'q',q:'Kdo byl Jiří z Poděbrad a proč byl výjimečný?',
+o:['Jediný husitský (utrakvistický) král Čech, zvolený roku 1458','Jeden z husitských vojevůdců po Žižkovi','Habsburský regent Čech','Syn Jiřího z Kunštátu, vzdorokrál'],a:0,
+f:'Jiří z Poděbrad byl roku 1458 zvolen prvním a jediným husitským králem. Pokusil se o mírový projekt – jako první v Evropě navrhoval jakýsi mezinárodní mírový svaz panovníků. S papežem byl ve sporu kvůli vyznání, zemřel roku 1471.'},
+
+{c:'stredovek',t:'q',q:'Co se stalo roku 1419 při první pražské defenestraci?',
+o:['Husité vyhodili z okna Novoměstské radnice konšely; událost spustila husitské války','Husité svrhli katolické kněze z Vítu','Husitská posádka dobyla Vyšehrad','Byl zabit husitský delegát, který přijel vyjednat mír'],a:0,
+f:'Dne 30. července 1419 vnikl husitský dav vedený knězem Janem Želivským do Novoměstské radnice a vyhodil z okna několik konšelů. Událost spustila husitskou revoluci. Tradičně se mluví o třech pražských defenestracích: 1419, 1483 a 1618.'},
+
+// HABSBURKOVÉ
+{c:'habsburkove',t:'q',q:'Co byla bitva na Bílé hoře a kdy se odehrála?',
+o:['Porážka stavovského povstání císařskými vojsky 8. listopadu 1620','Vítězství protestantských stavů nad Habsburky','Bitva z roku 1618, která zahájila třicetiletou válku','Polní střet husitů s křižáky roku 1420'],a:0,
+f:'Bitva na Bílé hoře trvala asi dvě hodiny a skončila úplnou porážkou českých a moravských stavů. Následoval tvrdý protireformační postih – 27 předáků povstání bylo 21. června 1621 popraveno na Staroměstském náměstí. Pro českou kulturu to byla traumatická událost.'},
+
+{c:'habsburkove',t:'q',q:'Co bylo Obnovené zřízení zemské z roku 1627?',
+o:['Habsburský zákon, kterým bylo zakázáno protestanství a česká šlechta musela přestoupit na katolicismus nebo emigrovat','Ústava první Habsburské monarchie','Zákon potvrzující svobodu vyznání v Čechách','Dokument upravující vztah Čech a Moravy'],a:0,
+f:'Po Bílé hoře přišla rekatolizace. Obnovené zřízení zemské zbavilo české stavy většiny práv, němčina se stala druhým úředním jazykem a do Čech se vrátili jezuité. Desítky tisíc protestantů emigrovaly – mezi nimi Jan Amos Komenský.'},
+
+{c:'habsburkove',t:'q',q:'Kdo byl Jan Amos Komenský?',
+o:['Pedagog, filosof a teolog, zvaný „učitel národů", nucen odejít do exilu po Bílé hoře','Vojevůdce třicetileté války','Husitský kazatel','Zakladatel jezuitského řádu v Čechách'],a:0,
+f:'Komenský (1592–1670) je považován za zakladatele moderní pedagogiky. Jeho díla Didactica magna a Orbis pictus (první ilustrovaná učebnice pro děti na světě) ovlivnila vzdělávání po celé Evropě. Zemřel v Amsterdamu, aniž se mohl vrátit do vlasti.'},
+
+{c:'habsburkove',t:'q',q:'Co bylo josefinství a s jakým panovníkem se pojí?',
+o:['Reformní politika Josefa II. (1780–1790), ke které se váže zrušení nevolnictví a Toleranční patent','Habsburská politika centralizace za Marie Terezie','Osvícenské hnutí v Čechách 18. stol.','Náboženská politika Karla VI.'],a:0,
+f:'Josef II. byl reformátor a osvícenec. Tolerančním patentem z roku 1781 povolil protestantům a pravoslavným veřejně praktikovat víru. Zrušil nevolnictví. Jeho reformy byly po jeho smrti z části zrušeny, část zůstala v platnosti.'},
+
+{c:'habsburkove',t:'q',q:'Co bylo národní obrození a kdo patřil mezi jeho hlavní představitele?',
+o:['Kulturní a jazykové hnutí za obnovu češtiny a české identity 18.–19. stol.; Josef Dobrovský, Josef Jungmann, František Palacký','Politické hnutí za nezávislost Čech na Habsburcích','Selské povstání za práva nevolníků','Vojenské tažení za českou samostatnost'],a:0,
+f:'Národní obrození probíhalo v době, kdy se němčina stávala úředním jazykem na úkor češtiny. Josef Dobrovský vědecky zpracoval českou gramatiku, Josef Jungmann sestavil pětisvazkový česko-německý slovník, František Palacký napsal dějiny českého národa. Jejich práce položila základy moderní české identity.'},
+
+{c:'habsburkove',t:'q',q:'Co se odehrálo v Praze v červnu 1848?',
+o:['Slovanský sjezd a červnové povstání; generál Windischgrätz bombardoval Prahu a povstání potlačil','Vyhlášení české autonomie','Korunovace Ferdinanda I.','Schválení moderní české ústavy'],a:0,
+f:'Rok 1848 byl rokem revolucí v celé Evropě. V Praze se konal Slovanský sjezd, ale po zastřelení Windischgrätzovy manželky bylo vyhlášeno stanné právo a vojsko povstání brutálně potlačilo. Požadavky české autonomie zůstaly nevyslyšeny.'},
+
+{c:'habsburkove',t:'q',q:'Kdy bylo postaveno Národní divadlo a jaký byl jeho symbolický význam?',
+o:['Otevřeno roku 1883 po přestavbě; bylo postaveno ze sbírek lidu a symbolizovalo českou národní hrdost','Otevřeno roku 1869 jako první veřejná budova v Praze','Postaveno z fondu habsburských císařů','Otevřeno roku 1906 jako součást pražské výstavy'],a:0,
+f:'Národní divadlo bylo postaveno „nákladem národa" – ze sbírek tisíců dárců. Otevřeno bylo roku 1881, ale brzy vyhořelo. Obnovené divadlo bylo znovu otevřeno roku 1883. Heslo „Národ sobě" nad jevištěm shrnuje jeho symboliku.'},
+
+// VZNIK ČESKOSLOVENSKA
+{c:'vznik',t:'q',q:'Kdy a jak vzniklo Československo?',
+o:['28. října 1918 vyhlášením nezávislosti v Praze po rozpadu Rakouska-Uherska','1. ledna 1919 mírovou smlouvou v Paříži','28. října 1917 revolucí inspirovanou ruskou revolucí','14. listopadu 1918, kdy byl Masaryk zvolen prezidentem'],a:0,
+f:'Vznik Československa 28. října 1918 byl výsledkem práce zahraničního odboje (Masaryk, Beneš, Štefánik) i domácích politiků. Toto datum je dnes státním svátkem. Byl to jeden z mála případů, kdy nový stát vznikl pokojně.'},
+
+{c:'vznik',t:'q',q:'Kdo byl Tomáš Garrigue Masaryk?',
+o:['Filosof, politik a první prezident Československa','Předseda vlády první republiky','Slovenský politik, spoluzakladatel ČSR','Vojenský velitel československých legií'],a:0,
+f:'T. G. Masaryk (1850–1937) byl profesorem filosofie, poslancem a neúnavným bojovníkem za pravdu. Prosazoval Dreyfusovu nevinu i pravost Rukopisů (dokazoval jejich podvrh). Za 1. světové války vedl zahraniční odboj. Jako prezident byl symbolem demokracie. Je uctíván jako „Tatíček Masaryk".'},
+
+{c:'vznik',t:'q',q:'Kdo byl Milan Rastislav Štefánik?',
+o:['Slovenský astronom, generál a diplomat, jeden ze tří zakladatelů Československa','První slovenský premiér','Velitel slovenské armády','Slovenský básník a bojovník za práva Slováků'],a:0,
+f:'Milan Rastislav Štefánik (1880–1919) byl po Masarykovi a Benešovi třetím klíčovým architektem Československa. Jako astronom pracoval ve francouzských službách, stal se generálem a organizoval legie. Zahynul při letecké havárii krátce po konci války.'},
+
+{c:'vznik',t:'q',q:'Co bylo tzv. Washingtonská deklarace z 18. října 1918?',
+o:['Prohlášení o vzniku Československa, vydané Masarykem ve Washingtonu deset dní před 28. říjnem','Americko-československá smlouva o vzájemné obraně','Listina práv menšin v novém státě','Dokument amerického Kongresu uznávající ČSR'],a:0,
+f:'Masaryk vydal Washingtonskou deklaraci 18. října 1918, ještě před koncem války. Byl to de facto program nového státu – deklaroval demokratické principy, práva národů a menšin. Prezident Wilson americké uznání nového státu vyjádřil ještě před 28. říjnem.'},
+
+{c:'vznik',t:'q',q:'Proč se meziválečné Československo považovalo za úspěšnou demokracii?',
+o:['Bylo jedinou fungující demokracií ve střední Evropě ve 30. letech, s rozvinutým průmyslem a svobodným tiskem','Nemělo žádné menšinové problémy','Mělo silnou armádu a nikdy nebylo ohroženo','Jako první v Evropě zavedlo ženské volební právo'],a:0,
+f:'Meziválečné Česko-slovensko patřilo ke světové špičce průmyslové výroby (Baťa, Škoda). Bylo pluralitní demokracií, kde vycházel svobodný tisk i německy. Zatímco okolní státy měly sklony k autoritářství, ČSR si demokracii udrželo až do roku 1938.'},
+
+{c:'vznik',t:'q',q:'Co byla Mnichovská dohoda a kdy byla podepsána?',
+o:['Dohoda Británie, Francie, Německa a Itálie ze září 1938 nutící ČSR postoupit Sudety Německu','Smlouva o přátelství ČSR a Německa','Tajná dohoda Beneše s Hitlerem','Mezinárodní záruka hranic ČSR'],a:0,
+f:'Mnichovská dohoda z 29.–30. září 1938 byla podepsána bez účasti ČSR. Británie a Francie obětovaly Sudety Hitlerovi výměnou za slib míru. Prezident Beneš kapituloval, protože bez spojenců byl boj nemožný. Slovo „Mnichov" se v češtině stalo symbolem zrady.'},
+
+// VÁLKA A PROTEKTORÁT
+{c:'valka',t:'q',q:'Co byl Protektorát Čechy a Morava?',
+o:['Nacistická správa českých zemí v letech 1939–1945 po obsazení 15. března 1939','Německá vojenská správa Sudet v roce 1938','Autonomní status Čech v rámci Německé říše s vlastní vládou','Stav od roku 1940, kdy ČSR formálně přistoupila k Třetí říši'],a:0,
+f:'Dne 15. března 1939 obsadila německá vojska zbytek Čech a Moravy a Hitler vyhlásil protektorát. Přijel do Prahy a přespal na Hradě. Bylo to porušení Mnichovské dohody; ukázalo světu Hitlerovy skutečné záměry.'},
+
+{c:'valka',t:'q',q:'Kdo byl Reinhard Heydrich a proč je spojen s českými dějinami?',
+o:['Zastupující říšský protektor Čech a Moravy, zabit při atentátu v Praze v roce 1942','Velitel SS v Čechách v letech 1939–1945','Říšský komisař pro správu Prahy','Gestapo-šéf pro celé Německo, který Čechy nikdy nenavštívil'],a:0,
+f:'Reinhard Heydrich byl od září 1941 zastupujícím říšským protektorem a jedním z hlavních architektů holocaustu. Byl znám jako „Kat" (Řezník Prahy). Dne 27. května 1942 ho v Praze smrtelně zranili českoslovenští výsadkáři Jozef Gabčík a Jan Kubiš, vyslaní z Londýna.'},
+
+{c:'valka',t:'q',q:'Jak se jmenovala operace, při níž výsadkáři provedli atentát na Heydricha?',
+o:['Operace Anthropoid','Operace Silver A','Operace Out Distance','Operace Zinc'],a:0,
+f:'Výsadkáři Jan Kubiš a Jozef Gabčík byli vysazeni v Čechách v prosinci 1941. Po úspěšném atentátu se ukryli v kryptě kostela sv. Cyrila a Metoděje v Praze. Dne 18. června 1942 je tam obklíčilo gestapo; po hrdinném boji zahynuli spolu s dalšími parašutisty.'},
+
+{c:'valka',t:'q',q:'Co byly Lidice a proč jsou světově známé?',
+o:['Česká obec vypálená a srovnaná se zemí nacisty jako odplata za atentát na Heydricha dne 10. června 1942','Slovenská obec zničená Německem v roce 1944','Místo popravy odbojářů proti Heydrichovi','Koncentrační tábor zřízený v Čechách'],a:0,
+f:'Dne 10. června 1942 nacisté obec Lidice zcela zničili jako odplatu za atentát na Heydricha. Všichni muži byli zastřeleni, ženy odvezeny do koncentračního tábora, děti z velké části zavražděny. Název Lidice se stal po celém světě symbolem nacistické brutality.'},
+
+{c:'valka',t:'q',q:'Kdy a jak byla osvobozena Praha v roce 1945?',
+o:['5.–9. května 1945; Pražské povstání, pak osvobozena Rudou armádou 9. května','7. května 1945 americkou armádou gen. Pattona','8. května 1945 kapitulací německé posádky','1. května 1945 příchodem Rudé armády'],a:0,
+f:'Pražské povstání začalo 5. května 1945. Pražané bojovali s německou posádkou. Americká vojska stála u Plzně – v souladu s dohodou se spojenci. Praha připadla do sovětské sféry. Rudá armáda vstoupila do Prahy 9. května. Americká armáda osvobodila západ Čech.'},
+
+{c:'valka',t:'q',q:'Co byl Benešův dekret o odsunu Němců?',
+o:['Prezidentský dekret z roku 1945 umožňující odsun sudetských Němců z Československa','Zákon o konfiskaci majetku kolaborantů','Dekret o obnovení Československa v předmnichovských hranicích','Právní základ trestání válečných zločinců'],a:0,
+f:'Odsun sudetských Němců v letech 1945–1946 byl reakcí na Mnichovskou dohodu a nacistická zvěrstva. Odsunuto bylo asi 2,5–3 miliony osob. Odsun byl schválen spojenci na Postupimské konferenci, ale jeho průběh byl místy brutální. Téma je dodnes citlivé.'},
+
+// KOMUNISMUS
+{c:'komunismus',t:'q',q:'Co byl Únor 1948?',
+o:['Komunistický převrat, jímž KSČ pod vedením Klementa Gottwalda uchvátila moc v Československu','Demokratické volby, v nichž komunisté zvítězili','Vojenský puč podporovaný SSSR','Revoluce inspirovaná Únorovou revolucí v Rusku'],a:0,
+f:'Komunistická strana Československa zvítězila ve volbách roku 1946 s 38 % hlasů. V únoru 1948 vládní krize vyústila v převzetí moci komunisty. Prezident Beneš rezignoval. Únor 1948 je označován za počátek čtyřicetileté komunistické diktatury.'},
+
+{c:'komunismus',t:'q',q:'Co se stalo Janu Masarykovi v březnu 1948?',
+o:['Byl nalezen mrtvý pod okny svého bytu v Černínském paláci; dodnes není jisté, zda šlo o vraždu nebo sebevraždu','Byl zatčen a uvězněn komunistickým režimem','Emigroval do zahraničí','Byl donucen k rezignaci a zemřel přirozenou smrtí'],a:0,
+f:'Jan Masaryk (1886–1948), syn T. G. Masaryka, byl jediným nekomunistickým ministrem v poúnorové vládě. Dne 10. března 1948 byl nalezen mrtvý pod oknem svého bytu. Komunisté tvrdili, že vyskočil z okna. Mnozí historici se přiklánějí k vraždě sovětskými agenty.'},
+
+{c:'komunismus',t:'q',q:'Co jsou politické procesy 50. let a jaké jsou nejznámější oběti?',
+o:['Zinscenované soudní procesy s odpůrci režimu; mezi oběťmi Rudolf Slánský a Milada Horáková','Procesy s válečnými kolaboranty','Soudní pronásledování círke­vní hierarchie','Procesy se zbývajícími demokratickými politiky po únoru 1948'],a:0,
+f:'Milada Horáková (1901–1950) byla první ženou popravenou komunistickým režimem v poválečné Evropě. Rudolf Slánský, generální tajemník KSČ, byl roku 1952 popraven v inscenovaném procesu, jehož cílem bylo potrestání „nepřátel" i uvnitř strany.'},
+
+{c:'komunismus',t:'q',q:'Co byl rok 1968 – Pražské jaro?',
+o:['Reformní politika Alexandra Dubčeka, potlačená sovětskou invazí v srpnu 1968','Studentské povstání v Praze, jež vyvolalo politické uvolnění','Rok, kdy komunistická vláda schválila svobodné volby','Rok první návštěvy západního prezidenta v Praze'],a:0,
+f:'Pražské jaro znamenalo pokus reformovat komunismus „se socialistickou tváří". Dubčekova vláda uvolnila cenzuru a politický život. Dne 21. srpna 1968 vstoupila vojska pěti zemí Varšavské smlouvy do Československa a reformy potlačila.'},
+
+{c:'komunismus',t:'q',q:'Kdo byl Jan Palach a proč se upálil?',
+o:['Student filosofie, který se 16. ledna 1969 upálil na Václavském náměstí na protest proti pasivitě společnosti po sovětské invazi','Dělník, jenž se upálil na protest proti komunistickému režimu roku 1948','Slovenský student, jenž protestoval proti federalizaci','Student práv, jenž zahynul při demonstracích roku 1968'],a:0,
+f:'Jan Palach zemřel 19. ledna 1969, tři dny po svém činu. Bylo mu 21 let. V dopise napsal, že chce „probudit svědomí národa". Po jeho pohřbu demonstrovaly tisíce lidí. Rok 1969 – výročí jeho činu – je připomínáno jako Týden vzpomínek.'},
+
+{c:'komunismus',t:'q',q:'Co byla Charta 77?',
+o:['Petiční prohlášení z roku 1977 požadující dodržování lidských práv; podepsali ji Václav Havel, Jan Patočka a další','Zákon o reformě komunistické strany','Tajný plán pro opozici, jak připravit pád komunismu','Dokument, jímž ČSR přistoupilo k mezinárodním úmluvám o lidských právech'],a:0,
+f:'Charta 77 se zrodila po podpisu Helsinských dohod (1975), jimiž ČSSR přijalo závazky v oblasti lidských práv. Signatáři žádali, aby stát dodržoval vlastní závazky. Filozofa Jana Patočku, jednoho z mluvčích, komunisté pronásledovali tak intenzivně, že v březnu 1977 zemřel.'},
+
+// SVOBODA A DEMOKRACIE
+{c:'svoboda',t:'q',q:'Jak začala sametová revoluce a kdy?',
+o:['17. listopadu 1989 policejním zásahem proti studentské demonstraci na Národní třídě v Praze','4. listopadu 1989 masovými demonstracemi na Václavském náměstí','9. listopadu 1989 pádem Berlínské zdi','1. listopadu 1989 stávkou pracovníků televize'],a:0,
+f:'Studentská demonstrace 17. listopadu 1989, konaná u příležitosti výročí uzavření vysokých škol nacisty v roce 1939, přerostla v pochod centrem Prahy. Na Národní třídě ji pořádková policie brutálně rozehnala. Zásah vyvolal vlnu odporu a masové demonstrace.'},
+
+{c:'svoboda',t:'q',q:'Kdo byl Václav Havel a jakou roli hrál v sametové revoluci?',
+o:['Dramatik, signatář Charty 77, mluvčí Občanského fóra a první porevoluční prezident','Lídr komunistické reformní frakce, jenž přešel na stranu demonstrantů','Disident, jenž inicioval sametovou revoluci emigrací do zahraničí','Premiér, jenž vyjednával s KSČ o předání moci'],a:0,
+f:'Václav Havel (1936–2011) byl dramatik a disident, mnohokrát vězněný. Stal se tváří sametové revoluce a byl zvolen prezidentem 29. prosince 1989. Ve funkci prezidenta – nejprve ČSSR, pak ČR – setrval do roku 2003. Je považován za morální autoritu světového formátu.'},
+
+{c:'svoboda',t:'q',q:'Co se stalo 29. prosince 1989?',
+o:['Václav Havel byl Federálním shromážděním zvolen prezidentem','Komunisté formálně předali vládu Občanskému fóru','Byl schválen nový volební zákon','Sametová revoluce byla prohlášena za vítěznou'],a:0,
+f:'Federální shromáždění zvolilo Václava Havla prezidentem přesně 41 let po dni, kdy byl z téhož parlamentu odveden do vězení komunistický funkcionář, který nechal popravit Miladu Horákovou. Pro mnohé byla tato symbolická shoda datumů povzbudivá.'},
+
+{c:'svoboda',t:'q',q:'Proč a kdy se Československo rozdělilo na dvě samostatné republiky?',
+o:['1. ledna 1993 po dohodě Václava Klause a Vladimíra Mečiara; nikoli na základě referenda','1. ledna 1993 na základě referenda slovenského lidu','1. července 1992 rezolucí Federálního shromáždění','1. března 1993 mezinárodní smlouvou'],a:0,
+f:'Rozdělení Česko-Slovenska bylo tzv. „sametovým rozvodem". Odehrálo se politickým rozhodnutím bez referenda – průzkumy ukazovaly, že většina obyvatel si rozdělení nepřála. O rozdělení se dohodli předsedové vlád Klaus a Mečiar po červnových volbách 1992. ČR i SR vstoupily do EU společně roku 2004.'},
+
+{c:'svoboda',t:'q',q:'Kdy Česká republika vstoupila do NATO a do Evropské unie?',
+o:['NATO 1999, EU 2004','NATO a EU zároveň roku 2004','NATO 2004, EU 1999','NATO 1997, EU 2002'],a:0,
+f:'ČR byla přijata do NATO 12. března 1999 – společně s Polskem a Maďarskem. Do EU vstoupila 1. května 2004 jako součást největšího rozšíření unie v dějinách, kdy přistoupilo celkem deset zemí.'},
+
+{c:'svoboda',t:'q',q:'Která česká osobnost obdržela Nobelovu cenu za literaturu?',
+o:['Žádný český spisovatel Nobelovu cenu za literaturu neobdržel','Jaroslav Seifert','Bohumil Hrabal roku 1990','Milan Kundera roku 2001'],a:1,
+f:'Jaroslav Seifert (1901–1986) obdržel Nobelovu cenu za literaturu roku 1984 – jako dosud jediný Čech. Byl básníkem, signatářem Charty 77 a svědkem celého 20. století. Výbor ocenil jeho „poezii, která je obdařena svěžestí a smyslovým bohatstvím".'},
+
+{c:'svoboda',t:'q',q:'Co byl Velvet Underground ve vztahu k sametové revoluci?',
+o:['Americká kapela, jejíž hudba silně inspirovala českou undergroundovou scénu; Havel se spřátelil s Lou Reedem','Kódové označení pro plán sametové revoluce','Česká undergroundová kapela zakázaná komunistickým režimem','Název pro síť disidentů v 80. letech'],a:0,
+f:'Velvet Underground a zvláště kapela The Plastic People of the Universe inspirovaly český underground. Jejich pronásledování komunistickým režimem roku 1976 vedlo přímo ke vzniku Charty 77. Václav Havel se po revoluci přátelil s Lou Reedem i Frankem Zappou, kteří Prahu navštívili.'},
+];
+
+const BADGES=[
+  {id:'first',   ico:'📜',n:'První kronika',       d:'Odpověz na první otázku',            ok:s=>s.ta>=1},
+  {id:'str3',    ico:'🔥',n:'Série 3',              d:'3 správné za sebou',                 ok:s=>s.ms>=3},
+  {id:'str5',    ico:'⚔️',n:'Série 5',             d:'5 správných za sebou',               ok:s=>s.ms>=5},
+  {id:'str10',   ico:'👑',n:'Série 10!',            d:'10 správných za sebou',              ok:s=>s.ms>=10},
+  {id:'str15',   ico:'🏆',n:'Znalec dějin',         d:'15 správných za sebou',              ok:s=>s.ms>=15},
+  {id:'c_pre',   ico:'👑',n:'Přemyslovcolog',       d:'Dokonči Přemyslovce',                ok:s=>(s.cb.premyslovci||0)>0},
+  {id:'c_str',   ico:'🏰',n:'Medievalista',         d:'Dokonči Středověk a Lucemburkové',     ok:s=>(s.cb.stredovek||0)>0},
+  {id:'c_hab',   ico:'⚔️',n:'Barokní znalec',      d:'Dokonči Habsburkové',                ok:s=>(s.cb.habsburkove||0)>0},
+  {id:'c_vzn',   ico:'🇨🇿',n:'Vlastenec',          d:'Dokonči Vznik Československa',       ok:s=>(s.cb.vznik||0)>0},
+  {id:'c_val',   ico:'🎖️',n:'Válečný historik',    d:'Dokonči Válka a protektorát',        ok:s=>(s.cb.valka||0)>0},
+  {id:'c_kom',   ico:'⭐',n:'Kronikář 20. stol.',   d:'Dokonči Komunismus',                 ok:s=>(s.cb.komunismus||0)>0},
+  {id:'c_svo',   ico:'🕊️',n:'Sametový hrdina',    d:'Dokonči Svoboda a demokracie',       ok:s=>(s.cb.svoboda||0)>0},
+  {id:'perfect', ico:'⭐',n:'Perfektní!',           d:'3 hvězdy v jakékoliv kategorii',     ok:s=>Object.values(s.cb).some(v=>v===3)},
+  {id:'allcat',  ico:'🗺️',n:'Kronikář národa',     d:'Dokonči všech 7 kategorií',          ok:s=>CATS.every(c=>(s.cb[c.id]||0)>0)},
+  {id:'q50',     ico:'📖',n:'Pilný badatel',        d:'Zodpověz 50 otázek',                 ok:s=>s.ta>=50},
+  {id:'xp500',   ico:'💎',n:'500 XP',               d:'Získej 500 XP',                      ok:s=>s.xp>=500},
+  {id:'xp1000',  ico:'🏅',n:'1000 XP – Historik',  d:'Získej 1000 XP',                     ok:s=>s.xp>=1000},
+  {id:'allstar', ico:'🇨🇿',n:'Mistr českých dějin', d:'3 hvězdy ve všech 7 kategoriích',   ok:s=>CATS.every(c=>(s.cb[c.id]||0)>=3)},
+];
+
+// ── STATE ──
+let ST=load(),SES={};
+function load(){try{const s=JSON.parse(localStorage.getItem('fajncesko1')||'{}');return{xp:s.xp||0,cb:s.cb||{},ta:s.ta||0,ms:s.ms||0,bd:s.bd||[]};}catch(e){return{xp:0,cb:{},ta:0,ms:0,bd:[]};}}
+function save(){localStorage.setItem('fajncesko1',JSON.stringify(ST));}
+
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t,d,v=.24){try{const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.start();o.stop(ac.currentTime+d);}catch(e){}}
+function sndCorrect(){tone(523,'sine',.1);setTimeout(()=>tone(659,'sine',.12),70);setTimeout(()=>tone(784,'sine',.18),140);}
+function sndWrong(){tone(220,'sawtooth',.14);setTimeout(()=>tone(180,'sawtooth',.18),90);}
+function sndStreak(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'sine',.15,.28),i*60));}
+function sndFinish(){[523,659,784,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.17,.26),i*75));}
+
+function showXP(xp,streak){const el=document.getElementById('xpPopup');el.textContent=`+${xp} XP${streak>=3?' 🔥×'+streak:''}`;el.className='xp-popup go';setTimeout(()=>el.className='xp-popup',1800);}
+
+function renderHome(){
+  document.getElementById('xpTotal').textContent=ST.xp;
+  const earned=BADGES.filter(b=>ST.bd.includes(b.id)).length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  document.getElementById('catGrid').innerHTML=CATS.map(cat=>{
+    const cnt=QS.filter(q=>q.c===cat.id).length,best=ST.cb[cat.id]||0;
+    const stars=[1,2,3].map(s=>`<span class="cat-star ${s<=best?'on':''}">${s<=best?'⭐':'☆'}</span>`).join('');
+    return`<div class="cat-card" onclick="startCat('${cat.id}')"><span class="cat-emoji">${cat.emoji}</span><div class="cat-name">${cat.name}</div><div class="cat-count">${cnt} otázek</div><div class="cat-desc">${cat.desc}</div><div class="cat-stars">${stars}</div></div>`;
+  }).join('');
+  show('homeScreen');
+}
+
+function startCat(id){
+  getAC();
+  const pool=[...QS.filter(q=>q.c===id)].sort(()=>Math.random()-.5);
+  SES={cat:id,qs:pool,idx:0,ok:0,streak:0,ms:0,xp:0,answered:false,facts:[]};
+  show('questionScreen');renderQ();
+}
+
+function renderQ(){
+  const cat=CATS.find(c=>c.id===SES.cat),q=SES.qs[SES.idx],tot=SES.qs.length;
+  SES.answered=false;
+  document.getElementById('qCat').textContent=cat.emoji+' '+cat.name;
+  document.getElementById('qCnt').textContent=`${SES.idx+1} / ${tot}`;
+  document.getElementById('progFill').style.width=`${(SES.idx/tot)*100}%`;
+  const strEl=document.getElementById('qStreak');
+  if(SES.streak>=2){strEl.className='q-streak on';document.getElementById('streakN').textContent=SES.streak;}
+  else strEl.className='q-streak';
+  document.getElementById('qBadge').textContent='📜 Historická otázka';
+  document.getElementById('qText').textContent=q.q;
+  const shuffled=[...Array(q.o.length).keys()].sort(()=>Math.random()-.5);
+  q._newA=shuffled.indexOf(q.a);
+  const adiv=document.getElementById('answersDiv');
+  adiv.className='answers'+(q.o.length<=2?' solo':'');
+  adiv.innerHTML=shuffled.map((orig,i)=>`<button class="ans-btn" onclick="checkAns(${i})">${q.o[orig]}</button>`).join('');
+  document.getElementById('factBox').className='fact-box';
+  document.getElementById('nextBtn').className='next-btn';
+}
+
+function checkAns(idx){
+  if(SES.answered)return;
+  SES.answered=true;
+  const q=SES.qs[SES.idx],btns=document.querySelectorAll('.ans-btn'),ok=idx===q._newA;
+  btns.forEach(b=>b.disabled=true);
+  btns[q._newA].classList.add('show-correct');
+  if(ok){
+    btns[idx].classList.add('correct');
+    SES.streak++;SES.ms=Math.max(SES.ms,SES.streak);SES.ok++;
+    const xp=SES.streak>=15?35:SES.streak>=10?25:SES.streak>=5?18:SES.streak>=3?14:10;
+    SES.xp+=xp;sndCorrect();if(SES.streak>=3)setTimeout(sndStreak,220);showXP(xp,SES.streak);
+    const strEl=document.getElementById('qStreak');strEl.className='q-streak on';document.getElementById('streakN').textContent=SES.streak;
+  }else{btns[idx].classList.add('wrong');SES.streak=0;document.getElementById('qStreak').className='q-streak';sndWrong();}
+  ST.ta++;save();
+  if(q.f){document.getElementById('factTxt').textContent=q.f;document.getElementById('factBox').className='fact-box on';if(ok&&SES.facts.length<6)SES.facts.push(q.f);}
+  document.getElementById('nextBtn').className='next-btn on';
+}
+
+function nextQ(){SES.idx++;if(SES.idx>=SES.qs.length)showResult();else renderQ();}
+
+function showResult(){
+  sndFinish();
+  const tot=SES.qs.length,pct=SES.ok/tot,stars=pct>=.9?3:pct>=.6?2:1;
+  const prev=ST.cb[SES.cat]||0;if(stars>prev)ST.cb[SES.cat]=stars;
+  ST.xp+=SES.xp;ST.ms=Math.max(ST.ms,SES.ms);save();checkBadges();
+  const t={
+    3:['Výborně!','Skvělý znalec!','Perfektní!','Mistr dějin!'],
+    2:['Dobrá práce!','Solidní znalost!','Téměř perfektní!','Šikovný/á!'],
+    1:['Dějiny čekají!','Zkus to znovu!','Dobrý začátek!','Naučíš se!']
+  };
+  document.getElementById('resTitle').textContent=t[stars][Math.floor(Math.random()*4)];
+  document.getElementById('resSub').textContent=`${SES.ok} z ${tot} správně — ${Math.round(pct*100)} %`;
+  document.querySelectorAll('.res-star').forEach((s,i)=>{s.className='res-star';if(i<stars)setTimeout(()=>s.className='res-star on',i*200+100);});
+  document.getElementById('stCorrect').textContent=`${SES.ok}/${tot}`;
+  document.getElementById('stXP').textContent=SES.xp;
+  document.getElementById('stStreak').textContent=SES.ms;
+  document.getElementById('factsList').innerHTML=SES.facts.length>0
+    ?SES.facts.map(f=>`<div class="fact-item">${f}</div>`).join('')
+    :'<div class="fact-item" style="color:var(--muted)">Odpovídej správně a dozvíš se zajímavosti z českých dějin!</div>';
+  show('resultScreen');
+}
+
+function checkBadges(){BADGES.forEach(b=>{if(!ST.bd.includes(b.id)&&b.ok(ST))ST.bd.push(b.id);});save();}
+function showBadges(){
+  const earned=ST.bd.length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  document.getElementById('badgeGrid').innerHTML=BADGES.map(b=>`<div class="badge-c${ST.bd.includes(b.id)?' unlocked':' locked'}"><span class="badge-ico">${b.ico}</span><div class="badge-n">${b.n}</div><div class="badge-d">${b.d}</div></div>`).join('');
+  show('badgesScreen');
+}
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function goHome(){renderHome();}
+function playAgain(){startCat(SES.cat);}
+renderHome();
+
+</script>
+</body>
+</html>
