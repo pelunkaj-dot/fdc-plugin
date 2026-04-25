@@ -428,7 +428,7 @@ body.light .btn-next{background:linear-gradient(135deg,#166534,#15803d);}
     <div class="lvl-emoji" id="lvlEmoji">🎉</div>
     <div class="lvl-title" id="lvlTitle">Úroveň 2!</div>
     <div class="lvl-sub"   id="lvlSub">Výpočty ti jdou skvěle!</div>
-    <button class="btn-check" style="margin-top:4px" onclick="closeLvl()">Pokračovat!</button>
+    <button class="btn-check" style="margin-top:4px" onclick="closeLvl()">Pokračuj!</button>
   </div>
 </div>
 
@@ -883,7 +883,7 @@ function onWrong(userAns) {
     if (fp) fp.style.display = 'block';
     showFeedback('info', '💡 Postup řešení', currentQ.hint);
     showSteps();
-    setSpeech('Tady je postup – přečti si ho a zkus ještě jednou! 💡', 'sad');
+    setSpeech('Tady je postup – přečti si ho a zkus to ještě jednou! 💡', 'sad');
     document.getElementById('hintBtn').style.display  = 'none';
     document.getElementById('checkBtn').style.display = 'inline-flex';
     document.getElementById('nextBtn').style.display  = 'none';
