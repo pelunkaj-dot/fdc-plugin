@@ -738,7 +738,7 @@
             <input id="answerInput" class="answer-input" type="text" autocomplete="off" inputmode="decimal" placeholder="Sem napiš odpověď" />
             <button class="btn primary" id="submitBtn">Potvrdit odpověď</button>
           </div>
-          <div class="keyboard-note">Tip: Enter potvrzuje odpověď. Pokud ses uklikl, klid, Dekáček tě nenechá spadnout ze schodů didaktiky.</div>
+          <div class="keyboard-note">Tip: Enter potvrzuje odpověď. Pokud ses uklikl, nevadí, Dekáček tě nenechá spadnout ze schodů didaktiky.</div>
 
           <div class="action-grid">
             <button class="btn secondary" id="showHintBtn">Zobrazit nápovědu</button>
@@ -820,7 +820,7 @@
         },
         hard: {
           label: 'Těžká',
-          mascot: 'Těžká obtížnost už chce rozum, ne jen rychlou ruku. Tady se pozná, kdo čárku opravdu chápe.',
+          mascot: 'Těžká obtížnost už chce porozumění, ne jen rychlou ruku. Tady se pozná, kdo čárku opravdu chápe.',
         },
       };
 
@@ -868,7 +868,7 @@
       };
 
       const ACHIEVEMENTS = [
-        { id: 'first-blood', name: 'První přesný zásah', desc: 'Vyřešil jsi první příklad správně.', test: s => s.totalCorrect >= 1 },
+        { id: 'first-blood', name: 'První přesný zásah', desc: 'První příklad jsi vyřešil správně.', test: s => s.totalCorrect >= 1 },
         { id: 'streak-5', name: 'Pět bez zaváhání', desc: 'Získal jsi sérii 5 správných odpovědí.', test: s => s.bestStreak >= 5 },
         { id: 'streak-12', name: 'Dvanáctka jako z praku', desc: 'Získal jsi sérii 12 správných odpovědí.', test: s => s.bestStreak >= 12 },
         { id: 'hundred-points', name: 'Stovka bodů', desc: 'Nasbíral jsi alespoň 100 bodů.', test: s => s.points >= 100 },
@@ -1286,7 +1286,7 @@
         }
         saveState();
         renderExercise();
-        updateFeedback('info', 'Nový příklad je připravený. Čti zadání pečlivě a až potom útoč.', false);
+        updateFeedback('info', 'Nový příklad je připravený. Čti zadání pečlivě a až potom řeš.', false);
         resetBoxes();
         if (state.mode === 'game') {
           roundSecondsLeft = timerForDifficulty(state.difficulty);
@@ -1405,7 +1405,7 @@
           currentExercise.canRetry = true;
           currentExercise.canReveal = false;
           updateFeedback('error', `${verdict.message} Zkus opravu. U první chyby dávám prostor na klidné přehodnocení.`, true);
-          ui.footerStatus.textContent = 'První pokus nevyšel. Oprava je otevřená.';
+          ui.footerStatus.textContent = 'První pokus nevyšel. Zkus to opravit.';
           speakMascot('Tohle ještě není průšvih. První chyba je často jen uklouznutí ruky nebo čárky.');
         } else if (currentExercise.attemptNumber === 2) {
           currentExercise.canRetry = true;
@@ -1602,10 +1602,10 @@
 
       function sectionIntro(key) {
         const lines = {
-          addition: 'Vítej v sčítání. Tady se rozhoduje hlavně o tom, jestli držíš stejné řády pod sebou.',
+          addition: 'Vítej ve sčítání. Tady se rozhoduje hlavně o tom, jestli držíš stejné řády pod sebou.',
           subtraction: 'Vítej v odčítání. Teď si dej pozor, co je nahoře a co dole, ať z výsledku není komická nehoda.',
           multiplication: 'Vítej v násobení. Desetinná čárka se neposouvá kouzlem, ale logikou počtu desetinných míst.',
-          division: 'Vítej v dělení. Než odpovíš, zkus si aspoň odhadnout, zda má být výsledek větší, nebo menší.',
+          division: 'Vítej v dělení. Než odpovíš, zkus si aspoň odhadnout, zda má být výsledek větší nebo menší.',
           conversion: 'Vítej v převodech. Tady jde o smysl zápisu, ne jen o holé číslo bez duše.',
         };
         return lines[key];
@@ -1617,7 +1617,7 @@
           'Výborně. Desetinná čárka dnes poslouchá.',
           'Ano. Přesně takhle má výsledek vypadat.',
           'Dobrá práce. Žádná zbytečná divočina, jen poctivý výsledek.',
-          'Tohle sedí. Můžeš jít dál s hlavou nahoře.',
+          'Tohle sedí. Můžeš jít dál s hlavou vztyčenou.',
           'Správně. Přesnost a klid, dobrá dvojice.',
         ];
         return randomFrom(speeches);
@@ -1679,7 +1679,7 @@
           section: 'addition',
           tag: 'Více sčítanců',
           prompt: `${nums.map(fmt).join(' + ')} = ?`,
-          note: 'Někdy je výhodné sečíst si nejprve čísla, která dohromady tvoří „hezčí“ celek.',
+          note: 'Někdy je lepší sečíst si nejprve čísla, která dohromady tvoří „hezčí“ celek.',
           result,
           hint: 'Zkus si čísla vhodně seskupit. Například dvě čísla mohou dát celé číslo nebo hezký desetinný výsledek.',
           steps: `1. Máš ${count} sčítanců.<br>2. Všímej si, která čísla se dobře skládají dohromady.<br>3. Postupně je sečti a hlídej stejná desetinná místa.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
@@ -1913,7 +1913,7 @@
           prompt: `${fmt(dividend)} ÷ ${fmt(divisor)} = ?`,
           note: 'Před výpočtem odhadni, zda má být výsledek větší, nebo menší než dělenec.',
           result: quotient,
-          hint: 'Můžeš si upravit dělitele tak, aby byl celé číslo. Dělenec i dělitele přenásob stejným číslem.',
+          hint: 'Můžeš si upravit dělitele tak, aby byl celé číslo. Dělence i dělitele vynásob stejným číslem.',
           steps: `1. Máš ${fmt(dividend)} ÷ ${fmt(divisor)}.<br>2. Uprav si dělitele na celé číslo, pokud je to potřeba.<br>3. Pak normálně vyděl.<br>4. Výsledek je <strong>${fmt(quotient)}</strong>.`,
         });
       }
@@ -2041,7 +2041,7 @@
           prompt: `Převeď zlomek ${item.fraction} na desetinné číslo.`,
           note: 'Zapiš výsledek jen číslem.',
           result: item.decimal,
-          hint: 'Zlomek můžeš převést rozšířením na jmenovatel 10, 100 nebo 1000, případně dělením čitatele jmenovatelem.',
+          hint: 'Zlomek můžeš převést rozšířením na jmenovatele 10, 100 nebo 1000, případně dělením čitatele jmenovatelem.',
           steps: `1. Rozšiř nebo vypočítej dělení čitatele jmenovatelem.<br>2. Například 1/4 = 25/100 = 0,25.<br>3. Tady vyjde <strong>${fmt(item.decimal)}</strong>.`,
         });
       }
@@ -2079,8 +2079,8 @@
           prompt: `Převeď zlomek ${item.fraction} na desetinné číslo.`,
           note: 'Výsledek zapiš přesně.',
           result: item.decimal,
-          hint: 'Někdy je výhodné rozšířit na jmenovatel 10, 100 nebo 1000. Jindy je rychlejší dělení.',
-          steps: `1. Zkus zjistit, zda lze jmenovatel rozšířit na 10, 100 nebo 1000.<br>2. Pokud ano, udělej to. Pokud ne, děl čitatele jmenovatelem.<br>3. Vyjde <strong>${fmt(item.decimal)}</strong>.`,
+          hint: 'Někdy je výhodné rozšířit na jmenovatele 10, 100 nebo 1000. Jindy je rychlejší dělení.',
+          steps: `1. Zkus zjistit, zda lze jmenovatele rozšířit na 10, 100 nebo 1000.<br>2. Pokud ano, udělej to. Pokud ne, děl čitatele jmenovatelem.<br>3. Vyjde <strong>${fmt(item.decimal)}</strong>.`,
         });
       }
 
@@ -2088,7 +2088,7 @@
         const items = [
           { prompt: 'Které desetinné číslo odpovídá zlomku 3/8?', result: 0.375, hint: 'Buď děl 3 : 8, nebo si uvědom, že 1/8 = 0,125.' },
           { prompt: 'Které desetinné číslo odpovídá zlomku 7/16?', result: 0.4375, hint: 'Vyděl 7 : 16 nebo si zkus pomocný krok přes 1/16.' },
-          { prompt: 'Které desetinné číslo odpovídá zlomku 11/20?', result: 0.55, hint: 'Rozšiř jmenovatel 20 na 100.' },
+          { prompt: 'Které desetinné číslo odpovídá zlomku 11/20?', result: 0.55, hint: 'Rozšiř jmenovatele 20 na 100.' },
         ];
         const item = randomFrom(items);
         return buildStandardExercise({
@@ -2126,8 +2126,8 @@
             ? 'Jmenovatel obsahuje i jiná prvočísla než 2 a 5, takže desetinný rozvoj nebude konečný.'
             : 'Jmenovatel po zkrácení obsahuje jen faktory 2 a 5, takže desetinný rozvoj je konečný.',
           steps: item.repeating
-            ? `1. Zkus si uvědomit, zda jde o konečný, nebo periodický rozvoj.<br>2. U zlomku ${item.fraction} vychází periodický rozvoj.<br>3. Proto zapíšeme hodnotu zaokrouhlenou na 5 desetinných míst: <strong>${fmt(item.value)}</strong>.`
-            : `1. Po zkrácení sleduj jmenovatel.<br>2. Obsahuje jen faktory 2 a 5, proto vyjde konečný desetinný rozvoj.<br>3. Výsledek je <strong>${fmt(item.value)}</strong>.`,
+            ? `1. Zkus si uvědomit, zda jde o konečný nebo periodický rozvoj.<br>2. U zlomku ${item.fraction} vychází periodický rozvoj.<br>3. Proto zapíšeme hodnotu zaokrouhlenou na 5 desetinných míst: <strong>${fmt(item.value)}</strong>.`
+            : `1. Po zkrácení sleduj jmenovatele.<br>2. Obsahuje jen faktory 2 a 5, proto vyjde konečný desetinný rozvoj.<br>3. Výsledek je <strong>${fmt(item.value)}</strong>.`,
         });
       }
 
@@ -2142,7 +2142,7 @@
           note: 'Nejde o závod. Tady je důležitá přesnost a smysluplné zaokrouhlení.',
           result: value,
           roundingNote: 'Zaokrouhli na 5 desetinných míst.',
-          hint: 'Proveď dělení a pokračuj dost dlouho, aby šlo správně zaokrouhlit.',
+          hint: 'Proveď dělení a pokračuj tak dlouho, aby šlo správně zaokrouhlit.',
           steps: `1. Vyděl ${numerator} : ${denominator}.<br>2. Pokračuj alespoň na šest desetinných míst.<br>3. Potom výsledek zaokrouhli na pět desetinných míst.<br>4. Dostaneš <strong>${fmt(value)}</strong>.`,
         });
       }
@@ -2159,7 +2159,7 @@
           acceptedFraction: `${fraction.n}/${fraction.d}`,
           canonicalValue: value,
           solutionHtml: `${fmt(value)} = <strong>${fraction.n}/${fraction.d}</strong>`,
-          hint: 'Napiš číslo jako zlomek s vhodným jmenovatelem a potom krátíš až na základní tvar.',
+          hint: 'Napiš číslo jako zlomek s vhodným jmenovatelem a až potom krátíš na základní tvar.',
           steps: `1. ${fmt(value)} zapiš jako zlomek podle počtu desetinných míst.<br>2. Najdi největší společný dělitel čitatele a jmenovatele.<br>3. Po zkrácení dostaneš <strong>${fraction.n}/${fraction.d}</strong>.`,
         });
       }
@@ -2170,13 +2170,13 @@
             prompt: 'Rozhodni a vypočítej: má zlomek 7/20 konečný, nebo periodický desetinný rozvoj? Zapiš desetinné číslo.',
             result: 0.35,
             hint: 'Po zkrácení je ve jmenovateli jen 2 a 5, proto vyjde konečný desetinný rozvoj.',
-            steps: '1. Prohlédni si jmenovatel po případném zkrácení.<br>2. Jsou v něm jen faktory 2 a 5.<br>3. Rozvoj je konečný a hodnota je <strong>0,35</strong>.',
+            steps: '1. Prohlédni si jmenovatele po případném zkrácení.<br>2. Jsou v něm jen faktory 2 a 5.<br>3. Rozvoj je konečný a hodnota je <strong>0,35</strong>.',
           },
           {
             prompt: 'Rozhodni a vypočítej: má zlomek 2/15 konečný, nebo periodický desetinný rozvoj? Zapiš výsledek zaokrouhlený na 5 desetinných míst.',
             result: roundTo(2/15, 5),
             hint: 'Ve jmenovateli je po zkrácení i 3, proto rozvoj nebude konečný.',
-            steps: `1. Sleduj jmenovatel 15 = 3 × 5.<br>2. Proto jde o periodický rozvoj.<br>3. Zaokrouhlená hodnota na 5 desetinných míst je <strong>${fmt(roundTo(2/15, 5))}</strong>.`,
+            steps: `1. Sleduj jmenovatele 15 = 3 × 5.<br>2. Proto jde o periodický rozvoj.<br>3. Zaokrouhlená hodnota na 5 desetinných míst je <strong>${fmt(roundTo(2/15, 5))}</strong>.`,
           },
           {
             prompt: 'Převeď 0,33333 na zlomek, který smysluplně vyjadřuje periodický charakter čísla.',
@@ -2190,7 +2190,7 @@
         if (chosen.fractionOnly) {
           return buildFractionExercise({
             section: 'conversion',
-            tag: 'Smysl převodu a aproximace',
+            tag: 'Smysl převodu a aproximace (přibližný odhad)',
             prompt: chosen.prompt,
             note: 'Tady se hodnotí smysluplný matematický zápis, ne bezduché opisování číslic.',
             acceptedFraction: chosen.fractionOnly,
@@ -2202,7 +2202,7 @@
         }
         return buildStandardExercise({
           section: 'conversion',
-          tag: 'Rozhodni typ rozvoje',
+          tag: 'Rozhodni o typu rozvoje',
           prompt: chosen.prompt,
           note: 'Nejprve uvažuj, až potom počítej.',
           result: chosen.result,
