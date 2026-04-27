@@ -1,1 +1,748 @@
-uzfv
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Výrazy – pro jedničkáře | FajnCvičebna</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#7c3aed;--pd:#5b21b6;--pl:#ede9fe;
+  --ac:#f4a259;--ad:#d4833a;
+  --ok:#22c97a;--okl:#d0f7e7;
+  --err:#e84040;--errl:#fde8e8;
+  --bg:#f5f3ff;--card:#fff;--text:#1a1a2e;--muted:#7a7a9a;--border:#d8d4f0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+.hdr{background:linear-gradient(135deg,#3b0764,#6d28d9,#7c3aed);padding:18px 16px 14px;text-align:center;position:relative;overflow:hidden;}
+.hdr-orb{position:absolute;border-radius:50%;opacity:.1;}
+.hdr-orb.a{width:220px;height:220px;background:#fff;top:-90px;right:-60px;}
+.hdr-orb.b{width:160px;height:160px;background:#fff;bottom:-70px;left:-40px;}
+.hdr-tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#fff;margin-bottom:6px;}
+.hdr h1{font-size:26px;font-weight:900;color:#fff;margin-bottom:2px;}
+.hdr p{font-size:13px;color:rgba(255,255,255,.8);}
+
+.topbar{display:flex;gap:10px;padding:12px 14px 0;max-width:700px;margin:0 auto;}
+.ts{flex:1;background:var(--card);border-radius:14px;padding:10px 10px 8px;text-align:center;border:1.5px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.ts .num{font-size:26px;font-weight:900;line-height:1;}
+.ts .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:2px;}
+.s-xp .num{color:var(--p);}
+.s-str .num{color:#f77f00;}
+.s-ok .num{color:var(--ok);}
+
+.xpbar-wrap{max-width:700px;margin:10px auto 0;padding:0 14px;}
+.xpbar-row{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+.xpbar-bg{background:var(--border);border-radius:20px;height:10px;overflow:hidden;}
+.xpbar-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--ac));border-radius:20px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}
+
+.diff-wrap{max-width:700px;margin:12px auto 0;padding:0 14px;}
+.diff-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;}
+.diff-pills{display:flex;gap:8px;}
+.dp{flex:1;padding:9px 4px;border-radius:12px;border:2px solid var(--border);background:var(--card);font-size:12px;font-weight:800;color:var(--muted);cursor:pointer;transition:all .2s;text-align:center;}
+.dp:hover{border-color:var(--p);}
+.dp.active.z{border-color:#22c97a;background:#d0f7e7;color:#0f7a45;}
+.dp.active.p2{border-color:var(--ac);background:#fff3e0;color:var(--ad);}
+.dp.active.pr{border-color:var(--err);background:#fde8e8;color:#c02020;}
+.dp.active.j{border-color:var(--p);background:var(--pl);color:var(--pd);}
+
+.main{max-width:700px;margin:14px auto 80px;padding:0 14px;}
+.card{background:var(--card);border-radius:18px;padding:22px 18px;border:1.5px solid var(--border);box-shadow:0 3px 14px rgba(0,0,0,.08);}
+.card.shake{animation:shake .4s ease;}
+
+.tut-btn{width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--pl);border:none;border-radius:12px;padding:11px 16px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--pd);cursor:pointer;margin-bottom:14px;}
+.tut-body{display:none;background:#faf9ff;border-radius:12px;padding:14px;margin-bottom:14px;border:1.5px solid var(--pl);}
+.tut-body.open{display:block;}
+.rule-box{background:linear-gradient(135deg,#faf5ff,var(--pl));border:2px solid var(--p);border-radius:10px;padding:12px 14px;margin:8px 0;font-size:13px;font-weight:700;color:var(--pd);line-height:1.8;}
+.rule-box .rb-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;color:var(--pd);}
+.tut-step{display:flex;gap:10px;margin-bottom:10px;font-size:13px;line-height:1.6;}
+.tut-step .n{min-width:24px;height:24px;background:var(--p);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;margin-top:1px;}
+
+.expr-card{background:linear-gradient(135deg,#faf9ff,var(--pl));border:2.5px solid var(--p);border-radius:14px;padding:22px 16px;margin-bottom:18px;text-align:center;}
+.expr-cat{display:inline-block;background:var(--pl);color:var(--pd);border-radius:20px;padding:3px 12px;font-size:12px;font-weight:800;margin-bottom:12px;}
+.expr-text{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--text);line-height:1.6;word-break:break-word;}
+.expr-text.long{font-size:17px;}
+.expr-text .hl{color:var(--p);background:rgba(124,58,237,.12);border-radius:5px;padding:1px 3px;font-weight:900;}
+.expr-text .hl-neg{color:#c02020;background:rgba(232,64,64,.1);border-radius:5px;padding:1px 3px;font-weight:900;}
+
+.ans-wrap{display:flex;align-items:center;gap:12px;margin-bottom:4px;}
+.ans-label{font-size:14px;font-weight:800;color:var(--muted);}
+.ans-input{width:120px;padding:10px 12px;border:2.5px solid var(--p);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;text-align:center;outline:none;transition:border-color .2s,box-shadow .2s,transform .15s;}
+.ans-input:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(244,162,89,.22);transform:scale(1.05);}
+.ans-input.ok-inp{border-color:var(--ok);background:var(--okl);color:#0f7a45;}
+.ans-input.err-inp{border-color:var(--err);background:var(--errl);color:#c02020;}
+
+.hint-toggle{background:none;border:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--p);cursor:pointer;text-decoration:underline;text-underline-offset:2px;margin-top:10px;display:block;}
+.hint-box{display:none;background:#faf5ff;border:1.5px solid var(--p);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--pd);margin-top:8px;line-height:1.6;}
+
+.btn-check{width:100%;padding:15px;background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;cursor:pointer;margin-top:16px;box-shadow:0 5px 15px rgba(124,58,237,.35);transition:transform .15s,box-shadow .15s;}
+.btn-check:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 8px 22px rgba(124,58,237,.45);}
+.btn-check:disabled{opacity:.4;cursor:not-allowed;}
+.btn-next{width:100%;padding:15px;background:linear-gradient(135deg,var(--ok),#18a361);color:#fff;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:900;cursor:pointer;margin-top:10px;display:none;box-shadow:0 5px 15px rgba(34,201,122,.35);transition:transform .15s;}
+.btn-next:hover{transform:translateY(-2px);}
+
+.result{display:none;margin-top:16px;border-radius:14px;overflow:hidden;border:2px solid var(--border);animation:popIn .35s cubic-bezier(.34,1.56,.64,1);}
+.res-hdr{padding:14px 18px;font-size:17px;font-weight:900;}
+.res-hdr.ok-h{background:var(--okl);color:#0f7a45;border-bottom:2px solid #a3e8c8;}
+.res-hdr.err-h{background:var(--errl);color:#c02020;border-bottom:2px solid #f5b0b0;}
+.res-body{padding:14px 16px;background:#fafcff;}
+.ps-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:12px;}
+.ps-step{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.ps-num{min-width:24px;height:24px;background:var(--pl);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--p);margin-top:2px;}
+.ps-content{flex:1;}
+.ps-note{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px;}
+.ps-expr{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;background:var(--pl);border-radius:8px;padding:7px 12px;line-height:1.5;word-break:break-word;}
+.ps-expr .hl{color:var(--p);font-weight:900;background:rgba(124,58,237,.15);border-radius:4px;padding:0 3px;}
+.ps-expr .hl-neg{color:#c02020;font-weight:900;background:rgba(232,64,64,.12);border-radius:4px;padding:0 3px;}
+.ps-expr.final-step{background:var(--okl);color:#0f7a45;font-size:17px;}
+
+.streak-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,#f77f00,#f4a259);color:#fff;border-radius:20px;padding:20px 36px;text-align:center;z-index:1000;pointer-events:none;box-shadow:0 10px 40px rgba(247,127,0,.5);}
+.streak-popup h2{font-size:32px;font-weight:900;margin-bottom:4px;}
+.streak-popup p{font-size:15px;font-weight:700;opacity:.9;}
+.streak-popup.show{animation:streakPop .9s cubic-bezier(.34,1.56,.64,1) forwards;}
+.lvlup{position:fixed;top:22%;left:50%;transform:translateX(-50%) scale(0);background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border-radius:16px;padding:18px 36px;text-align:center;z-index:1001;pointer-events:none;box-shadow:0 10px 40px rgba(124,58,237,.5);}
+.lvlup.show{animation:lvlPop 1.3s cubic-bezier(.34,1.56,.64,1) forwards;}
+.lvlup h3{font-size:24px;font-weight:900;}
+.lvlup p{font-size:13px;opacity:.85;margin-top:4px;}
+.confetto{position:fixed;pointer-events:none;z-index:999;animation:fall linear forwards;}
+.retry-banner{background:linear-gradient(135deg,#fef9c3,#fef08a);border:2px solid #ca8a04;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:800;color:#713f12;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.wf{border-radius:11px;padding:11px 14px;font-size:14px;font-weight:700;margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.wf1{background:#fde8e8;color:#c02020;border:1.5px solid #f5b0b0;}
+.wf2{background:#fff3e0;color:var(--ad);border:1.5px solid #f4a259;}
+.hint-inline{background:none;border:2px solid currentColor;border-radius:8px;padding:3px 10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:inherit;transition:background .15s;}
+.hint-inline:hover{background:rgba(0,0,0,.08);}
+
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+@keyframes popIn{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+@keyframes fall{0%{opacity:1;transform:translateY(0) rotate(0deg);}100%{opacity:0;transform:translateY(100vh) rotate(720deg);}}
+@keyframes streakPop{0%{transform:translate(-50%,-50%) scale(0);}55%{transform:translate(-50%,-50%) scale(1.1);}75%{transform:translate(-50%,-50%) scale(.97);}88%{transform:translate(-50%,-50%) scale(1);opacity:1;}100%{transform:translate(-50%,-50%) scale(0);opacity:0;}}
+@keyframes lvlPop{0%{transform:translateX(-50%) scale(0);}50%{transform:translateX(-50%) scale(1.05);}70%{transform:translateX(-50%) scale(1);}90%{transform:translateX(-50%) scale(1);opacity:1;}100%{transform:translateX(-50%) scale(0);opacity:0;}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-orb a"></div><div class="hdr-orb b"></div>
+  <div class="hdr-tag">FajnCvičebna · Matematika 7. ročník</div>
+  <h1>🏆 Výrazy – pro jedničkáře</h1>
+  <p>{ [ ( ) ] } · Záporná čísla · Zlomky · Desetinná čísla · Vše najednou</p>
+</div>
+
+<div class="topbar">
+  <div class="ts s-xp"><div class="num" id="xp-num">0</div><div class="lbl">⚡ Body XP</div></div>
+  <div class="ts s-str"><div class="num" id="streak-num">0</div><div class="lbl">🔥 Série</div></div>
+  <div class="ts s-ok"><div class="num" id="ok-num">0</div><div class="lbl">✅ Správně</div></div>
+  <div class="ts"><div class="num" id="total-num" style="color:var(--muted)">0</div><div class="lbl">📝 Celkem</div></div>
+</div>
+
+<div class="xpbar-wrap">
+  <div class="xpbar-row"><span id="lvl-label">Úroveň 1</span><span id="xp-to-next">0 / 60 XP</span></div>
+  <div class="xpbar-bg"><div class="xpbar-fill" id="xpbar" style="width:0%"></div></div>
+</div>
+
+<div class="diff-wrap">
+  <div class="diff-label">Obtížnost</div>
+  <div class="diff-pills">
+    <div class="dp z active" onclick="setDiff('z',this)">🌱 Základ</div>
+    <div class="dp p2" onclick="setDiff('p2',this)">🔥 Pokročilý</div>
+    <div class="dp pr" onclick="setDiff('pr',this)">💀 Profi</div>
+    <div class="dp j" onclick="setDiff('j',this)">🏆 Jedničkář</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="card" id="main-card">
+    <button class="tut-btn" onclick="toggleTut()">
+      <span>📖 Připomenutí pravidel</span>
+      <span id="tut-arrow">▼</span>
+    </button>
+    <div class="tut-body" id="tut-body">
+      <div class="rule-box">
+        <div class="rb-title">Pořadí závorek (od nejhlubší ven)</div>
+        ( ) kulaté &nbsp;→&nbsp; [ ] hranaté &nbsp;→&nbsp; { } lomené<br>
+        Vždy začínáme od <strong>nejhlubší závorky</strong> a postupujeme ven.
+      </div>
+      <div class="rule-box" style="background:linear-gradient(135deg,#fff5f5,#fde8e8);border-color:var(--err);color:#9b1c1c;">
+        <div class="rb-title" style="color:#9b1c1c;">Znaménková pravidla</div>
+        − × − = + &nbsp;&nbsp;|&nbsp;&nbsp; + × − = − &nbsp;&nbsp;|&nbsp;&nbsp; − × + = −<br>
+        −(a + b) = −a − b &nbsp;&nbsp;|&nbsp;&nbsp; −(a − b) = −a + b<br>
+        Minus před závorkou <strong>změní znaménka všem členům</strong> v závorce.
+      </div>
+      <div class="tut-step"><div class="n">½</div><div><strong>Zlomky:</strong> vždy zkontroluj, jestli výsledek vyjde celé číslo. ½ × sudé = celé. ⅓ × násobek 3 = celé. ¼ × násobek 4 = celé.</div></div>
+      <div class="tut-step"><div class="n">!</div><div><strong>Tip pro jedničkáře:</strong> Každý krok si piš – jeden špatný výpočet pokazí celý příklad. Závorka za závorkou.</div></div>
+    </div>
+    <div id="ex"></div>
+  </div>
+</div>
+
+<div class="streak-popup" id="streak-popup">
+  <h2 id="streak-title">🔥 Série 5!</h2>
+  <p id="streak-sub">Jsi na vlně!</p>
+</div>
+<div class="lvlup" id="lvlup">
+  <h3 id="lvlup-title">🎉 Úroveň 2!</h3>
+  <p id="lvlup-sub">Postupuješ dál!</p>
+</div>
+
+<script>
+// ── AUDIO ───────────────────────────────────────────────────
+let audioCtx=null;
+function getCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function tone(f,s,d,t,v){t=t||'sine';v=v||0.28;try{const ctx=getCtx(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,ctx.currentTime+s);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+s+d);o.start(ctx.currentTime+s);o.stop(ctx.currentTime+s+d+.05);}catch(e){}}
+function sOk(){tone(523,0,.09);tone(659,.09,.09);tone(784,.18,.2);}
+function sErr(){tone(220,0,.1,'sawtooth',.22);tone(170,.1,.18,'sawtooth',.16);}
+function sStreak(){tone(523,0,.07);tone(659,.07,.07);tone(784,.14,.07);tone(1047,.21,.35);}
+function sLvl(){[523,587,659,784,1047].forEach((f,i)=>tone(f,i*.08,.18));}
+
+// ── STATE ───────────────────────────────────────────────────
+let diff='z',xp=0,streak=0,totalOk=0,totalAll=0,answered=false,cur=null,lvl=1;
+const XP_LEVELS=[0,60,150,280,450,660,920,1200];
+
+// ── HELPERS ─────────────────────────────────────────────────
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[ri(0,arr.length-1)];}
+function dec(n){return String(Math.round(n*100)/100).replace('.',',');}
+// Záporné číslo v závorce pro jasnost zápisu
+function n_(x){return x<0?`(${x})`:String(x);}
+
+// ── TEMPLATES ───────────────────────────────────────────────
+const T={
+
+// ── ZÁKLAD: tři závorky + základní zlomky, vše kladné ──────
+z:[
+  // { [a + (b × c)] − d }
+  {cat:'{ [ ( ) ] } Základ', gen(){
+    const b=ri(2,5),c=ri(2,5),a=ri(2,8);
+    const bc=b*c, s1=a+bc, d=ri(1,s1-1), ans=s1-d;
+    return{expr:`{ [${a} + (${b} × ${c})] − ${d} }`,ans,
+      hint:`( ): ${b}×${c}=${bc}. [ ]: ${a}+${bc}=${s1}. { }: ${s1}−${d}=${ans}.`,
+      steps:[
+        {note:'( ) Kulaté závorky – násobení', e:`{ [${a} + (<span class="hl">${b} × ${c}</span>)] − ${d} }`},
+        {note:'[ ] Hranaté závorky – sečteme', e:`{ [<span class="hl">${a} + ${bc}</span>] − ${d} }`},
+        {note:'{ } Lomené závorky – odečteme', e:`{ <span class="hl">${s1} − ${d}</span> }`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { a × [b − (c + d)] } + e
+  {cat:'{ [ ( ) ] } Základ', gen(){
+    const c=ri(2,4),d=ri(2,4),cd=c+d;
+    const b=ri(cd+2,cd+7),a=ri(2,5),e=ri(2,10);
+    const s1=b-cd,p1=a*s1,ans=p1+e;
+    return{expr:`{ ${a} × [${b} − (${c} + ${d})] } + ${e}`,ans,
+      hint:`( ): ${c}+${d}=${cd}. [ ]: ${b}−${cd}=${s1}. { }: ${a}×${s1}=${p1}. Pak ${p1}+${e}=${ans}.`,
+      steps:[
+        {note:'( ) Kulaté závorky', e:`{ ${a} × [${b} − (<span class="hl">${c} + ${d}</span>)] } + ${e}`},
+        {note:'[ ] Hranaté závorky', e:`{ ${a} × [<span class="hl">${b} − ${cd}</span>] } + ${e}`},
+        {note:'{ } Násobení v lomených', e:`{ <span class="hl">${a} × ${s1}</span> } + ${e}`},
+        {note:'Sčítání', e:`<span class="hl">${p1} + ${e}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // [a + (b × ½)] × c − d  (b sudé)
+  {cat:'{ [ ( ) ] } + zlomek ½', gen(){
+    const b=ri(1,6)*2, a=ri(2,8), c=ri(2,5), d=ri(2,10);
+    const bh=b/2, s1=a+bh, p1=s1*c, ans=p1-d;
+    return{expr:`[${a} + (${b} × ½)] × ${c} − ${d}`,ans,
+      hint:`( ): ${b}×½=${bh}. [ ]: ${a}+${bh}=${s1}. Násobení: ${s1}×${c}=${p1}. Pak ${p1}−${d}=${ans}.`,
+      steps:[
+        {note:'( ) Násobení zlomkem', e:`[${a} + (<span class="hl">${b} × ½</span>)] × ${c} − ${d}`},
+        {note:'[ ] Hranaté závorky', e:`[<span class="hl">${a} + ${bh}</span>] × ${c} − ${d}`},
+        {note:'Násobení (přednost před odčítáním)', e:`<span class="hl">${s1} × ${c}</span> − ${d}`},
+        {note:'Odčítání', e:`<span class="hl">${p1} − ${d}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { [a × b − (c × d)] } ÷ e
+  {cat:'{ [ ( ) ] } + dělení', gen(){
+    const e=ri(2,4), q=ri(2,7), c=ri(2,4), d=ri(2,4);
+    const cd=c*d, need=e*q+cd, b=ri(2,5), a=Math.ceil(need/b);
+    const p1=a*b, s1=p1-cd, ans=s1/e;
+    if(s1<=0||s1%e!==0||a>15){
+      const fa=7,fb=3,fc=2,fd=3,fe=3,fp1=21,fp2=6,fans=5;
+      return{expr:`{ [${fa} × ${fb} − (${fc} × ${fd})] } ÷ ${fe}`,ans:fans,
+        hint:`( ): ${fc}×${fd}=${fp2}. [ ]: ${fp1}−${fp2}=15. { }: 15÷${fe}=${fans}.`,
+        steps:[
+          {note:'( ) Kulaté závorky', e:`{ [${fa} × ${fb} − (<span class="hl">${fc} × ${fd}</span>)] } ÷ ${fe}`},
+          {note:'[ ] Násobení uvnitř', e:`{ [<span class="hl">${fa} × ${fb}</span> − ${fp2}] } ÷ ${fe}`},
+          {note:'[ ] Odečteme', e:`{ [<span class="hl">${fp1} − ${fp2}</span>] } ÷ ${fe}`},
+          {note:'{ } Dělení', e:`{ <span class="hl">15 ÷ ${fe}</span> }`},
+          {note:'Výsledek', e:`${fans}`,final:true},
+        ]};}
+    return{expr:`{ [${a} × ${b} − (${c} × ${d})] } ÷ ${e}`,ans,
+      hint:`( ): ${c}×${d}=${cd}. [ ]: ${p1}−${cd}=${s1}. { }: ${s1}÷${e}=${ans}.`,
+      steps:[
+        {note:'( ) Kulaté závorky', e:`{ [${a} × ${b} − (<span class="hl">${c} × ${d}</span>)] } ÷ ${e}`},
+        {note:'[ ] Násobení uvnitř', e:`{ [<span class="hl">${a} × ${b}</span> − ${cd}] } ÷ ${e}`},
+        {note:'[ ] Odečteme', e:`{ [<span class="hl">${p1} − ${cd}</span>] } ÷ ${e}`},
+        {note:'{ } Dělení', e:`{ <span class="hl">${s1} ÷ ${e}</span> }`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { [a + (b × ⅓)] − c } × d  (b násobek 3)
+  {cat:'{ [ ( ) ] } + zlomek ⅓', gen(){
+    const b=ri(1,4)*3, a=ri(2,8), c=ri(1,a), d=ri(2,4);
+    const bt=b/3, s1=a+bt, s2=s1-c, ans=s2*d;
+    return{expr:`{ [${a} + (${b} × ⅓)] − ${c} } × ${d}`,ans,
+      hint:`( ): ${b}×⅓=${bt}. [ ]: ${a}+${bt}=${s1}. { }: ${s1}−${c}=${s2}. Násobení: ${s2}×${d}=${ans}.`,
+      steps:[
+        {note:'( ) Násobení zlomkem ⅓', e:`{ [${a} + (<span class="hl">${b} × ⅓</span>)] − ${c} } × ${d}`},
+        {note:'[ ] Hranaté závorky', e:`{ [<span class="hl">${a} + ${bt}</span>] − ${c} } × ${d}`},
+        {note:'{ } Lomené závorky', e:`{ <span class="hl">${s1} − ${c}</span> } × ${d}`},
+        {note:'Vnější násobení', e:`<span class="hl">${s2} × ${d}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // [a + (b × ¼)] × { c − (d − e) }  (b násobek 4)
+  {cat:'Dvě skupiny závorek', gen(){
+    const b=ri(1,4)*4, a=ri(2,8);
+    const bq=b/4, s1=a+bq;
+    const e=ri(2,4), d=ri(e+1,e+5), s2=d-e, c=ri(s2+1,s2+6), s3=c-s2;
+    const ans=s1*s3;
+    return{expr:`[${a} + (${b} × ¼)] × { ${c} − (${d} − ${e}) }`,ans,
+      hint:`Levé [ ]: ${b}×¼=${bq}, pak ${a}+${bq}=${s1}. Pravé { }: ${d}−${e}=${s2}, pak ${c}−${s2}=${s3}. Výsledek: ${s1}×${s3}=${ans}.`,
+      steps:[
+        {note:'( ) Levá závorka – násobení ¼', e:`[${a} + (<span class="hl">${b} × ¼</span>)] × { ${c} − (${d} − ${e}) }`},
+        {note:'[ ] Hranaté závorky', e:`[<span class="hl">${a} + ${bq}</span>] × { ${c} − (${d} − ${e}) }`},
+        {note:'( ) Pravá závorka', e:`${s1} × { ${c} − (<span class="hl">${d} − ${e}</span>) }`},
+        {note:'{ } Lomené závorky', e:`${s1} × { <span class="hl">${c} − ${s2}</span> }`},
+        {note:'Násobení', e:`<span class="hl">${s1} × ${s3}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+],
+
+// ── POKROČILÝ: záporná čísla + tři závorky ─────────────────
+p2:[
+  // −{ [a + (b × c)] − d }
+  {cat:'➖ Minus před { }', gen(){
+    const b=ri(2,5),c=ri(2,4),a=ri(2,7);
+    const bc=b*c, s1=a+bc, d=ri(1,s1-1), inner=s1-d, ans=-inner;
+    return{expr:`−{ [${a} + (${b} × ${c})] − ${d} }`,ans,
+      hint:`( ): ${b}×${c}=${bc}. [ ]: ${a}+${bc}=${s1}. { }: ${s1}−${d}=${inner}. Minus změní znaménko: −${inner}=${ans}.`,
+      steps:[
+        {note:'( ) Kulaté závorky', e:`−{ [${a} + (<span class="hl">${b} × ${c}</span>)] − ${d} }`},
+        {note:'[ ] Hranaté závorky', e:`−{ [<span class="hl">${a} + ${bc}</span>] − ${d} }`},
+        {note:'{ } Lomené závorky', e:`−{ <span class="hl">${s1} − ${d}</span> }`},
+        {note:'Minus před { } změní znaménko', e:`<span class="hl-neg">−${inner}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { [−a + (b × c)] − d } + e
+  {cat:'➖ Záporné číslo uvnitř', gen(){
+    const a=ri(2,6), b=ri(2,4), c=ri(2,4);
+    const bc=b*c, s1=-a+bc, d=ri(1,Math.abs(s1)), s2=s1-d, e=ri(2,10), ans=s2+e;
+    return{expr:`{ [−${a} + (${b} × ${c})] − ${d} } + ${e}`,ans,
+      hint:`( ): ${b}×${c}=${bc}. [ ]: −${a}+${bc}=${s1}. { }: ${s1}−${d}=${s2}. Pak ${s2}+${e}=${ans}.`,
+      steps:[
+        {note:'( ) Kulaté závorky – násobení', e:`{ [<span class="hl-neg">−${a}</span> + (<span class="hl">${b} × ${c}</span>)] − ${d} } + ${e}`},
+        {note:'[ ] Hranaté závorky', e:`{ [<span class="hl-neg">−${a} + ${bc}</span>] − ${d} } + ${e}`},
+        {note:'{ } Lomené závorky', e:`{ <span class="hl">${s1} − ${d}</span> } + ${e}`},
+        {note:'Sčítání', e:`<span class="hl">${s2} + ${e}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // −(a + b) × { c − [d × ½] }  (d sudé)
+  {cat:'➖ Minus × { } se zlomkem', gen(){
+    const a=ri(2,5),b=ri(2,5),d=ri(1,6)*2,c=ri(d/2+1,d/2+6);
+    const ab=a+b, dh=d/2, s1=c-dh, ans=(-ab)*s1;
+    return{expr:`−(${a} + ${b}) × { ${c} − [${d} × ½] }`,ans,
+      hint:`( ): ${a}+${b}=${ab} → −${ab}. [ ]: ${d}×½=${dh}. { }: ${c}−${dh}=${s1}. Výsledek: −${ab}×${s1}=${ans}.`,
+      steps:[
+        {note:'( ) Kulaté závorky', e:`−(<span class="hl">${a} + ${b}</span>) × { ${c} − [${d} × ½] }`},
+        {note:'[ ] Hranaté závorky – zlomek', e:`<span class="hl-neg">−${ab}</span> × { ${c} − [<span class="hl">${d} × ½</span>] }`},
+        {note:'{ } Lomené závorky', e:`<span class="hl-neg">−${ab}</span> × { <span class="hl">${c} − ${dh}</span> }`},
+        {note:'Záporné × kladné = záporné', e:`<span class="hl-neg">−${ab} × ${s1}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { −[a × (b + c)] + d × e }
+  {cat:'➖ Minus před [ ] uvnitř { }', gen(){
+    const b=ri(2,5),c=ri(2,5),a=ri(2,4),d=ri(2,6),e=ri(2,5);
+    const bc=b+c, p1=a*bc, de=d*e, ans=-p1+de;
+    return{expr:`{ −[${a} × (${b} + ${c})] + ${d} × ${e} }`,ans,
+      hint:`( ): ${b}+${c}=${bc}. [ ]: ${a}×${bc}=${p1} → −${p1}. Násobení: ${d}×${e}=${de}. { }: −${p1}+${de}=${ans}.`,
+      steps:[
+        {note:'( ) Kulaté závorky', e:`{ −[${a} × (<span class="hl">${b} + ${c}</span>)] + ${d} × ${e} }`},
+        {note:'[ ] Násobení + minus před [ ]', e:`{ <span class="hl-neg">−[${a} × ${bc}]</span> + ${d} × ${e} }`},
+        {note:'{ } Násobení v lomených', e:`{ <span class="hl-neg">−${p1}</span> + <span class="hl">${d} × ${e}</span> }`},
+        {note:'{ } Sčítání', e:`{ <span class="hl">${-p1} + ${de}</span> }`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { a × [b − (c × ⅓)] } − d  (c násobek 3)
+  {cat:'{ [ ( ) ] } záporný výsledek + ⅓', gen(){
+    const c=ri(1,4)*3, b=ri(2,7), a=ri(2,4), d=ri(2,12);
+    const ct=c/3, s1=b-ct, p1=a*s1, ans=p1-d;
+    return{expr:`{ ${a} × [${b} − (${c} × ⅓)] } − ${d}`,ans,
+      hint:`( ): ${c}×⅓=${ct}. [ ]: ${b}−${ct}=${s1}. { }: ${a}×${s1}=${p1}. Odčítání: ${p1}−${d}=${ans}.`,
+      steps:[
+        {note:'( ) Zlomek ⅓', e:`{ ${a} × [${b} − (<span class="hl">${c} × ⅓</span>)] } − ${d}`},
+        {note:'[ ] Hranaté závorky', e:`{ ${a} × [<span class="hl">${b} − ${ct}</span>] } − ${d}`},
+        {note:'{ } Násobení', e:`{ <span class="hl">${a} × ${s1}</span> } − ${d}`},
+        {note:'Odčítání', e:`<span class="hl">${p1} − ${d}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // −{ [a + b × c] − (d − e) }
+  {cat:'➖ Minus před { } + více operací', gen(){
+    const b=ri(2,4),c=ri(2,4),a=ri(2,7);
+    const bc=b*c, s1=a+bc;
+    const e=ri(2,4), d=ri(e+1,e+6), de=d-e, inner=s1-de, ans=-inner;
+    return{expr:`−{ [${a} + ${b} × ${c}] − (${d} − ${e}) }`,ans,
+      hint:`Násobení: ${b}×${c}=${bc}. [ ]: ${a}+${bc}=${s1}. ( ): ${d}−${e}=${de}. { }: ${s1}−${de}=${inner}. Minus: −${inner}=${ans}.`,
+      steps:[
+        {note:'[ ] Násobení uvnitř hranatých', e:`−{ [${a} + <span class="hl">${b} × ${c}</span>] − (${d} − ${e}) }`},
+        {note:'[ ] Sečteme', e:`−{ [<span class="hl">${a} + ${bc}</span>] − (${d} − ${e}) }`},
+        {note:'( ) Kulaté závorky', e:`−{ ${s1} − (<span class="hl">${d} − ${e}</span>) }`},
+        {note:'{ } Lomené závorky', e:`−{ <span class="hl">${s1} − ${de}</span> }`},
+        {note:'Minus před { } změní znaménko', e:`<span class="hl-neg">−${inner}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+],
+
+// ── PROFI: záporné zlomky + složitý mix ────────────────────
+pr:[
+  // { [a × (−b + c × ½)] + d } − e  (c sudé)
+  {cat:'💀 Záporné číslo + zlomek uvnitř', gen(){
+    const c=ri(2,6)*2, b=ri(1,c/2-1), a=ri(2,4), d=ri(2,8), e=ri(2,10);
+    const ch=c/2, s1=-b+ch, p1=a*s1, s2=p1+d, ans=s2-e;
+    return{expr:`{ [${a} × (−${b} + ${c} × ½)] + ${d} } − ${e}`,ans,
+      hint:`( ): −${b}+${c}×½ = −${b}+${ch} = ${s1}. [ ]: ${a}×${s1}=${p1}. { }: ${p1}+${d}=${s2}. Pak ${s2}−${e}=${ans}.`,
+      steps:[
+        {note:'( ) Nejdříve násobení ½', e:`{ [${a} × (<span class="hl-neg">−${b}</span> + <span class="hl">${c} × ½</span>)] + ${d} } − ${e}`},
+        {note:'( ) Sečteme v závorce', e:`{ [${a} × (<span class="hl">${-b} + ${ch}</span>)] + ${d} } − ${e}`},
+        {note:'[ ] Hranaté závorky – násobení', e:`{ [<span class="hl">${a} × ${s1}</span>] + ${d} } − ${e}`},
+        {note:'{ } Lomené závorky', e:`{ <span class="hl">${p1} + ${d}</span> } − ${e}`},
+        {note:'Odčítání', e:`<span class="hl">${s2} − ${e}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // −{ [a − (b × ¾)] × c } + d  (b násobek 4)
+  {cat:'💀 Minus před { } + zlomek ¾', gen(){
+    const b=ri(1,4)*4, a=ri(b*3/4+1,b*3/4+6), c=ri(2,4), d=ri(2,12);
+    const bq=b*3/4, s1=a-bq, p1=s1*c, ans=-p1+d;
+    return{expr:`−{ [${a} − (${b} × ¾)] × ${c} } + ${d}`,ans,
+      hint:`( ): ${b}×¾=${bq}. [ ]: ${a}−${bq}=${s1}. { }: ${s1}×${c}=${p1}. Minus: −${p1}. Nakonec −${p1}+${d}=${ans}.`,
+      steps:[
+        {note:'( ) Zlomek ¾', e:`−{ [${a} − (<span class="hl">${b} × ¾</span>)] × ${c} } + ${d}`},
+        {note:'[ ] Odečteme', e:`−{ [<span class="hl">${a} − ${bq}</span>] × ${c} } + ${d}`},
+        {note:'{ } Násobení', e:`−{ <span class="hl">${s1} × ${c}</span> } + ${d}`},
+        {note:'Minus před { }', e:`<span class="hl-neg">−${p1}</span> + ${d}`},
+        {note:'Sčítání', e:`<span class="hl">${-p1} + ${d}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { a × [b − (c × ⅔)] } + (−d + e)  (c násobek 3)
+  {cat:'💀 ⅔ + záporné číslo', gen(){
+    const c=ri(1,4)*3, a=ri(2,4), b=ri(c*2/3+1,c*2/3+6);
+    const ct=c*2/3, s1=b-ct, p1=a*s1;
+    const d=ri(2,6), e=ri(d+1,d+8), de=-d+e, ans=p1+de;
+    return{expr:`{ ${a} × [${b} − (${c} × ⅔)] } + (−${d} + ${e})`,ans,
+      hint:`( ): ${c}×⅔=${ct}. [ ]: ${b}−${ct}=${s1}. { }: ${a}×${s1}=${p1}. ( ): −${d}+${e}=${de}. Pak ${p1}+${de}=${ans}.`,
+      steps:[
+        {note:'( ) Levá závorka – zlomek ⅔', e:`{ ${a} × [${b} − (<span class="hl">${c} × ⅔</span>)] } + (−${d} + ${e})`},
+        {note:'[ ] Hranaté závorky', e:`{ ${a} × [<span class="hl">${b} − ${ct}</span>] } + (−${d} + ${e})`},
+        {note:'{ } Násobení v lomených', e:`{ <span class="hl">${a} × ${s1}</span> } + (<span class="hl-neg">−${d} + ${e}</span>)`},
+        {note:'( ) Pravá závorka', e:`${p1} + <span class="hl">${-d} + ${e}</span>`},
+        {note:'Sčítání', e:`<span class="hl">${p1} + ${de}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { [a × b − (c + ½ × d)] ÷ e } × f  (d sudé)
+  {cat:'💀 Zlomek ½ uvnitř dělení', gen(){
+    const d=ri(2,6)*2, c=ri(2,6), e=ri(2,3), f=ri(2,4);
+    const dh=d/2;
+    // need (a*b - c - dh) divisible by e
+    const target=e*ri(2,6), ab=target+c+dh, b=ri(2,4), a=Math.ceil(ab/b);
+    const p1=a*b, cdh=c+dh, s1=p1-cdh, q=s1/e, ans=q*f;
+    return{expr:`{ [${a} × ${b} − (${c} + ½ × ${d})] ÷ ${e} } × ${f}`,ans,
+      hint:`( ): ½×${d}=${dh}, pak ${c}+${dh}=${cdh}. [ ]: ${p1}−${cdh}=${s1}. { }: ${s1}÷${e}=${q}. Násobení: ${q}×${f}=${ans}.`,
+      steps:[
+        {note:'( ) Zlomek ½ – násobení má přednost', e:`{ [${a} × ${b} − (${c} + <span class="hl">½ × ${d}</span>)] ÷ ${e} } × ${f}`},
+        {note:'( ) Sečteme v závorce', e:`{ [${a} × ${b} − (<span class="hl">${c} + ${dh}</span>)] ÷ ${e} } × ${f}`},
+        {note:'[ ] Násobení v hranatých', e:`{ [<span class="hl">${a} × ${b}</span> − ${cdh}] ÷ ${e} } × ${f}`},
+        {note:'[ ] Odečteme', e:`{ [<span class="hl">${p1} − ${cdh}</span>] ÷ ${e} } × ${f}`},
+        {note:'{ } Dělení', e:`{ <span class="hl">${s1} ÷ ${e}</span> } × ${f}`},
+        {note:'Vnější násobení', e:`<span class="hl">${q} × ${f}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // −{ a × [b × ½ − (c − d)] } + e × f
+  {cat:'💀 Minus před { } + ½ + více operací', gen(){
+    const b=ri(2,8)*2, c=ri(2,6), d=ri(2,c-1), a=ri(2,4);
+    const bh=b/2, cd=c-d, s1=bh-cd, p1=a*s1;
+    const e=ri(2,5), f=ri(2,5), ef=e*f, ans=-p1+ef;
+    return{expr:`−{ ${a} × [${b} × ½ − (${c} − ${d})] } + ${e} × ${f}`,ans,
+      hint:`[ ]: ½×${b}=${bh}, ( ): ${c}−${d}=${cd}, ${bh}−${cd}=${s1}. { }: ${a}×${s1}=${p1}, minus: −${p1}. Násobení: ${e}×${f}=${ef}. Výsledek: ${ans}.`,
+      steps:[
+        {note:'[ ] Násobení ½ v hranatých', e:`−{ ${a} × [<span class="hl">${b} × ½</span> − (${c} − ${d})] } + ${e} × ${f}`},
+        {note:'( ) Kulaté závorky', e:`−{ ${a} × [${bh} − (<span class="hl">${c} − ${d}</span>)] } + ${e} × ${f}`},
+        {note:'[ ] Odečteme', e:`−{ ${a} × [<span class="hl">${bh} − ${cd}</span>] } + ${e} × ${f}`},
+        {note:'{ } Násobení', e:`−{ <span class="hl">${a} × ${s1}</span> } + ${e} × ${f}`},
+        {note:'Minus před { } + vnější násobení', e:`<span class="hl-neg">−${p1}</span> + <span class="hl">${e} × ${f}</span>`},
+        {note:'Sčítání', e:`<span class="hl">${-p1} + ${ef}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+],
+
+// ── JEDNIČKÁŘ: vše najednou, dlouhé výrazy ─────────────────
+j:[
+  // −{ [a × (b − c × ½)] + d } × (e − f)  (c sudé)
+  {cat:'🏆 Vše najednou', gen(){
+    const c=ri(2,6)*2,b=ri(c/2+1,c/2+6),a=ri(2,4),d=ri(2,8);
+    const ch=c/2,s1=b-ch,p1=a*s1,s2=p1+d;
+    const f=ri(2,4),e=ri(f+1,f+5),ef=e-f,ans=-s2*ef;
+    return{expr:`−{ [${a} × (${b} − ${c} × ½)] + ${d} } × (${e} − ${f})`,ans,
+      hint:`( ): ${c}×½=${ch}, ${b}−${ch}=${s1}. [ ]: ${a}×${s1}=${p1}. { }: ${p1}+${d}=${s2}. Minus: −${s2}. ( ): ${e}−${f}=${ef}. Výsledek: −${s2}×${ef}=${ans}.`,
+      steps:[
+        {note:'( ) Levá závorka – násobení ½', e:`−{ [${a} × (${b} − <span class="hl">${c} × ½</span>)] + ${d} } × (${e} − ${f})`},
+        {note:'( ) Odečteme v závorce', e:`−{ [${a} × (<span class="hl">${b} − ${ch}</span>)] + ${d} } × (${e} − ${f})`},
+        {note:'[ ] Násobení v hranatých', e:`−{ [<span class="hl">${a} × ${s1}</span>] + ${d} } × (${e} − ${f})`},
+        {note:'{ } Sečteme v lomených', e:`−{ <span class="hl">${p1} + ${d}</span> } × (${e} − ${f})`},
+        {note:'( ) Pravá závorka', e:`<span class="hl-neg">−${s2}</span> × (<span class="hl">${e} − ${f}</span>)`},
+        {note:'Záporné × kladné = záporné', e:`<span class="hl-neg">−${s2} × ${ef}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { [a × (b × ⅓ − c)] − d } ÷ e + f  (b násobek 3)
+  {cat:'🏆 ⅓ + dělení { }', gen(){
+    const b=ri(1,4)*3,c=ri(1,b/3),a=ri(2,4);
+    const bt=b/3,s1=bt-c,p1=a*s1;
+    const e=ri(2,3), d_add=ri(0,2)*e;
+    const d=p1-d_add, inner=(p1-d);
+    if(inner<=0||inner%e!==0){
+      return T.j[0].gen();
+    }
+    const q=inner/e, f=ri(2,8), ans=q+f;
+    return{expr:`{ [${a} × (${b} × ⅓ − ${c})] − ${d} } ÷ ${e} + ${f}`,ans,
+      hint:`( ): ${b}×⅓=${bt}, ${bt}−${c}=${s1}. [ ]: ${a}×${s1}=${p1}. { }: ${p1}−${d}=${inner}. Dělení: ${inner}÷${e}=${q}. Pak ${q}+${f}=${ans}.`,
+      steps:[
+        {note:'( ) Násobení ⅓', e:`{ [${a} × (<span class="hl">${b} × ⅓</span> − ${c})] − ${d} } ÷ ${e} + ${f}`},
+        {note:'( ) Odečteme v závorce', e:`{ [${a} × (<span class="hl">${bt} − ${c}</span>)] − ${d} } ÷ ${e} + ${f}`},
+        {note:'[ ] Násobení v hranatých', e:`{ [<span class="hl">${a} × ${s1}</span>] − ${d} } ÷ ${e} + ${f}`},
+        {note:'{ } Odečteme v lomených', e:`{ <span class="hl">${p1} − ${d}</span> } ÷ ${e} + ${f}`},
+        {note:'Dělení (přednost před sčítáním)', e:`<span class="hl">${inner} ÷ ${e}</span> + ${f}`},
+        {note:'Sčítání', e:`<span class="hl">${q} + ${f}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // −{ [a + b × ¾] × c } + { d − (e × ½) }  dvě { } skupiny
+  {cat:'🏆 Dvě { } skupiny', gen(){
+    const b=ri(1,4)*4,a=ri(2,7),c=ri(2,4);
+    const bq=b*3/4, s1=a+bq, p1=s1*c;
+    const e=ri(2,8)*2, d=ri(e/2+1,e/2+8);
+    const eh=e/2, s2=d-eh, ans=-p1+s2;
+    return{expr:`−{ [${a} + ${b} × ¾] × ${c} } + { ${d} − (${e} × ½) }`,ans,
+      hint:`Levé { }: ${b}×¾=${bq}, ${a}+${bq}=${s1}, ${s1}×${c}=${p1}, minus: −${p1}. Pravé { }: ${e}×½=${eh}, ${d}−${eh}=${s2}. Výsledek: −${p1}+${s2}=${ans}.`,
+      steps:[
+        {note:'Levá { }: [ ] násobení ¾', e:`−{ [${a} + <span class="hl">${b} × ¾</span>] × ${c} } + { ${d} − (${e} × ½) }`},
+        {note:'Levá { }: [ ] sečteme', e:`−{ [<span class="hl">${a} + ${bq}</span>] × ${c} } + { ${d} − (${e} × ½) }`},
+        {note:'Levá { }: násobení + minus', e:`<span class="hl-neg">−{ ${s1} × ${c} }</span> + { ${d} − (<span class="hl">${e} × ½</span>) }`},
+        {note:'Pravá { }: ( ) zlomek ½', e:`<span class="hl-neg">−${p1}</span> + { <span class="hl">${d} − ${eh}</span> }`},
+        {note:'Pravá { } vyřešena, sčítáme', e:`<span class="hl">${-p1} + ${s2}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // { a × [−b + (c × ⅔)] − d × ½ } × e
+  {cat:'🏆 Záporné číslo + ⅔ + ½ v { }', gen(){
+    const c=ri(1,4)*3,b=ri(1,c*2/3-1),a=ri(2,4);
+    const ct=c*2/3, s1=-b+ct;
+    const d=ri(1,6)*2, dh=d/2;
+    const s2=a*s1-dh, e=ri(2,4), ans=s2*e;
+    return{expr:`{ ${a} × [−${b} + (${c} × ⅔)] − ${d} × ½ } × ${e}`,ans,
+      hint:`( ): ${c}×⅔=${ct}. [ ]: −${b}+${ct}=${s1}. Násobení ${a}×${s1}=${a*s1}. ½×${d}=${dh}. { }: ${a*s1}−${dh}=${s2}. Výsledek: ${s2}×${e}=${ans}.`,
+      steps:[
+        {note:'( ) Zlomek ⅔ v závorce', e:`{ ${a} × [<span class="hl-neg">−${b}</span> + (<span class="hl">${c} × ⅔</span>)] − ${d} × ½ } × ${e}`},
+        {note:'[ ] Hranaté závorky', e:`{ ${a} × [<span class="hl">${-b} + ${ct}</span>] − ${d} × ½ } × ${e}`},
+        {note:'{ } Násobení vlevo (přednost)', e:`{ <span class="hl">${a} × ${s1}</span> − ${d} × ½ } × ${e}`},
+        {note:'{ } Násobení ½ (přednost)', e:`{ ${a*s1} − <span class="hl">${d} × ½</span> } × ${e}`},
+        {note:'{ } Odečteme', e:`{ <span class="hl">${a*s1} − ${dh}</span> } × ${e}`},
+        {note:'Vnější násobení', e:`<span class="hl">${s2} × ${e}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+
+  // −{ [a − (b × ¼ + c)] × d } ÷ e  (b násobek 4)
+  {cat:'🏆 ¼ + záporné + dělení', gen(){
+    const b=ri(1,4)*4, c=ri(2,5), a=ri(b/4+c+1,b/4+c+7), d=ri(2,4), e=ri(2,3);
+    const bq=b/4, s1=bq+c, s2=a-s1, p1=s2*d;
+    if(p1%e!==0){return T.j[3].gen();}
+    const q=p1/e, ans=-q;
+    return{expr:`−{ [${a} − (${b} × ¼ + ${c})] × ${d} } ÷ ${e}`,ans,
+      hint:`( ): ${b}×¼=${bq}, ${bq}+${c}=${s1}. [ ]: ${a}−${s1}=${s2}. { }: ${s2}×${d}=${p1}. Dělení: ${p1}÷${e}=${q}. Minus: −${q}=${ans}.`,
+      steps:[
+        {note:'( ) Násobení ¼', e:`−{ [${a} − (<span class="hl">${b} × ¼</span> + ${c})] × ${d} } ÷ ${e}`},
+        {note:'( ) Sečteme v závorce', e:`−{ [${a} − (<span class="hl">${bq} + ${c}</span>)] × ${d} } ÷ ${e}`},
+        {note:'[ ] Odečteme v hranatých', e:`−{ [<span class="hl">${a} − ${s1}</span>] × ${d} } ÷ ${e}`},
+        {note:'{ } Násobení v lomených', e:`−{ <span class="hl">${s2} × ${d}</span> } ÷ ${e}`},
+        {note:'Dělení (přednost před minus)', e:`<span class="hl-neg">−</span>{ <span class="hl">${p1} ÷ ${e}</span> }`},
+        {note:'Minus před výsledkem', e:`<span class="hl-neg">−${q}</span>`},
+        {note:'Výsledek', e:`${ans}`,final:true},
+      ]};}},
+]};
+
+// ── LOGIKA ──────────────────────────────────────────────────
+let attempts=0, retryQueue=[], completedCount=0;
+
+function setDiff(d,el){diff=d;document.querySelectorAll('.dp').forEach(p=>p.classList.remove('active'));el.classList.add('active');genProblem();}
+function toggleTut(){const b=document.getElementById('tut-body'),a=document.getElementById('tut-arrow');b.classList.toggle('open');a.textContent=b.classList.contains('open')?'▲':'▼';}
+function toggleHint(){const b=document.getElementById('hint-box');if(b)b.style.display=b.style.display==='block'?'none':'block';}
+function hideFeedback(){const el=document.getElementById('feedback-area');if(el)el.innerHTML='';}
+
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  if(!answered)check();else genProblem();
+});
+
+function genProblem(){
+  answered=false;attempts=0;hideFeedback();
+  const due=retryQueue.findIndex(r=>r.target<=completedCount);
+  if(due!==-1){
+    cur=retryQueue.splice(due,1)[0].prob;
+    renderEx(true);
+    return;
+  }
+  const pool=T[diff];
+  cur=pool[ri(0,pool.length-1)].gen();
+  renderEx(false);
+}
+
+function renderEx(isRetry){
+  const long=cur.expr.length>35;
+  document.getElementById('ex').innerHTML=`
+    ${isRetry?`<div class="retry-banner">📌 Opakování – tento příklad ti dřív nešel. Teď to zvládneš!</div>`:''}
+    <div class="expr-card">
+      <div class="expr-cat">${cur.cat}</div>
+      <div class="expr-text${long?' long':''}">${cur.expr}</div>
+    </div>
+    <div class="ans-wrap">
+      <span class="ans-label">Výsledek =</span>
+      <input type="number" id="ai" class="ans-input" placeholder="?" inputmode="decimal" step="any">
+    </div>
+    <div id="feedback-area"></div>
+    <button class="hint-toggle" onclick="toggleHint()">💡 Nevím si rady – poradit</button>
+    <div class="hint-box" id="hint-box">${cur.hint}</div>
+    <button class="btn-check" id="bchk" onclick="check()">Zkontrolovat ✓</button>
+    <button class="btn-next" id="bnx" onclick="genProblem()">Další příklad → <small style="opacity:.7;font-size:12px;">(nebo Enter)</small></button>
+    <div class="result" id="res"></div>
+  `;
+  setTimeout(()=>document.getElementById('ai').focus(),80);
+}
+
+function check(){
+  if(answered)return;
+  const inp=document.getElementById('ai');
+  const val=parseFloat(inp.value.replace(',','.'));
+  if(isNaN(val)){inp.focus();return;}
+  const correct=Math.abs(val-cur.ans)<0.05;
+
+  if(correct){
+    answered=true;completedCount++;
+    inp.disabled=true;inp.classList.add('ok-inp');
+    document.getElementById('bchk').disabled=true;
+    document.getElementById('bnx').style.display='block';
+    totalAll++;totalOk++;streak++;
+    document.getElementById('ok-num').textContent=totalOk;
+    document.getElementById('streak-num').textContent=streak;
+    document.getElementById('total-num').textContent=totalAll;
+    const base=diff==='j'?60:diff==='pr'?45:diff==='p2'?30:15;
+    const mult=attempts===0?1:attempts===1?0.65:0.4;
+    const sb=streak>=5?Math.floor(streak/5)*5:0;
+    gainXP(Math.round(base*mult)+sb);
+    sOk();
+    if(attempts===0)spawnConfetti();
+    if([5,10,15,20].includes(streak))showStreak();
+    hideFeedback();
+    showResult(true,val);
+  } else {
+    attempts++;
+    inp.classList.add('err-inp');
+    sErr();shakeCard();
+    if(attempts===1){
+      document.getElementById('feedback-area').innerHTML=
+        `<div class="wf wf1">❌ To není správně – zkus to ještě jednou! <button class="hint-inline" onclick="toggleHint()">💡 Chceš nápovědu?</button></div>`;
+      setTimeout(()=>{inp.classList.remove('err-inp');inp.value='';inp.disabled=false;document.getElementById('bchk').disabled=false;inp.focus();},700);
+    } else if(attempts===2){
+      document.getElementById('feedback-area').innerHTML=
+        `<div class="wf wf2">🤔 Pořád to nesedí – tady je nápověda:</div>`;
+      const hb=document.getElementById('hint-box');if(hb)hb.style.display='block';
+      setTimeout(()=>{inp.classList.remove('err-inp');inp.value='';inp.disabled=false;document.getElementById('bchk').disabled=false;inp.focus();},700);
+    } else {
+      answered=true;completedCount++;
+      inp.disabled=true;
+      document.getElementById('bchk').disabled=true;
+      document.getElementById('bnx').style.display='block';
+      totalAll++;streak=0;
+      document.getElementById('streak-num').textContent=0;
+      document.getElementById('total-num').textContent=totalAll;
+      retryQueue.push({prob:JSON.parse(JSON.stringify(cur)),target:completedCount+ri(5,10)});
+      hideFeedback();
+      showResult(false,val);
+    }
+  }
+}
+
+function showResult(correct,given){
+  const stepsHtml=cur.steps.map((s,i)=>`
+    <div class="ps-step">
+      <div class="ps-num">${i+1}</div>
+      <div class="ps-content">
+        <div class="ps-note">${s.note}</div>
+        <div class="ps-expr${s.final?' final-step':''}">${s.e}</div>
+      </div>
+    </div>`).join('');
+  const ansStr=Number.isInteger(cur.ans)?String(cur.ans):dec(cur.ans);
+  const givenStr=Number.isInteger(given)?String(given):dec(given);
+  document.getElementById('res').style.display='block';
+  document.getElementById('res').innerHTML=`
+    <div class="res-hdr ${correct?'ok-h':'err-h'}">
+      ${correct?'✅ Správně! Skvělá práce!':'❌ Chyba – správná odpověď je <strong>'+ansStr+'</strong>, ty jsi zadal '+givenStr}
+    </div>
+    <div class="res-body">
+      <div class="ps-title">Postup řešení krok za krokem</div>
+      ${stepsHtml}
+    </div>`;
+}
+
+function gainXP(n){
+  xp+=n;document.getElementById('xp-num').textContent=xp;
+  const next=XP_LEVELS[lvl]||9999;
+  if(xp>=next&&lvl<XP_LEVELS.length-1){lvl++;sLvl();showLvlUp();}
+  updateXPBar();
+}
+function updateXPBar(){
+  const next=XP_LEVELS[lvl]||xp+60,prev=XP_LEVELS[lvl-1]||0;
+  const pct=Math.min(100,Math.round((xp-prev)/(next-prev)*100));
+  document.getElementById('xpbar').style.width=pct+'%';
+  document.getElementById('lvl-label').textContent='Úroveň '+lvl;
+  document.getElementById('xp-to-next').textContent=xp+' / '+next+' XP';
+}
+function shakeCard(){const c=document.getElementById('main-card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');}
+function showStreak(){
+  sStreak();
+  const msgs={5:'Jsi na vlně! 🌊',10:'Neuvěřitelné! 🚀',15:'Absolutní mašina! 🤖',20:'LEGENDÁRNÍ! 👑'};
+  const pop=document.getElementById('streak-popup');
+  document.getElementById('streak-title').textContent='🔥 Série '+streak+'!';
+  document.getElementById('streak-sub').textContent=msgs[streak]||'Pokračuj dál!';
+  pop.classList.remove('show');void pop.offsetWidth;pop.classList.add('show');
+}
+function showLvlUp(){
+  const titles=['','','Dobře','Pokročilý','Profi','Expert','Mistr','Jedničkář'];
+  const el=document.getElementById('lvlup');
+  document.getElementById('lvlup-title').textContent='🎉 Úroveň '+lvl+'!';
+  document.getElementById('lvlup-sub').textContent=(titles[lvl]||'Výborně')+' – titul odemčen!';
+  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
+}
+const COLS=['#f4a259','#7c3aed','#22c97a','#e84040','#a855f7','#f59e0b','#3b82f6','#10b981'];
+function spawnConfetti(){
+  for(let i=0;i<52;i++){
+    const el=document.createElement('div');el.className='confetto';
+    const sz=6+Math.random()*10;
+    el.style.cssText=`left:${Math.random()*100}vw;top:-14px;background:${COLS[Math.floor(Math.random()*8)]};width:${sz}px;height:${sz}px;border-radius:${Math.random()>.5?'50%':'3px'};animation-duration:${1.2+Math.random()*1.6}s;animation-delay:${Math.random()*.35}s;`;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+updateXPBar();genProblem();
+</script>
+</body>
+</html>
