@@ -84,15 +84,9 @@
     letter-spacing: -0.5px;
   }
 
-  .header-title span {
-    color: var(--choco-cream);
-  }
+  .header-title span { color: var(--choco-cream); }
 
-  .score-panel {
-    display: flex;
-    gap: 14px;
-    align-items: center;
-  }
+  .score-panel { display: flex; gap: 14px; align-items: center; }
 
   .score-badge {
     background: rgba(240,192,64,0.15);
@@ -137,6 +131,63 @@
   .demo-banner.hidden { display: none; }
   .demo-counter { margin-top: 6px; font-weight: 800; }
 
+  /* ── ADAPTIVE SUGGESTION ── */
+  .adaptive-suggest {
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border: 2px solid #a5d6a7;
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1b5e20;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .adaptive-suggest.warn {
+    background: linear-gradient(135deg, #fff3e0, #fff8e1);
+    border-color: #ffcc80;
+    color: #bf360c;
+  }
+
+  .adaptive-suggest.hidden { display: none; }
+
+  .adaptive-btns { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .btn-adaptive-yes {
+    padding: 6px 16px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-adaptive-no {
+    padding: 6px 16px;
+    background: white;
+    color: #555;
+    border: 2px solid #ccc;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-adaptive-yes:hover { transform: translateY(-1px); background: #43a047; }
+  .btn-adaptive-no:hover { transform: translateY(-1px); }
+
   .mascot-area {
     background: linear-gradient(135deg, var(--choco-cream), var(--choco-white));
     border-radius: var(--radius);
@@ -154,24 +205,20 @@
   .mascot-area::before {
     content: '';
     position: absolute;
-    right: -20px;
-    top: -20px;
-    width: 150px;
-    height: 150px;
+    right: -20px; top: -20px;
+    width: 150px; height: 150px;
     background: radial-gradient(circle, rgba(240,192,64,0.1), transparent 70%);
     border-radius: 50%;
   }
 
   .mascot-svg-container {
     flex-shrink: 0;
-    width: 90px;
-    height: 90px;
+    width: 90px; height: 90px;
     position: relative;
   }
 
   .mascot-svg-container svg {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     filter: drop-shadow(0 4px 8px rgba(61,26,8,0.3));
     transition: transform 0.3s ease;
   }
@@ -180,16 +227,16 @@
   .mascot-svg-container.wiggle svg { animation: mascotWiggle 0.4s ease; }
 
   @keyframes mascotBounce {
-    0% { transform: translateY(0) scale(1); }
-    30% { transform: translateY(-18px) scale(1.1); }
-    60% { transform: translateY(-6px) scale(1.05); }
+    0%   { transform: translateY(0) scale(1); }
+    30%  { transform: translateY(-18px) scale(1.1); }
+    60%  { transform: translateY(-6px) scale(1.05); }
     100% { transform: translateY(0) scale(1); }
   }
 
   @keyframes mascotWiggle {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(-8deg); }
-    75% { transform: rotate(8deg); }
+    0%   { transform: rotate(0deg); }
+    25%  { transform: rotate(-8deg); }
+    75%  { transform: rotate(8deg); }
     100% { transform: rotate(0deg); }
   }
 
@@ -215,8 +262,7 @@
   .speech-bubble::before {
     content: '';
     position: absolute;
-    left: -12px;
-    bottom: 14px;
+    left: -12px; bottom: 14px;
     border: 6px solid transparent;
     border-right-color: var(--choco-milk);
   }
@@ -224,8 +270,7 @@
   .speech-bubble::after {
     content: '';
     position: absolute;
-    left: -9px;
-    bottom: 15px;
+    left: -9px; bottom: 15px;
     border: 5px solid transparent;
     border-right-color: white;
   }
@@ -333,7 +378,7 @@
   }
 
   @keyframes shimmer {
-    0% { background-position: 200% 0; }
+    0%   { background-position: 200% 0; }
     100% { background-position: -200% 0; }
   }
 
@@ -343,12 +388,67 @@
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
-    margin-bottom: 28px;
+    margin-bottom: 12px;
     padding: 20px;
     background: white;
     border-radius: var(--radius);
     border: 2px solid rgba(168,90,40,0.15);
     min-height: 120px;
+  }
+
+  /* ── FRACTION VISUALIZATION ── */
+  .visual-area {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 14px;
+    padding: 12px 16px 16px;
+    background: rgba(255,255,255,0.6);
+    border-radius: var(--radius-sm);
+    border: 2px dashed rgba(168,90,40,0.2);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .visual-area.hidden { display: none; }
+
+  .visual-bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .visual-bar-label {
+    font-family: 'Baloo 2', cursive;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--choco-mid);
+  }
+
+  .visual-bar-caption {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .visual-op-symbol {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--choco-mid);
+    padding-bottom: 28px;
+  }
+
+  .visual-equals {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--choco-mid);
+    padding-bottom: 28px;
   }
 
   .fraction { display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; }
@@ -418,19 +518,16 @@
   .answer-input.wrong { border-bottom-color: var(--red); color: var(--red); animation: shake 0.3s ease; }
 
   .answer-line {
-    width: 80px;
-    height: 3px;
+    width: 80px; height: 3px;
     background: var(--choco-dark);
     border-radius: 2px;
   }
 
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    75% { transform: translateX(8px); }
+    25%  { transform: translateX(-8px); }
+    75%  { transform: translateX(8px); }
   }
-
-  .whole-number-section { display: none; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
   .btn-primary {
     padding: 14px 36px;
@@ -469,10 +566,25 @@
     box-shadow: 0 2px 10px rgba(230,81,0,0.3);
   }
 
-  .btn-hint:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(230,81,0,0.4);
+  .btn-hint:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(230,81,0,0.4); }
+
+  /* ── WHY BUTTON ── */
+  .btn-why {
+    padding: 10px 22px;
+    background: linear-gradient(135deg, #1976d2, #1565c0);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(25,118,210,0.3);
+    display: none;
   }
+
+  .btn-why:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(25,118,210,0.4); }
 
   .btn-reveal {
     padding: 10px 24px;
@@ -503,10 +615,7 @@
     display: none;
   }
 
-  .btn-next:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(76,175,80,0.4);
-  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(76,175,80,0.4); }
 
   .action-row {
     display: flex;
@@ -528,13 +637,13 @@
 
   .feedback-area.show { display: block; }
   .feedback-area.correct-fb { border-color: var(--green); background: linear-gradient(135deg, #f1f8e9, #e8f5e9); }
-  .feedback-area.wrong-fb { border-color: #ffb74d; background: linear-gradient(135deg, #fff8e1, #fff3e0); }
-  .feedback-area.hint-fb { border-color: var(--blue); background: linear-gradient(135deg, #e3f2fd, #e8eaf6); }
+  .feedback-area.wrong-fb  { border-color: #ffb74d; background: linear-gradient(135deg, #fff8e1, #fff3e0); }
+  .feedback-area.hint-fb   { border-color: var(--blue); background: linear-gradient(135deg, #e3f2fd, #e8eaf6); }
 
   .feedback-title { font-family: 'Baloo 2', cursive; font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
   .feedback-area.correct-fb .feedback-title { color: #2e7d32; }
-  .feedback-area.wrong-fb .feedback-title { color: #e65100; }
-  .feedback-area.hint-fb .feedback-title { color: #1565c0; }
+  .feedback-area.wrong-fb  .feedback-title  { color: #e65100; }
+  .feedback-area.hint-fb   .feedback-title  { color: #1565c0; }
 
   .feedback-text { font-size: 0.97rem; color: var(--text-dark); line-height: 1.6; }
 
@@ -567,8 +676,8 @@
   .star.earned { filter: none; animation: starPop 0.4s ease; }
 
   @keyframes starPop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.5) rotate(20deg); }
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.5) rotate(20deg); }
     100% { transform: scale(1); }
   }
 
@@ -600,15 +709,14 @@
   }
 
   @keyframes pointsFly {
-    0% { transform: translateY(0) scale(0.5); opacity: 1; }
-    50% { transform: translateY(-60px) scale(1.3); opacity: 1; }
+    0%   { transform: translateY(0) scale(0.5); opacity: 1; }
+    50%  { transform: translateY(-60px) scale(1.3); opacity: 1; }
     100% { transform: translateY(-120px) scale(1); opacity: 0; }
   }
 
   .confetti-piece {
     position: fixed;
-    width: 10px;
-    height: 10px;
+    width: 10px; height: 10px;
     border-radius: 2px;
     pointer-events: none;
     z-index: 998;
@@ -616,10 +724,11 @@
   }
 
   @keyframes confettiFall {
-    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
     100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
   }
 
+  /* ── HINT BOX ── */
   .hint-box {
     background: linear-gradient(135deg, #e3f2fd, #e8eaf6);
     border: 2px solid #90caf9;
@@ -629,7 +738,7 @@
     display: none;
   }
 
-  .hint-box.show { display: block; }
+  .hint-box.show { display: block; animation: fadeIn 0.3s ease; }
 
   .hint-box-title {
     font-weight: 800;
@@ -657,8 +766,7 @@
     background: #1976d2;
     color: white;
     border-radius: 50%;
-    width: 22px;
-    height: 22px;
+    width: 22px; height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -667,6 +775,49 @@
     flex-shrink: 0;
     margin-top: 2px;
   }
+
+  /* ── SIMPLIFY HINT (restructured) ── */
+  .simplify-hint {
+    background: #fff3e0;
+    border: 2px solid #ffb74d;
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .simplify-hint.show { display: block; animation: fadeIn 0.3s ease; }
+
+  .simplify-hint-text {
+    font-size: 0.92rem;
+    color: #e65100;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .simplify-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .btn-simplify-help {
+    padding: 7px 16px;
+    background: linear-gradient(135deg, #e65100, #f57c00);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-simplify-help:hover { transform: translateY(-1px); }
+  .btn-simplify-help:disabled { opacity: 0.4; cursor: default; transform: none; }
 
   .reveal-dialog {
     background: linear-gradient(135deg, var(--purple-light), #f3e5f5);
@@ -678,14 +829,12 @@
     text-align: center;
   }
 
-  .reveal-dialog.show { display: block; }
+  .reveal-dialog.show { display: block; animation: fadeIn 0.3s ease; }
   .reveal-question { font-weight: 700; color: var(--purple); font-size: 1rem; margin-bottom: 12px; }
   .reveal-btns { display: flex; gap: 10px; justify-content: center; }
 
-  .btn-yes,
-  .btn-no,
-  .btn-demo-full,
-  .btn-demo-restart {
+  .btn-yes, .btn-no,
+  .btn-demo-full, .btn-demo-restart {
     padding: 10px 20px;
     border-radius: 50px;
     font-family: 'Nunito', sans-serif;
@@ -695,8 +844,9 @@
   }
 
   .btn-yes { background: var(--purple); color: white; border: none; }
-  .btn-no { background: white; color: var(--purple); border: 2px solid var(--purple); }
-  .btn-yes:hover, .btn-no:hover, .btn-demo-full:hover, .btn-demo-restart:hover { transform: translateY(-1px); }
+  .btn-no  { background: white; color: var(--purple); border: 2px solid var(--purple); }
+  .btn-yes:hover, .btn-no:hover,
+  .btn-demo-full:hover, .btn-demo-restart:hover { transform: translateY(-1px); }
 
   .level-overlay,
   .demo-finish-overlay {
@@ -712,6 +862,7 @@
 
   .level-overlay.show,
   .demo-finish-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   .level-card,
@@ -728,24 +879,20 @@
 
   @keyframes levelPop {
     from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    to   { transform: scale(1); opacity: 1; }
   }
 
-  .level-emoji { font-size: 4rem; margin-bottom: 12px; }
-  .level-title { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--choco-dark); }
-  .level-sub { color: var(--text-mid); font-size: 1rem; margin: 10px 0 24px; }
+  .level-emoji  { font-size: 4rem; margin-bottom: 12px; }
+  .level-title  { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; color: var(--choco-dark); }
+  .level-sub    { color: var(--text-mid); font-size: 1rem; margin: 10px 0 24px; }
 
   .demo-finish-card h2 {
     font-family: 'Baloo 2', cursive;
-    font-size: 2rem;
-    color: var(--choco-dark);
-    margin-bottom: 10px;
+    font-size: 2rem; color: var(--choco-dark); margin-bottom: 10px;
   }
 
   .demo-finish-card p {
-    color: var(--text-dark);
-    line-height: 1.6;
-    margin-bottom: 18px;
+    color: var(--text-dark); line-height: 1.6; margin-bottom: 18px;
   }
 
   .demo-finish-stats {
@@ -760,16 +907,12 @@
   }
 
   .demo-finish-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
   }
 
   .btn-demo-full {
     background: linear-gradient(135deg, var(--green), #388e3c);
-    color: white;
-    border: none;
+    color: white; border: none;
   }
 
   .btn-demo-restart {
@@ -777,20 +920,6 @@
     color: var(--choco-dark);
     border: 2px solid var(--choco-mid);
   }
-
-  .simplify-hint {
-    background: #fff3e0;
-    border: 2px solid #ffb74d;
-    border-radius: var(--radius-sm);
-    padding: 12px 16px;
-    margin-top: 8px;
-    font-size: 0.9rem;
-    color: #e65100;
-    font-weight: 600;
-    display: none;
-  }
-
-  .simplify-hint.show { display: block; }
 
   .help-text {
     text-align: center;
@@ -802,24 +931,23 @@
 
   .attempt-dots { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
   .attempt-dot {
-    width: 10px;
-    height: 10px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: rgba(168,90,40,0.25);
     transition: background 0.3s;
   }
 
   .attempt-dot.used { background: var(--red); }
-  .attempt-dot.ok { background: var(--green); }
+  .attempt-dot.ok   { background: var(--green); }
 
   @media (max-width: 500px) {
-    .header-title { font-size: 1.3rem; }
-    .score-badge { padding: 4px 10px; font-size: 0.85rem; }
+    .header-title  { font-size: 1.3rem; }
+    .score-badge   { padding: 4px 10px; font-size: 0.85rem; }
     .fraction-num, .fraction-den { font-size: 1.7rem; }
-    .operator { font-size: 1.9rem; }
-    .answer-input { font-size: 1.6rem; width: 64px; }
-    .controls-row { gap: 8px; }
-    .game-area { padding: 18px; }
+    .operator      { font-size: 1.9rem; }
+    .answer-input  { font-size: 1.6rem; width: 64px; }
+    .controls-row  { gap: 8px; }
+    .game-area     { padding: 18px; }
     .level-card, .demo-finish-card { padding: 28px 20px; }
   }
 </style>
@@ -857,19 +985,28 @@
     <div class="control-group">
       <div class="control-label">⚡ Obtížnost</div>
       <div class="btn-group">
-        <button class="btn-toggle active" data-diff="easy" onclick="setDifficulty('easy', this)">Lehká</button>
-        <button class="btn-toggle" data-diff="medium" onclick="setDifficulty('medium', this)">Střední</button>
-        <button class="btn-toggle" data-diff="hard" onclick="setDifficulty('hard', this)">Těžká</button>
+        <button class="btn-toggle active" data-diff="easy"   onclick="setDifficulty('easy', this)">Lehká</button>
+        <button class="btn-toggle"        data-diff="medium" onclick="setDifficulty('medium', this)">Střední</button>
+        <button class="btn-toggle"        data-diff="hard"   onclick="setDifficulty('hard', this)">Těžká</button>
       </div>
     </div>
     <div class="control-group">
       <div class="control-label">🧮 Operace</div>
       <div class="btn-group">
         <button class="btn-op active" data-op="+" onclick="toggleOp('+', this)" title="Sčítání">+</button>
-        <button class="btn-op" data-op="-" onclick="toggleOp('-', this)" title="Odčítání">−</button>
-        <button class="btn-op" data-op="*" onclick="toggleOp('*', this)" title="Násobení">×</button>
-        <button class="btn-op" data-op="/" onclick="toggleOp('/', this)" title="Dělení">÷</button>
+        <button class="btn-op"        data-op="-" onclick="toggleOp('-', this)" title="Odčítání">−</button>
+        <button class="btn-op"        data-op="*" onclick="toggleOp('*', this)" title="Násobení">×</button>
+        <button class="btn-op"        data-op="/" onclick="toggleOp('/', this)" title="Dělení">÷</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ── ADAPTIVE SUGGESTION ── -->
+  <div class="adaptive-suggest hidden" id="adaptiveSuggest">
+    <span id="adaptiveText"></span>
+    <div class="adaptive-btns">
+      <button class="btn-adaptive-yes" onclick="acceptAdaptive()">Ano, zkusím!</button>
+      <button class="btn-adaptive-no"  onclick="dismissAdaptive()">Ne díky</button>
     </div>
   </div>
 
@@ -892,15 +1029,11 @@
   <div class="game-area">
     <div class="example-display" id="exampleDisplay"></div>
 
+    <!-- ── FRACTION VISUALIZATION ── -->
+    <div class="visual-area hidden" id="visualArea"></div>
+
     <div class="answer-section">
       <div class="answer-label">Tvůj výsledek:</div>
-      <div class="whole-number-section" id="wholeNumberSection" style="display:none">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-          <div style="font-size:0.8rem;color:#888;font-weight:600">celá č.</div>
-          <input type="number" class="answer-input" id="wholeInput" placeholder="0" min="0">
-        </div>
-        <div style="font-family:'Baloo 2',cursive;font-size:1.8rem;color:#888;margin-top:8px">+</div>
-      </div>
       <div class="answer-fraction">
         <input type="number" class="answer-input" id="numInput" placeholder="?" min="-999" max="999">
         <div class="answer-line"></div>
@@ -912,27 +1045,32 @@
       </div>
     </div>
 
+    <!-- ── SIMPLIFY HINT (with help button) ── -->
     <div class="simplify-hint" id="simplifyHint">
-      ✨ Správně! Ale zlomek jde ještě zjednodušit. Zkus ho zkrátit!
+      <div class="simplify-hint-text">✨ <strong>Správně!</strong> Ale zlomek jde ještě zjednodušit. Zkus ho zkrátit!</div>
+      <div class="simplify-actions">
+        <button class="btn-simplify-help" id="simplifyHelpBtn" onclick="showSimplifyHintSteps()">💡 Nevíš si rady?</button>
+      </div>
     </div>
 
     <div class="hint-box" id="hintBox">
-      <div class="hint-box-title">💡 Nápověda – postup řešení:</div>
+      <div class="hint-box-title" id="hintBoxTitle">💡 Nápověda – postup řešení:</div>
       <div id="hintSteps"></div>
     </div>
 
     <div class="reveal-dialog" id="revealDialog">
-      <div class="reveal-question">Chceš prozradit výsledek, nebo to ještě zkusíš?</div>
+      <div class="reveal-question" id="revealQuestion">Chceš prozradit výsledek, nebo to ještě zkusíš?</div>
       <div class="reveal-btns">
         <button class="btn-yes" onclick="revealAnswer()">Prozradit</button>
-        <button class="btn-no" onclick="tryAgainAfterReveal()">Zkusím znovu!</button>
+        <button class="btn-no"  onclick="tryAgainAfterReveal()">Zkusím znovu!</button>
       </div>
     </div>
 
     <div class="action-row">
-      <button class="btn-primary" id="checkBtn" onclick="checkAnswer()">✓ Zkontrolovat</button>
-      <button class="btn-hint" id="hintBtn" onclick="showHint()" style="display:none">💡 Nápověda</button>
-      <button class="btn-next" id="nextBtn" onclick="nextExercise()">Další příklad →</button>
+      <button class="btn-primary" id="checkBtn"  onclick="checkAnswer()">✓ Zkontrolovat</button>
+      <button class="btn-hint"    id="hintBtn"   onclick="showHint()" style="display:none">💡 Nápověda</button>
+      <button class="btn-why"     id="whyBtn"    onclick="showWhySteps()">🔍 Jak na to?</button>
+      <button class="btn-next"    id="nextBtn"   onclick="nextExercise()">Další příklad →</button>
     </div>
 
     <div class="help-text">Zadej čitatele → Enter → jmenovatele → Enter → zkontrolovat</div>
@@ -940,16 +1078,17 @@
 
   <div class="feedback-area" id="feedbackArea">
     <div class="feedback-title" id="feedbackTitle"></div>
-    <div class="feedback-text" id="feedbackText"></div>
+    <div class="feedback-text"  id="feedbackText"></div>
   </div>
 
 </div>
 
+<!-- OVERLAYS -->
 <div class="level-overlay" id="levelOverlay">
   <div class="level-card">
     <div class="level-emoji" id="levelEmoji">🎉</div>
     <div class="level-title" id="levelTitle">Úroveň 2!</div>
-    <div class="level-sub" id="levelSub">Výborně, pokračuješ skvěle!</div>
+    <div class="level-sub"   id="levelSub">Výborně, pokračuješ skvěle!</div>
     <button class="btn-primary" onclick="closeLevelUp()">Pokračovat!</button>
   </div>
 </div>
@@ -957,13 +1096,11 @@
 <div class="demo-finish-overlay" id="demoFinishOverlay">
   <div class="demo-finish-card">
     <h2>🍫 Konec dema</h2>
-    <p>
-      Paráda. Demo jsi dohrál až do konce. V plné verzi jsou dostupné další operace,
-      vyšší obtížnosti a neomezené pokračování.
-    </p>
+    <p>Paráda. Demo jsi dohrál až do konce. V plné verzi jsou dostupné další operace,
+       vyšší obtížnosti a neomezené pokračování.</p>
     <div class="demo-finish-stats" id="demoFinishStats">Skóre: 0 bodů</div>
     <div class="demo-finish-actions">
-      <button class="btn-demo-full" onclick="goToFullVersion()">Chci plnou verzi</button>
+      <button class="btn-demo-full"    onclick="goToFullVersion()">Chci plnou verzi</button>
       <button class="btn-demo-restart" onclick="restartDemo()">Zahrát demo znovu</button>
     </div>
   </div>
@@ -973,43 +1110,91 @@
 // ============================================================
 // MODE
 // ============================================================
-const urlParams = new URLSearchParams(window.location.search);
-const DEMO_MODE = urlParams.has('demo');
+const urlParams    = new URLSearchParams(window.location.search);
+const DEMO_MODE    = urlParams.has('demo');
 const DEMO_MAX_EXERCISES = 8;
-const FULL_VERSION_URL = window.location.pathname;
+const FULL_VERSION_URL   = window.location.pathname;
+const LS_KEY = 'fajnzlomky_v2';
 
 // ============================================================
 // STATE
 // ============================================================
-let difficulty = 'easy';
-let activeOps = ['+'];
-let score = 0;
-let streak = 0;
-let level = 1;
+let difficulty   = 'easy';
+let activeOps    = ['+'];
+let score        = 0;
+let streak       = 0;
+let level        = 1;
 let levelProgress = 0;
-let starsEarned = 0;
+let starsEarned  = 0;
 
-let currentProblem = null;
-let attempts = 0;
-let hintShown = false;
+let currentProblem    = null;
+let attempts          = 0;
+let simplifyAttempts  = 0;   // NEW: attempts at unsimplified answers
+let simplifyHintShown = false; // NEW: whether GCD steps were shown
+let hintShown         = false;
 let revealDialogShown = false;
-let answered = false;
-let problemClosed = false;
+let answered          = false;
+let problemClosed     = false;
 
-let demoSolved = 0;
+// ── Adaptive difficulty ──
+let consecutiveCorrect = 0;   // first-try correct streak
+let consecutiveWrong   = 0;   // revealed / gave up streak
+let adaptivePending    = null; // 'up' | 'down' | null
+
+let demoSolved   = 0;
 let demoFinished = false;
 
 let audioCtx = null;
-
 function getAudioCtx() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
 }
 
 // ============================================================
-// MASCOT DEFINITIONS
+// LOCAL STORAGE
+// ============================================================
+function saveProgress() {
+  if (DEMO_MODE) return;
+  try {
+    const data = { score, level, stats, difficulty, activeOps };
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+function loadProgress() {
+  if (DEMO_MODE) return;
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.score)     score     = d.score;
+    if (d.level)     level     = d.level;
+    if (d.stats)     stats     = { ...stats, ...d.stats };
+    if (d.difficulty) {
+      difficulty = d.difficulty;
+      document.querySelectorAll('.btn-toggle').forEach(b => {
+        b.classList.toggle('active', b.dataset.diff === difficulty);
+      });
+    }
+    if (d.activeOps && d.activeOps.length) {
+      activeOps = d.activeOps;
+      document.querySelectorAll('.btn-op').forEach(b => {
+        b.classList.toggle('active', activeOps.includes(b.dataset.op));
+      });
+    }
+    document.getElementById('scoreDisplay').textContent = score;
+    document.getElementById('levelDisplay').textContent = level;
+    // Restore progress bar
+    const prevThreshold = levelThresholds[level - 1] || 0;
+    const nextThreshold = levelThresholds[level]     || (prevThreshold + 100);
+    const range    = nextThreshold - prevThreshold;
+    const progress = Math.min(score - prevThreshold, range);
+    document.getElementById('progressBar').style.width = ((progress / range) * 100) + '%';
+  } catch(e) {}
+}
+
+// ============================================================
+// MASCOT
 // ============================================================
 const animalHeads = [
   (color) => `
@@ -1024,8 +1209,7 @@ const animalHeads = [
     <line x1="38" y1="27" x2="25" y2="25" stroke="#555" stroke-width="1.2"/>
     <line x1="38" y1="29" x2="25" y2="31" stroke="#555" stroke-width="1.2"/>
     <line x1="62" y1="27" x2="75" y2="25" stroke="#555" stroke-width="1.2"/>
-    <line x1="62" y1="29" x2="75" y2="31" stroke="#555" stroke-width="1.2"/>
-  `,
+    <line x1="62" y1="29" x2="75" y2="31" stroke="#555" stroke-width="1.2"/>`,
   (color) => `
     <ellipse cx="50" cy="22" rx="20" ry="17" fill="${color}"/>
     <ellipse cx="34" cy="20" rx="8" ry="12" fill="${color}"/>
@@ -1035,8 +1219,7 @@ const animalHeads = [
     <ellipse cx="44" cy="19" rx="2" ry="3" fill="white"/>
     <ellipse cx="56" cy="19" rx="2" ry="3" fill="white"/>
     <ellipse cx="50" cy="30" rx="6" ry="4" fill="#c07070"/>
-    <ellipse cx="50" cy="26" rx="3" ry="2.5" fill="#e0a0a0"/>
-  `,
+    <ellipse cx="50" cy="26" rx="3" ry="2.5" fill="#e0a0a0"/>`,
   (color) => `
     <ellipse cx="50" cy="26" rx="18" ry="16" fill="${color}"/>
     <ellipse cx="40" cy="8" rx="5" ry="14" fill="${color}"/>
@@ -1047,8 +1230,7 @@ const animalHeads = [
     <ellipse cx="56" cy="22" rx="4" ry="5" fill="#111" opacity="0.8"/>
     <ellipse cx="44" cy="22" rx="2" ry="3" fill="white"/>
     <ellipse cx="56" cy="22" rx="2" ry="3" fill="white"/>
-    <ellipse cx="50" cy="31" rx="3" ry="2" fill="#ffb3c1"/>
-  `,
+    <ellipse cx="50" cy="31" rx="3" ry="2" fill="#ffb3c1"/>`,
   (color) => `
     <ellipse cx="50" cy="24" rx="20" ry="18" fill="${color}"/>
     <ellipse cx="33" cy="14" rx="9" ry="9" fill="${color}"/>
@@ -1058,8 +1240,7 @@ const animalHeads = [
     <ellipse cx="44" cy="21" rx="2.2" ry="3" fill="white"/>
     <ellipse cx="56" cy="21" rx="2.2" ry="3" fill="white"/>
     <ellipse cx="50" cy="30" rx="7" ry="5" fill="${color}" opacity="0.7"/>
-    <ellipse cx="50" cy="31" rx="3.5" ry="2.5" fill="#333" opacity="0.6"/>
-  `,
+    <ellipse cx="50" cy="31" rx="3.5" ry="2.5" fill="#333" opacity="0.6"/>`,
   (color) => `
     <polygon points="50,2 30,22 70,22" fill="#e86030"/>
     <ellipse cx="50" cy="24" rx="18" ry="16" fill="${color}"/>
@@ -1070,8 +1251,7 @@ const animalHeads = [
     <ellipse cx="44" cy="21" rx="2" ry="3" fill="white"/>
     <ellipse cx="56" cy="21" rx="2" ry="3" fill="white"/>
     <ellipse cx="50" cy="29" rx="5" ry="4" fill="white" opacity="0.8"/>
-    <ellipse cx="50" cy="30" rx="3" ry="2" fill="#e86030" opacity="0.6"/>
-  `,
+    <ellipse cx="50" cy="30" rx="3" ry="2" fill="#e86030" opacity="0.6"/>`,
   (color) => `
     <ellipse cx="50" cy="22" rx="18" ry="17" fill="${color}"/>
     <polygon points="42,6 38,14 46,14" fill="${color}"/>
@@ -1082,8 +1262,7 @@ const animalHeads = [
     <circle cx="57" cy="21" r="4.5" fill="#4a3000" opacity="0.9"/>
     <circle cx="44.5" cy="19.5" r="1.5" fill="white"/>
     <circle cx="58.5" cy="19.5" r="1.5" fill="white"/>
-    <polygon points="50,27 47,32 53,32" fill="#e8a030"/>
-  `,
+    <polygon points="50,27 47,32 53,32" fill="#e8a030"/>`,
   (color) => `
     <circle cx="36" cy="16" r="9" fill="${color}"/>
     <circle cx="64" cy="16" r="9" fill="${color}"/>
@@ -1094,8 +1273,7 @@ const animalHeads = [
     <circle cx="64" cy="13" r="3" fill="#111" opacity="0.8"/>
     <circle cx="37" cy="12" r="1" fill="white"/>
     <circle cx="65" cy="12" r="1" fill="white"/>
-    <path d="M42,33 Q50,38 58,33" stroke="#555" stroke-width="2" fill="none"/>
-  `,
+    <path d="M42,33 Q50,38 58,33" stroke="#555" stroke-width="2" fill="none"/>`,
   (color) => `
     <ellipse cx="50" cy="22" rx="18" ry="18" fill="#2a2a2a"/>
     <ellipse cx="50" cy="26" rx="12" ry="13" fill="white"/>
@@ -1106,28 +1284,25 @@ const animalHeads = [
     <circle cx="43" cy="18" r="2" fill="#111"/>
     <circle cx="57" cy="18" r="2" fill="#111"/>
     <ellipse cx="50" cy="31" rx="5" ry="3" fill="#f5a030"/>
-    <ellipse cx="50" cy="32" rx="5" ry="2" fill="#f5a030"/>
-  `,
+    <ellipse cx="50" cy="32" rx="5" ry="2" fill="#f5a030"/>`,
 ];
 
-const animalNames = ['Kočka', 'Pes', 'Zajíček', 'Medvěd', 'Liška', 'Sova', 'Žabák', 'Tučňák'];
+const animalNames = ['Kočka','Pes','Zajíček','Medvěd','Liška','Sova','Žabák','Tučňák'];
 let currentAnimalIndex = 0;
 
 function drawMascot(mood = 'neutral') {
-  const svg = document.getElementById('mascotSvg');
+  const svg       = document.getElementById('mascotSvg');
   const container = document.getElementById('mascotContainer');
-
-  const bodyColor = mood === 'happy' ? '#8B4513' : mood === 'sad' ? '#a0522d' : '#6b3a1f';
+  const bodyColor  = mood === 'happy' ? '#8B4513' : mood === 'sad' ? '#a0522d' : '#6b3a1f';
   const chocoColor = mood === 'happy' ? '#c8845a' : '#a0522d';
-  const mouthPath = mood === 'happy'
+  const mouthPath  = mood === 'happy'
     ? 'M43,80 Q50,88 57,80'
     : mood === 'sad'
     ? 'M43,86 Q50,80 57,86'
     : 'M44,82 Q50,85 56,82';
 
-  const headFunc = animalHeads[currentAnimalIndex];
+  const headFunc  = animalHeads[currentAnimalIndex];
   const headColor = currentAnimalIndex === 7 ? '#2a2a2a' : bodyColor;
-  const headSvg = headFunc(headColor);
 
   svg.innerHTML = `
     <rect x="30" y="50" width="40" height="45" rx="10" fill="${bodyColor}"/>
@@ -1139,22 +1314,16 @@ function drawMascot(mood = 'neutral') {
     <ellipse cx="40" cy="98" rx="8" ry="5" fill="${bodyColor}"/>
     <ellipse cx="60" cy="98" rx="8" ry="5" fill="${bodyColor}"/>
     <ellipse cx="50" cy="48" rx="16" ry="6" fill="${bodyColor}"/>
-    ${headSvg}
+    ${headFunc(headColor)}
     <path d="${mouthPath}" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
     <ellipse cx="40" cy="57" rx="5" ry="3" fill="white" opacity="0.15" transform="rotate(-20,40,57)"/>
   `;
 
   container.classList.remove('bounce', 'wiggle');
   if (mood === 'happy') {
-    setTimeout(() => {
-      container.classList.add('bounce');
-      setTimeout(() => container.classList.remove('bounce'), 500);
-    }, 10);
+    setTimeout(() => { container.classList.add('bounce'); setTimeout(() => container.classList.remove('bounce'), 500); }, 10);
   } else if (mood === 'sad') {
-    setTimeout(() => {
-      container.classList.add('wiggle');
-      setTimeout(() => container.classList.remove('wiggle'), 400);
-    }, 10);
+    setTimeout(() => { container.classList.add('wiggle'); setTimeout(() => container.classList.remove('wiggle'), 400); }, 10);
   }
 }
 
@@ -1166,48 +1335,16 @@ function nextAnimal() {
 // SPEECH MESSAGES
 // ============================================================
 const messages = {
-  start: [
-    "Ahoj! Pojďme počítat zlomky! 🍫",
-    "Jsem Čokík a jsem tu pro tebe! Šup na příklady!",
-    "Zlomky nejsou strašák! Ukáži ti cestu. 🎯",
-    `Dnes budu ${() => animalNames[currentAnimalIndex]}! Počítáme? 😊`,
-  ],
   correct: [
-    "Výborně! Jsi génius! 🎉",
-    "Perfektní! Takhle to má být! ⭐",
-    "Bravo! Čokoláda pro tebe! 🍫",
-    "Úžasné! Jen tak dál! 🚀",
-    "Skvělá práce! Jsi moje hvězda! 🌟",
-    "Jo jo jo! To byl ale výkon! 💪",
-    "Wow! Počítáš jako počítač! 🤖",
-    "Takhle se to dělá! Jsem na tebe pyšný! 😊",
+    "Výborně! Jsi génius! 🎉","Perfektní! Takhle to má být! ⭐","Bravo! Čokoláda pro tebe! 🍫",
+    "Úžasné! Jen tak dál! 🚀","Skvělá práce! Jsi moje hvězda! 🌟","Jo jo jo! To byl ale výkon! 💪",
+    "Wow! Počítáš jako počítač! 🤖","Takhle se to dělá! Jsem na tebe pyšný! 😊",
   ],
-  wrong1: [
-    "Hmm, to nebylo ono. Zkus to znovu! 💪",
-    "Nevadí! Každý se někdy splete. Ještě jednou! 🎯",
-    "Ještě jednou zkus – věřím ti! 😊",
-    "Skoro! Oprav výpočet a zkus znovu.",
-  ],
-  wrong2: [
-    "Nevadí! Podívej se na nápovědu. 💡",
-    "Nic se nestalo – nápověda pomůže! 💡",
-    "Teď ti pomůžu – koukni na postup. 💡",
-  ],
-  simplify: [
-    "Správně, ale zlomek jde ještě zkrátit! ✂️",
-    "Téměř! Zkus zlomek zjednodušit. 🔍",
-    "Výsledek je správný – ale dá se zkrátit!",
-  ],
-  streak: [
-    "🔥 Skvělá série! Ty máš formu!",
-    "🔥 Neuvěřitelné – stále správně!",
-    "🔥 Takhle to miluju! Pokračuj!",
-  ],
-  levelUp: [
-    "🎊 Postoupil jsi na novou úroveň!",
-    "🏆 Fantastické! Nová úroveň odemčena!",
-    "⚡ Přechod na vyšší level!",
-  ],
+  wrong1:  ["Hmm, to nebylo ono. Zkus to znovu! 💪","Nevadí! Každý se někdy splete. Ještě jednou! 🎯","Ještě jednou zkus – věřím ti! 😊","Skoro! Oprav výpočet a zkus znovu."],
+  wrong2:  ["Nevadí! Podívej se na nápovědu. 💡","Nic se nestalo – nápověda pomůže! 💡","Teď ti pomůžu – koukni na postup. 💡"],
+  simplify:["Správně, ale zlomek jde ještě zkrátit! ✂️","Téměř! Zkus zlomek zjednodušit. 🔍","Výsledek je správný – ale dá se zkrátit!"],
+  streak:  ["🔥 Skvělá série! Ty máš formu!","🔥 Neuvěřitelné – stále správně!","🔥 Takhle to miluju! Pokračuj!"],
+  levelUp: ["🎊 Postoupil jsi na novou úroveň!","🏆 Fantastické! Nová úroveň odemčena!","⚡ Přechod na vyšší level!"],
 };
 
 function randomMsg(arr) {
@@ -1218,10 +1355,7 @@ function randomMsg(arr) {
 function setSpeech(text, mood = 'neutral') {
   const el = document.getElementById('speechText');
   el.classList.add('fade');
-  setTimeout(() => {
-    el.textContent = text;
-    el.classList.remove('fade');
-  }, 200);
+  setTimeout(() => { el.textContent = text; el.classList.remove('fade'); }, 200);
   drawMascot(mood);
 }
 
@@ -1229,27 +1363,16 @@ function setSpeech(text, mood = 'neutral') {
 // DIFFICULTY & OPERATIONS
 // ============================================================
 function setDifficulty(diff, btn) {
-  if (DEMO_MODE) {
-    difficulty = 'easy';
-    lockDemoControls();
-    setSpeech("V demu je dostupná jen lehká obtížnost. 🍫", 'neutral');
-    return;
-  }
-
+  if (DEMO_MODE) { lockDemoControls(); setSpeech("V demu je dostupná jen lehká obtížnost. 🍫", 'neutral'); return; }
   difficulty = diff;
   document.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  dismissAdaptive();
   generateProblem();
 }
 
 function toggleOp(op, btn) {
-  if (DEMO_MODE) {
-    activeOps = ['+'];
-    lockDemoControls();
-    setSpeech("V demu je dostupné jen sčítání zlomků. ➕", 'neutral');
-    return;
-  }
-
+  if (DEMO_MODE) { lockDemoControls(); setSpeech("V demu je dostupné jen sčítání zlomků. ➕", 'neutral'); return; }
   activeOps = [op];
   document.querySelectorAll('.btn-op').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1259,12 +1382,7 @@ function toggleOp(op, btn) {
 // ============================================================
 // FRACTION MATH UTILITIES
 // ============================================================
-function gcd(a, b) {
-  a = Math.abs(a); b = Math.abs(b);
-  while (b) { [a, b] = [b, a % b]; }
-  return a;
-}
-
+function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; }
 function lcm(a, b) { return Math.abs(a * b) / gcd(a, b); }
 
 function simplifyFraction(num, den) {
@@ -1275,9 +1393,7 @@ function simplifyFraction(num, den) {
   return { num: n, den: d };
 }
 
-function isSimplified(num, den) {
-  return gcd(Math.abs(num), Math.abs(den)) === 1;
-}
+function isSimplified(num, den) { return gcd(Math.abs(num), Math.abs(den)) === 1; }
 
 function fractionEqual(n1, d1, n2, d2) {
   const f1 = simplifyFraction(n1, d1);
@@ -1288,9 +1404,7 @@ function fractionEqual(n1, d1, n2, d2) {
 // ============================================================
 // PROBLEM GENERATION
 // ============================================================
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
 function getDiffParams() {
   switch (difficulty) {
@@ -1323,7 +1437,7 @@ function generateEasyAddSubFractions() {
 }
 
 function generateProblem() {
-  const op = activeOps[Math.floor(Math.random() * activeOps.length)];
+  const op     = activeOps[Math.floor(Math.random() * activeOps.length)];
   const params = getDiffParams();
   let f1, f2;
 
@@ -1334,9 +1448,7 @@ function generateProblem() {
     f2 = generateFraction(params);
   }
 
-  if (op === '/') {
-    while (f2.num === 0) f2 = generateFraction(params);
-  }
+  if (op === '/') while (f2.num === 0) f2 = generateFraction(params);
 
   if (op === '-' && difficulty !== 'hard') {
     const r = computeResult(f1, op, f2);
@@ -1347,17 +1459,20 @@ function generateProblem() {
     }
   }
 
-  const result = computeResult(f1, op, f2);
+  const result     = computeResult(f1, op, f2);
   const simplified = simplifyFraction(result.num, result.den);
 
   currentProblem = { f1, f2, op, result: simplified };
-  attempts = 0;
-  hintShown = false;
+  attempts          = 0;
+  simplifyAttempts  = 0;
+  simplifyHintShown = false;
+  hintShown         = false;
   revealDialogShown = false;
-  answered = false;
-  problemClosed = false;
+  answered          = false;
+  problemClosed     = false;
 
   renderProblem();
+  updateVisual();
   resetUI();
   nextAnimal();
   drawMascot('neutral');
@@ -1365,7 +1480,7 @@ function generateProblem() {
 }
 
 function getStartMessage() {
-  const opNames = { '+': 'sečteme', '-': 'odečteme', '*': 'vynásobíme', '/': 'vydělíme' };
+  const opNames   = { '+': 'sečteme', '-': 'odečteme', '*': 'vynásobíme', '/': 'vydělíme' };
   const diffNames = { easy: 'lehký', medium: 'střední', hard: 'těžký' };
   const msgs = [
     `Pojďme ${opNames[currentProblem.op]} zlomky! 🎯`,
@@ -1380,22 +1495,10 @@ function getStartMessage() {
 function computeResult(f1, op, f2) {
   let num, den;
   switch (op) {
-    case '+':
-      den = lcm(f1.den, f2.den);
-      num = f1.num * (den / f1.den) + f2.num * (den / f2.den);
-      break;
-    case '-':
-      den = lcm(f1.den, f2.den);
-      num = f1.num * (den / f1.den) - f2.num * (den / f2.den);
-      break;
-    case '*':
-      num = f1.num * f2.num;
-      den = f1.den * f2.den;
-      break;
-    case '/':
-      num = f1.num * f2.den;
-      den = f1.den * f2.num;
-      break;
+    case '+': den = lcm(f1.den, f2.den); num = f1.num*(den/f1.den) + f2.num*(den/f2.den); break;
+    case '-': den = lcm(f1.den, f2.den); num = f1.num*(den/f1.den) - f2.num*(den/f2.den); break;
+    case '*': num = f1.num*f2.num; den = f1.den*f2.den; break;
+    case '/': num = f1.num*f2.den; den = f1.den*f2.num; break;
   }
   return { num, den };
 }
@@ -1406,9 +1509,7 @@ function computeResult(f1, op, f2) {
 function renderProblem() {
   const { f1, f2, op } = currentProblem;
   const opSymbols = { '+': '+', '-': '−', '*': '×', '/': '÷' };
-
-  const display = document.getElementById('exampleDisplay');
-  display.innerHTML = `
+  document.getElementById('exampleDisplay').innerHTML = `
     ${renderFraction(f1.num, f1.den)}
     <div class="operator">${opSymbols[op]}</div>
     ${renderFraction(f2.num, f2.den)}
@@ -1424,10 +1525,80 @@ function renderFraction(num, den, highlight = false) {
       <div class="fraction-num">${num}</div>
       <div class="fraction-line" style="background:${color}"></div>
       <div class="fraction-den">${den}</div>
-    </div>
-  `;
+    </div>`;
 }
 
+// ============================================================
+// FRACTION VISUALIZATION  (NEW)
+// ============================================================
+function createFractionBar(num, den, fillColor, totalWidth = 150, barH = 28) {
+  if (den <= 0 || den > 30 || num < 0) return '';
+  const segW = totalWidth / den;
+  let segs = '';
+  for (let i = 0; i < den; i++) {
+    const x      = i * segW + 0.5;
+    const filled = i < num;
+    segs += `<rect x="${x.toFixed(1)}" y="0.5" width="${(segW - 1).toFixed(1)}" height="${barH - 1}"
+      rx="3" fill="${filled ? fillColor : '#e8ddd0'}" stroke="white" stroke-width="0.8"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${barH}">
+    <rect width="${totalWidth}" height="${barH}" rx="4" fill="#f5e6d0" stroke="#c8845a" stroke-width="1"/>
+    ${segs}
+  </svg>`;
+}
+
+function updateVisual(showResult = false) {
+  const el = document.getElementById('visualArea');
+  if (!el || !currentProblem) return;
+
+  // Only for easy, only for + and -
+  if (difficulty !== 'easy' || !['+',' -'].includes(currentProblem.op) && currentProblem.op !== '+' && currentProblem.op !== '-') {
+    el.classList.add('hidden');
+    return;
+  }
+
+  const { f1, f2, op, result } = currentProblem;
+  const opSymbol = op === '+' ? '+' : '−';
+  const color1   = '#6b3a1f';
+  const color2   = '#a0522d';
+  const colorRes = '#2e7d32';
+
+  // Normalize bar width by LCM so same-scale comparison
+  const commonDen = lcm(f1.den, f2.den);
+  const barWidth  = Math.min(150, Math.max(80, commonDen * 14));
+
+  let html = `
+    <div class="visual-bar-group">
+      <div class="visual-bar-caption">první zlomek</div>
+      ${createFractionBar(f1.num * (commonDen / f1.den), commonDen, color1, barWidth)}
+      <div class="visual-bar-label">${f1.num}/${f1.den}</div>
+    </div>
+    <div class="visual-op-symbol">${opSymbol}</div>
+    <div class="visual-bar-group">
+      <div class="visual-bar-caption">druhý zlomek</div>
+      ${createFractionBar(f2.num * (commonDen / f2.den), commonDen, color2, barWidth)}
+      <div class="visual-bar-label">${f2.num}/${f2.den}</div>
+    </div>`;
+
+  if (showResult && result) {
+    const resDen = result.den;
+    const resW   = Math.min(150, Math.max(80, resDen * 14));
+    html += `
+      <div class="visual-equals">=</div>
+      <div class="visual-bar-group">
+        <div class="visual-bar-caption">výsledek</div>
+        ${createFractionBar(result.num, result.den, colorRes, resW)}
+        <div class="visual-bar-label" style="color:#2e7d32">${result.num}/${result.den}</div>
+      </div>`;
+  }
+
+  el.innerHTML = html;
+  el.classList.remove('hidden');
+}
+
+// ============================================================
+// UI RESET
+// ============================================================
 function resetUI() {
   const numInput = document.getElementById('numInput');
   const denInput = document.getElementById('denInput');
@@ -1440,44 +1611,33 @@ function resetUI() {
   document.getElementById('revealDialog').classList.remove('show');
   document.getElementById('simplifyHint').classList.remove('show');
   document.getElementById('feedbackArea').className = 'feedback-area';
-  document.getElementById('hintBtn').style.display = 'none';
-  document.getElementById('checkBtn').style.display = 'inline-flex';
-  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('hintBtn').style.display   = 'none';
+  document.getElementById('whyBtn').style.display    = 'none';
+  document.getElementById('checkBtn').style.display  = 'inline-flex';
+  document.getElementById('nextBtn').style.display   = 'none';
+
+  // Re-enable simplify help button
+  const shBtn = document.getElementById('simplifyHelpBtn');
+  if (shBtn) { shBtn.disabled = false; shBtn.style.display = 'inline-flex'; }
 
   updateAttemptDots();
   numInput.focus();
 }
 
 function updateAttemptDots() {
-  const dot1 = document.getElementById('dot1');
-  const dot2 = document.getElementById('dot2');
-  dot1.className = 'attempt-dot' + (attempts >= 1 ? ' used' : '');
-  dot2.className = 'attempt-dot' + (attempts >= 2 ? ' used' : '');
+  document.getElementById('dot1').className = 'attempt-dot' + (attempts >= 1 ? ' used' : '');
+  document.getElementById('dot2').className = 'attempt-dot' + (attempts >= 2 ? ' used' : '');
 }
 
 // ============================================================
 // INPUT HANDLING
 // ============================================================
 document.getElementById('numInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    document.getElementById('denInput').focus();
-  }
+  if (e.key === 'Enter') { e.preventDefault(); document.getElementById('denInput').focus(); }
 });
 
 document.getElementById('denInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    if (!answered) checkAnswer();
-    else nextExercise();
-  }
-});
-
-document.getElementById('wholeInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    document.getElementById('numInput').focus();
-  }
+  if (e.key === 'Enter') { e.preventDefault(); if (!answered) checkAnswer(); else nextExercise(); }
 });
 
 // ============================================================
@@ -1489,64 +1649,91 @@ function checkAnswer() {
   const numVal = parseInt(document.getElementById('numInput').value);
   const denVal = parseInt(document.getElementById('denInput').value);
 
-  if (isNaN(numVal) || isNaN(denVal)) {
-    setSpeech("Vyplň prosím čitatele i jmenovatele! 📝", 'neutral');
-    return;
-  }
-
-  if (denVal === 0) {
-    setSpeech("Jmenovatel nemůže být nula! 🚫", 'sad');
-    return;
-  }
+  if (isNaN(numVal) || isNaN(denVal)) { setSpeech("Vyplň prosím čitatele i jmenovatele! 📝", 'neutral'); return; }
+  if (denVal === 0)                    { setSpeech("Jmenovatel nemůže být nula! 🚫", 'sad'); return; }
 
   const { result } = currentProblem;
-  attempts++;
-  updateAttemptDots();
-
   const isCorrectValue = fractionEqual(numVal, denVal, result.num, result.den);
 
   if (isCorrectValue) {
-    const isFullySimplified = isSimplified(numVal, denVal);
-    if (!isFullySimplified) {
-      showSimplifyHint();
+    if (!isSimplified(numVal, denVal)) {
+      // ── SIMPLIFY PATH ──
+      simplifyAttempts++;
+      document.getElementById('numInput').classList.add('wrong');
+      setTimeout(() => document.getElementById('numInput').classList.remove('wrong'), 500);
+      playSound('simplify');
+
+      if (simplifyAttempts === 1) {
+        // First time: show hint div with "Nevíš si rady?" button
+        document.getElementById('simplifyHint').classList.add('show');
+        setSpeech(randomMsg(messages.simplify), 'neutral');
+      } else {
+        // Second time: show reveal dialog
+        document.getElementById('simplifyHint').classList.add('show');
+        document.getElementById('revealQuestion').textContent = 'Pořád si nevíš rady se zkrácením? Chceš vidět výsledek?';
+        showRevealDialog();
+        setSpeech("Zobrazím ti správnou odpověď. Příště to zvládneš! 💪", 'sad');
+      }
       return;
     }
     onCorrectAnswer();
   } else {
+    // ── WRONG ANSWER PATH ──
+    attempts++;
+    updateAttemptDots();
     onWrongAnswer();
   }
 }
 
-function showSimplifyHint() {
-  document.getElementById('simplifyHint').classList.add('show');
-  document.getElementById('numInput').classList.add('wrong');
-  setSpeech(randomMsg(messages.simplify), 'neutral');
-  playSound('simplify');
+// ── SIMPLIFY HINT STEPS (NEW) ──
+function showSimplifyHintSteps() {
+  simplifyHintShown = true;
+  const shBtn = document.getElementById('simplifyHelpBtn');
+  if (shBtn) { shBtn.disabled = true; shBtn.style.display = 'none'; }
+
+  const numVal = parseInt(document.getElementById('numInput').value) || '?';
+  const denVal = parseInt(document.getElementById('denInput').value) || '?';
+  const g      = (typeof numVal === 'number' && typeof denVal === 'number')
+                   ? gcd(Math.abs(numVal), Math.abs(denVal)) : '?';
+  const { result } = currentProblem;
+
+  const steps = [
+    `Tvůj zlomek <strong>${numVal}/${denVal}</strong> je správně, ale jde zkrátit.`,
+    `Najdi největší společný dělitel (GCD) čitatele a jmenovatele. GCD(${Math.abs(numVal)}, ${Math.abs(denVal)}) = <strong>${g}</strong>`,
+    `Vydel oba čísla tímto GCD: čitatel ${numVal} ÷ ${g} = <strong>${result.num}</strong>, jmenovatel ${denVal} ÷ ${g} = <strong>${result.den}</strong>`,
+    `Zjednodušený výsledek: <strong>${result.num}/${result.den}</strong> — zkus ho zadat!`,
+  ];
+
+  document.getElementById('hintBoxTitle').textContent = '✂️ Jak zlomek zkrátit:';
+  document.getElementById('hintSteps').innerHTML = steps.map((s, i) => `
+    <div class="hint-step">
+      <div class="hint-step-num">${i + 1}</div>
+      <div>${s}</div>
+    </div>`).join('');
+  document.getElementById('hintBox').classList.add('show');
+  setSpeech("Koukni na postup – pak to zkus znovu! 💡", 'neutral');
 }
 
 function onCorrectAnswer() {
-  answered = true;
+  answered      = true;
   problemClosed = true;
-  recordResult(true, attempts === 1, hintShown);
+  recordResult(true, attempts === 0, hintShown);
 
   document.getElementById('numInput').classList.add('correct');
   document.getElementById('denInput').classList.add('correct');
   document.getElementById('simplifyHint').classList.remove('show');
 
   let points = 10;
-  if (attempts === 1) points = 15;
-  if (hintShown) points = 5;
+  if (attempts === 0) points = 15;
+  if (hintShown || simplifyHintShown) points = 5;
   if (difficulty === 'medium') points = Math.round(points * 1.5);
-  if (difficulty === 'hard') points = Math.round(points * 2);
+  if (difficulty === 'hard')   points = Math.round(points * 2);
 
-  score += points;
+  score  += points;
   streak++;
   levelProgress += points;
 
-  if (DEMO_MODE) {
-    demoSolved++;
-    updateDemoCounter();
-  }
+  if (DEMO_MODE) { demoSolved++; updateDemoCounter(); }
 
   document.getElementById('scoreDisplay').textContent = score;
   updateStreakDisplay();
@@ -1557,7 +1744,7 @@ function onCorrectAnswer() {
   document.getElementById('feedbackTitle').textContent = '✅ Správně!';
   document.getElementById('feedbackText').innerHTML = `
     <strong>+${points} bodů!</strong> Výsledek: ${renderFractionInline(currentProblem.result.num, currentProblem.result.den)}
-    ${attempts === 1 && !hintShown ? '<br>💎 Bonus za první pokus!' : ''}
+    ${attempts === 0 && !hintShown && !simplifyHintShown ? '<br>💎 Bonus za první pokus!' : ''}
   `;
 
   let msg = randomMsg(messages.correct);
@@ -1569,7 +1756,13 @@ function onCorrectAnswer() {
   playSound('correct', streak);
 
   document.getElementById('checkBtn').style.display = 'none';
-  document.getElementById('hintBtn').style.display = 'none';
+  document.getElementById('hintBtn').style.display  = 'none';
+
+  // Show "Jak na to?" only if they haven't already seen the hint
+  if (!hintShown && !simplifyHintShown) {
+    document.getElementById('whyBtn').style.display = 'inline-flex';
+  }
+
   document.getElementById('nextBtn').style.display = 'inline-flex';
 
   if (DEMO_MODE && demoSolved >= DEMO_MAX_EXERCISES) {
@@ -1578,8 +1771,22 @@ function onCorrectAnswer() {
     document.getElementById('nextBtn').textContent = 'Další příklad →';
   }
 
-  const dotId = attempts === 1 ? 'dot1' : 'dot2';
-  document.getElementById(dotId).className = 'attempt-dot ok';
+  const dotId = attempts === 0 ? 'dot1' : (attempts === 1 ? 'dot1' : 'dot2');
+  document.getElementById(attempts >= 1 ? 'dot' + Math.min(attempts, 2) : 'dot1').className = 'attempt-dot ok';
+
+  // Show result bar in visualization
+  if (difficulty === 'easy' && (currentProblem.op === '+' || currentProblem.op === '-')) {
+    updateVisual(true);
+  }
+
+  // ── Adaptive difficulty ──
+  if (attempts === 0 && !hintShown && !simplifyHintShown) {
+    consecutiveCorrect++;
+    consecutiveWrong = 0;
+  }
+  checkAdaptive();
+
+  saveProgress();
 }
 
 function onWrongAnswer() {
@@ -1601,7 +1808,7 @@ function onWrongAnswer() {
     const feedbackArea = document.getElementById('feedbackArea');
     feedbackArea.className = 'feedback-area wrong-fb show';
     document.getElementById('feedbackTitle').textContent = '❌ Není to správně';
-    document.getElementById('feedbackText').textContent = 'Zkus to ještě jednou! Zamysli se nad postupem.';
+    document.getElementById('feedbackText').textContent  = 'Zkus to ještě jednou! Zamysli se nad postupem.';
 
   } else if (attempts >= 2) {
     setSpeech(randomMsg(messages.wrong2), 'sad');
@@ -1615,9 +1822,9 @@ function onWrongAnswer() {
     const feedbackArea = document.getElementById('feedbackArea');
     feedbackArea.className = 'feedback-area wrong-fb show';
     document.getElementById('feedbackTitle').textContent = '❌ Stále nesprávně';
-    document.getElementById('feedbackText').textContent = hintShown ?
-      'Podívej se na nápovědu výše.' :
-      'Zobrazuji ti postup řešení.';
+    document.getElementById('feedbackText').textContent  = hintShown
+      ? 'Podívej se na nápovědu výše.'
+      : 'Zobrazuji ti postup řešení.';
   }
 }
 
@@ -1629,33 +1836,48 @@ function showHint() {
   const { f1, f2, op } = currentProblem;
   const steps = generateHintSteps(f1, f2, op);
 
+  document.getElementById('hintBoxTitle').textContent = '💡 Nápověda – postup řešení:';
   document.getElementById('hintSteps').innerHTML = steps.map((s, i) => `
     <div class="hint-step">
       <div class="hint-step-num">${i + 1}</div>
       <div>${s}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 
   document.getElementById('hintBox').classList.add('show');
   document.getElementById('hintBtn').style.display = 'none';
+}
+
+// "Jak na to?" – shown after correct answer, same steps but non-penalising (NEW)
+function showWhySteps() {
+  const { f1, f2, op } = currentProblem;
+  const steps = generateHintSteps(f1, f2, op);
+
+  document.getElementById('hintBoxTitle').textContent = '🔍 Jak na to – postup:';
+  document.getElementById('hintSteps').innerHTML = steps.map((s, i) => `
+    <div class="hint-step">
+      <div class="hint-step-num">${i + 1}</div>
+      <div>${s}</div>
+    </div>`).join('');
+
+  document.getElementById('hintBox').classList.add('show');
+  document.getElementById('whyBtn').style.display = 'none';
+  setSpeech("Tady je postup – pro příště to budeš mít v hlavě! 🧠", 'happy');
 }
 
 function generateHintSteps(f1, f2, op) {
   switch (op) {
     case '+':
     case '-': {
-      const l = lcm(f1.den, f2.den);
-      const m1 = l / f1.den, m2 = l / f2.den;
-      const opStr = op === '+' ? 'sečteme' : 'odečteme';
+      const l   = lcm(f1.den, f2.den);
+      const m1  = l / f1.den, m2 = l / f2.den;
+      const opStr  = op === '+' ? 'sečteme' : 'odečteme';
       const opChar = op === '+' ? '+' : '−';
-      const resultNum = op === '+'
-        ? f1.num * m1 + f2.num * m2
-        : f1.num * m1 - f2.num * m2;
+      const resultNum = op === '+' ? f1.num*m1 + f2.num*m2 : f1.num*m1 - f2.num*m2;
       const sim = simplifyFraction(resultNum, l);
       const steps = [
-        `Nejprve najdeme nejmenší společný jmenovatel čísel <strong>${f1.den}</strong> a <strong>${f2.den}</strong>. NSJ = <strong>${l}</strong>`,
-        `Převedeme oba zlomky: ${f1.num}/${f1.den} = <strong>${f1.num * m1}/${l}</strong> a ${f2.num}/${f2.den} = <strong>${f2.num * m2}/${l}</strong>`,
-        `Teď ${opStr} čitatele: ${f1.num * m1} ${opChar} ${f2.num * m2} = <strong>${resultNum}</strong>, jmenovatel zůstává <strong>${l}</strong>`,
+        `Najdeme nejmenší společný jmenovatel (NSJ) čísel <strong>${f1.den}</strong> a <strong>${f2.den}</strong>. NSJ = <strong>${l}</strong>`,
+        `Převedeme oba zlomky: ${f1.num}/${f1.den} = <strong>${f1.num*m1}/${l}</strong> &nbsp;&nbsp; ${f2.num}/${f2.den} = <strong>${f2.num*m2}/${l}</strong>`,
+        `${opStr.charAt(0).toUpperCase() + opStr.slice(1)} čitatele: ${f1.num*m1} ${opChar} ${f2.num*m2} = <strong>${resultNum}</strong>, jmenovatel zůstává <strong>${l}</strong>`,
       ];
       if (sim.num !== resultNum || sim.den !== l) {
         steps.push(`Zlomek ${resultNum}/${l} zjednodušíme: GCD = ${gcd(Math.abs(resultNum), l)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
@@ -1663,30 +1885,26 @@ function generateHintSteps(f1, f2, op) {
       return steps;
     }
     case '*': {
-      const rawNum = f1.num * f2.num, rawDen = f1.den * f2.den;
+      const rawNum = f1.num*f2.num, rawDen = f1.den*f2.den;
       const sim = simplifyFraction(rawNum, rawDen);
       const steps = [
-        `Při násobení zlomků násobíme čitatele navzájem: ${f1.num} × ${f2.num} = <strong>${rawNum}</strong>`,
-        `A jmenovatele navzájem: ${f1.den} × ${f2.den} = <strong>${rawDen}</strong>`,
+        `Při násobení: čitatele navzájem: ${f1.num} × ${f2.num} = <strong>${rawNum}</strong>`,
+        `Jmenovatele navzájem: ${f1.den} × ${f2.den} = <strong>${rawDen}</strong>`,
         `Dostaneme ${rawNum}/${rawDen}`,
       ];
-      if (sim.num !== rawNum || sim.den !== rawDen) {
-        steps.push(`Zjednodušíme: GCD = ${gcd(Math.abs(rawNum), rawDen)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
-      }
+      if (sim.num !== rawNum || sim.den !== rawDen) steps.push(`Zjednodušíme: GCD = ${gcd(Math.abs(rawNum), rawDen)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
       return steps;
     }
     case '/': {
       const flipped = { num: f2.den, den: f2.num };
-      const rawNum = f1.num * flipped.num, rawDen = f1.den * flipped.den;
-      const sim = simplifyFraction(rawNum, rawDen);
+      const rawNum  = f1.num*flipped.num, rawDen = f1.den*flipped.den;
+      const sim     = simplifyFraction(rawNum, rawDen);
       const steps = [
-        `Při dělení zlomků otočíme druhý zlomek: ${f2.num}/${f2.den} → <strong>${f2.den}/${f2.num}</strong>`,
+        `Při dělení otočíme druhý zlomek: ${f2.num}/${f2.den} → <strong>${f2.den}/${f2.num}</strong>`,
         `Teď násobíme: (${f1.num}/${f1.den}) × (${f2.den}/${f2.num})`,
         `Čitatele: ${f1.num} × ${f2.den} = <strong>${rawNum}</strong>, jmenovatele: ${f1.den} × ${f2.num} = <strong>${rawDen}</strong>`,
       ];
-      if (sim.num !== rawNum || sim.den !== rawDen) {
-        steps.push(`Zjednodušíme: GCD = ${gcd(Math.abs(rawNum), rawDen)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
-      }
+      if (sim.num !== rawNum || sim.den !== rawDen) steps.push(`Zjednodušíme: GCD = ${gcd(Math.abs(rawNum), rawDen)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
       return steps;
     }
   }
@@ -1700,7 +1918,7 @@ function showRevealDialog() {
 
 function revealAnswer() {
   document.getElementById('revealDialog').classList.remove('show');
-  answered = true;
+  answered      = true;
   problemClosed = true;
   recordResult(false, false, hintShown);
 
@@ -1714,19 +1932,30 @@ function revealAnswer() {
   feedbackArea.className = 'feedback-area wrong-fb show';
   document.getElementById('feedbackTitle').textContent = '📖 Správný výsledek';
   document.getElementById('feedbackText').innerHTML = `
-    Výsledek je <strong>${result.num}/${result.den}</strong>. Nevadí – příště to zvládneš!
-  `;
+    Výsledek je <strong>${result.num}/${result.den}</strong>. Nevadí – příště to zvládneš!`;
 
   setSpeech("Nevadí! Příští příklad bude tvůj! 💪", 'sad');
   document.getElementById('checkBtn').style.display = 'none';
-  document.getElementById('hintBtn').style.display = 'none';
-  document.getElementById('nextBtn').style.display = 'inline-flex';
+  document.getElementById('hintBtn').style.display  = 'none';
+  document.getElementById('whyBtn').style.display   = 'none';
+  document.getElementById('nextBtn').style.display  = 'inline-flex';
 
   if (DEMO_MODE && demoSolved >= DEMO_MAX_EXERCISES) {
     document.getElementById('nextBtn').textContent = 'Dokončit demo 🎁';
   } else {
     document.getElementById('nextBtn').textContent = 'Další příklad →';
   }
+
+  if (difficulty === 'easy' && (currentProblem.op === '+' || currentProblem.op === '-')) {
+    updateVisual(true);
+  }
+
+  // ── Adaptive difficulty ──
+  consecutiveWrong++;
+  consecutiveCorrect = 0;
+  checkAdaptive();
+
+  saveProgress();
 }
 
 function tryAgainAfterReveal() {
@@ -1736,13 +1965,60 @@ function tryAgainAfterReveal() {
 }
 
 // ============================================================
+// ADAPTIVE DIFFICULTY  (NEW)
+// ============================================================
+let adaptiveDirection = null; // 'up' | 'down'
+
+function checkAdaptive() {
+  if (DEMO_MODE || adaptivePending) return;
+
+  if (consecutiveCorrect >= 5 && difficulty !== 'hard') {
+    adaptiveDirection = 'up';
+    const nextDiff = difficulty === 'easy' ? 'Střední' : 'Těžká';
+    showAdaptiveSuggestion('up', `🚀 Zvládáš to skvěle – 5× za sebou na první pokus! Zkusíš ${nextDiff} obtížnost?`);
+  } else if (consecutiveWrong >= 3 && difficulty !== 'easy') {
+    adaptiveDirection = 'down';
+    const prevDiff = difficulty === 'hard' ? 'Střední' : 'Lehká';
+    showAdaptiveSuggestion('down', `💪 Zdá se to těžké. Chceš zkusit ${prevDiff} obtížnost?`);
+  }
+}
+
+function showAdaptiveSuggestion(direction, text) {
+  adaptivePending = direction;
+  const el = document.getElementById('adaptiveSuggest');
+  document.getElementById('adaptiveText').textContent = text;
+  el.className = 'adaptive-suggest' + (direction === 'down' ? ' warn' : '');
+}
+
+function acceptAdaptive() {
+  if (!adaptivePending) return;
+  const newDiff = adaptivePending === 'up'
+    ? (difficulty === 'easy' ? 'medium' : 'hard')
+    : (difficulty === 'hard' ? 'medium' : 'easy');
+
+  difficulty = newDiff;
+  document.querySelectorAll('.btn-toggle').forEach(b => {
+    b.classList.toggle('active', b.dataset.diff === difficulty);
+  });
+
+  consecutiveCorrect = 0;
+  consecutiveWrong   = 0;
+  dismissAdaptive();
+  generateProblem();
+  setSpeech(`Přepnuto na ${newDiff === 'easy' ? 'Lehkou' : newDiff === 'medium' ? 'Střední' : 'Těžkou'} obtížnost! 🎯`, 'happy');
+}
+
+function dismissAdaptive() {
+  adaptivePending = null;
+  const el = document.getElementById('adaptiveSuggest');
+  if (el) el.className = 'adaptive-suggest hidden';
+}
+
+// ============================================================
 // NEXT EXERCISE
 // ============================================================
 function nextExercise() {
-  if (DEMO_MODE && demoSolved >= DEMO_MAX_EXERCISES) {
-    showDemoFinish();
-    return;
-  }
+  if (DEMO_MODE && demoSolved >= DEMO_MAX_EXERCISES) { showDemoFinish(); return; }
   generateProblem();
 }
 
@@ -1750,29 +2026,21 @@ function nextExercise() {
 // SCORING & LEVELS
 // ============================================================
 const levelThresholds = [0, 50, 130, 250, 420, 650, 950, 1350, 1900, 2600, 3500];
-const levelNames = [
-  '', 'Začátečník', 'Žák', 'Počtář', 'Zlomkář',
-  'Expert', 'Mistr', 'Velmistr', 'Čokoládový génius', 'Legenda', 'Ultimátní Čokík'
-];
-const levelEmojis = ['', '🍫', '📐', '🧮', '🎯', '⭐', '🏆', '👑', '🧠', '🌟', '🚀'];
+const levelNames      = ['','Začátečník','Žák','Počtář','Zlomkář','Expert','Mistr','Velmistr','Čokoládový génius','Legenda','Ultimátní Čokík'];
+const levelEmojis     = ['','🍫','📐','🧮','🎯','⭐','🏆','👑','🧠','🌟','🚀'];
 
 function updateStarsAndLevel() {
   const prevThreshold = levelThresholds[level - 1] || 0;
-  const nextThreshold = levelThresholds[level] || (prevThreshold + 100);
-  const range = nextThreshold - prevThreshold;
+  const nextThreshold = levelThresholds[level]     || (prevThreshold + 100);
+  const range    = nextThreshold - prevThreshold;
   const progress = Math.min(score - prevThreshold, range);
-  const pct = (progress / range) * 100;
+  const pct      = (progress / range) * 100;
 
   document.getElementById('progressBar').style.width = pct + '%';
 
   const starsNeeded = Math.floor(pct / 20);
   for (let i = 1; i <= 5; i++) {
-    const star = document.getElementById('star' + i);
-    if (i <= starsNeeded) {
-      star.classList.add('earned');
-    } else {
-      star.classList.remove('earned');
-    }
+    document.getElementById('star' + i).classList.toggle('earned', i <= starsNeeded);
   }
   starsEarned = starsNeeded;
 
@@ -1789,25 +2057,21 @@ function updateStarsAndLevel() {
 }
 
 function showLevelUp() {
-  const overlay = document.getElementById('levelOverlay');
   document.getElementById('levelEmoji').textContent = levelEmojis[level] || '🎉';
   document.getElementById('levelTitle').textContent = `Úroveň ${level}: ${levelNames[level] || 'Šampión'}!`;
-  document.getElementById('levelSub').textContent = randomMsg(messages.levelUp);
-  overlay.classList.add('show');
+  document.getElementById('levelSub').textContent   = randomMsg(messages.levelUp);
+  document.getElementById('levelOverlay').classList.add('show');
   playSound('levelup');
   spawnConfetti(30);
 }
 
-function closeLevelUp() {
-  document.getElementById('levelOverlay').classList.remove('show');
-}
+function closeLevelUp() { document.getElementById('levelOverlay').classList.remove('show'); }
 
 function updateStreakDisplay() {
   const badge = document.getElementById('streakBadge');
-  const count = document.getElementById('streakCount');
   if (streak >= 2) {
     badge.style.display = 'flex';
-    count.textContent = streak;
+    document.getElementById('streakCount').textContent = streak;
   } else {
     badge.style.display = 'none';
   }
@@ -1821,23 +2085,23 @@ function showPointsPopup(points) {
   popup.className = 'points-popup';
   popup.textContent = `+${points} ⭐`;
   popup.style.left = (Math.random() * 60 + 20) + '%';
-  popup.style.top = '50%';
+  popup.style.top  = '50%';
   document.body.appendChild(popup);
   setTimeout(() => popup.remove(), 1200);
 }
 
 function spawnConfetti(count = 15) {
-  const colors = ['#f0c040', '#c8845a', '#6b3a1f', '#4caf50', '#e53935', '#1976d2', '#ab47bc'];
+  const colors = ['#f0c040','#c8845a','#6b3a1f','#4caf50','#e53935','#1976d2','#ab47bc'];
   for (let i = 0; i < count; i++) {
     setTimeout(() => {
       const piece = document.createElement('div');
       piece.className = 'confetti-piece';
-      piece.style.left = Math.random() * 100 + 'vw';
-      piece.style.top = '-20px';
-      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-      piece.style.width = (Math.random() * 12 + 6) + 'px';
-      piece.style.height = (Math.random() * 8 + 4) + 'px';
-      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      piece.style.left             = Math.random() * 100 + 'vw';
+      piece.style.top              = '-20px';
+      piece.style.background       = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.width            = (Math.random() * 12 + 6) + 'px';
+      piece.style.height           = (Math.random() * 8 + 4) + 'px';
+      piece.style.borderRadius     = Math.random() > 0.5 ? '50%' : '2px';
       piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
       document.body.appendChild(piece);
       setTimeout(() => piece.remove(), 3500);
@@ -1857,18 +2121,17 @@ function playSound(type, streakVal = 0) {
   try {
     const ctx = getAudioCtx();
     if (ctx.state === 'suspended') ctx.resume();
-
     switch (type) {
-      case 'correct': playCorrectSound(ctx, streakVal); break;
-      case 'wrong': playWrongSound(ctx); break;
-      case 'levelup': playLevelUpSound(ctx); break;
+      case 'correct':  playCorrectSound(ctx, streakVal); break;
+      case 'wrong':    playWrongSound(ctx); break;
+      case 'levelup':  playLevelUpSound(ctx); break;
       case 'simplify': playSimplifySound(ctx); break;
     }
   } catch(e) {}
 }
 
 function playTone(ctx, freq, duration, type = 'sine', vol = 0.3, delay = 0) {
-  const osc = ctx.createOscillator();
+  const osc  = ctx.createOscillator();
   const gain = ctx.createGain();
   osc.connect(gain);
   gain.connect(ctx.destination);
@@ -1884,22 +2147,18 @@ function playTone(ctx, freq, duration, type = 'sine', vol = 0.3, delay = 0) {
 function playCorrectSound(ctx, streak) {
   const levelSound = Math.min(Math.floor(streak / 1), 8);
   const melodies = [
-    [[523, 0.15, 0], [659, 0.25, 0.12]],
-    [[523, 0.12, 0], [659, 0.12, 0.1], [784, 0.25, 0.2]],
-    [[523, 0.1, 0], [587, 0.1, 0.08], [659, 0.1, 0.16], [784, 0.25, 0.24]],
-    [[523, 0.1, 0], [659, 0.1, 0.09], [784, 0.1, 0.18], [1047, 0.3, 0.27]],
-    [[392, 0.08, 0], [523, 0.08, 0.07], [659, 0.08, 0.14], [784, 0.08, 0.21], [1047, 0.35, 0.3]],
-    [[523, 0.08, 0], [659, 0.08, 0.06], [784, 0.08, 0.12], [659, 0.08, 0.18], [784, 0.08, 0.24], [1047, 0.4, 0.32]],
-    [[523, 0.07, 0], [587, 0.07, 0.06], [659, 0.07, 0.12], [698, 0.07, 0.18], [784, 0.07, 0.24], [880, 0.07, 0.3], [988, 0.07, 0.36], [1047, 0.5, 0.43]],
-    [[262, 0.3, 0], [330, 0.3, 0], [392, 0.3, 0], [523, 0.08, 0.1], [659, 0.08, 0.17], [784, 0.08, 0.24], [988, 0.08, 0.31], [1175, 0.08, 0.38], [1397, 0.6, 0.46]],
+    [[523,0.15,0],[659,0.25,0.12]],
+    [[523,0.12,0],[659,0.12,0.1],[784,0.25,0.2]],
+    [[523,0.1,0],[587,0.1,0.08],[659,0.1,0.16],[784,0.25,0.24]],
+    [[523,0.1,0],[659,0.1,0.09],[784,0.1,0.18],[1047,0.3,0.27]],
+    [[392,0.08,0],[523,0.08,0.07],[659,0.08,0.14],[784,0.08,0.21],[1047,0.35,0.3]],
+    [[523,0.08,0],[659,0.08,0.06],[784,0.08,0.12],[659,0.08,0.18],[784,0.08,0.24],[1047,0.4,0.32]],
+    [[523,0.07,0],[587,0.07,0.06],[659,0.07,0.12],[698,0.07,0.18],[784,0.07,0.24],[880,0.07,0.3],[988,0.07,0.36],[1047,0.5,0.43]],
+    [[262,0.3,0],[330,0.3,0],[392,0.3,0],[523,0.08,0.1],[659,0.08,0.17],[784,0.08,0.24],[988,0.08,0.31],[1175,0.08,0.38],[1397,0.6,0.46]],
   ];
-
   const melody = melodies[Math.min(levelSound, melodies.length - 1)];
   melody.forEach(([freq, dur, delay]) => playTone(ctx, freq, dur, 'sine', 0.28, delay));
-
-  if (levelSound >= 5) {
-    [1568, 1760, 2093].forEach((f, i) => playTone(ctx, f, 0.08, 'sine', 0.12, 0.5 + i * 0.06));
-  }
+  if (levelSound >= 5) [1568,1760,2093].forEach((f, i) => playTone(ctx, f, 0.08, 'sine', 0.12, 0.5 + i*0.06));
 }
 
 function playWrongSound(ctx) {
@@ -1914,7 +2173,7 @@ function playSimplifySound(ctx) {
 
 function playLevelUpSound(ctx) {
   const notes = [523, 659, 784, 1047, 1319, 1568];
-  notes.forEach((freq, i) => playTone(ctx, freq, i < 5 ? 0.15 : 0.8, 'sine', 0.3, i * 0.1));
+  notes.forEach((freq, i) => playTone(ctx, freq, i < 5 ? 0.15 : 0.8, 'sine', 0.3, i*0.1));
   [1047, 1319, 1568].forEach(f => playTone(ctx, f, 0.8, 'sine', 0.2, 0.6));
 }
 
@@ -1922,11 +2181,8 @@ function playLevelUpSound(ctx) {
 // STATISTICS TRACKING
 // ============================================================
 let stats = {
-  total: 0,
-  correct: 0,
-  firstTry: 0,
-  hintUsed: 0,
-  byOp: { '+': {total:0,correct:0}, '-': {total:0,correct:0}, '*': {total:0,correct:0}, '/': {total:0,correct:0} },
+  total: 0, correct: 0, firstTry: 0, hintUsed: 0,
+  byOp:   { '+': {total:0,correct:0}, '-': {total:0,correct:0}, '*': {total:0,correct:0}, '/': {total:0,correct:0} },
   byDiff: { easy:{total:0,correct:0}, medium:{total:0,correct:0}, hard:{total:0,correct:0} }
 };
 
@@ -1957,36 +2213,18 @@ function updateDemoCounter() {
 
 function lockDemoControls() {
   if (!DEMO_MODE) return;
-
-  difficulty = 'easy';
-  activeOps = ['+'];
-
+  difficulty = 'easy'; activeOps = ['+'];
   document.querySelectorAll('.btn-toggle').forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.dataset.diff !== 'easy') {
-      btn.disabled = true;
-      btn.style.opacity = '0.45';
-      btn.style.cursor = 'not-allowed';
-    } else {
-      btn.disabled = false;
-      btn.style.opacity = '1';
-      btn.style.cursor = 'pointer';
-      btn.classList.add('active');
-    }
+    btn.classList.toggle('active', btn.dataset.diff === 'easy');
+    btn.disabled = btn.dataset.diff !== 'easy';
+    btn.style.opacity = btn.dataset.diff !== 'easy' ? '0.45' : '1';
+    btn.style.cursor  = btn.dataset.diff !== 'easy' ? 'not-allowed' : 'pointer';
   });
-
   document.querySelectorAll('.btn-op').forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.dataset.op !== '+') {
-      btn.disabled = true;
-      btn.style.opacity = '0.45';
-      btn.style.cursor = 'not-allowed';
-    } else {
-      btn.disabled = false;
-      btn.style.opacity = '1';
-      btn.style.cursor = 'pointer';
-      btn.classList.add('active');
-    }
+    btn.classList.toggle('active', btn.dataset.op === '+');
+    btn.disabled = btn.dataset.op !== '+';
+    btn.style.opacity = btn.dataset.op !== '+' ? '0.45' : '1';
+    btn.style.cursor  = btn.dataset.op !== '+' ? 'not-allowed' : 'pointer';
   });
 }
 
@@ -1995,40 +2233,28 @@ function showDemoFinish() {
   document.getElementById('demoFinishStats').innerHTML = `
     Skóre: <strong>${score}</strong> bodů<br>
     Správnost: <strong>${getAccuracy()} %</strong><br>
-    Vyřešeno: <strong>${demoSolved} / ${DEMO_MAX_EXERCISES}</strong>
-  `;
+    Vyřešeno: <strong>${demoSolved} / ${DEMO_MAX_EXERCISES}</strong>`;
   document.getElementById('demoFinishOverlay').classList.add('show');
   setSpeech("Demo je u konce. Když chceš, otevři si plnou verzi! 🚀", 'happy');
 }
 
-function goToFullVersion() {
-  window.location.href = FULL_VERSION_URL;
-}
+function goToFullVersion()  { window.location.href = FULL_VERSION_URL; }
 
 function restartDemo() {
-  demoSolved = 0;
-  demoFinished = false;
-  score = 0;
-  streak = 0;
-  level = 1;
-  levelProgress = 0;
-  starsEarned = 0;
+  demoSolved = 0; demoFinished = false;
+  score = 0; streak = 0; level = 1; levelProgress = 0; starsEarned = 0;
+  consecutiveCorrect = 0; consecutiveWrong = 0;
   stats = {
-    total: 0,
-    correct: 0,
-    firstTry: 0,
-    hintUsed: 0,
-    byOp: { '+': {total:0,correct:0}, '-': {total:0,correct:0}, '*': {total:0,correct:0}, '/': {total:0,correct:0} },
-    byDiff: { easy:{total:0,correct:0}, medium:{total:0,correct:0}, hard:{total:0,correct:0} }
+    total:0, correct:0, firstTry:0, hintUsed:0,
+    byOp: {'+': {total:0,correct:0},'-': {total:0,correct:0},'*': {total:0,correct:0},'/': {total:0,correct:0}},
+    byDiff: {easy:{total:0,correct:0},medium:{total:0,correct:0},hard:{total:0,correct:0}}
   };
-
   document.getElementById('scoreDisplay').textContent = '0';
   document.getElementById('levelDisplay').textContent = '1';
   document.getElementById('progressBar').style.width = '0%';
   document.getElementById('streakBadge').style.display = 'none';
   document.getElementById('demoFinishOverlay').classList.remove('show');
   for (let i = 1; i <= 5; i++) document.getElementById('star' + i).classList.remove('earned');
-
   updateDemoCounter();
   lockDemoControls();
   generateProblem();
@@ -2038,10 +2264,7 @@ function restartDemo() {
 // KEYBOARD SHORTCUTS
 // ============================================================
 document.addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.key === 'n') {
-    e.preventDefault();
-    if (answered) nextExercise();
-  }
+  if (e.ctrlKey && e.key === 'n') { e.preventDefault(); if (answered) nextExercise(); }
   if (e.key === 'Escape') {
     document.getElementById('numInput').value = '';
     document.getElementById('denInput').value = '';
@@ -2050,18 +2273,14 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ============================================================
-// ACCESSIBILITY & FOCUS MANAGEMENT
+// ACCESSIBILITY
 // ============================================================
 function setupAccessibility() {
-  const inputs = [document.getElementById('numInput'), document.getElementById('denInput')];
-
-  inputs.forEach(input => {
-    input.setAttribute('aria-label', input.id === 'numInput' ? 'Čitatel výsledku' : 'Jmenovatel výsledku');
+  ['numInput','denInput'].forEach(id => {
+    const input = document.getElementById(id);
+    input.setAttribute('aria-label', id === 'numInput' ? 'Čitatel výsledku' : 'Jmenovatel výsledku');
     input.setAttribute('inputmode', 'numeric');
-    input.setAttribute('pattern', '[0-9]*');
-  });
-
-  inputs.forEach(input => {
+    input.setAttribute('pattern', '[0-9-]*');
     input.addEventListener('input', function() {
       const val = this.value.replace(/[^0-9\-]/g, '');
       if (this.value !== val) this.value = val;
@@ -2069,13 +2288,10 @@ function setupAccessibility() {
   });
 }
 
-// ============================================================
-// TOUCH SUPPORT
-// ============================================================
 function setupTouchFeedback() {
-  document.querySelectorAll('.btn-toggle, .btn-op, .btn-primary, .btn-next, .btn-hint, .btn-demo-full, .btn-demo-restart').forEach(btn => {
+  document.querySelectorAll('.btn-toggle,.btn-op,.btn-primary,.btn-next,.btn-hint,.btn-why,.btn-demo-full,.btn-demo-restart').forEach(btn => {
     btn.addEventListener('touchstart', function() { this.style.transform = 'scale(0.96)'; }, { passive: true });
-    btn.addEventListener('touchend', function() { this.style.transform = ''; }, { passive: true });
+    btn.addEventListener('touchend',   function() { this.style.transform = ''; },           { passive: true });
   });
 }
 
@@ -2091,6 +2307,8 @@ function init() {
     document.getElementById('demoBanner').classList.remove('hidden');
     lockDemoControls();
     updateDemoCounter();
+  } else {
+    loadProgress();
   }
 
   generateProblem();
