@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bass Tab Studio 🎸</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <style>
 /* ── THEMES ── */
 :root {
@@ -560,6 +561,7 @@ input[type=range] { flex:1; accent-color:var(--accent); height:3px; cursor:point
     <button class="edit-btn" onclick="clearGrid()">🗑 Smazat grid</button>
     <button class="edit-btn" onclick="undoLast()" title="Ctrl+Z">↩ Zpět</button>
     <button class="edit-btn" id="ghostBtn" onclick="toggleGhost()">👻 Vzor</button>
+    <span id="samplerStatus" style="font-family:var(--mono);font-size:.65rem;color:var(--text3);margin-left:2px;white-space:nowrap;"></span>
   </div>
 
   <!-- ═══ SCROLL AREA ═══ -->
@@ -632,6 +634,50 @@ let currentStyle='root', resolution=1, selectedDur=1, selectedStr='E', showGhost
 let popupBar=-1, popupStr='', popupSlot=-1;
 let secPopupBarIdx=-1;
 let audioCtx=null, activeOscs=[], isPlaying=false, tapArr=[];
+
+// ── TONE.JS SAMPLER STATE ──
+let sampler=null, samplerReady=false, samplerLoading=false, useFallback=false;
+let _fallbackCtx=null;
+function getFallbackCtx(){ if(!_fallbackCtx) _fallbackCtx=new(window.AudioContext||window.webkitAudioContext)(); return _fallbackCtx; }
+function fallbackNote(midi,toneTime,dur){
+  try{
+    const ctx=getFallbackCtx(); if(ctx.state==='suspended') ctx.resume();
+    const now=ctx.currentTime; const delay=Math.max(0,toneTime-Tone.now());
+    const start=now+delay;
+    const freq=440*Math.pow(2,(midi-69)/12);
+    const o1=ctx.createOscillator(),g1=ctx.createGain();
+    const o2=ctx.createOscillator(),g2=ctx.createGain();
+    o1.type='triangle'; o1.frequency.value=freq;
+    o2.type='sine'; o2.frequency.value=freq/2;
+    const vol=parseInt(document.getElementById('volSlider').value||80)/100;
+    g1.gain.setValueAtTime(0,start); g1.gain.linearRampToValueAtTime(vol,start+0.01); g1.gain.exponentialRampToValueAtTime(0.001,start+dur);
+    g2.gain.setValueAtTime(0,start); g2.gain.linearRampToValueAtTime(vol*0.7,start+0.01); g2.gain.exponentialRampToValueAtTime(0.001,start+dur);
+    o1.connect(g1);g1.connect(ctx.destination); o2.connect(g2);g2.connect(ctx.destination);
+    [o1,o2].forEach(o=>{o.start(start);o.stop(start+dur+0.05);});
+  }catch(e){}
+}
+const SAMPLE_BASE='https://pelunkaj-dot.github.io/fdc-plugin/samples/bass/';
+const SAMPLE_URLS={'E1':'E1.mp3','A1':'A1.mp3','D2':'D2.mp3','G2':'G2.mp3','C3':'C3.mp3'};
+
+function setSamplerStatus(msg){ const el=document.getElementById('samplerStatus'); if(el) el.textContent=msg; }
+
+function initSampler(onReady){
+  if(samplerReady){ onReady(); return; }
+  if(samplerLoading){ const p=setInterval(()=>{ if(samplerReady){ clearInterval(p); onReady(); }},150); return; }
+  samplerLoading=true;
+  setSamplerStatus('⏳ Nahrávám zvuky…');
+  sampler=new Tone.Sampler({
+    urls: SAMPLE_URLS,
+    baseUrl: SAMPLE_BASE,
+    onload:()=>{ samplerReady=true; samplerLoading=false; setSamplerStatus('🎸'); onReady(); },
+    onerror:(e)=>{ console.error('Sampler error',e); samplerLoading=false; samplerReady=false; setSamplerStatus('♪ synth'); useFallback=true; onReady(); }
+  }).toDestination();
+}
+
+function midiToToneName(midi){
+  const n=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  return n[midi%12]+(Math.floor(midi/12)-1);
+}
 
 // ═══════════════════════════════════════════
 // UTILS
@@ -1234,8 +1280,7 @@ let isSeeking=false;  // true while user is dragging
 function updateProgress(){
   if(!isPlaying){cancelAnimationFrame(progressRaf);return;}
   if(isSeeking){progressRaf=requestAnimationFrame(updateProgress);return;}
-  const ctx=getCtx();
-  const elapsed=Math.max(0,ctx.currentTime-playStartTime);
+  const elapsed=Math.max(0,Tone.now()-playStartTime);
   const pct=Math.min(1,elapsed/playTotalSec);
   const rangeEl=document.getElementById('progressRange');
   if(rangeEl) rangeEl.value=Math.round(pct*1000);
@@ -1283,7 +1328,10 @@ function playTab(){ playTabFrom(0); }
 function playTabFrom(startPct=0){
   stopPlay();
   if(!bars.length||!grid.length) return;
-  const ctx=getCtx(); if(ctx.state==='suspended') ctx.resume();
+  initSampler(()=>_doPlay(startPct));
+}
+
+function _doPlay(startPct){
   const bpm=parseInt(document.getElementById('tempoNum').value)||80;
   const vol=parseInt(document.getElementById('volSlider').value)/100;
   const slotSec=(60/bpm)/resolution;
@@ -1294,23 +1342,21 @@ function playTabFrom(startPct=0){
   const skipSec=startPct*totalSec;
   const skipSlots=Math.floor(skipSec/slotSec);
 
-  // True limiter (only catches real peaks, doesn't squash everything)
-  const comp=ctx.createDynamicsCompressor();
-  comp.threshold.value=-1; comp.knee.value=0; comp.ratio.value=20;
-  comp.attack.value=0.001; comp.release.value=0.05; comp.connect(ctx.destination);
-  const master=ctx.createGain(); master.gain.value=22*vol; master.connect(comp);
+  // Set volume (Tone destination, in dB)
+  Tone.getDestination().volume.value=Tone.gainToDb(Math.max(0.01,vol*1.8));
 
-  isPlaying=true; setLed('on');
-  playStartTime=ctx.currentTime+0.05-skipSec;
+  // Resume Tone AudioContext if suspended
+  if(Tone.context.state==='suspended') Tone.context.resume();
 
-  // Reset scroll to start of play position
+  isPlaying=true;
+  playStartTime=Tone.now()-skipSec;
+  setLed('on');
+
   scrollToBar(Math.floor(skipSlots/spb()));
-
-  // Show progress bar
   document.getElementById('progressWrap').classList.add('show');
   document.getElementById('progressTotal').textContent=Math.ceil(totalSec)+'s';
 
-  let t=ctx.currentTime+0.05;
+  const now=Tone.now();
   const tids=[];
   let lastScrolledBar=-1;
 
@@ -1318,43 +1364,41 @@ function playTabFrom(startPct=0){
     const g=grid[b]||emptyGridBar();
     for(let sl=0;sl<spb();sl++){
       const globalSlot=b*spb()+sl;
-      if(globalSlot<skipSlots){continue;}
-      const ts=t+(globalSlot-skipSlots)*slotSec;
+      if(globalSlot<skipSlots) continue;
+      const toneTime=now+(globalSlot-skipSlots)*slotSec;
+      const msDelay=Math.max(0,(toneTime-Tone.now())*1000);
 
       STR_ORDER.forEach(str=>{
         const note=g[str][sl];
         if(note){
-          scheduleNote(ctx,master,BASS_STRINGS[str]+note.fret,ts,note.dur*(60/bpm)*0.82);
+          const midi=BASS_STRINGS[str]+note.fret;
+          const dur=Math.max(0.05,note.dur*(60/bpm)*0.82);
+          if(useFallback||!samplerReady){ fallbackNote(midi,toneTime,dur); } else { try{ sampler.triggerAttackRelease(midiToToneName(midi),dur,toneTime); }catch(e){ fallbackNote(midi,toneTime,dur); } }
         }
       });
 
-      // Visual + scroll events (fire on first slot of each bar, on G string)
       if(sl===0){
-        const delay=Math.max(0,(ts-ctx.currentTime)*1000);
         tids.push(setTimeout(()=>{
           if(b!==lastScrolledBar){
             lastScrolledBar=b;
             scrollToBar(b);
-            // Highlight bar card in chord strip
             document.querySelectorAll('.bar-card').forEach((c,i)=>c.classList.toggle('selected',i===b));
           }
           document.getElementById('beatTxt').className='beat-txt playing';
-        },delay));
+        },msDelay));
       }
 
-      // Cell highlight (just first string to avoid visual overload)
-      if(str_first(g,sl)){
-        const str=str_first(g,sl);
-        const delay=Math.max(0,(t+(globalSlot-skipSlots)*slotSec-ctx.currentTime)*1000);
+      const str=str_first(g,sl);
+      if(str){
         tids.push(setTimeout(()=>{
           const c=document.querySelector(`.beat-cell[data-bar="${b}"][data-str="${str}"][data-slot="${sl}"]`);
           if(c){c.classList.add('playing-now');setTimeout(()=>c.classList.remove('playing-now'),slotSec*1000*.85);}
-        },delay));
+          document.getElementById('beatTxt').textContent='Beat '+(Math.floor(sl/resolution)+1)+'/4';
+        },msDelay));
       }
     }
   });
 
-  // Stop timer
   const remaining=(totalSlots-skipSlots)*slotSec;
   tids.push(setTimeout(()=>{
     setLed('off'); isPlaying=false;
@@ -1375,37 +1419,8 @@ function str_first(gridBar,sl){
   return null;
 }
 
-function scheduleNote(ctx,dest,midi,start,dur){
-  const freq=440*Math.pow(2,(midi-69)/12);
-
-  // Sine sub (deep fundamental punch)
-  const o1=ctx.createOscillator(),g1=ctx.createGain();
-  o1.type='sine'; o1.frequency.value=freq/2;
-  g1.gain.setValueAtTime(0,start);
-  g1.gain.linearRampToValueAtTime(1.0,start+0.012);
-  g1.gain.exponentialRampToValueAtTime(0.001,start+dur);
-
-  // Triangle one octave up (body/attack)
-  const o2=ctx.createOscillator(),g2=ctx.createGain();
-  o2.type='triangle'; o2.frequency.value=freq;
-  g2.gain.setValueAtTime(0,start);
-  g2.gain.linearRampToValueAtTime(0.6,start+0.008);
-  g2.gain.exponentialRampToValueAtTime(0.001,start+dur*0.7);
-
-  o1.connect(g1); g1.connect(dest);
-  o2.connect(g2); g2.connect(dest);
-  [o1,o2].forEach(o=>{o.start(start);o.stop(start+dur+0.05);});
-  activeOscs.push(o1,o2);
-}
-
-function makeDistortionCurve(amount){
-  const n=256,curve=new Float32Array(n);
-  for(let i=0;i<n;i++){const x=i*2/n-1;curve[i]=((Math.PI+amount)*x)/(Math.PI+amount*Math.abs(x));}
-  return curve;
-}
-
 function stopPlay(){
-  activeOscs.forEach(o=>{try{o.stop();}catch(e){}});
+  if(sampler) try{ sampler.releaseAll(); }catch(e){}
   activeOscs=[];(activeOscs._tids||[]).forEach(clearTimeout);activeOscs._tids=[];
   cancelAnimationFrame(progressRaf);
   isPlaying=false; setLed('off');
@@ -1502,7 +1517,7 @@ function getTabText(){
 }
 
 // ── Share link for student ──
-const PLAYER_BASE_URL = 'https://pelunkaj-dot.github.io/fdc-plugin/bas_player.html';
+const PLAYER_BASE_URL = 'https://pelunkaj-dot.github.io/fdc-plugin/bass_player.html';
 
 function sharePlayer(){
   const title=getSongTitle(), artist=getSongArtist();
@@ -1747,6 +1762,9 @@ function initDefault(){
 }
 
 initDefault();
+
+// Preload sampler in background so it's ready when user hits play
+setTimeout(()=>initSampler(()=>{}), 1000);
 
 try{const s=localStorage.getItem('bas_theme');if(s!==null){const b=document.querySelector(`.th-btn[data-theme="${s}"]`);if(b)setTheme(s,b);}}catch(e){}
 </script>
