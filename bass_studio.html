@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bass Tab Studio 🎸</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── THEMES ── */
+:root {
+  --bg:#f2f0ea; --bg2:#e8e5de; --bg3:#dedad2; --panel:#faf9f6;
+  --border:#cec9c0; --border2:#b5b0a8;
+  --accent:#b87000; --accent2:#d99000;
+  --green:#1a7a42; --red:#c0302a; --blue:#1a5faa; --purple:#7a3aaa;
+  --text:#1a1814; --text2:#5a5650; --text3:#9a9590;
+  --mono:'Space Mono',monospace; --sans:'DM Sans',sans-serif;
+  --r:8px; --shadow:0 4px 20px rgba(0,0,0,.13);
+  --hdr:linear-gradient(90deg,#e4e0d8,#ede9e0,#e4e0d8);
+  --cell-h:42px;
+}
+[data-theme="dark"] {
+  --bg:#0d0d0f; --bg2:#141417; --bg3:#1c1c21; --panel:#18181d;
+  --border:#2a2a33; --border2:#3a3a45;
+  --accent:#f5a623; --accent2:#ffcc66;
+  --green:#3ddc84; --red:#ff5a5a; --blue:#4da6ff; --purple:#b87cff;
+  --text:#e8e8ee; --text2:#909099; --text3:#55555f;
+  --shadow:0 4px 20px rgba(0,0,0,.45);
+  --hdr:linear-gradient(90deg,#0d0d0f,#18161f,#0d0d0f);
+}
+[data-theme="girly"] {
+  --bg:#fdf0f5; --bg2:#f7e2ec; --bg3:#f0d0e2; --panel:#fef7fa;
+  --border:#e8c0d4; --border2:#d4a0bc;
+  --accent:#c0407a; --accent2:#e060a0;
+  --green:#2a9a5a; --red:#e02050; --blue:#6060c0; --purple:#9040b0;
+  --text:#280818; --text2:#7a3858; --text3:#b080a0;
+  --shadow:0 4px 20px rgba(180,60,120,.12);
+  --hdr:linear-gradient(90deg,#fae0ee,#fdeef5,#fae0ee);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0;
+  transition:background-color .2s,border-color .2s,color .2s; }
+html,body { height:100%; }
+body { font-family:var(--sans); background:var(--bg); color:var(--text); font-size:14px;
+  display:flex; flex-direction:column; min-height:100vh; }
+
+/* ── HEADER ── */
+.hdr {
+  background:var(--hdr); border-bottom:1px solid var(--border);
+  padding:0 16px; height:46px; display:flex; align-items:center; gap:11px;
+  flex-shrink:0; position:sticky; top:0; z-index:90;
+}
+.hdr-title { font-family:var(--mono); font-size:.95rem; font-weight:700; color:var(--accent); letter-spacing:.5px; white-space:nowrap; }
+.hdr-title span { color:var(--text3); font-weight:400; }
+.hdr-gap { flex:1; }
+.hdr-btn {
+  background:var(--bg3); border:1.5px solid var(--border); border-radius:6px;
+  color:var(--text2); font-size:.82rem; font-weight:700; padding:5px 14px; cursor:pointer; font-family:var(--sans);
+}
+.hdr-btn:hover { border-color:var(--border2); color:var(--text); }
+.hdr-btn.play { border-color:var(--green); color:var(--green); background:color-mix(in srgb,var(--green) 7%,var(--bg3)); }
+.hdr-btn.stop { border-color:var(--red);   color:var(--red);   background:color-mix(in srgb,var(--red)   7%,var(--bg3)); }
+.led { width:9px; height:9px; border-radius:50%; background:var(--border2); flex-shrink:0; }
+.led.on  { background:var(--green); box-shadow:0 0 8px var(--green); }
+.led.off { background:var(--red); }
+.beat-txt { font-family:var(--mono); font-size:.7rem; color:var(--text3); min-width:54px; }
+.beat-txt.playing { color:var(--accent); }
+.theme-sw { display:flex; gap:3px; background:var(--bg3); border:1px solid var(--border); border-radius:20px; padding:3px; }
+.th-btn { background:transparent; border:none; width:28px; height:28px; border-radius:14px; font-size:.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.th-btn:hover { background:var(--bg2); }
+.th-btn.active { background:var(--panel); box-shadow:0 1px 4px rgba(0,0,0,.12); }
+
+/* ── WORKSPACE ── */
+.workspace { display:flex; flex:1; min-height:0; overflow:hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:220px; flex-shrink:0; background:var(--panel);
+  border-right:1px solid var(--border); overflow-y:auto;
+}
+.sb-sec { padding:10px 12px 9px; border-bottom:1px solid var(--border); }
+.sb-lbl { font-family:var(--mono); font-size:.6rem; color:var(--text3); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:7px; }
+
+.style-card {
+  display:flex; align-items:center; gap:8px; padding:6px 9px;
+  border-radius:var(--r); border:1.5px solid transparent; cursor:pointer; background:var(--bg2); margin-bottom:3px;
+}
+.style-card:last-child { margin-bottom:0; }
+.style-card:hover { border-color:var(--border2); }
+.style-card.active { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 8%,var(--bg2)); }
+.sc-icon { font-size:.95rem; width:18px; text-align:center; flex-shrink:0; }
+.sc-name { font-size:.82rem; font-weight:600; flex:1; }
+.sc-rhythm { font-family:var(--mono); font-size:.6rem; color:var(--accent); letter-spacing:.5px; }
+
+.ctrl-row { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.ctrl-row:last-child { margin-bottom:0; }
+.ctrl-lbl { font-size:.75rem; color:var(--text2); width:58px; flex-shrink:0; }
+.ctrl-val { font-family:var(--mono); font-size:.75rem; color:var(--accent); width:34px; text-align:right; flex-shrink:0; }
+input[type=range] { flex:1; accent-color:var(--accent); height:3px; cursor:pointer; }
+.tempo-num {
+  background:var(--bg3); border:1px solid var(--border); border-radius:5px;
+  color:var(--accent); font-family:var(--mono); font-size:.85rem; font-weight:700;
+  width:50px; padding:3px 5px; text-align:center; outline:none;
+}
+.tempo-num:focus { border-color:var(--accent); }
+.tap-btn { background:var(--bg3); border:1px solid var(--border); border-radius:5px; color:var(--text2); font-size:.7rem; padding:3px 8px; cursor:pointer; flex-shrink:0; }
+.tap-btn:active { border-color:var(--accent); color:var(--accent); }
+
+.res-group { display:flex; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
+.res-btn { flex:1; background:var(--bg3); border:none; border-right:1px solid var(--border); color:var(--text2); font-family:var(--mono); font-size:.7rem; padding:6px 2px; cursor:pointer; text-align:center; }
+.res-btn:last-child { border-right:none; }
+.res-btn.active { background:color-mix(in srgb,var(--accent) 12%,var(--bg3)); color:var(--accent); font-weight:700; }
+
+.btn-gen {
+  width:100%; background:var(--accent); color:#fff; border:none; border-radius:var(--r);
+  font-family:var(--sans); font-weight:700; font-size:.9rem; padding:10px; cursor:pointer;
+}
+.btn-gen:hover { filter:brightness(1.08); }
+
+.help-box {
+  background:color-mix(in srgb,var(--blue) 7%,var(--bg2));
+  border:1px solid color-mix(in srgb,var(--blue) 28%,var(--border));
+  border-radius:var(--r); padding:9px 10px; font-size:.72rem; color:var(--text2); line-height:1.75;
+}
+.help-box strong { color:var(--text); }
+
+/* ── MAIN ── */
+.main { flex:1; display:flex; flex-direction:column; min-width:0; overflow:hidden; }
+
+/* ══════════════════════════════════════════════════════
+   CHORD STRIP — the new chord/bar editor
+══════════════════════════════════════════════════════ */
+.chord-strip {
+  background:var(--panel);
+  border-bottom:2px solid var(--border);
+  padding:10px 14px 12px;
+  flex-shrink:0;
+}
+
+.cs-top {
+  display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;
+}
+
+.cs-title {
+  font-family:var(--mono); font-size:.65rem; color:var(--text3);
+  text-transform:uppercase; letter-spacing:1.5px; margin-right:4px;
+}
+
+.cs-action {
+  background:var(--bg3); border:1px solid var(--border); border-radius:5px;
+  color:var(--text2); font-size:.75rem; padding:4px 10px; cursor:pointer;
+  font-family:var(--sans); font-weight:600; white-space:nowrap;
+}
+.cs-action:hover { border-color:var(--border2); color:var(--text); }
+.cs-action.primary { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb,var(--accent) 7%,var(--bg3)); }
+
+/* quick-paste input */
+.cs-paste-wrap { display:flex; align-items:center; gap:6px; margin-left:auto; }
+.cs-paste { background:var(--bg3); border:1px solid var(--border); border-radius:5px; color:var(--text2); font-size:.78rem; padding:4px 9px; outline:none; width:220px; font-family:var(--mono); }
+.cs-paste:focus { border-color:var(--accent); color:var(--text); }
+.cs-paste::placeholder { color:var(--text3); }
+
+/* ── Bar track ── */
+.cs-track {
+  display:flex; align-items:flex-start; gap:0; overflow-x:auto;
+  padding-bottom:4px; /* space for scrollbar */
+}
+.cs-track::-webkit-scrollbar { height:4px; }
+.cs-track::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+/* Section label chip */
+.section-chip {
+  display:flex; align-items:center; gap:4px;
+  background:color-mix(in srgb,var(--purple) 12%,var(--bg3));
+  border:1px solid color-mix(in srgb,var(--purple) 30%,var(--border));
+  border-radius:12px; padding:3px 8px; font-size:.7rem; font-weight:700;
+  color:var(--purple); white-space:nowrap; align-self:center;
+  margin-right:4px; flex-shrink:0; cursor:default; user-select:none;
+}
+.section-chip .sc-del { cursor:pointer; opacity:.6; font-size:.75rem; margin-left:2px; }
+.section-chip .sc-del:hover { opacity:1; }
+
+/* Bar card */
+.bar-card {
+  display:flex; flex-direction:column; align-items:stretch;
+  background:var(--bg2); border:2px solid var(--border);
+  border-radius:var(--r); margin-right:5px; flex-shrink:0;
+  width:72px; cursor:pointer; position:relative;
+  transition:border-color .15s, box-shadow .15s;
+}
+.bar-card:hover { border-color:var(--border2); }
+.bar-card.selected { border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent); }
+.bar-card.split { width:108px; }
+
+.bc-num {
+  font-family:var(--mono); font-size:.6rem; color:var(--text3);
+  text-align:center; padding:3px 0 0; line-height:1; user-select:none;
+}
+
+.bc-body {
+  display:flex; flex:1; align-items:stretch;
+}
+
+/* single chord */
+.bc-chord {
+  flex:1; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:1.05rem; font-weight:700; color:var(--text);
+  padding:5px 4px 7px; outline:none; min-height:36px; text-align:center;
+  border-radius:0 0 6px 6px; cursor:text;
+}
+.bc-chord:focus { background:color-mix(in srgb,var(--accent) 8%,var(--bg2)); color:var(--accent); }
+.bc-chord.empty-ch { color:var(--text3); font-size:.85rem; }
+
+/* split divider */
+.bc-divider { width:1px; background:var(--border2); margin:4px 0; flex-shrink:0; }
+
+/* bar card delete button */
+.bc-del {
+  position:absolute; top:2px; right:3px;
+  background:none; border:none; cursor:pointer;
+  color:var(--text3); font-size:.75rem; line-height:1; padding:1px 3px;
+  border-radius:3px; opacity:0;
+}
+.bar-card:hover .bc-del { opacity:.7; }
+.bc-del:hover { opacity:1 !important; color:var(--red); }
+
+/* add bar button */
+.add-bar-btn {
+  display:flex; align-items:center; justify-content:center;
+  width:42px; height:68px; border:2px dashed var(--border); border-radius:var(--r);
+  color:var(--text3); font-size:1.4rem; cursor:pointer; flex-shrink:0; align-self:center;
+  background:transparent;
+}
+.add-bar-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+/* section insert arrow */
+.section-insert {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  width:20px; height:68px; cursor:pointer; flex-shrink:0; align-self:center;
+  color:var(--text3); font-size:.9rem;
+}
+.section-insert:hover { color:var(--purple); }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  background:var(--bg2); border-bottom:1px solid var(--border);
+  padding:7px 14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex-shrink:0;
+}
+.tl-lbl { font-size:.62rem; color:var(--text3); font-family:var(--mono); text-transform:uppercase; letter-spacing:1px; white-space:nowrap; }
+.tl-sep { width:1px; height:22px; background:var(--border); }
+.dur-btn,.str-btn,.edit-btn {
+  background:var(--bg3); border:1.5px solid var(--border); border-radius:5px;
+  color:var(--text2); font-size:.78rem; font-weight:700; padding:5px 11px; cursor:pointer; font-family:var(--mono);
+}
+.dur-btn:hover,.str-btn:hover,.edit-btn:hover { border-color:var(--border2); color:var(--text); }
+.dur-btn.sel { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb,var(--accent) 8%,var(--bg3)); }
+.str-btn.sel { border-color:var(--purple); color:var(--purple); background:color-mix(in srgb,var(--purple) 8%,var(--bg3)); }
+.edit-btn.on { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb,var(--accent) 8%,var(--bg3)); }
+
+/* ── SCROLL AREA ── */
+.scroll-area { flex:1; overflow-y:auto; overflow-x:auto; padding:16px 18px; }
+
+/* ── GRID ── */
+.grid-container { display:inline-block; min-width:100%; }
+.bar-labels { display:flex; padding-left:31px; margin-bottom:4px; }
+.bar-lbl { font-family:var(--mono); font-size:.65rem; color:var(--text3); text-align:center; }
+
+.str-row { display:flex; align-items:center; margin-bottom:4px; }
+.str-lbl { font-family:var(--mono); font-size:1rem; font-weight:700; color:var(--text2); width:26px; text-align:right; margin-right:5px; flex-shrink:0; }
+.row-cells { display:flex; align-items:center; }
+
+.beat-cell {
+  height:var(--cell-h); border:1.5px solid transparent; border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-family:var(--mono); font-size:1rem; font-weight:700;
+  color:var(--accent); user-select:none; flex-shrink:0; position:relative;
+}
+.beat-cell.res1 { width:54px; }
+.beat-cell.res2 { width:30px; }
+.beat-cell.res4 { width:18px; }
+.beat-cell.beat1 { border-left:2.5px solid var(--border2); }
+.beat-cell.empty { color:var(--text3); font-size:.75rem; }
+.beat-cell.has-note { background:color-mix(in srgb,var(--accent) 13%,var(--bg)); border-color:color-mix(in srgb,var(--accent) 38%,var(--border)); }
+.beat-cell.ghost-note { color:color-mix(in srgb,var(--accent) 22%,var(--bg3)); }
+.beat-cell:hover { background:color-mix(in srgb,var(--text) 5%,var(--bg)); border-color:var(--border2) !important; }
+.beat-cell.has-note:hover { background:color-mix(in srgb,var(--accent) 22%,var(--bg)); }
+.beat-cell.playing-now { background:color-mix(in srgb,var(--green) 20%,var(--bg)) !important; border-color:var(--green) !important; }
+.bar-sep { width:4px; height:var(--cell-h); background:var(--border2); flex-shrink:0; border-radius:1px; }
+.dur-stripe { position:absolute; bottom:3px; left:4px; right:4px; height:3px; border-radius:2px; background:var(--accent); opacity:.45; }
+
+/* ── TAB TEXT ── */
+.tab-section { margin-top:22px; border-top:2px solid var(--border); padding-top:14px; }
+.tab-hdr { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.tab-title { font-family:var(--mono); font-size:.65rem; color:var(--text3); text-transform:uppercase; letter-spacing:1.5px; }
+.copy-btn { background:var(--bg3); border:1px solid var(--border); border-radius:5px; color:var(--text2); font-size:.72rem; padding:3px 10px; cursor:pointer; font-family:var(--sans); }
+.copy-btn:hover { border-color:var(--border2); color:var(--text); }
+.tab-text { font-family:var(--mono); font-size:.88rem; line-height:1.9; color:var(--text); white-space:pre; background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:12px 16px; overflow-x:auto; }
+
+/* ── FRET POPUP ── */
+.fret-popup {
+  position:fixed; background:var(--panel); border:2px solid var(--accent);
+  border-radius:var(--r); padding:12px 14px; box-shadow:var(--shadow);
+  z-index:500; display:none; flex-direction:column; gap:9px; width:260px;
+}
+.fret-popup.show { display:flex; }
+.fp-title { font-family:var(--mono); font-size:.65rem; color:var(--text3); text-transform:uppercase; letter-spacing:1.5px; }
+.fp-dur-row { display:flex; gap:4px; }
+.fp-dur-btn {
+  flex:1; background:var(--bg3); border:1.5px solid var(--border); border-radius:5px;
+  color:var(--text2); font-family:var(--mono); font-size:.72rem; font-weight:700;
+  padding:5px 3px; cursor:pointer; text-align:center;
+}
+.fp-dur-btn.sel { border-color:var(--accent); color:var(--accent); background:color-mix(in srgb,var(--accent) 10%,var(--bg3)); }
+.fp-note-row { display:flex; align-items:center; justify-content:space-between; }
+.fp-note-name { font-family:var(--mono); font-size:1.15rem; font-weight:700; color:var(--accent); }
+.fp-note-sub { font-size:.7rem; color:var(--text2); }
+.fp-board { width:100%; display:block; }
+.fret-row { display:flex; gap:4px; flex-wrap:wrap; }
+.fret-opt {
+  background:var(--bg2); border:1.5px solid var(--border); border-radius:5px;
+  color:var(--text); font-family:var(--mono); font-size:.85rem; font-weight:700;
+  padding:6px 8px; cursor:pointer; min-width:32px; text-align:center;
+}
+.fret-opt:hover { border-color:var(--accent); color:var(--accent); }
+.fret-opt.cur { border-color:var(--accent); background:color-mix(in srgb,var(--accent) 15%,var(--bg2)); color:var(--accent); }
+.fp-del { background:color-mix(in srgb,var(--red) 10%,var(--bg3)); border:1.5px solid color-mix(in srgb,var(--red) 30%,var(--border)); border-radius:5px; color:var(--red); font-size:.78rem; padding:6px; cursor:pointer; text-align:center; font-weight:700; }
+.fp-del:hover { background:color-mix(in srgb,var(--red) 18%,var(--bg3)); }
+
+/* ── SECTION POPUP ── */
+.sec-popup {
+  position:fixed; background:var(--panel); border:1.5px solid var(--purple);
+  border-radius:var(--r); padding:10px 12px; box-shadow:var(--shadow);
+  z-index:500; display:none; flex-direction:column; gap:6px; min-width:160px;
+}
+.sec-popup.show { display:flex; }
+.sec-popup-title { font-family:var(--mono); font-size:.62rem; color:var(--text3); text-transform:uppercase; letter-spacing:1.5px; }
+.sec-opt {
+  background:var(--bg3); border:1px solid var(--border); border-radius:5px;
+  color:var(--text2); font-size:.82rem; padding:6px 10px; cursor:pointer; font-weight:600;
+  text-align:left;
+}
+.sec-opt:hover { border-color:var(--purple); color:var(--purple); background:color-mix(in srgb,var(--purple) 8%,var(--bg3)); }
+
+/* ── PLAYBACK CURSOR ── */
+.play-cursor {
+  position:absolute; top:0; width:3px; height:100%;
+  background:var(--green); opacity:.7; border-radius:2px;
+  pointer-events:none; z-index:10; transition:left .05s linear;
+  box-shadow:0 0 8px var(--green);
+}
+.grid-container { position:relative; }
+
+/* ── PLAYBACK PROGRESS BAR ── */
+.play-progress-wrap {
+  padding:6px 14px 0;
+  flex-shrink:0;
+  display:none;
+}
+.play-progress-wrap.show { display:block; }
+.play-progress-track {
+  position:relative; height:6px; background:var(--bg3);
+  border-radius:3px; cursor:pointer; border:1px solid var(--border);
+}
+.play-progress-fill {
+  height:100%; background:var(--green); border-radius:3px;
+  transition:width .1s linear; pointer-events:none;
+}
+.play-progress-thumb {
+  position:absolute; top:50%; transform:translate(-50%,-50%);
+  width:14px; height:14px; background:var(--green); border-radius:50%;
+  box-shadow:0 0 6px var(--green); cursor:grab;
+}
+.play-progress-lbl {
+  display:flex; justify-content:space-between;
+  font-family:var(--mono); font-size:.65rem; color:var(--text3); margin-top:3px;
+}
+
+/* ── SAVE MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:800;
+  display:flex; align-items:center; justify-content:center;
+  backdrop-filter:blur(3px); animation:fadeIn .2s ease;
+}
+.modal-overlay.hidden { display:none; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+.modal {
+  background:var(--panel); border:1.5px solid var(--border); border-radius:14px;
+  padding:24px 28px; width:480px; max-width:96vw;
+  box-shadow:0 12px 40px rgba(0,0,0,.25);
+  animation:modalPop .2s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes modalPop { from{transform:scale(.9);opacity:0} to{transform:scale(1);opacity:1} }
+
+.modal-title { font-family:var(--mono); font-size:1rem; font-weight:700; color:var(--accent); margin-bottom:16px; }
+.modal-row { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.modal-label { font-size:.78rem; color:var(--text2); width:80px; flex-shrink:0; }
+.modal-input {
+  flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:6px;
+  color:var(--text); font-family:var(--sans); font-size:.88rem; padding:7px 10px; outline:none;
+}
+.modal-input:focus { border-color:var(--accent); }
+
+.modal-section-title { font-family:var(--mono); font-size:.62rem; color:var(--text3); text-transform:uppercase; letter-spacing:1.5px; margin:14px 0 8px; }
+.export-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.export-btn {
+  background:var(--bg2); border:1.5px solid var(--border); border-radius:var(--r);
+  padding:10px 12px; cursor:pointer; text-align:left;
+}
+.export-btn:hover { border-color:var(--accent); }
+.export-btn .eb-icon { font-size:1.2rem; margin-bottom:4px; }
+.export-btn .eb-name { font-size:.82rem; font-weight:700; color:var(--text); }
+.export-btn .eb-desc { font-size:.7rem; color:var(--text2); margin-top:2px; }
+
+.saved-list { max-height:140px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; }
+.saved-item {
+  display:flex; align-items:center; gap:8px; background:var(--bg2);
+  border:1px solid var(--border); border-radius:6px; padding:6px 10px;
+}
+.saved-item-name { flex:1; font-size:.82rem; font-weight:600; color:var(--text); }
+.saved-item-date { font-size:.68rem; color:var(--text3); font-family:var(--mono); }
+.saved-item-load { background:none; border:1px solid var(--accent); border-radius:4px; color:var(--accent); font-size:.72rem; padding:2px 8px; cursor:pointer; }
+.saved-item-del { background:none; border:none; color:var(--text3); cursor:pointer; font-size:.9rem; padding:2px 6px; }
+.saved-item-del:hover { color:var(--red); }
+.modal-no-saves { font-size:.78rem; color:var(--text3); text-align:center; padding:12px; }
+
+.modal-footer { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+.modal-close { background:var(--bg3); border:1px solid var(--border); border-radius:6px; color:var(--text2); font-size:.82rem; padding:7px 18px; cursor:pointer; }
+.modal-save { background:var(--accent); border:none; border-radius:6px; color:#fff; font-size:.82rem; font-weight:700; padding:7px 18px; cursor:pointer; }
+
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--bg2); }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-title">🎸 BASS TAB STUDIO <span>/ generátor + editor</span></div>
+  <div class="hdr-gap"></div>
+  <button class="hdr-btn play" onclick="playTab()">▶ Přehrát</button>
+  <button class="hdr-btn stop" onclick="stopPlay()">■ Stop</button>
+  <button class="hdr-btn" style="border-color:var(--blue);color:var(--blue)" onclick="newSong()" title="Začít novou píseň">✦ Nová píseň</button>
+  <button class="hdr-btn" onclick="openSaveModal()" title="Uložit a exportovat">💾 Uložit / Načíst</button>
+  <div class="led" id="led"></div>
+  <div class="beat-txt" id="beatTxt">● ● ● ●</div>
+  <div class="theme-sw">
+    <button class="th-btn active" data-theme=""      onclick="setTheme('',this)"      title="Světlé">☀️</button>
+    <button class="th-btn"        data-theme="dark"  onclick="setTheme('dark',this)"  title="Tmavé">🌙</button>
+    <button class="th-btn"        data-theme="girly" onclick="setTheme('girly',this)" title="Holčičí">🌸</button>
+  </div>
+</header>
+
+<div class="workspace">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+  <div class="sb-sec">
+    <div class="sb-lbl">Styl basy</div>
+    <div class="style-card active" data-style="root"   onclick="setStyle('root',this)">  <span class="sc-icon">🔵</span><span class="sc-name">Jen základ</span>  <span class="sc-rhythm">♩—♩—</span></div>
+    <div class="style-card"        data-style="root5"  onclick="setStyle('root5',this)"> <span class="sc-icon">🟠</span><span class="sc-name">Základ+kvinta</span><span class="sc-rhythm">♩♩♩♩</span></div>
+    <div class="style-card"        data-style="walk"   onclick="setStyle('walk',this)">  <span class="sc-icon">🟢</span><span class="sc-name">Chodící bas</span>  <span class="sc-rhythm">♩♩♩♪♪</span></div>
+    <div class="style-card"        data-style="rock"   onclick="setStyle('rock',this)">  <span class="sc-icon">🔴</span><span class="sc-name">Rock bas</span>     <span class="sc-rhythm">♩♪♪♩♪♪</span></div>
+    <div class="style-card"        data-style="ballad" onclick="setStyle('ballad',this)"><span class="sc-icon">🌙</span><span class="sc-name">Balada</span>       <span class="sc-rhythm">𝅗𝅥—♩♪♪</span></div>
+    <div class="style-card"        data-style="funk"   onclick="setStyle('funk',this)">  <span class="sc-icon">🟣</span><span class="sc-name">Funk</span>         <span class="sc-rhythm">♪♪♪♪♪♪♪♪</span></div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-lbl">Tempo</div>
+    <div class="ctrl-row">
+      <span class="ctrl-lbl">BPM</span>
+      <input type="range" id="tempoSlider" min="40" max="200" value="80" oninput="syncTempo(this.value)">
+      <input type="number" class="tempo-num" id="tempoNum" value="80" min="40" max="200" oninput="syncTempo(this.value)">
+      <button class="tap-btn" onclick="tapTempo()">TAP</button>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-lbl">Hlasitost</span>
+      <input type="range" id="volSlider" min="0" max="100" value="80" oninput="document.getElementById('volLbl').textContent=this.value+'%'">
+      <span class="ctrl-val" id="volLbl">80%</span>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-lbl">Rozlišení mřížky</div>
+    <div class="res-group">
+      <button class="res-btn active" data-res="1" onclick="setResolution(1,this)">♩ čtvrťové</button>
+      <button class="res-btn"        data-res="2" onclick="setResolution(2,this)">♪ osminové</button>
+      <button class="res-btn"        data-res="4" onclick="setResolution(4,this)">𝅘𝅥𝅯 16-ové</button>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <button class="btn-gen" onclick="generate()">⚡ Vygenerovat TAB</button>
+  </div>
+
+  <div class="sb-sec">
+    <div class="help-box">
+      <strong>Chord strip:</strong><br>
+      Klikni na akord = edituj<br>
+      ÷ = rozděl takt na 2 akordy<br>
+      ⊕ = přidej sekci (Sloka…)<br>
+      <br>
+      <strong>Mřížka:</strong><br>
+      Klik = přidej/uprav notu<br>
+      Pravý klik = smaž notu
+    </div>
+  </div>
+
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ═══ CHORD STRIP ═══ -->
+  <div class="chord-strip">
+    <div class="cs-top">
+      <span class="cs-title">Akordy</span>
+      <button class="cs-action" onclick="addBar()" title="Přidat prázdný takt">+ Takt</button>
+      <button class="cs-action" onclick="duplicateLastBar()" title="Duplikovat poslední takt">⊕ Duplikovat</button>
+      <button class="cs-action" onclick="clearAllBars()" title="Smazat vše">🗑 Smazat vše</button>
+
+      <div class="cs-paste-wrap">
+        <input class="cs-paste" id="csPaste" placeholder="Rychlé zadání: D G Am F …" title="Vlož akordy oddělené mezerami a stiskni Enter">
+        <button class="cs-action primary" onclick="pasteChords()">→ Načíst</button>
+      </div>
+    </div>
+
+    <div class="cs-track" id="csTrack">
+      <!-- bar cards rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ═══ PROGRESS BAR ═══ -->
+  <div class="play-progress-wrap" id="progressWrap">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span id="progressPos" style="font-family:var(--mono);font-size:.65rem;color:var(--text3);white-space:nowrap;min-width:70px;">Takt 1</span>
+      <input type="range" id="progressRange" min="0" max="1000" value="0"
+        style="flex:1;accent-color:var(--green);height:5px;cursor:pointer;"
+        oninput="onProgressDrag(this.value)"
+        onchange="onProgressSeek(this.value)">
+      <span id="progressTotal" style="font-family:var(--mono);font-size:.65rem;color:var(--text3);white-space:nowrap;min-width:36px;text-align:right;"></span>
+    </div>
+  </div>
+
+  <!-- ═══ TOOLBAR ═══ -->
+  <div class="toolbar">
+    <span class="tl-lbl">Délka noty</span>
+    <button class="dur-btn sel" data-dur="1"    onclick="setDur(1,this)"    title="Čtvrťová">♩ ¼</button>
+    <button class="dur-btn"     data-dur="0.5"  onclick="setDur(0.5,this)"  title="Osminová">♪ ⅛</button>
+    <button class="dur-btn"     data-dur="2"    onclick="setDur(2,this)"    title="Půlová">𝅗𝅥 ½</button>
+    <button class="dur-btn"     data-dur="0.75" onclick="setDur(0.75,this)" title="Tečk. osm.">♪. ⅜</button>
+    <div class="tl-sep"></div>
+    <span class="tl-lbl">Struna</span>
+    <button class="str-btn sel" data-str="E" onclick="setStr('E',this)">E</button>
+    <button class="str-btn"     data-str="A" onclick="setStr('A',this)">A</button>
+    <button class="str-btn"     data-str="D" onclick="setStr('D',this)">D</button>
+    <button class="str-btn"     data-str="G" onclick="setStr('G',this)">G</button>
+    <div class="tl-sep"></div>
+    <button class="edit-btn" onclick="clearGrid()">🗑 Smazat grid</button>
+    <button class="edit-btn" onclick="undoLast()" title="Ctrl+Z">↩ Zpět</button>
+    <button class="edit-btn" id="ghostBtn" onclick="toggleGhost()">👻 Vzor</button>
+  </div>
+
+  <!-- ═══ SCROLL AREA ═══ -->
+  <div class="scroll-area" id="scrollArea">
+    <div class="grid-container" id="gridContainer"></div>
+    <div class="tab-section" id="tabSection">
+      <div class="tab-hdr">
+        <span class="tab-title">TAB výstup</span>
+        <button class="copy-btn" onclick="copyTab()">Kopírovat</button>
+      </div>
+      <div class="tab-text" id="tabText">— zatím žádná data —</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /workspace -->
+
+<!-- FRET POPUP -->
+<div class="fret-popup" id="fretPopup">
+  <div class="fp-title">Pražec · struna <span id="fpStr">E</span></div>
+  <div class="fp-note-row">
+    <div class="fp-note-name" id="fpNoteName">—</div>
+    <div class="fp-note-sub" id="fpNoteSub"></div>
+  </div>
+  <svg class="fp-board" id="fpSvg" viewBox="0 0 232 80" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="fp-dur-row">
+    <button class="fp-dur-btn" data-dur="0.5"  onclick="changeCellDur(0.5)">♪ ⅛</button>
+    <button class="fp-dur-btn sel" data-dur="1" onclick="changeCellDur(1)">♩ ¼</button>
+    <button class="fp-dur-btn" data-dur="2"    onclick="changeCellDur(2)">𝅗𝅥 ½</button>
+    <button class="fp-dur-btn" data-dur="0.75" onclick="changeCellDur(0.75)">♪. ⅜</button>
+  </div>
+  <div class="fret-row" id="fretRow"></div>
+  <button class="fp-del" onclick="deleteCell()">✕ Smazat notu</button>
+</div>
+
+<!-- SECTION POPUP -->
+<div class="sec-popup" id="secPopup">
+  <div class="sec-popup-title">Přidat sekci před takt</div>
+  <button class="sec-opt" onclick="insertSection('Intro')">🎬 Intro</button>
+  <button class="sec-opt" onclick="insertSection('Sloka')">📝 Sloka</button>
+  <button class="sec-opt" onclick="insertSection('Refrén')">🎵 Refrén</button>
+  <button class="sec-opt" onclick="insertSection('Přechod')">↔ Přechod</button>
+  <button class="sec-opt" onclick="insertSection('Bridge')">🌉 Bridge</button>
+  <button class="sec-opt" onclick="insertSection('Outro')">🏁 Outro</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════
+const BEATS_PER_BAR=4;
+const STR_ORDER=['G','D','A','E'];
+const NOTE_MAP={'C':24,'C#':25,'Db':25,'D':26,'D#':27,'Eb':27,'E':28,'F':29,'F#':30,'Gb':30,'G':31,'G#':32,'Ab':32,'A':33,'A#':34,'Bb':34,'B':35,'H':35};
+const BASS_STRINGS={G:43,D:38,A:33,E:28};
+const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const Q=1,E=0.5,H=2;
+
+// ═══════════════════════════════════════════
+// BAR DATA MODEL
+// bars = [{ chords:['D'] | ['D','G'], section:null|'Sloka', gridData:{...} }]
+// chords with 1 item = full bar (4 beats)
+// chords with 2 items = split bar (2 beats each)
+// ═══════════════════════════════════════════
+let bars = [];           // bar objects
+let grid = [];           // grid[barIdx] = same emptyBar structure (per chord slot for split)
+let ghostGrid = [];
+let undoStack = [];
+
+let currentStyle='root', resolution=1, selectedDur=1, selectedStr='E', showGhost=false;
+let popupBar=-1, popupStr='', popupSlot=-1;
+let secPopupBarIdx=-1;
+let audioCtx=null, activeOscs=[], isPlaying=false, tapArr=[];
+
+// ═══════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;}
+function fifth(m){return m+7;}
+function midiToName(m){return NOTE_NAMES[m%12]+(Math.floor(m/12)-1);}
+function parseChord(ch){
+  if(!ch||!ch.trim()) return null;
+  const m=ch.trim().match(/^([A-H][b#]?)/i);
+  if(!m) return null;
+  let n=m[1][0].toUpperCase()+(m[1][1]||'');
+  return {DB:'Db',EB:'Eb',GB:'Gb',AB:'Ab',BB:'Bb'}[n.toUpperCase()]||n;
+}
+function findPos(midi){
+  let opts=[];
+  Object.entries(BASS_STRINGS).forEach(([s,o])=>{const fr=midi-o;if(fr>=0&&fr<=12)opts.push({str:s,fret:fr,midi});});
+  if(!opts.length) return null;
+  const p=opts.filter(o=>o.str==='E'||o.str==='A');
+  const pool=p.length?p:opts;
+  pool.sort((a,b)=>Math.abs(a.fret-5)-Math.abs(b.fret-5));
+  return pool[0];
+}
+function walkApproach(r,nr){if(nr===r)return[r+2,r+3];const d=nr>r?1:-1;return[nr-d*2,nr-d*1];}
+
+// ═══════════════════════════════════════════
+// PATTERNS
+// ═══════════════════════════════════════════
+const PATTERNS={
+  root:(r,f,nr)=>[{midi:r,dur:Q},{midi:null,dur:Q},{midi:r,dur:Q},{midi:null,dur:Q}],
+  root5:(r,f,nr)=>[{midi:r,dur:Q},{midi:f,dur:Q},{midi:r,dur:Q},{midi:f,dur:Q}],
+  walk:(r,f,nr)=>{const[w1,w2]=walkApproach(r,nr);return[{midi:r,dur:Q},{midi:f,dur:Q},{midi:r,dur:Q},{midi:w1,dur:E},{midi:w2,dur:E}];},
+  rock:(r,f,nr)=>[{midi:r,dur:Q},{midi:r,dur:E},{midi:f,dur:E},{midi:r,dur:Q},{midi:f,dur:E},{midi:r,dur:E}],
+  ballad:(r,f,nr)=>[{midi:r,dur:H},{midi:f,dur:Q},{midi:r,dur:E},{midi:f,dur:E}],
+  funk:(r,f,nr)=>[{midi:r,dur:E},{midi:null,dur:E},{midi:r,dur:E},{midi:f,dur:E},{midi:r,dur:E},{midi:null,dur:E},{midi:f,dur:E},{midi:r,dur:E}]
+};
+
+// Half-bar versions of each pattern (2 beats)
+const HALF_PATTERNS={
+  root:(r,f,nr)=>[{midi:r,dur:Q},{midi:null,dur:Q}],
+  root5:(r,f,nr)=>[{midi:r,dur:Q},{midi:f,dur:Q}],
+  walk:(r,f,nr)=>[{midi:r,dur:E},{midi:f,dur:E},{midi:r,dur:E},{midi:f,dur:E}],
+  rock:(r,f,nr)=>[{midi:r,dur:Q},{midi:f,dur:E},{midi:r,dur:E}],
+  ballad:(r,f,nr)=>[{midi:r,dur:Q},{midi:f,dur:Q}],
+  funk:(r,f,nr)=>[{midi:r,dur:E},{midi:null,dur:E},{midi:f,dur:E},{midi:r,dur:E}]
+};
+
+// ═══════════════════════════════════════════
+// GRID MODEL
+// ═══════════════════════════════════════════
+function spb(){return BEATS_PER_BAR*resolution;}
+function emptyGridBar(){const b={};STR_ORDER.forEach(s=>{b[s]=new Array(spb()).fill(null);});return b;}
+
+function patternToGridSlots(events,totalSlots){
+  const bar=emptyGridBar();
+  const sd=1/resolution;
+  let sl=0;
+  events.forEach(ev=>{
+    const span=Math.max(1,Math.round(ev.dur/sd));
+    if(ev.midi!==null){
+      const pos=findPos(ev.midi);
+      if(pos&&sl<totalSlots) bar[pos.str][sl]={fret:pos.fret,dur:ev.dur};
+    }
+    sl+=span;
+  });
+  return bar;
+}
+
+function generateBarGrid(barObj,barIdx){
+  const chords=barObj.chords;
+  const patFn=PATTERNS[currentStyle]||PATTERNS.root;
+  const halfPatFn=HALF_PATTERNS[currentStyle]||HALF_PATTERNS.root;
+  const s=spb();
+
+  if(chords.length===1){
+    // Full bar
+    const norm=parseChord(chords[0]);
+    const r=norm&&NOTE_MAP[norm]!==undefined?NOTE_MAP[norm]:NOTE_MAP['C'];
+    const f=fifth(r);
+    const nextBar=bars[barIdx+1];
+    const nextChord=nextBar?nextBar.chords[0]:chords[0];
+    const nn=parseChord(nextChord);
+    const nr=nn&&NOTE_MAP[nn]!==undefined?NOTE_MAP[nn]:r;
+    return patternToGridSlots(patFn(r,f,nr),s);
+  } else {
+    // Split bar: 2 chords, each gets half the slots
+    const half=Math.floor(s/2);
+    const bar=emptyGridBar();
+    [0,1].forEach(ci=>{
+      const norm=parseChord(chords[ci]);
+      const r=norm&&NOTE_MAP[norm]!==undefined?NOTE_MAP[norm]:NOTE_MAP['C'];
+      const f=fifth(r);
+      const nextChord=ci===0?chords[1]:(bars[barIdx+1]?bars[barIdx+1].chords[0]:chords[1]);
+      const nn=parseChord(nextChord);
+      const nr=nn&&NOTE_MAP[nn]!==undefined?NOTE_MAP[nn]:r;
+      const evs=halfPatFn(r,f,nr);
+      const sd=1/resolution;
+      let sl=ci*half;
+      evs.forEach(ev=>{
+        const span=Math.max(1,Math.round(ev.dur/sd));
+        if(ev.midi!==null){
+          const pos=findPos(ev.midi);
+          if(pos&&sl<s) bar[pos.str][sl]={fret:pos.fret,dur:ev.dur};
+        }
+        sl+=span;
+      });
+    });
+    return bar;
+  }
+}
+
+// ═══════════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════════
+function generate(){
+  pushUndo();
+  if(!bars.length) return;
+  grid=[];ghostGrid=[];
+  bars.forEach((bar,i)=>{
+    const g=generateBarGrid(bar,i);
+    grid.push(g);
+    ghostGrid.push(JSON.parse(JSON.stringify(g)));
+  });
+  renderGrid();
+  buildTabText();
+  resetScroll();
+}
+
+// ═══════════════════════════════════════════
+// BAR STRIP — data operations
+// ═══════════════════════════════════════════
+function addBar(chord=''){
+  bars.push({chords:[chord],section:null});
+  grid.push(emptyGridBar());
+  ghostGrid.push(emptyGridBar());
+  renderStrip();
+  renderGrid();
+  buildTabText();
+}
+
+function duplicateLastBar(){
+  if(!bars.length){addBar();return;}
+  const last=bars[bars.length-1];
+  bars.push({chords:[...last.chords],section:null});
+  grid.push(emptyGridBar());
+  ghostGrid.push(emptyGridBar());
+  renderStrip();
+  renderGrid();
+  buildTabText();
+}
+
+function deleteBar(idx){
+  bars.splice(idx,1);
+  grid.splice(idx,1);
+  ghostGrid.splice(idx,1);
+  renderStrip();
+  renderGrid();
+  buildTabText();
+}
+
+function splitBar(idx){
+  const bar=bars[idx];
+  if(bar.chords.length===1){
+    bar.chords.push(bar.chords[0]); // duplicate chord
+  }
+  renderStrip();
+}
+
+function mergeBar(idx){
+  const bar=bars[idx];
+  if(bar.chords.length===2){
+    bar.chords=[bar.chords[0]];
+  }
+  renderStrip();
+}
+
+function clearAllBars(){
+  bars=[]; grid=[]; ghostGrid=[];
+  renderStrip(); renderGrid(); buildTabText();
+}
+
+function pasteChords(){
+  const raw=document.getElementById('csPaste').value.trim();
+  if(!raw) return;
+  const tokens=raw.split(/\s+/);
+  bars=tokens.map(t=>({chords:[t],section:null}));
+  grid=bars.map(()=>emptyGridBar());
+  ghostGrid=bars.map(()=>emptyGridBar());
+  document.getElementById('csPaste').value='';
+  renderStrip();
+  // Auto-generate
+  generate();
+}
+
+// Section management
+function insertSection(name){
+  if(secPopupBarIdx<0||secPopupBarIdx>=bars.length) return;
+  bars[secPopupBarIdx].section=name;
+  renderStrip();
+  hideSecPopup();
+}
+
+function removeSection(idx){
+  if(bars[idx]) bars[idx].section=null;
+  renderStrip();
+}
+
+// ═══════════════════════════════════════════
+// RENDER CHORD STRIP
+// ═══════════════════════════════════════════
+function renderStrip(){
+  const track=document.getElementById('csTrack');
+  track.innerHTML='';
+
+  bars.forEach((bar,idx)=>{
+    // Section label
+    if(bar.section){
+      const chip=document.createElement('div');
+      chip.className='section-chip';
+      chip.innerHTML=`${bar.section} <span class="sc-del" onclick="removeSection(${idx})" title="Odstranit sekci">×</span>`;
+      track.appendChild(chip);
+    }
+
+    // Section insert button (before this bar)
+    const si=document.createElement('div');
+    si.className='section-insert';
+    si.title='Přidat sekci před takt '+(idx+1);
+    si.textContent='⊕';
+    si.addEventListener('click',(e)=>{e.stopPropagation();showSecPopup(si,idx);});
+    track.appendChild(si);
+
+    // Bar card
+    const card=document.createElement('div');
+    card.className='bar-card'+(bar.chords.length===2?' split':'');
+    card.dataset.idx=idx;
+
+    // Bar number
+    const num=document.createElement('div');
+    num.className='bc-num';
+    num.textContent=idx+1;
+    card.appendChild(num);
+
+    // Body
+    const body=document.createElement('div');
+    body.className='bc-body';
+
+    if(bar.chords.length===2){
+      // Two half-chords
+      [0,1].forEach((ci)=>{
+        const ch=createChordInput(bar,idx,ci);
+        body.appendChild(ch);
+        if(ci===0){
+          const div=document.createElement('div');
+          div.className='bc-divider';
+          body.appendChild(div);
+        }
+      });
+      // Merge button
+      const mb=document.createElement('button');
+      mb.className='bc-del'; mb.title='Sloučit zpět na 1 akord'; mb.textContent='⊖';
+      mb.addEventListener('click',e=>{e.stopPropagation();mergeBar(idx);});
+      card.appendChild(mb);
+    } else {
+      const ch=createChordInput(bar,idx,0);
+      body.appendChild(ch);
+      // Split button
+      const sb=document.createElement('button');
+      sb.className='bc-del'; sb.title='Rozdělit na 2 akordy (÷)'; sb.textContent='÷';
+      sb.addEventListener('click',e=>{e.stopPropagation();splitBar(idx);});
+      card.appendChild(sb);
+    }
+
+    card.appendChild(body);
+
+    // Click on bar = select (highlight corresponding grid section)
+    card.addEventListener('click',()=>highlightBar(idx));
+
+    track.appendChild(card);
+  });
+
+  // Add bar button at end
+  const addBtn=document.createElement('button');
+  addBtn.className='add-bar-btn';
+  addBtn.title='Přidat takt';
+  addBtn.textContent='+';
+  addBtn.addEventListener('click',()=>addBar());
+  track.appendChild(addBtn);
+}
+
+function createChordInput(bar,barIdx,chordIdx){
+  const div=document.createElement('div');
+  const val=bar.chords[chordIdx]||'';
+  div.className='bc-chord'+(val?'':' empty-ch');
+  div.contentEditable='true';
+  div.spellcheck=false;
+  div.textContent=val||'—';
+
+  div.addEventListener('focus',()=>{
+    if(!bar.chords[chordIdx]) div.textContent='';
+    div.classList.remove('empty-ch');
+  });
+
+  div.addEventListener('blur',()=>{
+    let v=div.textContent.trim();
+    if(!v){ div.textContent='—'; div.classList.add('empty-ch'); v=''; }
+    bar.chords[chordIdx]=v;
+  });
+
+  div.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){ e.preventDefault(); div.blur(); }
+    if(e.key==='Tab'){
+      e.preventDefault();
+      // Move to next chord input or add bar
+      div.blur();
+      const allInputs=[...document.querySelectorAll('.bc-chord')];
+      const ci=allInputs.indexOf(div);
+      if(ci<allInputs.length-1) allInputs[ci+1].focus();
+      else addBar();
+    }
+  });
+
+  return div;
+}
+
+function highlightBar(idx){
+  document.querySelectorAll('.bar-card').forEach(c=>c.classList.remove('selected'));
+  const cards=[...document.querySelectorAll('.bar-card')];
+  if(cards[idx]) cards[idx].classList.add('selected');
+  // Scroll grid to that bar
+  const gc=document.getElementById('gridContainer');
+  const barSeps=[...gc.querySelectorAll('.bar-sep')];
+  // Each bar = 4+1 seps approximately; simpler: scroll by proportion
+  if(gc&&idx>0){
+    const sa=document.getElementById('scrollArea');
+    if(sa){const barW=gc.scrollWidth/bars.length;sa.scrollLeft=barW*idx;}
+  }
+}
+
+// ═══════════════════════════════════════════
+// SECTION POPUP
+// ═══════════════════════════════════════════
+function showSecPopup(el,barIdx){
+  secPopupBarIdx=barIdx;
+  const popup=document.getElementById('secPopup');
+  const rect=el.getBoundingClientRect();
+  let top=rect.bottom+4, left=rect.left;
+  if(top+220>window.innerHeight) top=rect.top-225;
+  if(left+170>window.innerWidth) left=window.innerWidth-174;
+  popup.style.top=top+'px'; popup.style.left=left+'px';
+  popup.classList.add('show');
+}
+function hideSecPopup(){document.getElementById('secPopup').classList.remove('show');secPopupBarIdx=-1;}
+
+// ═══════════════════════════════════════════
+// RENDER GRID
+// ═══════════════════════════════════════════
+const CW={1:54,2:30,4:18};
+
+function renderGrid(){
+  const gc=document.getElementById('gridContainer');
+  gc.innerHTML='';
+  if(!bars.length||!grid.length) return;
+  const s=spb(), cw=CW[resolution]||30;
+
+  // Bar labels (show chord info)
+  const lr=document.createElement('div');
+  lr.className='bar-labels';
+  lr.style.paddingLeft='31px';
+  bars.forEach((bar,b)=>{
+    const lbl=document.createElement('div');
+    lbl.className='bar-lbl';
+    lbl.style.width=(s*cw+4)+'px';
+    const section=bar.section?`[${bar.section}] `:'';
+    const chordStr=bar.chords.filter(Boolean).join(' / ') || '?';
+    lbl.textContent=section+(b+1)+'. '+chordStr;
+    lr.appendChild(lbl);
+  });
+  gc.appendChild(lr);
+
+  STR_ORDER.forEach(str=>{
+    const row=document.createElement('div');
+    row.className='str-row';
+    const lbl=document.createElement('div');
+    lbl.className='str-lbl'; lbl.textContent=str;
+    row.appendChild(lbl);
+    const cells=document.createElement('div');
+    cells.className='row-cells';
+
+    bars.forEach((bar,b)=>{
+      const g=grid[b]||emptyGridBar();
+      const sep=document.createElement('div'); sep.className='bar-sep'; cells.appendChild(sep);
+
+      // Split bar divider at mid-point
+      const half=s/2;
+
+      for(let sl=0;sl<s;sl++){
+        // Visual half-bar divider for split bars
+        if(bar.chords.length===2&&sl===half){
+          const hd=document.createElement('div');
+          hd.style.cssText=`width:2px;height:var(--cell-h);background:color-mix(in srgb,var(--accent) 40%,var(--border));flex-shrink:0;border-radius:1px;`;
+          cells.appendChild(hd);
+        }
+
+        const cell=document.createElement('div');
+        cell.className='beat-cell res'+resolution;
+        cell.dataset.bar=b; cell.dataset.str=str; cell.dataset.slot=sl;
+        cell.style.width=cw+'px';
+        if(sl===0||(bar.chords.length===2&&sl===half)) cell.classList.add('beat1');
+        const note=g[str][sl];
+        const ghost=showGhost&&ghostGrid[b]&&ghostGrid[b][str]&&ghostGrid[b][str][sl];
+        if(note){
+          cell.classList.add('has-note'); cell.textContent=note.fret;
+          const stripe=document.createElement('div'); stripe.className='dur-stripe';
+          stripe.style.width=Math.min(92,Math.min(Math.round(note.dur*resolution),s-sl)*65)+'%';
+          cell.appendChild(stripe);
+        } else if(ghost){
+          cell.classList.add('ghost-note'); cell.textContent=ghost.fret;
+        } else {
+          cell.classList.add('empty'); cell.textContent='·';
+        }
+        cell.addEventListener('click',onCellClick);
+        cell.addEventListener('contextmenu',onCellRightClick);
+        cells.appendChild(cell);
+      }
+    });
+
+    const sf=document.createElement('div'); sf.className='bar-sep'; cells.appendChild(sf);
+    row.appendChild(cells); gc.appendChild(row);
+  });
+}
+
+// ═══════════════════════════════════════════
+// CELL INTERACTION
+// ═══════════════════════════════════════════
+function onCellClick(e){
+  e.stopPropagation();
+  const cell=e.currentTarget;
+  const bar=+cell.dataset.bar,str=cell.dataset.str,slot=+cell.dataset.slot;
+  if(!grid[bar]) return;
+  const note=grid[bar][str][slot];
+  if(note){
+    showFretPopup(cell,bar,str,slot,note.fret,note.dur);
+  } else {
+    pushUndo();
+    grid[bar][str][slot]={fret:0,dur:selectedDur};
+    renderGrid(); buildTabText();
+    const nc=document.querySelector(`.beat-cell[data-bar="${bar}"][data-str="${str}"][data-slot="${slot}"]`);
+    if(nc) showFretPopup(nc,bar,str,slot,0,selectedDur);
+  }
+}
+
+function onCellRightClick(e){
+  e.preventDefault(); e.stopPropagation();
+  const cell=e.currentTarget;
+  const bar=+cell.dataset.bar,str=cell.dataset.str,slot=+cell.dataset.slot;
+  if(grid[bar]&&grid[bar][str][slot]){pushUndo();grid[bar][str][slot]=null;renderGrid();buildTabText();}
+}
+
+function showFretPopup(cell,bar,str,slot,curFret,curDur){
+  popupBar=bar; popupStr=str; popupSlot=slot;
+  const popup=document.getElementById('fretPopup');
+  document.getElementById('fpStr').textContent=str;
+  document.querySelectorAll('.fp-dur-btn').forEach(b=>b.classList.toggle('sel',parseFloat(b.dataset.dur)===curDur));
+  const fr=document.getElementById('fretRow'); fr.innerHTML='';
+  for(let f=0;f<=12;f++){
+    const btn=document.createElement('button');
+    btn.className='fret-opt'+(f===curFret?' cur':'');
+    btn.textContent=f;
+    btn.addEventListener('click',()=>setFret(f));
+    fr.appendChild(btn);
+  }
+  const rect=cell.getBoundingClientRect();
+  let top=rect.bottom+6; if(top+340>window.innerHeight) top=Math.max(4,rect.top-346);
+  let left=rect.left;    if(left+268>window.innerWidth)  left=window.innerWidth-272;
+  popup.style.top=top+'px'; popup.style.left=left+'px';
+  popup.classList.add('show');
+  updateFretboard(str,curFret);
+}
+
+function setFret(fret){
+  pushUndo();
+  if(grid[popupBar]&&grid[popupBar][popupStr]){
+    const ex=grid[popupBar][popupStr][popupSlot];
+    grid[popupBar][popupStr][popupSlot]={fret,dur:ex?ex.dur:selectedDur};
+  }
+  hideFretPopup(); renderGrid(); buildTabText();
+}
+
+function changeCellDur(dur){
+  if(grid[popupBar]&&grid[popupBar][popupStr]&&grid[popupBar][popupStr][popupSlot]){
+    pushUndo(); grid[popupBar][popupStr][popupSlot].dur=dur;
+  }
+  document.querySelectorAll('.fp-dur-btn').forEach(b=>b.classList.toggle('sel',parseFloat(b.dataset.dur)===dur));
+  renderGrid(); buildTabText();
+}
+
+function deleteCell(){
+  pushUndo();
+  if(grid[popupBar]&&grid[popupBar][popupStr]) grid[popupBar][popupStr][popupSlot]=null;
+  hideFretPopup(); renderGrid(); buildTabText();
+}
+
+function hideFretPopup(){document.getElementById('fretPopup').classList.remove('show');}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#fretPopup')) hideFretPopup();
+  if(!e.target.closest('#secPopup')&&!e.target.closest('.section-insert')) hideSecPopup();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideFretPopup();hideSecPopup();}});
+
+// ═══════════════════════════════════════════
+// FRETBOARD IN POPUP
+// ═══════════════════════════════════════════
+function updateFretboard(strName,fret){
+  const midi=BASS_STRINGS[strName]+fret;
+  document.getElementById('fpNoteName').textContent=midiToName(midi).replace(/(\d)/,' $1');
+  document.getElementById('fpNoteSub').textContent=strName+' · pražec '+fret;
+  renderMiniBoard(strName,fret);
+}
+
+function renderMiniBoard(activeStr,activeFret){
+  const svg=document.getElementById('fpSvg');
+  const W=232,H=80,strings=['G','D','A','E'];
+  const fretCount=5,startFret=activeFret<=2?0:activeFret-2;
+  const mL=24,mT=12,mR=10,mB=14;
+  const ss=(H-mT-mB)/3, fs=(W-mL-mR)/fretCount;
+  let html=`<rect width="${W}" height="${H}" fill="var(--bg3)" rx="5"/>`;
+  if(startFret===0) html+=`<rect x="${mL-2}" y="${mT}" width="4" height="${H-mT-mB}" fill="var(--text2)" rx="1"/>`;
+  for(let f=0;f<=fretCount;f++){
+    const x=mL+f*fs;
+    html+=`<line x1="${x}" y1="${mT}" x2="${x}" y2="${H-mB}" stroke="var(--border2)" stroke-width="1"/>`;
+    if(f<fretCount&&startFret+f+1>0) html+=`<text x="${x+fs/2}" y="${H-2}" text-anchor="middle" font-size="8" fill="var(--text3)" font-family="monospace">${startFret+f+1}</text>`;
+  }
+  strings.forEach((s,i)=>{
+    const y=mT+i*ss, sw=(2.5-i*0.4).toFixed(1);
+    html+=`<line x1="${mL}" y1="${y}" x2="${W-mR}" y2="${y}" stroke="var(--border2)" stroke-width="${sw}"/>`;
+    html+=`<text x="${mL-4}" y="${y+3.5}" text-anchor="end" font-size="8.5" fill="var(--text2)" font-family="monospace" font-weight="700">${s}</text>`;
+  });
+  const si=strings.indexOf(activeStr);
+  if(si>=0){
+    const dotY=mT+si*ss;
+    if(activeFret===0){
+      html+=`<circle cx="${mL-11}" cy="${dotY}" r="7" fill="none" stroke="var(--accent)" stroke-width="2"/>`;
+    } else {
+      const dx=mL+(activeFret-startFret-0.5)*fs;
+      html+=`<circle cx="${dx}" cy="${dotY}" r="8" fill="var(--accent)"/>`;
+      html+=`<text x="${dx}" y="${dotY+3.5}" text-anchor="middle" font-size="8.5" fill="white" font-weight="700" font-family="monospace">${activeFret}</text>`;
+    }
+  }
+  svg.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════
+// TAB TEXT
+// ═══════════════════════════════════════════
+function buildTabText(){
+  if(!bars.length||!grid.length){document.getElementById('tabText').textContent='— zatím žádná data —';return;}
+  const s=spb(), sw=resolution===1?4:resolution===2?3:2;
+  const lines={};
+  STR_ORDER.forEach(st=>{lines[st]='';});
+  bars.forEach((bar,b)=>{
+    const g=grid[b]||emptyGridBar();
+    STR_ORDER.forEach(st=>{lines[st]+='|';});
+    for(let sl=0;sl<s;sl++){
+      STR_ORDER.forEach(st=>{
+        const note=g[st][sl];
+        if(note){const f=String(note.fret);lines[st]+='-'+f+'-'.repeat(Math.max(0,sw-1-f.length));}
+        else lines[st]+='-'.repeat(sw);
+      });
+    }
+  });
+  STR_ORDER.forEach(st=>{lines[st]+='|';});
+  const chordRow=bars.map(bar=>('|'+bar.chords.filter(Boolean).join('/')).padEnd(s*sw+1)).join('')+'|';
+  document.getElementById('tabText').textContent=[chordRow,'G'+lines.G,'D'+lines.D,'A'+lines.A,'E'+lines.E].join('\n');
+}
+
+// ═══════════════════════════════════════════
+// PLAYBACK — with auto-scroll & progress bar
+// ═══════════════════════════════════════════
+function getCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+// Calculate pixel offset of bar b inside .grid-container
+function barPixelLeft(b){
+  const cw=CW[resolution]||30;
+  const strLblW=31; // .str-lbl width + margin
+  const barW=spb()*cw+4; // slots*cellW + separator
+  return strLblW + b*barW;
+}
+
+function scrollToBar(b){
+  const sa=document.getElementById('scrollArea');
+  const target=barPixelLeft(b)-60; // 60px left margin
+  sa.scrollTo({left:Math.max(0,target),behavior:'smooth'});
+}
+
+let playStartTime=0, playTotalSec=0;
+let progressRaf=null;
+let isSeeking=false;  // true while user is dragging
+
+function updateProgress(){
+  if(!isPlaying){cancelAnimationFrame(progressRaf);return;}
+  if(isSeeking){progressRaf=requestAnimationFrame(updateProgress);return;}
+  const ctx=getCtx();
+  const elapsed=Math.max(0,ctx.currentTime-playStartTime);
+  const pct=Math.min(1,elapsed/playTotalSec);
+  const rangeEl=document.getElementById('progressRange');
+  if(rangeEl) rangeEl.value=Math.round(pct*1000);
+  const barIdx=Math.min(Math.floor(pct*bars.length),bars.length-1);
+  const posEl=document.getElementById('progressPos');
+  if(posEl) posEl.textContent='Takt '+(barIdx+1)+' / '+bars.length;
+  progressRaf=requestAnimationFrame(updateProgress);
+}
+
+function onProgressDrag(val){
+  // While dragging: just update label, don't seek yet
+  isSeeking=true;
+  const pct=val/1000;
+  const barIdx=Math.min(Math.floor(pct*bars.length),bars.length-1);
+  const posEl=document.getElementById('progressPos');
+  if(posEl) posEl.textContent='Takt '+(barIdx+1)+' / '+bars.length;
+}
+
+function onProgressSeek(val){
+  isSeeking=false;
+  const pct=val/1000;
+  if(isPlaying){
+    stopPlay();
+    setTimeout(()=>playTabFrom(pct),30);
+  } else {
+    // Just update label
+    const barIdx=Math.min(Math.floor(pct*bars.length),bars.length-1);
+    const posEl=document.getElementById('progressPos');
+    if(posEl) posEl.textContent='Takt '+(barIdx+1)+' / '+bars.length;
+    // Scroll to that bar
+    if(bars.length) scrollToBar(barIdx);
+  }
+}
+
+function resetProgressBar(){
+  const r=document.getElementById('progressRange');
+  if(r) r.value=0;
+  const p=document.getElementById('progressPos');
+  if(p) p.textContent='Takt 1';
+  isSeeking=false;
+}
+
+function playTab(){ playTabFrom(0); }
+
+function playTabFrom(startPct=0){
+  stopPlay();
+  if(!bars.length||!grid.length) return;
+  const ctx=getCtx(); if(ctx.state==='suspended') ctx.resume();
+  const bpm=parseInt(document.getElementById('tempoNum').value)||80;
+  const vol=parseInt(document.getElementById('volSlider').value)/100;
+  const slotSec=(60/bpm)/resolution;
+  const totalSlots=bars.length*spb();
+  const totalSec=totalSlots*slotSec;
+
+  playTotalSec=totalSec;
+  const skipSec=startPct*totalSec;
+  const skipSlots=Math.floor(skipSec/slotSec);
+
+  // True limiter (only catches real peaks, doesn't squash everything)
+  const comp=ctx.createDynamicsCompressor();
+  comp.threshold.value=-1; comp.knee.value=0; comp.ratio.value=20;
+  comp.attack.value=0.001; comp.release.value=0.05; comp.connect(ctx.destination);
+  const master=ctx.createGain(); master.gain.value=22*vol; master.connect(comp);
+
+  isPlaying=true; setLed('on');
+  playStartTime=ctx.currentTime+0.05-skipSec;
+
+  // Reset scroll to start of play position
+  scrollToBar(Math.floor(skipSlots/spb()));
+
+  // Show progress bar
+  document.getElementById('progressWrap').classList.add('show');
+  document.getElementById('progressTotal').textContent=Math.ceil(totalSec)+'s';
+
+  let t=ctx.currentTime+0.05;
+  const tids=[];
+  let lastScrolledBar=-1;
+
+  bars.forEach((bar,b)=>{
+    const g=grid[b]||emptyGridBar();
+    for(let sl=0;sl<spb();sl++){
+      const globalSlot=b*spb()+sl;
+      if(globalSlot<skipSlots){continue;}
+      const ts=t+(globalSlot-skipSlots)*slotSec;
+
+      STR_ORDER.forEach(str=>{
+        const note=g[str][sl];
+        if(note){
+          scheduleNote(ctx,master,BASS_STRINGS[str]+note.fret,ts,note.dur*(60/bpm)*0.82);
+        }
+      });
+
+      // Visual + scroll events (fire on first slot of each bar, on G string)
+      if(sl===0){
+        const delay=Math.max(0,(ts-ctx.currentTime)*1000);
+        tids.push(setTimeout(()=>{
+          if(b!==lastScrolledBar){
+            lastScrolledBar=b;
+            scrollToBar(b);
+            // Highlight bar card in chord strip
+            document.querySelectorAll('.bar-card').forEach((c,i)=>c.classList.toggle('selected',i===b));
+          }
+          document.getElementById('beatTxt').className='beat-txt playing';
+        },delay));
+      }
+
+      // Cell highlight (just first string to avoid visual overload)
+      if(str_first(g,sl)){
+        const str=str_first(g,sl);
+        const delay=Math.max(0,(t+(globalSlot-skipSlots)*slotSec-ctx.currentTime)*1000);
+        tids.push(setTimeout(()=>{
+          const c=document.querySelector(`.beat-cell[data-bar="${b}"][data-str="${str}"][data-slot="${sl}"]`);
+          if(c){c.classList.add('playing-now');setTimeout(()=>c.classList.remove('playing-now'),slotSec*1000*.85);}
+        },delay));
+      }
+    }
+  });
+
+  // Stop timer
+  const remaining=(totalSlots-skipSlots)*slotSec;
+  tids.push(setTimeout(()=>{
+    setLed('off'); isPlaying=false;
+    document.getElementById('beatTxt').className='beat-txt';
+    document.getElementById('beatTxt').textContent='● ● ● ●';
+    document.querySelectorAll('.bar-card').forEach(c=>c.classList.remove('selected'));
+    resetProgressBar();
+  },(remaining+0.3)*1000));
+
+  activeOscs._tids=tids;
+  document.getElementById('beatTxt').className='beat-txt playing';
+  progressRaf=requestAnimationFrame(updateProgress);
+}
+
+// Return the string name of the first note in a slot (for cursor highlight)
+function str_first(gridBar,sl){
+  for(const s of STR_ORDER){ if(gridBar[s][sl]) return s; }
+  return null;
+}
+
+function scheduleNote(ctx,dest,midi,start,dur){
+  const freq=440*Math.pow(2,(midi-69)/12);
+
+  // Sine sub (deep fundamental punch)
+  const o1=ctx.createOscillator(),g1=ctx.createGain();
+  o1.type='sine'; o1.frequency.value=freq/2;
+  g1.gain.setValueAtTime(0,start);
+  g1.gain.linearRampToValueAtTime(1.0,start+0.012);
+  g1.gain.exponentialRampToValueAtTime(0.001,start+dur);
+
+  // Triangle one octave up (body/attack)
+  const o2=ctx.createOscillator(),g2=ctx.createGain();
+  o2.type='triangle'; o2.frequency.value=freq;
+  g2.gain.setValueAtTime(0,start);
+  g2.gain.linearRampToValueAtTime(0.6,start+0.008);
+  g2.gain.exponentialRampToValueAtTime(0.001,start+dur*0.7);
+
+  o1.connect(g1); g1.connect(dest);
+  o2.connect(g2); g2.connect(dest);
+  [o1,o2].forEach(o=>{o.start(start);o.stop(start+dur+0.05);});
+  activeOscs.push(o1,o2);
+}
+
+function makeDistortionCurve(amount){
+  const n=256,curve=new Float32Array(n);
+  for(let i=0;i<n;i++){const x=i*2/n-1;curve[i]=((Math.PI+amount)*x)/(Math.PI+amount*Math.abs(x));}
+  return curve;
+}
+
+function stopPlay(){
+  activeOscs.forEach(o=>{try{o.stop();}catch(e){}});
+  activeOscs=[];(activeOscs._tids||[]).forEach(clearTimeout);activeOscs._tids=[];
+  cancelAnimationFrame(progressRaf);
+  isPlaying=false; setLed('off');
+  document.querySelectorAll('.playing-now').forEach(c=>c.classList.remove('playing-now'));
+  document.querySelectorAll('.bar-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('beatTxt').className='beat-txt';
+  document.getElementById('beatTxt').textContent='● ● ● ●';
+  resetProgressBar();
+}
+function setLed(s){const l=document.getElementById('led');l.className='led'+(s==='on'?' on':' off');}
+
+// Reset scroll when grid is re-generated
+function resetScroll(){
+  const sa=document.getElementById('scrollArea');
+  if(sa) sa.scrollLeft=0;
+}
+
+// ═══════════════════════════════════════════
+// SAVE / EXPORT
+// ═══════════════════════════════════════════
+function openSaveModal(){
+  renderSavedList();
+  document.getElementById('saveModal').classList.remove('hidden');
+}
+
+function newSong(){
+  if(!bars.length){ doNewSong(); return; }
+  showConfirm('Zahodit aktuální píseň a začít novou?', doNewSong);
+}
+
+function doNewSong(){
+  stopPlay();
+  bars=[]; grid=[]; ghostGrid=[];
+  try{ document.getElementById('songTitle').value=''; document.getElementById('songArtist').value=''; }catch(e){}
+  renderStrip(); renderGrid(); buildTabText(); resetScroll();
+  toast('Nová píseň připravena — zadej akordy nebo použij Rychlé zadání.');
+}
+
+function showConfirm(msg, onYes){
+  // Remove any existing confirm toast
+  document.querySelectorAll('.confirm-toast').forEach(e=>e.remove());
+  const el=document.createElement('div');
+  el.className='confirm-toast';
+  el.style.cssText=`position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--panel);border:2px solid var(--accent);border-radius:10px;
+    padding:14px 20px;font-size:.85rem;color:var(--text);box-shadow:var(--shadow);
+    z-index:900;max-width:90vw;text-align:center;display:flex;flex-direction:column;gap:10px;
+    animation:fadeIn .2s ease;`;
+  el.innerHTML=`<div>${msg}</div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="confirm-yes" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:6px 18px;font-size:.82rem;font-weight:700;cursor:pointer">Ano, smazat</button>
+      <button class="confirm-no"  style="background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:6px 18px;font-size:.82rem;cursor:pointer">Zrušit</button>
+    </div>`;
+  el.querySelector('.confirm-yes').addEventListener('click',()=>{ el.remove(); onYes(); });
+  el.querySelector('.confirm-no').addEventListener('click',()=>el.remove());
+  document.body.appendChild(el);
+}
+
+function toast(msg, duration=3500){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText=`position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--panel);border:1.5px solid var(--accent);border-radius:8px;
+    padding:10px 20px;font-size:.82rem;color:var(--text);box-shadow:var(--shadow);
+    z-index:900;max-width:80vw;text-align:center;animation:fadeIn .2s ease;`;
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, duration);
+}
+function closeSaveModal(){ document.getElementById('saveModal').classList.add('hidden'); }
+function closeSaveModalOutside(e){ if(e.target===e.currentTarget) closeSaveModal(); }
+
+function getSongTitle(){ return document.getElementById('songTitle').value.trim()||'Bez názvu'; }
+function getSongArtist(){ return document.getElementById('songArtist').value.trim(); }
+
+// ── Assemble tab text ──
+function getTabText(){
+  const s=spb(), sw=resolution===1?4:resolution===2?3:2;
+  const lines={};
+  STR_ORDER.forEach(st=>{lines[st]='';});
+  bars.forEach((bar,b)=>{
+    const g=grid[b]||emptyGridBar();
+    STR_ORDER.forEach(st=>{lines[st]+='|';});
+    for(let sl=0;sl<s;sl++){
+      STR_ORDER.forEach(st=>{
+        const note=g[st][sl];
+        if(note){const f=String(note.fret);lines[st]+='-'+f+'-'.repeat(Math.max(0,sw-1-f.length));}
+        else lines[st]+='-'.repeat(sw);
+      });
+    }
+  });
+  STR_ORDER.forEach(st=>{lines[st]+='|';});
+  const chordRow=bars.map(bar=>('|'+bar.chords.filter(Boolean).join('/')).padEnd(s*sw+1)).join('')+'|';
+  return [chordRow,'G|'+lines.G.slice(1),'D|'+lines.D.slice(1),'A|'+lines.A.slice(1),'E|'+lines.E.slice(1)].join('\n');
+}
+
+// ── Share link for student ──
+const PLAYER_BASE_URL = 'https://pelunkaj-dot.github.io/fdc-plugin/bas_player.html';
+
+function sharePlayer(){
+  const title=getSongTitle(), artist=getSongArtist();
+  const project={
+    title, artist,
+    style:currentStyle,
+    bpm:parseInt(document.getElementById('tempoNum').value)||80,
+    resolution, bars, grid
+  };
+  try {
+    const json=JSON.stringify(project);
+    const encoded=btoa(encodeURIComponent(json));
+    const url=`${PLAYER_BASE_URL}?d=${encoded}`;
+
+    navigator.clipboard.writeText(url).then(()=>{
+      toast('🔗 Odkaz zkopírován! Vlož ho do e-mailu nebo zprávy žákovi.');
+    }).catch(()=>{
+      // Fallback: show URL in a prompt so user can copy manually
+      prompt('Zkopíruj tento odkaz a pošli žákovi:', url);
+    });
+  } catch(e) {
+    alert('Nepodařilo se vygenerovat odkaz: '+e.message);
+  }
+}
+function exportTxt(){
+  const title=getSongTitle(), artist=getSongArtist();
+  const bpm=document.getElementById('tempoNum').value;
+  const header=[
+    title+(artist?' — '+artist:''),
+    'Styl: '+currentStyle+' | BPM: '+bpm+' | Bass TAB',
+    '='.repeat(60),''
+  ].join('\n');
+
+  // Group by sections
+  let out=header;
+  let sec='';
+  bars.forEach((bar,i)=>{
+    if(bar.section) sec=bar.section;
+  });
+  out+='\n'+getTabText()+'\n\n';
+  out+='Vygenerováno: Bass Tab Studio';
+  download(title.replace(/\s+/g,'_')+'.txt', out, 'text/plain');
+}
+
+// ── HTML print export ──
+function exportHtml(){
+  const title=getSongTitle(), artist=getSongArtist();
+  const bpm=document.getElementById('tempoNum').value;
+  const tab=getTabText();
+  const html=`<!DOCTYPE html>
+<html lang="cs"><head><meta charset="UTF-8">
+<title>${title}</title>
+<style>
+  body{font-family:'Courier New',monospace;max-width:900px;margin:40px auto;padding:0 20px;color:#111;}
+  h1{font-size:1.4rem;margin-bottom:4px;font-family:sans-serif;}
+  .sub{color:#666;font-size:.85rem;margin-bottom:24px;font-family:sans-serif;}
+  .section-label{background:#f0e8d0;border-left:4px solid #b87000;padding:4px 12px;margin:18px 0 4px;font-weight:bold;font-family:sans-serif;font-size:.85rem;}
+  pre{background:#f8f6f0;border:1px solid #ddd;padding:16px;line-height:1.9;font-size:.88rem;overflow-x:auto;border-radius:6px;}
+  @media print{pre{page-break-inside:avoid;}}
+</style>
+</head><body>
+<h1>🎸 ${title}</h1>
+<div class="sub">${artist?artist+' · ':''} Styl: ${currentStyle} · BPM: ${bpm} · Bass TAB</div>
+<pre>${tab}</pre>
+<p style="margin-top:24px;font-size:.75rem;color:#999;font-family:sans-serif;">Vygenerováno: Bass Tab Studio</p>
+</body></html>`;
+  download(title.replace(/\s+/g,'_')+'.html', html, 'text/html');
+}
+
+// ── JSON project export ──
+function exportJson(){
+  const title=getSongTitle(), artist=getSongArtist();
+  const project={
+    title, artist, style:currentStyle,
+    bpm:parseInt(document.getElementById('tempoNum').value)||80,
+    resolution, bars, grid, savedAt:new Date().toISOString()
+  };
+  download(title.replace(/\s+/g,'_')+'.json', JSON.stringify(project,null,2), 'application/json');
+}
+
+// ── Save to localStorage ──
+function saveToLocalStorage(){
+  const title=getSongTitle();
+  try{
+    const saves=JSON.parse(localStorage.getItem('bas_saves')||'[]');
+    const project={
+      title, artist:getSongArtist(),
+      style:currentStyle, bpm:parseInt(document.getElementById('tempoNum').value)||80,
+      resolution, bars, grid, savedAt:new Date().toISOString()
+    };
+    // Replace if same title exists
+    const idx=saves.findIndex(s=>s.title===title);
+    if(idx>=0) saves[idx]=project; else saves.unshift(project);
+    // Keep max 20
+    if(saves.length>20) saves.length=20;
+    localStorage.setItem('bas_saves',JSON.stringify(saves));
+    renderSavedList();
+    // Flash feedback on button
+    const btn=document.querySelector('.modal-save');
+    const orig=btn.textContent; btn.textContent='✓ Uloženo!';
+    setTimeout(()=>btn.textContent=orig,2000);
+  }catch(e){ alert('Nepodařilo se uložit: '+e.message); }
+}
+
+// ── Load from localStorage ──
+function loadSave(idx){
+  try{
+    const saves=JSON.parse(localStorage.getItem('bas_saves')||'[]');
+    const p=saves[idx];
+    if(!p) return;
+    bars=p.bars; grid=p.grid; ghostGrid=JSON.parse(JSON.stringify(p.grid));
+    currentStyle=p.style||'root'; resolution=p.resolution||1;
+    document.getElementById('songTitle').value=p.title||'';
+    document.getElementById('songArtist').value=p.artist||'';
+    document.querySelector(`[data-style="${currentStyle}"]`)?.click();
+    document.querySelector(`.res-btn[data-res="${resolution}"]`)?.click();
+    renderStrip(); renderGrid(); buildTabText(); resetScroll();
+    closeSaveModal();
+    toast('✅ Načteno: '+(p.title||'Bez názvu'));
+  }catch(e){ alert('Nepodařilo se načíst: '+e.message); }
+}
+
+function deleteSave(idx){
+  try{
+    const saves=JSON.parse(localStorage.getItem('bas_saves')||'[]');
+    saves.splice(idx,1);
+    localStorage.setItem('bas_saves',JSON.stringify(saves));
+    renderSavedList();
+  }catch(e){}
+}
+
+function renderSavedList(){
+  const el=document.getElementById('savedList');
+  try{
+    const saves=JSON.parse(localStorage.getItem('bas_saves')||'[]');
+    if(!saves.length){
+      el.innerHTML='<div class="modal-no-saves">Zatím nic uloženého</div>';
+      return;
+    }
+    el.innerHTML=saves.map((s,i)=>`
+      <div class="saved-item">
+        <div class="saved-item-name">${s.title||'Bez názvu'}${s.artist?' — '+s.artist:''}</div>
+        <div class="saved-item-date">${s.savedAt?s.savedAt.slice(0,10):''}</div>
+        <button class="saved-item-load" onclick="loadSave(${i})">Načíst</button>
+        <button class="saved-item-del" onclick="deleteSave(${i})" title="Smazat">✕</button>
+      </div>`).join('');
+  }catch(e){ el.innerHTML='<div class="modal-no-saves">Chyba čtení</div>'; }
+}
+
+// ── File download helper ──
+function download(filename, content, mime){
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── Load JSON file ──
+function loadJsonFile(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const p=JSON.parse(ev.target.result);
+      bars=p.bars; grid=p.grid; ghostGrid=JSON.parse(JSON.stringify(p.grid));
+      currentStyle=p.style||'root'; resolution=p.resolution||1;
+      if(p.title) document.getElementById('songTitle').value=p.title;
+      if(p.artist) document.getElementById('songArtist').value=p.artist;
+      renderStrip(); renderGrid(); buildTabText(); resetScroll();
+    }catch(err){ alert('Nepodařilo se načíst soubor: '+err.message); }
+  };
+  reader.readAsText(file);
+}
+
+
+// ═══════════════════════════════════════════
+// UNDO
+// ═══════════════════════════════════════════
+function pushUndo(){undoStack.push(JSON.parse(JSON.stringify({bars,grid})));if(undoStack.length>40)undoStack.shift();}
+function undoLast(){
+  if(!undoStack.length) return;
+  const state=undoStack.pop();
+  bars=state.bars; grid=state.grid; ghostGrid=JSON.parse(JSON.stringify(state.grid));
+  renderStrip(); renderGrid(); buildTabText();
+}
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();undoLast();}});
+
+// ═══════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════
+function setStyle(s,el){currentStyle=s;document.querySelectorAll('.style-card').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+function setDur(d,btn){selectedDur=d;document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function setStr(s,btn){selectedStr=s;document.querySelectorAll('.str-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function clearGrid(){pushUndo();grid=Array.from({length:bars.length},()=>emptyGridBar());renderGrid();buildTabText();}
+function toggleGhost(){showGhost=!showGhost;document.getElementById('ghostBtn').classList.toggle('on',showGhost);renderGrid();}
+function syncTempo(v){v=Math.max(40,Math.min(200,parseInt(v)||80));document.getElementById('tempoSlider').value=v;document.getElementById('tempoNum').value=v;}
+function setResolution(res,btn){
+  resolution=res;document.querySelectorAll('.res-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  if(bars.length){grid=grid.map(()=>emptyGridBar());ghostGrid=ghostGrid.map(()=>emptyGridBar());renderGrid();buildTabText();}
+}
+function tapTempo(){
+  const now=Date.now();tapArr.push(now);
+  if(tapArr.length>1&&now-tapArr[tapArr.length-2]>3000)tapArr=[now];
+  if(tapArr.length>6)tapArr.shift();
+  if(tapArr.length>=2){const d=tapArr.slice(1).map((t,i)=>t-tapArr[i]);syncTempo(Math.round(60000/(d.reduce((a,b)=>a+b)/d.length)));}
+}
+function copyTab(){
+  const txt=document.getElementById('tabText').textContent;
+  navigator.clipboard.writeText(txt).catch(()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);});
+  const btn=event.currentTarget||event.target;const orig=btn.textContent;btn.textContent='✓ Zkopírováno';setTimeout(()=>btn.textContent=orig,2000);
+}
+function setTheme(t,btn){
+  document.documentElement.dataset.theme=t;
+  document.querySelectorAll('.th-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  try{localStorage.setItem('bas_theme',t);}catch(e){}
+}
+
+// ═══════════════════════════════════════════
+// QUICK CHORD INPUT on Enter
+// ═══════════════════════════════════════════
+document.getElementById('csPaste').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();pasteChords();}
+});
+
+// ═══════════════════════════════════════════
+// INIT — default song
+// ═══════════════════════════════════════════
+function initDefault(){
+  // Hlídač krav: 2× Sloka + Refrén
+  const slokaChords=['D','G','D','G','D','A','G','D'];
+  const refrenChords=['G','D','A','D'];
+  bars=[];
+  slokaChords.forEach((ch,i)=>bars.push({chords:[ch],section:i===0?'Sloka':null}));
+  refrenChords.forEach((ch,i)=>bars.push({chords:[ch],section:i===0?'Refrén':null}));
+  grid=bars.map(()=>emptyGridBar());
+  ghostGrid=bars.map(()=>emptyGridBar());
+  renderStrip();
+  generate();
+}
+
+initDefault();
+
+try{const s=localStorage.getItem('bas_theme');if(s!==null){const b=document.querySelector(`.th-btn[data-theme="${s}"]`);if(b)setTheme(s,b);}}catch(e){}
+</script>
+
+<!-- SAVE / EXPORT MODAL -->
+<div class="modal-overlay hidden" id="saveModal" onclick="closeSaveModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title">💾 Uložit / Načíst projekt</div>
+    <div class="modal-row">
+      <div class="modal-label">Název písně</div>
+      <input class="modal-input" type="text" id="songTitle" placeholder="Hlídač krav">
+    </div>
+    <div class="modal-row">
+      <div class="modal-label">Interpret</div>
+      <input class="modal-input" type="text" id="songArtist" placeholder="(nepovinné)">
+    </div>
+
+    <div class="modal-section-title">Export / Stáhnout</div>
+    <div class="export-grid">
+      <button class="export-btn" onclick="sharePlayer()" style="border-color:var(--green);grid-column:1/-1">
+        <div class="eb-icon">🔗</div>
+        <div class="eb-name" style="color:var(--green)">Sdílet žákovi — zkopírovat odkaz</div>
+        <div class="eb-desc">Žák klikne na odkaz a rovnou přehraje na fajndoucko.cz</div>
+      </button>
+      <button class="export-btn" onclick="exportTxt()">
+        <div class="eb-icon">📄</div>
+        <div class="eb-name">Text TAB (.txt)</div>
+        <div class="eb-desc">Klasický zápis basové kytary</div>
+      </button>
+      <button class="export-btn" onclick="exportHtml()">
+        <div class="eb-icon">🖨️</div>
+        <div class="eb-name">Tisknutelný list (.html)</div>
+        <div class="eb-desc">Formátovaný pro tisk / PDF</div>
+      </button>
+      <button class="export-btn" onclick="exportJson()">
+        <div class="eb-icon">🗂️</div>
+        <div class="eb-name">Projekt (.json)</div>
+        <div class="eb-desc">Znovu načíst a editovat</div>
+      </button>
+      <label class="export-btn" style="cursor:pointer">
+        <div class="eb-icon">📂</div>
+        <div class="eb-name">Načíst projekt (.json)</div>
+        <div class="eb-desc">Otevřít uložený soubor</div>
+        <input type="file" accept=".json" style="display:none" onchange="loadJsonFile(event)">
+      </label>
+    </div>
+
+    <div class="modal-section-title">Uložené projekty (v prohlížeči)</div>
+    <div class="saved-list" id="savedList"></div>
+
+    <div class="modal-footer">
+      <button class="modal-close" onclick="closeSaveModal()">Zavřít</button>
+      <button class="modal-save" onclick="saveToLocalStorage()">📌 Uložit v prohlížeči</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
