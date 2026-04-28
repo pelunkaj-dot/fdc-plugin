@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bass Tab Přehrávač</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <style>
 :root {
   --bg:#f2f0ea; --bg2:#e8e5de; --bg3:#dedad2; --panel:#faf9f6;
@@ -192,9 +193,51 @@ const STR_ORDER=['G','D','A','E'];
 const BASS_STRINGS={G:43,D:38,A:33,E:28};
 const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 
-let song=null, audioCtx=null, activeOscs=[], isPlaying=false;
+let song=null, isPlaying=false;
 let playStartTime=0, playTotalSec=0, progressRaf=null, isSeeking=false;
-let tapArr=[];
+let activeOscs=[];
+
+// ── TONE.JS SAMPLER ──
+let sampler=null, samplerReady=false, samplerLoading=false, useFallback=false;
+let _fallbackCtx=null;
+function getFallbackCtx(){ if(!_fallbackCtx) _fallbackCtx=new(window.AudioContext||window.webkitAudioContext)(); return _fallbackCtx; }
+function fallbackNote(midi,toneTime,dur){
+  try{
+    const ctx=getFallbackCtx(); if(ctx.state==='suspended') ctx.resume();
+    const now=ctx.currentTime; const delay=Math.max(0,toneTime-Tone.now());
+    const start=now+delay;
+    const freq=440*Math.pow(2,(midi-69)/12);
+    const o1=ctx.createOscillator(),g1=ctx.createGain();
+    const o2=ctx.createOscillator(),g2=ctx.createGain();
+    o1.type='triangle'; o1.frequency.value=freq;
+    o2.type='sine'; o2.frequency.value=freq/2;
+    const vol=parseInt(document.getElementById('volSlider').value||80)/100;
+    g1.gain.setValueAtTime(0,start); g1.gain.linearRampToValueAtTime(vol,start+0.01); g1.gain.exponentialRampToValueAtTime(0.001,start+dur);
+    g2.gain.setValueAtTime(0,start); g2.gain.linearRampToValueAtTime(vol*0.7,start+0.01); g2.gain.exponentialRampToValueAtTime(0.001,start+dur);
+    o1.connect(g1);g1.connect(ctx.destination); o2.connect(g2);g2.connect(ctx.destination);
+    [o1,o2].forEach(o=>{o.start(start);o.stop(start+dur+0.05);});
+  }catch(e){}
+}
+const SAMPLE_BASE='https://pelunkaj-dot.github.io/fdc-plugin/samples/bass/';
+const SAMPLE_URLS={'E1':'E1.mp3','A1':'A1.mp3','D2':'D2.mp3','G2':'G2.mp3','C3':'C3.mp3'};
+
+function initSampler(onReady){
+  if(samplerReady){onReady();return;}
+  if(samplerLoading){const p=setInterval(()=>{if(samplerReady){clearInterval(p);onReady();}},150);return;}
+  samplerLoading=true;
+  const btn=document.getElementById('playBtn');
+  if(btn) btn.textContent='⏳';
+  sampler=new Tone.Sampler({
+    urls:SAMPLE_URLS, baseUrl:SAMPLE_BASE,
+    onload:()=>{ samplerReady=true; samplerLoading=false; if(btn){btn.textContent='▶';btn.classList.remove('playing');} onReady(); },
+    onerror:()=>{ console.error('Sampler load failed'); samplerLoading=false; samplerReady=false; useFallback=true; if(btn){btn.textContent='▶';} onReady(); }
+  }).toDestination();
+}
+
+function midiToToneName(midi){
+  const n=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  return n[midi%12]+(Math.floor(midi/12)-1);
+}
 
 function midiToName(m){ return NOTE_NAMES[m%12]+(Math.floor(m/12)-1); }
 
@@ -342,36 +385,34 @@ function render(data){
 // ═══════════════════════════════════════
 // PLAYBACK
 // ═══════════════════════════════════════
-function getCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
-
 function togglePlay(){
-  if(isPlaying) stopPlay(); else playFrom(0);
+  if(isPlaying) stopPlay(); else initSampler(()=>_doPlay(0));
 }
 
 function playFrom(startPct=0){
   stopPlay();
+  initSampler(()=>_doPlay(startPct));
+}
+
+function _doPlay(startPct){
   if(!song) return;
   const {bpm=80,resolution=1,bars,grid}=song;
-  const ctx=getCtx(); if(ctx.state==='suspended') ctx.resume();
-  const vol=parseInt(document.getElementById('volSlider').value)/100;
   const spb=4*resolution;
   const slotSec=(60/bpm)/resolution;
   const totalSec=bars.length*spb*slotSec;
   playTotalSec=totalSec;
   const skipSec=startPct*totalSec;
   const skipSlots=Math.floor(skipSec/slotSec);
-
-  const comp=ctx.createDynamicsCompressor();
-  comp.threshold.value=-1; comp.knee.value=0; comp.ratio.value=20;
-  comp.attack.value=0.001; comp.release.value=0.05; comp.connect(ctx.destination);
-  const master=ctx.createGain(); master.gain.value=22*vol; master.connect(comp);
-
-  isPlaying=true; playStartTime=ctx.currentTime+0.05-skipSec;
+  const vol=parseInt(document.getElementById('volSlider').value)/100;
+  Tone.getDestination().volume.value=Tone.gainToDb(Math.max(0.01,vol*1.8));
+  if(Tone.context.state==='suspended') Tone.context.resume();
+  isPlaying=true;
+  playStartTime=Tone.now()-skipSec;
   setLed('on');
   document.getElementById('playBtn').textContent='■';
   document.getElementById('playBtn').classList.add('playing');
   document.getElementById('beatLbl').className='beat-label playing';
-
+  const now=Tone.now();
   const tids=[];
   let lastBar=-1;
   bars.forEach((bar,b)=>{
@@ -379,35 +420,30 @@ function playFrom(startPct=0){
     for(let sl=0;sl<spb;sl++){
       const gs=b*spb+sl;
       if(gs<skipSlots) continue;
-      const ts=ctx.currentTime+0.05+(gs-skipSlots)*slotSec;
+      const toneTime=now+(gs-skipSlots)*slotSec;
+      const msDelay=Math.max(0,(toneTime-Tone.now())*1000);
       STR_ORDER.forEach(str=>{
         const note=g[str]&&g[str][sl];
-        if(note) scheduleNote(ctx,master,BASS_STRINGS[str]+note.fret,ts,note.dur*(60/bpm)*0.82);
+        if(note){
+          const dur=Math.max(0.05,note.dur*(60/bpm)*0.82);
+          const _midi=BASS_STRINGS[str]+note.fret; if(useFallback||!samplerReady){ fallbackNote(_midi,toneTime,dur); } else { try{ sampler.triggerAttackRelease(midiToToneName(_midi),dur,toneTime); }catch(e){ fallbackNote(_midi,toneTime,dur); } }
+        }
       });
       if(sl===0){
-        const delay=Math.max(0,(ts-ctx.currentTime)*1000);
         tids.push(setTimeout(()=>{
-          if(b!==lastBar){
-            lastBar=b;
-            scrollToBar(b,spb,resolution);
-            // Highlight chord strip bar
-            document.querySelectorAll('.bar-card').forEach((c,i)=>c.classList.toggle('active',i===b));
-          }
-        },delay));
+          if(b!==lastBar){ lastBar=b; scrollToBar(b,spb,resolution); document.querySelectorAll('.bar-card').forEach((c,i)=>c.classList.toggle('active',i===b)); }
+        },msDelay));
       }
-      // Cell highlight
       const str=firstStr(g,sl);
       if(str){
-        const delay=Math.max(0,(ts-ctx.currentTime)*1000);
         tids.push(setTimeout(()=>{
           const c=document.querySelector(`.beat-cell[data-bar="${b}"][data-str="${str}"][data-slot="${sl}"]`);
           if(c){c.classList.add('playing-now');setTimeout(()=>c.classList.remove('playing-now'),slotSec*1000*.85);}
           document.getElementById('beatLbl').textContent='Beat '+(Math.floor(sl/resolution)+1)+'/4';
-        },delay));
+        },msDelay));
       }
     }
   });
-
   const remaining=(bars.length*spb-skipSlots)*slotSec;
   tids.push(setTimeout(()=>stopPlay(),(remaining+0.3)*1000));
   activeOscs._tids=tids;
@@ -420,7 +456,7 @@ function firstStr(gridBar,sl){
 }
 
 function stopPlay(){
-  activeOscs.forEach(o=>{try{o.stop();}catch(e){}});
+  if(sampler) try{ sampler.releaseAll(); }catch(e){}
   activeOscs=[];(activeOscs._tids||[]).forEach(clearTimeout);activeOscs._tids=[];
   cancelAnimationFrame(progressRaf);
   isPlaying=false; setLed('off'); isSeeking=false;
@@ -441,8 +477,7 @@ function setLed(s){const l=document.getElementById('led');if(l)l.className='led'
 function updateProgress(){
   if(!isPlaying){cancelAnimationFrame(progressRaf);return;}
   if(isSeeking){progressRaf=requestAnimationFrame(updateProgress);return;}
-  const ctx=getCtx();
-  const elapsed=Math.max(0,ctx.currentTime-playStartTime);
+  const elapsed=Math.max(0,Tone.now()-playStartTime);
   const pct=Math.min(1,elapsed/playTotalSec);
   const r=document.getElementById('progressRange');
   if(r) r.value=Math.round(pct*1000);
@@ -460,19 +495,6 @@ function onProgressSeek(val){
   const pct=val/1000;
   if(isPlaying){ stopPlay(); setTimeout(()=>playFrom(pct),30); }
   else if(song){ scrollToBar(Math.floor(pct*song.bars.length),4*(song.resolution||1),song.resolution||1); }
-}
-
-function scheduleNote(ctx,dest,midi,start,dur){
-  const freq=440*Math.pow(2,(midi-69)/12);
-  const o1=ctx.createOscillator(),g1=ctx.createGain();
-  const o2=ctx.createOscillator(),g2=ctx.createGain();
-  o1.type='sine'; o1.frequency.value=freq/2;
-  o2.type='triangle'; o2.frequency.value=freq;
-  g1.gain.setValueAtTime(0,start); g1.gain.linearRampToValueAtTime(1.0,start+0.012); g1.gain.exponentialRampToValueAtTime(0.001,start+dur);
-  g2.gain.setValueAtTime(0,start); g2.gain.linearRampToValueAtTime(0.6,start+0.008); g2.gain.exponentialRampToValueAtTime(0.001,start+dur*0.7);
-  o1.connect(g1);g1.connect(dest); o2.connect(g2);g2.connect(dest);
-  [o1,o2].forEach(o=>{o.start(start);o.stop(start+dur+0.05);});
-  activeOscs.push(o1,o2);
 }
 
 function scrollToBar(b,spb,resolution){
@@ -502,6 +524,7 @@ function copyTab(){
 const data=loadSongData();
 if(data){
   render(data);
+  setTimeout(()=>initSampler(()=>{}),800);
 } else {
   document.getElementById('app').innerHTML=`
     <div class="error-box">
