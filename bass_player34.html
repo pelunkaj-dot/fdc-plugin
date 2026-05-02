@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Přehrávač basových tabů 4/4 · Peluš – FajnDoučko</title>
+<title>Přehrávač basových tabů 3/4 · Peluš – FajnDoučko</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 <style>
@@ -20,10 +20,10 @@ const SAMPLE_URLS={'E1':'E1.mp3','A1':'A1.mp3','D2':'D2.mp3','G2':'G2.mp3','C3':
 let project=null,sampler=null,samplerReady=false,samplerLoading=false,useFallback=false,scheduled=[],isPlaying=false,raf=null,startTime=0,totalSec=0;
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function midiToToneName(m){return NOTE_NAMES[m%12]+(Math.floor(m/12)-1)}
-function spb(){return 4*(project.resolution||1)}
+function spb(){return 3*(project.resolution||1)}
 function getData(){const p=new URLSearchParams(location.search).get('d');if(!p)throw new Error('Chybí data v odkazu.');return JSON.parse(decodeURIComponent(escape(atob(p))))}
 function buildTabText(){if(!project||!project.bars||!project.grid)return'— žádná data —';const res=project.resolution||1,s=spb(),sw=res===1?4:res===2?3:2,lines={};STR_ORDER.forEach(st=>lines[st]='');project.bars.forEach((bar,b)=>{const g=project.grid[b]||{};STR_ORDER.forEach(st=>lines[st]+='|');for(let sl=0;sl<s;sl++){STR_ORDER.forEach(st=>{const row=g[st]||[],note=row[sl];if(note){const f=String(note.fret);lines[st]+='-'+f+'-'.repeat(Math.max(0,sw-1-f.length))}else lines[st]+='-'.repeat(sw)})}});STR_ORDER.forEach(st=>lines[st]+='|');const chordRow=project.bars.map(bar=>('|'+(bar.chords||[]).filter(Boolean).join('/')).padEnd(s*sw+1)).join('')+'|';return [chordRow,'G'+lines.G,'D'+lines.D,'A'+lines.A,'E'+lines.E].join('\n')}
-function render(){document.getElementById('app').innerHTML=`<div class="top"><div class="title"><h1>🎸 ${esc(project.title||'Basový tab 4/4')}</h1><div class="sub">${project.artist?esc(project.artist)+' · ':''}Přehrávač basového tabu 4/4</div></div><button class="btn play" onclick="play()">▶ Přehrát</button><button class="btn stop" onclick="stop()">■ Stop</button><button class="btn" onclick="window.print()">🖨️ Tisk / PDF</button></div><div class="meta"><span>Takt: 4/4</span><span>Tempo: ${esc(project.bpm||80)} BPM</span><span>Styl: ${esc(project.style||'')}</span><span>Rozlišení: ${esc(project.resolution||1)}×</span><span>Počet taktů: ${(project.bars||[]).length}</span></div><div class="panel"><div class="progress"><div class="fill" id="fill"></div></div><div class="now" id="now">Připraveno</div><pre class="tab">${esc(buildTabText())}</pre></div><div class="brand">Vytvořeno v Bass Tab Studiu 4/4 · Peluš – FajnDoučko · fajndoucko.cz</div>`}
+function render(){document.getElementById('app').innerHTML=`<div class="top"><div class="title"><h1>🎸 ${esc(project.title||'Basový tab 3/4')}</h1><div class="sub">${project.artist?esc(project.artist)+' · ':''}Přehrávač basového tabu 3/4</div></div><button class="btn play" onclick="play()">▶ Přehrát</button><button class="btn stop" onclick="stop()">■ Stop</button><button class="btn" onclick="window.print()">🖨️ Tisk / PDF</button></div><div class="meta"><span>Takt: 3/4</span><span>Tempo: ${esc(project.bpm||80)} BPM</span><span>Styl: ${esc(project.style||'')}</span><span>Rozlišení: ${esc(project.resolution||1)}×</span><span>Počet taktů: ${(project.bars||[]).length}</span></div><div class="panel"><div class="progress"><div class="fill" id="fill"></div></div><div class="now" id="now">Připraveno</div><pre class="tab">${esc(buildTabText())}</pre></div><div class="brand">Vytvořeno v Bass Tab Studiu 3/4 · Peluš – FajnDoučko · fajndoucko.cz</div>`}
 function initSampler(done){if(samplerReady||useFallback){done();return}if(samplerLoading){const i=setInterval(()=>{if(samplerReady||useFallback){clearInterval(i);done()}},120);return}samplerLoading=true;sampler=new Tone.Sampler({urls:SAMPLE_URLS,baseUrl:SAMPLE_BASE,onload:()=>{samplerReady=true;samplerLoading=false;done()},onerror:()=>{useFallback=true;samplerLoading=false;done()}}).toDestination()}
 function fallback(midi,t,dur){const ctx=Tone.context.rawContext,delay=Math.max(0,t-Tone.now()),start=ctx.currentTime+delay,f=440*Math.pow(2,(midi-69)/12),o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.001,start);g.gain.linearRampToValueAtTime(.35,start+.01);g.gain.exponentialRampToValueAtTime(.001,start+dur);o.connect(g);g.connect(ctx.destination);o.start(start);o.stop(start+dur+.05)}
 function play(){stop();if(!project)return;initSampler(doPlay)}
@@ -60,7 +60,7 @@ function doPlay(){
 }
 function tick(){if(!isPlaying)return;const pct=Math.min(1,(Tone.now()-startTime)/totalSec);const f=document.getElementById('fill');if(f)f.style.width=(pct*100)+'%';raf=requestAnimationFrame(tick)}
 function stop(){if(sampler)try{sampler.releaseAll()}catch(e){}scheduled.forEach(clearTimeout);scheduled=[];cancelAnimationFrame(raf);isPlaying=false;const f=document.getElementById('fill');if(f)f.style.width='0%';const n=document.getElementById('now');if(n)n.textContent='Připraveno'}
-try{project=getData();if(project.meter&&project.meter!=="4/4")throw new Error('Tento odkaz není pro 4/4 přehrávač.');render();setTimeout(()=>initSampler(()=>{}),800)}catch(e){document.getElementById('app').innerHTML='<div class="empty"><h2>Tab se nepodařilo načíst</h2><p>'+esc(e.message)+'</p></div>'}
+try{project=getData();if(project.meter&&project.meter!=='3/4')throw new Error('Tento odkaz není pro 3/4 přehrávač.');render();setTimeout(()=>initSampler(()=>{}),800)}catch(e){document.getElementById('app').innerHTML='<div class="empty"><h2>Tab se nepodařilo načíst</h2><p>'+esc(e.message)+'</p></div>'}
 </script>
 </body>
 </html>
