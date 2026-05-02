@@ -197,7 +197,13 @@ function closeSaveModalOutside(e){if(e.target===e.currentTarget)closeSaveModal()
 function getSongTitle(){return document.getElementById('songTitle').value.trim()||'Bez názvu'}
 function getSongArtist(){return document.getElementById('songArtist').value.trim()}
 function getProject(){return{title:getSongTitle(),artist:getSongArtist(),meter:'4/4',style:currentStyle,bpm:parseInt(document.getElementById('tempoNum').value)||80,resolution,bars,grid,savedAt:new Date().toISOString(),brand:'Peluš – FajnDoučko',site:'fajndoucko.cz'}}
-function makePlayerUrl(){const json=JSON.stringify(getProject()),encoded=btoa(unescape(encodeURIComponent(json)));return PLAYER_BASE_URL+'?d='+encodeURIComponent(encoded)}
+function makePlayerUrl(){
+  const json=JSON.stringify(getProject());
+  const encoded=btoa(unescape(encodeURIComponent(json)));
+  const playerUrl=new URL(PLAYER_BASE_URL, window.location.href);
+  playerUrl.searchParams.set('d', encoded);
+  return playerUrl.href;
+}
 function openPlayerNow(){try{const url=makePlayerUrl();window.open(url,'_blank')}catch(e){alert('Nepodařilo se otevřít přehrávač: '+e.message)}}
 function sharePlayer(){try{const url=makePlayerUrl();navigator.clipboard.writeText(url).then(()=>toast('🔗 Odkaz zkopírován.')).catch(()=>prompt('Zkopíruj tento odkaz a pošli žákovi:',url))}catch(e){alert('Nepodařilo se vygenerovat odkaz: '+e.message)}}
 function exportTxt(){const title=getSongTitle(),artist=getSongArtist(),bpm=document.getElementById('tempoNum').value,out=[title+(artist?' — '+artist:''),'Styl: '+currentStyle+' | BPM: '+bpm+' | Bass TAB 4/4','='.repeat(60),'',getTabText(),'','',BRAND_LINE].join('\n');download(safeFileName(title)+'.txt',out,'text/plain;charset=utf-8')}
