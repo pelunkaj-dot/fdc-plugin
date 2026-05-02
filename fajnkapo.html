@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FajnKapo Mobile · Peluš – FajnDoučko</title>
+<style>
+:root{
+  --bg:#f3f7ff;--card:#fff;--ink:#101828;--muted:#667085;--line:#d7e1f3;
+  --blue:#1554c0;--blue2:#0d3d93;--soft:#eef5ff;--green:#128043;--orange:#a15c00;--red:#b42318;
+  --shadow:0 12px 32px rgba(15,23,42,.13);--mono:"Courier New",ui-monospace,monospace;
+  --sans:Arial,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:var(--sans);background:linear-gradient(180deg,#eef5ff,#fff);color:var(--ink)}
+body:before{
+  content:"♯  ♭  capo  G  D  A  E  C  Em  Am";
+  position:fixed;inset:0;z-index:-1;color:#1554c0;opacity:.04;font-size:48px;line-height:1.8;letter-spacing:18px;transform:rotate(-8deg);white-space:pre-wrap
+}
+.app{max-width:540px;margin:0 auto;padding:10px 10px 28px}
+.header{
+  position:sticky;top:0;z-index:10;background:rgba(243,247,255,.92);backdrop-filter:blur(10px);
+  padding:10px 0 8px;border-bottom:1px solid rgba(215,225,243,.75)
+}
+h1{margin:0;font-size:25px;line-height:1.05}
+.subtitle{font-size:13px;color:var(--muted);margin-top:3px}
+.card{background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:14px;margin-top:10px}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mode button{border:1px solid #cfd8ee;background:#fff;border-radius:15px;padding:12px 8px;font-weight:900;font-size:15px;color:#344054}
+.mode button.active{background:var(--blue);border-color:var(--blue);color:white}
+.panel{display:none}.panel.active{display:block}
+label{display:block;font-size:13px;color:#344054;font-weight:900;margin:10px 0 6px}
+textarea{
+  width:100%;min-height:86px;border:2px solid #cbd8f2;border-radius:18px;padding:13px 14px;
+  font-family:var(--mono);font-size:19px;line-height:1.35;outline:none;background:#fff;color:#111827
+}
+textarea:focus{border-color:#8eadff;box-shadow:0 0 0 4px #edf3ff}
+.find{
+  width:100%;border:none;background:var(--blue);color:white;border-radius:18px;padding:15px 12px;
+  font-size:21px;font-weight:950;margin-top:10px;box-shadow:0 10px 22px rgba(21,84,192,.22)
+}
+.find:active{transform:translateY(1px)}
+.quick{display:flex;gap:7px;overflow-x:auto;padding:8px 0 2px}
+.quick button{white-space:nowrap;border:1px solid #cfd8ee;background:#fff;border-radius:999px;padding:8px 10px;color:var(--blue);font-weight:900}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select{flex:1;border:2px solid #cbd8f2;background:#fff;border-radius:16px;padding:13px;font-weight:900;font-size:16px;color:#111827}
+.numgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}
+.numgrid button,.accbtn{
+  border:1px solid #cfd8ee;background:#fff;border-radius:15px;padding:12px 4px;font-weight:950;font-size:17px;color:#344054
+}
+.numgrid button.active,.accbtn.active{background:var(--blue);border-color:var(--blue);color:white}
+.accrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.result{border-radius:22px;border:1px solid #c9d8ff;background:#fff;padding:14px;margin-top:10px;box-shadow:0 10px 26px rgba(15,23,42,.08)}
+.result.best{border-color:#9bd8af;background:#f4fff8}
+.result.ok{border-color:#c9d8ff;background:#f8fbff}
+.result.warn{border-color:#f4cf9b;background:#fffaf2}
+.topline{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.capo{font-size:31px;font-weight:1000;letter-spacing:-.02em;color:#0f172a}
+.badge{font-size:13px;font-weight:950;border-radius:999px;padding:7px 10px;background:#e7f8ed;color:var(--green);white-space:nowrap}
+.ok .badge{background:#eef4ff;color:var(--blue)}.warn .badge{background:#fff1d8;color:var(--orange)}
+.bigline{font-family:var(--mono);font-size:23px;line-height:1.35;margin-top:10px;white-space:pre-wrap;word-break:break-word}
+.bigline b{color:var(--blue)}
+.smallline{font-family:var(--mono);font-size:16px;line-height:1.35;margin-top:6px;color:#475467;white-space:pre-wrap;word-break:break-word}
+.note{font-size:13px;color:#667085;margin-top:7px;line-height:1.35}
+.moretitle{font-weight:950;color:#344054;margin:14px 0 4px;font-size:14px}
+.compact{padding:10px 12px;margin-top:7px;border-radius:16px}
+.compact .capo{font-size:20px}
+.compact .bigline{font-size:16px;margin-top:5px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.tool{border:1px solid #cfd8ee;background:#fff;border-radius:15px;padding:11px;font-weight:900;color:#344054}
+.footer{text-align:center;font-size:12px;color:#667085;margin-top:14px}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#fff;border:1px solid #c8d6ff;border-radius:13px;padding:10px 14px;box-shadow:var(--shadow);font-weight:900;z-index:50;max-width:92vw;text-align:center}
+@media(min-width:700px){
+  .app{padding-top:18px}.card{padding:18px}.capo{font-size:34px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>🎸 FajnKapo</h1>
+    <div class="subtitle">Kapesní kapo kompas pro doprovod v původní tónině</div>
+  </div>
+
+  <div class="card">
+    <div class="mode">
+      <button id="mChords" class="active" onclick="showMode('chords')">Akordy</button>
+      <button id="mKey" onclick="showMode('key')">Předznamenání</button>
+    </div>
+
+    <div id="pChords" class="panel active">
+      <label>Znějící akordy</label>
+      <textarea id="chordsInput" spellcheck="false" inputmode="text" placeholder="F#m D A E">F#m D A E</textarea>
+      <div class="quick">
+        <button onclick="loadEx('F#m D A E')">F#m D A E</button>
+        <button onclick="loadEx('Fis D A E')">Fis D A E</button>
+        <button onclick="loadEx('Ebm Abm Bb7 Gb')">Ebm Abm Bb7 Gb</button>
+        <button onclick="loadEx('As Es Fm Des')">As Es Fm Des</button>
+      </div>
+      <button class="find" onclick="findByChords()">Najít kapo</button>
+    </div>
+
+    <div id="pKey" class="panel">
+      <label>Předznamenání</label>
+      <div class="accrow">
+        <button class="accbtn active" id="accSharp" onclick="setAcc('sharp')">♯ křížky</button>
+        <button class="accbtn" id="accFlat" onclick="setAcc('flat')">♭ béčka</button>
+      </div>
+      <div class="numgrid" id="numGrid"></div>
+      <label>Charakter tóniny</label>
+      <select id="modeSelect">
+        <option value="both">ukázat dur i moll</option>
+        <option value="major">spíš dur</option>
+        <option value="minor">spíš moll</option>
+      </select>
+      <button class="find" onclick="findByKey()">Najít kapo</button>
+    </div>
+  </div>
+
+  <div id="results"></div>
+
+  <div class="tools">
+    <button class="tool" onclick="copyBest()">Kopírovat nejlepší</button>
+    <button class="tool" onclick="clearAll()">Vyčistit</button>
+  </div>
+
+  <div class="footer">Vytvořilo FajnDoučko · Peluš</div>
+</div>
+
+<script>
+const CHROMA=["C","C#","D","D#","E","F","F#","G","G#","A","B","H"];
+const ROOT_ALIASES=[
+ ["Cis",1],["cis",1],["Des",1],["des",1],["Dis",3],["dis",3],["Es",3],["es",3],
+ ["Fis",6],["fis",6],["Ges",6],["ges",6],["Gis",8],["gis",8],["As",8],["as",8],
+ ["Ais",10],["ais",10],["B",10],["H",11],
+ ["C#",1],["Db",1],["D#",3],["Eb",3],["F#",6],["Gb",6],["G#",8],["Ab",8],["A#",10],["Bb",10],
+ ["C",0],["D",2],["E",4],["F",5],["G",7],["A",9]
+].sort((a,b)=>b[0].length-a[0].length);
+
+const SHARP_KEYS=[
+  {n:0,maj:"C",min:"Am",majS:0,minS:9},{n:1,maj:"G",min:"Em",majS:7,minS:4},
+  {n:2,maj:"D",min:"Hm",majS:2,minS:11},{n:3,maj:"A",min:"F#m",majS:9,minS:6},
+  {n:4,maj:"E",min:"C#m",majS:4,minS:1},{n:5,maj:"H",min:"G#m",majS:11,minS:8},
+  {n:6,maj:"F#",min:"D#m",majS:6,minS:3},{n:7,maj:"C#",min:"A#m",majS:1,minS:10}
+];
+const FLAT_KEYS=[
+  {n:0,maj:"C",min:"Am",majS:0,minS:9},{n:1,maj:"F",min:"Dm",majS:5,minS:2},
+  {n:2,maj:"B",min:"Gm",majS:10,minS:7},{n:3,maj:"Eb",min:"Cm",majS:3,minS:0},
+  {n:4,maj:"Ab",min:"Fm",majS:8,minS:5},{n:5,maj:"Db",min:"Bm",majS:1,minS:10},
+  {n:6,maj:"Gb",min:"Ebm",majS:6,minS:3},{n:7,maj:"Cb",min:"Abm",majS:11,minS:8}
+];
+
+const EASY_MAJOR=new Set(["C","D","E","G","A"]);
+const GOOD_MAJOR=new Set(["F","B","H"]);
+const EASY_MINOR=new Set(["Am","Dm","Em"]);
+const GOOD_MINOR=new Set(["Hm","Cm","Gm","Fm"]);
+const EASY_CHORDS=new Set(["C","D","E","G","A","Am","Dm","Em","A7","D7","E7","G7","C7","H7","Dsus4","Asus4","Cadd9"]);
+const OK_CHORDS=new Set(["F","B","H","Hm","Cm","Gm","Fm","Fmaj7","Dm7","Em7","Am7","D/F#","G/H","D/Fis"]);
+
+let accType="sharp",accCount=0,lastBest=null,lastResults=[];
+
+function noteName(semi){return CHROMA[(semi+1200)%12];}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
+function showMode(m){
+  document.getElementById("pChords").classList.toggle("active",m==="chords");
+  document.getElementById("pKey").classList.toggle("active",m==="key");
+  document.getElementById("mChords").classList.toggle("active",m==="chords");
+  document.getElementById("mKey").classList.toggle("active",m==="key");
+  document.getElementById("results").innerHTML="";
+}
+function setAcc(t){
+  accType=t;
+  document.getElementById("accSharp").classList.toggle("active",t==="sharp");
+  document.getElementById("accFlat").classList.toggle("active",t==="flat");
+}
+function buildNums(){
+  const g=document.getElementById("numGrid");
+  g.innerHTML="";
+  for(let i=0;i<=7;i++){
+    const b=document.createElement("button");
+    b.textContent=i;
+    b.onclick=()=>{accCount=i;document.querySelectorAll("#numGrid button").forEach(x=>x.classList.remove("active"));b.classList.add("active");};
+    if(i===0)b.classList.add("active");
+    g.appendChild(b);
+  }
+}
+function normalizeSuffix(s, minorByLower){
+  s=s||"";
+  s=s.replace(/^mi/i,"m").replace(/^min/i,"m").replace(/^mol/i,"m").replace(/^moll/i,"m").replace(/^-/,"m").replace(/^dur/i,"");
+  if(minorByLower && !/^m/i.test(s))s="m"+s;
+  return s;
+}
+function parseRootAt(str,pos=0){
+  const rest=str.slice(pos);
+  for(const [alias,semi] of ROOT_ALIASES){
+    if(rest.startsWith(alias)){
+      const lower=alias[0]===alias[0].toLowerCase();
+      return {alias,semi,len:alias.length,lower};
+    }
+  }
+  return null;
+}
+function parseChord(token){
+  const r=parseRootAt(token,0); if(!r)return null;
+  let i=r.len,suffix="",bass=null;
+  while(i<token.length){
+    if(token[i]==="/"){
+      const b=parseRootAt(token,i+1);
+      if(b && i+1+b.len===token.length){bass=b;i=token.length;break}
+    }
+    suffix+=token[i];i++;
+  }
+  return {root:r.semi,suffix:normalizeSuffix(suffix,r.lower),bass:bass?bass.semi:null,raw:token};
+}
+function parseChordList(txt){
+  const m=txt.match(/[A-Ha-h](?:is|es|#|b)?[A-Za-z0-9#b+\-°ø]*(?:\/[A-Ha-h](?:is|es|#|b)?)?/g)||[];
+  return m.map(parseChord).filter(Boolean);
+}
+function chordName(ch,capo){
+  const root=noteName(ch.root-capo);
+  const bass=ch.bass!==null&&ch.bass!==undefined?"/"+noteName(ch.bass-capo):"";
+  return root+ch.suffix+bass;
+}
+function scoreChord(name){
+  const base=name.replace(/\/.*$/,"");
+  if(EASY_CHORDS.has(name)||EASY_CHORDS.has(base))return 0;
+  if(OK_CHORDS.has(name)||OK_CHORDS.has(base))return 2;
+  if(/#|b/.test(base))return 7;
+  if(/^F($|m|7|maj)/.test(base))return 4;
+  if(/m/.test(base))return 3;
+  return 3;
+}
+function shapeKeyFromChords(names){
+  const count={};
+  names.forEach(n=>{
+    const b=n.replace(/\/.*$/,"").replace(/(maj7|maj|m7|m|7|6|9|11|13|sus2|sus4|sus|dim|aug|add9|add|°|ø|\+|-).*$/,"");
+    const m=n.replace(/\/.*$/,"").match(/^([A-H][#b]?m)(?!a)/);
+    if(b)count[b]=(count[b]||0)+1;
+    if(m)count[m[1]]=(count[m[1]]||0)+1;
+  });
+  const best=Object.entries(count).sort((a,b)=>b[1]-a[1])[0];
+  return best?best[0]:"kytarová poloha";
+}
+function noteText(score){
+  if(score<=4)return "výborné pro doprovod";
+  if(score<=8)return "velmi dobré";
+  if(score<=13)return "použitelné";
+  return "nouzové";
+}
+function klass(score){return score<=4?"best":score<=10?"ok":"warn";}
+function star(score){return score<=4?"⭐":score<=10?"✅":"⚠️";}
+function capoResultsForChords(chords){
+  const res=[];
+  for(let capo=0;capo<=9;capo++){
+    const names=chords.map(c=>chordName(c,capo));
+    let score=capo*0.7+names.reduce((s,n)=>s+scoreChord(n),0);
+    if(capo>7)score+=2.5;
+    if(capo===0)score+=1.1;
+    res.push({capo,names,score,shape:shapeKeyFromChords(names),note:noteText(score)});
+  }
+  return res.sort((a,b)=>a.score-b.score).slice(0,5);
+}
+function findByChords(){
+  const chords=parseChordList(document.getElementById("chordsInput").value);
+  if(!chords.length){document.getElementById("results").innerHTML='<div class="card">Nenašla jsem akordy. Zkus třeba <b>F#m D A E</b>.</div>';return}
+  const sounding=chords.map(c=>noteName(c.root)+c.suffix+(c.bass!=null?"/"+noteName(c.bass):"")).join("  ");
+  render(capoResultsForChords(chords),sounding);
+}
+function scoreMajorKey(k){if(EASY_MAJOR.has(k))return 0;if(GOOD_MAJOR.has(k))return 3;if(/#|b/.test(k))return 8;return 5}
+function scoreMinorKey(k){if(EASY_MINOR.has(k))return 0;if(GOOD_MINOR.has(k))return 3;if(/#|b/.test(k))return 8;return 5}
+function findByKey(){
+  const data=(accType==="sharp"?SHARP_KEYS:FLAT_KEYS).find(x=>x.n===accCount),mode=document.getElementById("modeSelect").value;
+  const targets=[];
+  if(mode==="major"||mode==="both")targets.push({label:data.maj+" dur",semi:data.majS,minor:false});
+  if(mode==="minor"||mode==="both")targets.push({label:data.min+" moll",semi:data.minS,minor:true});
+  const all=[];
+  targets.forEach(t=>{
+    for(let capo=0;capo<=9;capo++){
+      const shape=t.minor?noteName(t.semi-capo)+"m":noteName(t.semi-capo);
+      let score=(t.minor?scoreMinorKey(shape):scoreMajorKey(shape))+capo*.7;
+      if(capo>7)score+=2.5;
+      all.push({capo,names:["hraj jako "+shape],score,shape,note:"pro "+t.label});
+    }
+  });
+  all.sort((a,b)=>a.score-b.score);
+  render(all.slice(0,6),`${accCount} ${accType==="sharp"?"křížků":"béček"} = ${targets.map(t=>t.label).join(" / ")}`);
+}
+function render(items,sounding){
+  lastResults=items;lastBest=items[0]||null;
+  const box=document.getElementById("results");
+  const best=items[0];
+  const rest=items.slice(1);
+  box.innerHTML=`
+    <div class="result ${klass(best.score)}">
+      <div class="topline">
+        <div class="capo">${star(best.score)} Kapo ${best.capo}</div>
+        <div class="badge">doporučeno</div>
+      </div>
+      <div class="bigline"><b>Hraj:</b> ${esc(best.names.join("  "))}</div>
+      <div class="smallline"><b>Zní:</b>  ${esc(sounding)}</div>
+      <div class="note">Tvarová orientace: <b>${esc(best.shape)}</b>. ${esc(best.note)}.</div>
+    </div>
+    <div class="moretitle">Další možnosti</div>
+    ${rest.map(r=>`
+      <div class="result compact ${klass(r.score)}">
+        <div class="topline"><div class="capo">Kapo ${r.capo}</div><div class="badge">${esc(r.note)}</div></div>
+        <div class="bigline">${esc(r.names.join("  "))}</div>
+      </div>`).join("")}
+  `;
+}
+function loadEx(t){document.getElementById("chordsInput").value=t;findByChords()}
+function copyBest(){
+  if(!lastBest){findByChords(); if(!lastBest)return;}
+  const txt=`Kapo ${lastBest.capo}\nHraj: ${lastBest.names.join("  ")}\nTvarová orientace: ${lastBest.shape}`;
+  navigator.clipboard.writeText(txt).then(()=>toast("Zkopírováno."),()=>toast("Kopírování se nepovedlo."));
+}
+function clearAll(){document.getElementById("chordsInput").value="";document.getElementById("results").innerHTML="";lastBest=null;}
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity=0;t.style.transition="opacity .25s";setTimeout(()=>t.remove(),260)},1900)}
+buildNums();
+findByChords();
+</script>
+</body>
+</html>
