@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Přehrávač basových tabů 4/4 · Peluš – FajnDoučko</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<style>
+:root{--bg:#f2f0ea;--bg2:#e8e5de;--panel:#faf9f6;--border:#cec9c0;--accent:#b87000;--green:#1a7a42;--red:#c0302a;--text:#1a1814;--text2:#5a5650;--text3:#8b857d;--mono:'Space Mono',monospace;--sans:'DM Sans',sans-serif;--shadow:0 8px 28px rgba(0,0,0,.12)}
+*{box-sizing:border-box}body{margin:0;font-family:var(--sans);background:linear-gradient(135deg,var(--bg),#faf7ef);color:var(--text);min-height:100vh}.wrap{max-width:1050px;margin:0 auto;padding:22px 16px}.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}.top{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:center;flex-wrap:wrap}.title{flex:1;min-width:260px}.title h1{font-size:1.35rem;margin:0;color:var(--accent)}.title .sub{font-size:.85rem;color:var(--text2);margin-top:4px}.btn{border:1.5px solid var(--border);background:#fff;border-radius:9px;padding:9px 15px;font-weight:700;cursor:pointer;color:var(--text2)}.btn.play{border-color:var(--green);color:var(--green)}.btn.stop{border-color:var(--red);color:var(--red)}.btn:hover{filter:brightness(.98)}.meta{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg2)}.meta span{font-size:.8rem;border:1px solid var(--border);background:#fff;border-radius:999px;padding:5px 10px;color:var(--text2)}.panel{padding:18px 20px}.progress{height:9px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-bottom:12px}.fill{height:100%;width:0;background:var(--green);transition:width .08s linear}.now{font-family:var(--mono);font-size:.8rem;color:var(--text3);margin-bottom:18px}.tab{font-family:var(--mono);font-size:.95rem;line-height:1.85;white-space:pre;overflow-x:auto;background:#fffdf8;border:1px solid var(--border);border-left:5px solid var(--accent);border-radius:12px;padding:16px}.brand{font-size:.78rem;color:var(--text3);padding:14px 20px;border-top:1px solid var(--border);background:var(--bg2)}.empty{padding:40px 20px;text-align:center;color:var(--text2)}@media print{.top .btn,.progress,.now{display:none}.wrap{max-width:none;padding:0}.card{box-shadow:none;border:none}.tab{font-size:11px;overflow:visible;white-space:pre}.brand{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card" id="app"><div class="empty">Načítám tab…</div></div></div>
+<script>
+const STR_ORDER=['G','D','A','E'],BASS_STRINGS={G:43,D:38,A:33,E:28},NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const SAMPLE_BASE='https://pelunkaj-dot.github.io/fdc-plugin/samples/bass/';
+const SAMPLE_URLS={'E1':'E1.mp3','A1':'A1.mp3','D2':'D2.mp3','G2':'G2.mp3','C3':'C3.mp3'};
+let project=null,sampler=null,samplerReady=false,samplerLoading=false,useFallback=false,scheduled=[],isPlaying=false,raf=null,startTime=0,totalSec=0;
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function midiToToneName(m){return NOTE_NAMES[m%12]+(Math.floor(m/12)-1)}
+function spb(){return 4*(project.resolution||1)}
+function getData(){const p=new URLSearchParams(location.search).get('d');if(!p)throw new Error('Chybí data v odkazu.');return JSON.parse(decodeURIComponent(escape(atob(p))))}
+function buildTabText(){if(!project||!project.bars||!project.grid)return'— žádná data —';const res=project.resolution||1,s=spb(),sw=res===1?4:res===2?3:2,lines={};STR_ORDER.forEach(st=>lines[st]='');project.bars.forEach((bar,b)=>{const g=project.grid[b]||{};STR_ORDER.forEach(st=>lines[st]+='|');for(let sl=0;sl<s;sl++){STR_ORDER.forEach(st=>{const row=g[st]||[],note=row[sl];if(note){const f=String(note.fret);lines[st]+='-'+f+'-'.repeat(Math.max(0,sw-1-f.length))}else lines[st]+='-'.repeat(sw)})}});STR_ORDER.forEach(st=>lines[st]+='|');const chordRow=project.bars.map(bar=>('|'+(bar.chords||[]).filter(Boolean).join('/')).padEnd(s*sw+1)).join('')+'|';return [chordRow,'G'+lines.G,'D'+lines.D,'A'+lines.A,'E'+lines.E].join('\n')}
+function render(){document.getElementById('app').innerHTML=`<div class="top"><div class="title"><h1>🎸 ${esc(project.title||'Basový tab 4/4')}</h1><div class="sub">${project.artist?esc(project.artist)+' · ':''}Přehrávač basového tabu 4/4</div></div><button class="btn play" onclick="play()">▶ Přehrát</button><button class="btn stop" onclick="stop()">■ Stop</button><button class="btn" onclick="window.print()">🖨️ Tisk / PDF</button></div><div class="meta"><span>Takt: 4/4</span><span>Tempo: ${esc(project.bpm||80)} BPM</span><span>Styl: ${esc(project.style||'')}</span><span>Rozlišení: ${esc(project.resolution||1)}×</span><span>Počet taktů: ${(project.bars||[]).length}</span></div><div class="panel"><div class="progress"><div class="fill" id="fill"></div></div><div class="now" id="now">Připraveno</div><pre class="tab">${esc(buildTabText())}</pre></div><div class="brand">Vytvořeno v Bass Tab Studiu 4/4 · Peluš – FajnDoučko · fajndoucko.cz</div>`}
+function initSampler(done){if(samplerReady||useFallback){done();return}if(samplerLoading){const i=setInterval(()=>{if(samplerReady||useFallback){clearInterval(i);done()}},120);return}samplerLoading=true;sampler=new Tone.Sampler({urls:SAMPLE_URLS,baseUrl:SAMPLE_BASE,onload:()=>{samplerReady=true;samplerLoading=false;done()},onerror:()=>{useFallback=true;samplerLoading=false;done()}}).toDestination()}
+function fallback(midi,t,dur){const ctx=Tone.context.rawContext,delay=Math.max(0,t-Tone.now()),start=ctx.currentTime+delay,f=440*Math.pow(2,(midi-69)/12),o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.001,start);g.gain.linearRampToValueAtTime(.35,start+.01);g.gain.exponentialRampToValueAtTime(.001,start+dur);o.connect(g);g.connect(ctx.destination);o.start(start);o.stop(start+dur+.05)}
+function play(){stop();if(!project)return;initSampler(doPlay)}
+function doPlay(){
+  stop();
+  const bpm=project.bpm||80,res=project.resolution||1,slotSec=(60/bpm)/res,totalSlots=(project.bars||[]).length*spb();
+  totalSec=totalSlots*slotSec;
+  try{Tone.getDestination().volume.value=Tone.gainToDb(.9);if(Tone.context.state==='suspended')Tone.context.resume()}catch(e){}
+  isPlaying=true;
+  startTime=Tone.now();
+  (project.bars||[]).forEach((bar,b)=>{
+    const g=project.grid[b]||{};
+    for(let sl=0;sl<spb();sl++){
+      const delay=(b*spb()+sl)*slotSec*1000;
+      const notes=[];
+      STR_ORDER.forEach(str=>{
+        const row=g[str]||[],note=row[sl];
+        if(note)notes.push({midi:BASS_STRINGS[str]+note.fret,dur:Math.max(.05,note.dur*(60/bpm)*.82)});
+      });
+      if(notes.length||sl===0){
+        scheduled.push(setTimeout(()=>{
+          if(!isPlaying)return;
+          notes.forEach(n=>{
+            if(useFallback||!samplerReady)fallback(n.midi,Tone.now(),n.dur);
+            else{try{sampler.triggerAttackRelease(midiToToneName(n.midi),n.dur)}catch(e){fallback(n.midi,Tone.now(),n.dur)}}
+          });
+          if(sl===0)document.getElementById('now').textContent='Takt '+(b+1)+' / '+project.bars.length;
+        },Math.max(0,delay)));
+      }
+    }
+  });
+  scheduled.push(setTimeout(()=>{if(isPlaying)stop()},(totalSec+.25)*1000));
+  raf=requestAnimationFrame(tick);
+}
+function tick(){if(!isPlaying)return;const pct=Math.min(1,(Tone.now()-startTime)/totalSec);const f=document.getElementById('fill');if(f)f.style.width=(pct*100)+'%';raf=requestAnimationFrame(tick)}
+function stop(){if(sampler)try{sampler.releaseAll()}catch(e){}scheduled.forEach(clearTimeout);scheduled=[];cancelAnimationFrame(raf);isPlaying=false;const f=document.getElementById('fill');if(f)f.style.width='0%';const n=document.getElementById('now');if(n)n.textContent='Připraveno'}
+try{project=getData();if(project.meter&&project.meter!=="4/4")throw new Error('Tento odkaz není pro 4/4 přehrávač.');render();setTimeout(()=>initSampler(()=>{}),800)}catch(e){document.getElementById('app').innerHTML='<div class="empty"><h2>Tab se nepodařilo načíst</h2><p>'+esc(e.message)+'</p></div>'}
+</script>
+</body>
+</html>
