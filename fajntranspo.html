@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FajnTranspoziční pravítko · Peluš – FajnDoučko</title>
+<style>
+:root{
+  --bg:#f6f8fc;--card:#fff;--ink:#111827;--muted:#6b7280;--line:#dbe3f2;
+  --blue:#164fbb;--blue2:#0f3d93;--soft:#eef4ff;--green:#147a3d;--red:#b42318;
+  --shadow:0 18px 50px rgba(15,23,42,.12);--mono:"Courier New",ui-monospace,monospace;
+  --sans:Arial,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:var(--sans);color:var(--ink);background:
+  radial-gradient(circle at 10% 10%,#eaf1ff 0,#f6f8fc 38%,#f8fbff 100%)}
+body::before{
+  content:"♯   ♭   H   B   C   D   E   F   G   A   ♯   ♭";
+  position:fixed;inset:0;z-index:-1;font-size:74px;letter-spacing:34px;line-height:1.55;
+  color:#164fbb;opacity:.045;transform:rotate(-8deg);pointer-events:none;white-space:pre-wrap
+}
+.wrap{max-width:920px;margin:0 auto;padding:24px 16px 60px}
+.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:24px;position:relative;overflow:hidden}
+.card::after{content:"Vytvořilo FajnDoučko · Peluš";position:absolute;right:18px;bottom:12px;color:#164fbb;opacity:.36;font-size:13px;font-weight:700}
+h1{margin:0 0 6px;font-size:30px;color:#0f172a}
+.sub{color:var(--muted);margin:0 0 18px;line-height:1.45}
+.transbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border:1px solid #d4e0ff;
+  border-radius:18px;padding:12px;box-shadow:0 8px 22px rgba(22,79,187,.08);margin:14px 0 16px
+}
+.label{font-weight:900;letter-spacing:.05em;color:#0f172a}
+.bigbtn{
+  width:58px;height:48px;border-radius:13px;border:1px solid #c8d6ff;background:#f8fbff;color:var(--blue);
+  font-size:30px;font-weight:900;cursor:pointer;line-height:1
+}
+.bigbtn:hover{background:#eaf1ff}
+.pill{min-width:100px;text-align:center;background:var(--soft);border:1px solid #d4e0ff;color:var(--blue);font-weight:900;border-radius:999px;padding:10px 14px}
+select,.btn,textarea{font:inherit}
+select,.btn{border:1px solid #d1d8e8;background:#fff;border-radius:11px;padding:10px 12px;font-weight:800;color:#374151;cursor:pointer}
+.btn:hover,select:hover{background:#f9fafb;border-color:#aeb8cc}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:white}
+.btn.green{color:var(--green);border-color:#b7e4c7;background:#f2fff6}
+.btn.red{color:var(--red);border-color:#f2c4bf;background:#fff7f6}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.box label{display:block;font-size:13px;font-weight:900;color:#374151;margin:0 0 7px}
+textarea{
+  width:100%;min-height:260px;resize:vertical;border:1px solid #cfd8ea;border-radius:16px;
+  padding:14px;font-family:var(--mono);font-size:18px;line-height:1.55;outline:none;background:#fff;color:#111827
+}
+textarea:focus{border-color:#a8bcff;box-shadow:0 0 0 4px #edf3ff}
+.output{background:#fbfdff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.hint{font-size:13px;color:var(--muted);line-height:1.5}
+.examples{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ex{border:1px solid #d4e0ff;background:#f8fbff;color:var(--blue);border-radius:999px;padding:6px 9px;font-size:13px;font-weight:800;cursor:pointer}
+.ex:hover{background:#eaf1ff}
+.footer{margin-top:18px;color:#64748b;font-size:13px;text-align:right}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:white;border:1px solid #c8d6ff;border-radius:12px;padding:10px 16px;box-shadow:var(--shadow);font-weight:800;z-index:99}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.card{padding:18px}h1{font-size:25px}.bigbtn{width:54px}.transbar{gap:8px}textarea{font-size:16px}}
+@media print{
+  body{background:#fff}.wrap{max-width:none;padding:0}.card{box-shadow:none;border:none;padding:0}.transbar,.box:first-child,.row,.hint,.examples{display:none!important}
+  h1{font-size:22px}.sub{display:none}.grid{display:block}.output{border:none;font-size:15px;min-height:0}.card::after{content:"Vytvořeno v modulu FajnTranspoziční pravítko · Peluš – FajnDoučko · fajndoucko.cz";position:fixed;right:10mm;bottom:8mm;color:#777;opacity:1;font-size:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>🎼 FajnTranspoziční pravítko</h1>
+    <p class="sub">Rychlá transpozice akordů. Vlevo napiš akordy, vpravo hned vidíš výsledek. Text písně to neřeší — jen praktické akordové pravítko.</p>
+
+    <div class="transbar">
+      <span class="label">TRANSPOZICE</span>
+      <button class="bigbtn" onclick="transposeBy(-1)" title="O půltón dolů">−</button>
+      <div class="pill" id="shiftPill">0 půltónů</div>
+      <button class="bigbtn" onclick="transposeBy(1)" title="O půltón nahoru">+</button>
+      <button class="btn" onclick="transposeBy(-2)">− celý tón</button>
+      <button class="btn" onclick="transposeBy(2)">+ celý tón</button>
+      <button class="btn red" onclick="resetShift()">Reset</button>
+    </div>
+
+    <div class="row">
+      <select id="notation" onchange="updateOutput()">
+        <option value="cz-sharp">České značení: H, B + křížky</option>
+        <option value="cz-flat">České značení: H, B + béčka</option>
+        <option value="intl-sharp">Mezinárodní: B, Bb + křížky</option>
+        <option value="intl-flat">Mezinárodní: B, Bb + béčka</option>
+      </select>
+      <button class="btn primary" onclick="copyOutput()">Kopírovat výsledek</button>
+      <button class="btn green" onclick="downloadTxt()">Stáhnout TXT</button>
+      <button class="btn" onclick="window.print()">Tisk / PDF</button>
+      <button class="btn red" onclick="clearInput()">Smazat</button>
+    </div>
+
+    <div class="grid">
+      <div class="box">
+        <label for="input">Původní akordy</label>
+        <textarea id="input" spellcheck="false" oninput="updateOutput()" placeholder="Např.
+
+G   D   Em   C
+G   D   C    G
+
+nebo:
+E / H / C#m / A"></textarea>
+        <div class="examples">
+          <button class="ex" onclick="loadExample('G   D   Em   C\\nG   D   C    G')">G D Em C</button>
+          <button class="ex" onclick="loadExample('E   H   C#m   A\\nE   H   A     E')">E H C#m A</button>
+          <button class="ex" onclick="loadExample('D/Fis   G   A7   hmi\\nEm7    A   D')">Český zápis</button>
+        </div>
+      </div>
+      <div class="box">
+        <label for="output">Transponovaný výsledek</label>
+        <textarea id="output" class="output" spellcheck="false" readonly></textarea>
+      </div>
+    </div>
+
+    <p class="hint">
+      Umí běžné akordy a český zápis: <strong>C, Cm, C7, Fis, fis, cis7, Es, as, D/Fis, F#m7, H7, B</strong>.
+      Zachovává mezery, řádky i oddělovače. Obyčejný text nechává být, pokud nevypadá jako akord.
+    </p>
+
+    <div class="footer">Vytvořilo FajnDoučko · Peluš</div>
+  </div>
+</div>
+
+<script>
+let shift=0;
+
+const CZ_SHARP=["C","C#","D","D#","E","F","F#","G","G#","A","B","H"];
+const CZ_FLAT =["C","Db","D","Eb","E","F","Gb","G","Ab","A","B","H"];
+const INT_SHARP=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const INT_FLAT =["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+
+// České zvyklosti:
+// H = tón B natural; B = tón Bb.
+// Fis = F# dur, fis = F# moll. Cis = C# dur, cis = C# moll.
+// Es = Eb dur, es = Eb moll. As = Ab dur, as = Ab moll.
+const ROOTS = [
+  ["his",0], ["ces",11],
+  ["cis",1], ["des",1],
+  ["dis",3], ["es",3],
+  ["eis",5], ["fes",4],
+  ["fis",6], ["ges",6],
+  ["gis",8], ["as",8],
+  ["ais",10], ["bes",10], ["hes",10],
+  ["c#",1], ["db",1],
+  ["d#",3], ["eb",3],
+  ["e#",5], ["fb",4],
+  ["f#",6], ["gb",6],
+  ["g#",8], ["ab",8],
+  ["a#",10], ["bb",10],
+  ["h#",0], ["hb",10],
+  ["c",0], ["d",2], ["e",4], ["f",5], ["g",7], ["a",9], ["h",11], ["b",10]
+].sort((a,b)=>b[0].length-a[0].length);
+
+const QUALITY_START=/^(m|mi|min|mol|maj|dur|sus|dim|aug|add|ø|°|\+|-|5|6|7|9|11|13|$)/i;
+
+function names(){
+  const n=document.getElementById("notation").value;
+  if(n==="cz-flat")return CZ_FLAT;
+  if(n==="intl-sharp")return INT_SHARP;
+  if(n==="intl-flat")return INT_FLAT;
+  return CZ_SHARP;
+}
+
+function normalizeAccidentals(s){
+  return String(s||"")
+    .replaceAll("♯","#")
+    .replaceAll("♭","b");
+}
+
+function parseRoot(str, pos=0, isBass=false){
+  const raw = normalizeAccidentals(str.slice(pos));
+  const low = raw.toLowerCase();
+
+  for(const [alias,semitone] of ROOTS){
+    if(!low.startsWith(alias)) continue;
+
+    const original = str.slice(pos, pos + alias.length);
+    const next = str[pos + alias.length] || "";
+    const rest = str.slice(pos + alias.length);
+
+    // Ochrana proti normálním slovům. V tomto modulu se sice píšou hlavně akordy,
+    // ale nechceme měnit např. "auto", "den", "hora".
+    if(/[a-zá-ž]/.test(next) && !QUALITY_START.test(rest)){
+      continue;
+    }
+
+    let semi = semitone;
+
+    // Samostatné B je dvojznačné. V českém režimu B=Bb, v mezinárodním B=B.
+    if(alias==="b"){
+      const notation=document.getElementById("notation").value;
+      if(notation.startsWith("intl")) semi=11;
+      else semi=10;
+    }
+
+    const isLower = original.length > 0 && original[0] === original[0].toLowerCase() && /[a-zá-ž]/.test(original[0]);
+
+    return {
+      alias,
+      original,
+      semitone:semi,
+      len:alias.length,
+      lowercaseMinor: isLower && !isBass
+    };
+  }
+  return null;
+}
+
+function normalizeSuffix(suffix, lowercaseMinor){
+  let s = suffix || "";
+
+  // České/školní varianty moll.
+  s = s.replace(/^mi/i,"m");
+  s = s.replace(/^min/i,"m");
+  s = s.replace(/^mol/i,"m");
+  s = s.replace(/^moll/i,"m");
+  s = s.replace(/^-/, "m");
+
+  // České "dur" nepotřebujeme ve značce vypisovat.
+  s = s.replace(/^dur/i,"");
+
+  // Malé písmeno kořene znamená moll, pokud už moll není výslovně uvedený
+  // a pokud nejde o major/sus/dim/aug.
+  if(lowercaseMinor && s && /^[0-9]/.test(s)){
+    s = "m" + s;
+  }else if(lowercaseMinor && !s){
+    s = "m";
+  }else if(lowercaseMinor && s && !/^(m|maj|sus|dim|aug|add|ø|°|\+|5)/i.test(s)){
+    s = "m" + s;
+  }
+
+  return s;
+}
+
+function transposeRoot(parsed){
+  const out=names();
+  return out[(parsed.semitone + shift + 1200) % 12];
+}
+
+function parseChordToken(token){
+  token = normalizeAccidentals(token);
+  if(!token.trim()) return null;
+
+  const main = parseRoot(token,0,false);
+  if(!main) return null;
+
+  let i = main.len;
+  let suffix = "";
+  let bass = null;
+
+  while(i < token.length){
+    if(token[i] === "/"){
+      const b = parseRoot(token, i+1, true);
+      if(b && i + 1 + b.len === token.length){
+        bass = b;
+        i = token.length;
+        break;
+      }
+    }
+    suffix += token[i];
+    i++;
+  }
+
+  // Jestli suffix vypadá jako začátek běžného slova, není to akord.
+  if(suffix && !QUALITY_START.test(suffix)){
+    return null;
+  }
+
+  return {main, suffix:normalizeSuffix(suffix, main.lowercaseMinor), bass};
+}
+
+function transposeToken(token){
+  const parsed = parseChordToken(token);
+  if(!parsed) return token;
+
+  let out = transposeRoot(parsed.main) + parsed.suffix;
+  if(parsed.bass) out += "/" + transposeRoot(parsed.bass);
+  return out;
+}
+
+function transposeLine(line){
+  // Bere shluky typu Fis, fis, F#m7, D/F#, G/H, Es, as7.
+  // Interpunkci a mezery nechává přesně tam, kde jsou.
+  return line.replace(/[A-Ha-h](?:is|es|b|#|♯|♭)?[A-Za-z0-9#b♯♭+\-°ø]*(?:\/[A-Ha-h](?:is|es|b|#|♯|♭)?)?/g, m => transposeToken(m));
+}
+
+function updateOutput(){
+  const input=document.getElementById("input").value;
+  document.getElementById("output").value=input.split("\n").map(transposeLine).join("\n");
+  updatePill();
+}
+
+function updatePill(){
+  const el=document.getElementById("shiftPill");
+  el.textContent=shift===0 ? "0 půltónů" : (shift>0?"+":"")+shift+" půltón"+(Math.abs(shift)===1?"":"ů");
+}
+
+function transposeBy(n){shift+=n;updateOutput();}
+function resetShift(){shift=0;updateOutput();}
+function loadExample(txt){document.getElementById("input").value=txt;shift=0;updateOutput();}
+function clearInput(){document.getElementById("input").value="";document.getElementById("output").value="";shift=0;updatePill();}
+
+function copyOutput(){
+  const txt=document.getElementById("output").value;
+  navigator.clipboard.writeText(txt).then(()=>toast("Výsledek zkopírován."),()=>toast("Kopírování se nepovedlo."));
+}
+
+function downloadTxt(){
+  const txt=document.getElementById("output").value;
+  const blob=new Blob([txt+"\n\nVytvořeno v modulu FajnTranspoziční pravítko · Peluš – FajnDoučko · fajndoucko.cz"],{type:"text/plain;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="transponovane_akordy.txt";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function toast(msg){
+  const t=document.createElement("div");
+  t.className="toast";
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity=0;t.style.transition="opacity .25s";setTimeout(()=>t.remove(),260)},2100);
+}
+
+loadExample("G   D   Em   C\nFis   H   cis   A\nD/Fis   G   A7   hmi");
+</script>
+</body>
+</html>
