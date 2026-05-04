@@ -10,32 +10,25 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --orange:#C94A0A; --orange-light:#F26522; --orange-pale:#FEF0E7;
-      --navy:#1A2744; --navy-mid:#2E3F6A; --cream:#FDF8F2; --white:#fff;
-      --gray:#6B7280; --gray-light:#F3F4F6; --gray-dark:#4B5563;
-      --green:#16A34A; --green-pale:#DCFCE7; --red:#DC2626; --red-pale:#FEE2E2;
-      --blue:#2563EB; --blue-pale:#DBEAFE; --gold:#B45309; --gold-pale:#FEF3C7;
-      --radius:16px; --shadow:0 4px 20px rgba(26,39,68,.10);
+      --orange:#C94A0A;--orange-light:#F26522;--orange-pale:#FEF0E7;
+      --navy:#1A2744;--navy-mid:#2E3F6A;--cream:#FDF8F2;--white:#fff;
+      --gray:#6B7280;--gray-light:#F3F4F6;--gray-dark:#4B5563;
+      --green:#16A34A;--green-pale:#DCFCE7;--red:#DC2626;--red-pale:#FEE2E2;
+      --blue:#2563EB;--blue-pale:#DBEAFE;--gold:#B45309;--gold-pale:#FEF3C7;
+      --radius:16px;--shadow:0 4px 20px rgba(26,39,68,.10);
     }
     html,body{height:100%;background:var(--cream);font-family:"Plus Jakarta Sans",sans-serif;color:var(--navy);overflow:hidden}
     #app{height:100%;display:flex;flex-direction:column;max-width:540px;margin:0 auto;background:var(--cream)}
     .screen{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .screen.active{display:flex;flex-direction:column}
-    .home-header{
-      background:linear-gradient(180deg,var(--navy) 0%, #223258 100%);
-      padding:28px 20px 22px;position:relative;overflow:hidden
-    }
-    .home-header::before{
-      content:"🇳🇱";font-size:110px;position:absolute;right:-14px;top:-8px;opacity:.12;line-height:1
-    }
+    .home-header{background:linear-gradient(180deg,var(--navy) 0%,#223258 100%);padding:28px 20px 22px;position:relative;overflow:hidden}
+    .home-header::before{content:"🇳🇱";font-size:110px;position:absolute;right:-14px;top:-8px;opacity:.12;line-height:1}
     .eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:8px}
     .home-header h1{font-family:"Fraunces",serif;font-size:34px;line-height:1.08;color:#fff;margin-bottom:6px}
     .home-header h1 span{color:var(--orange-light)}
     .home-sub{color:rgba(255,255,255,.72);font-size:14px;line-height:1.5;max-width:350px}
     .dashboard{padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .card,.stat-card,.wide-card,.module-card,.dialog-card,.situation-card,.badge-chip,.result-stat,.mini-stat{
-      background:#fff;border-radius:var(--radius);box-shadow:var(--shadow)
-    }
+    .card,.stat-card,.wide-card,.module-card,.dialog-card,.situation-card,.badge-chip,.result-stat,.mini-stat{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow)}
     .stat-card,.mini-stat{padding:14px 14px 12px}
     .wide-card{grid-column:1 / -1;padding:14px}
     .stat-label,.mini-stat .label{font-size:12px;color:var(--gray);font-weight:700;margin-bottom:6px}
@@ -48,7 +41,7 @@
     .badges-wrap{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
     .badge-chip{min-width:130px;flex-shrink:0;padding:12px;border:2px solid transparent}
     .badge-chip.locked{opacity:.55;filter:grayscale(.25)}
-    .badge-chip.unlocked{border-color:var(--gold);background:linear-gradient(180deg,#fff 0%, #fffaf0 100%)}
+    .badge-chip.unlocked{border-color:var(--gold);background:linear-gradient(180deg,#fff 0%,#fffaf0 100%)}
     .badge-icon{font-size:24px}
     .badge-name{font-size:13px;font-weight:800;color:var(--navy);margin-top:6px;margin-bottom:4px}
     .badge-desc{font-size:11px;color:var(--gray);line-height:1.35}
@@ -64,14 +57,8 @@
     .pill.good{background:var(--green-pale);color:var(--green)}
     .pill.blue{background:var(--blue-pale);color:var(--blue)}
     .module-arrow{font-size:20px;font-weight:800;color:var(--gray)}
-    .module-header{
-      padding:18px 16px 14px;display:flex;align-items:center;gap:12px;background:#fff;box-shadow:0 1px 0 #E5E7EB;
-      position:sticky;top:0;z-index:10
-    }
-    .back-btn,.ghost-btn{
-      width:40px;height:40px;border-radius:12px;background:var(--gray-light);border:none;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--navy);flex-shrink:0
-    }
+    .module-header{padding:18px 16px 14px;display:flex;align-items:center;gap:12px;background:#fff;box-shadow:0 1px 0 #E5E7EB;position:sticky;top:0;z-index:10}
+    .back-btn,.ghost-btn{width:40px;height:40px;border-radius:12px;background:var(--gray-light);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--navy);flex-shrink:0}
     .ghost-btn.small{width:auto;padding:0 12px;font-size:12px;font-weight:800}
     .module-header-info h2{font-size:18px;font-weight:800;color:var(--navy)}
     .module-header-info p{font-size:12px;color:var(--gray);font-weight:600;margin-top:2px}
@@ -95,8 +82,17 @@
     .phrase-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
     .phrase-nl{font-family:"Fraunces",serif;font-size:18px;font-weight:700;color:var(--navy);line-height:1.3}
     .phrase-cs{font-size:14px;color:var(--gray);line-height:1.45;margin-top:4px}
-    .phrase-pron{display:none;font-size:13px;color:var(--orange);font-weight:700;background:var(--orange-pale);padding:4px 8px;border-radius:6px;display:inline-block;margin-top:7px}
-    .speak-icon{font-size:16px;opacity:.55;flex-shrink:0}
+    .phrase-pron{font-size:13px;color:var(--orange);font-weight:700;background:var(--orange-pale);padding:4px 8px;border-radius:6px;display:none;margin-top:7px}
+    .speak-icon{font-size:16px;opacity:.55;flex-shrink:0;cursor:pointer}
+    .pron-mic-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:2px 4px;opacity:.6;transition:opacity .15s;touch-action:manipulation;flex-shrink:0}
+    .pron-mic-btn:hover{opacity:1}
+    .pron-mic-btn.rec{opacity:1;animation:pulse2 1s infinite}
+    @keyframes pulse2{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+    .pron-result{margin-top:6px;font-size:12px;font-weight:700;padding:5px 8px;border-radius:8px;display:none}
+    .pron-result.show{display:block}
+    .pron-result.good{background:var(--green-pale);color:var(--green)}
+    .pron-result.bad{background:var(--red-pale);color:var(--red)}
+    .pron-result.mid{background:var(--gold-pale);color:var(--gold)}
     .dialog-card{padding:14px 16px}
     .dialog-title{font-size:14px;font-weight:800;color:var(--navy);margin-bottom:4px}
     .dialog-ctx{font-size:12px;color:var(--gray);line-height:1.45;margin-bottom:10px}
@@ -106,12 +102,10 @@
     .line-nl{font-family:"Fraunces",serif;font-size:17px;font-weight:700;color:var(--navy);line-height:1.3}
     .line-cs{font-size:13px;color:var(--gray);line-height:1.45;margin-top:4px}
     .module-actions{padding:0 16px 28px;display:grid;gap:10px}
-    .btn,.quiz-btn,.secondary-btn,.result-btn,.next-btn{
-      width:100%;border:none;border-radius:16px;padding:16px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer
-    }
+    .btn,.quiz-btn,.secondary-btn,.result-btn,.next-btn{width:100%;border:none;border-radius:16px;padding:16px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer}
     .quiz-btn,.next-btn,.result-btn.secondary{background:var(--orange);color:#fff}
     .secondary-btn,.result-btn.primary{background:var(--navy);color:#fff}
-    .quiz-header{background:linear-gradient(180deg,var(--navy) 0%, #223258 100%);padding:18px 16px 20px}
+    .quiz-header{background:linear-gradient(180deg,var(--navy) 0%,#223258 100%);padding:18px 16px 20px}
     .quiz-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
     .quiz-top h2{font-size:18px;font-weight:800;color:#fff;flex:1}
     .quiz-progress-text{color:rgba(255,255,255,.72);font-size:13px;font-weight:700}
@@ -147,149 +141,89 @@
     .result-stat .k{font-size:13px;color:var(--gray);font-weight:700}
     .result-stat .v{font-size:16px;color:var(--navy);font-weight:800}
     .result-actions{display:grid;gap:10px}
-    .pron-mic-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:2px 4px;opacity:.6;transition:opacity .15s;touch-action:manipulation}
-    .pron-mic-btn:hover{opacity:1}
-    .pron-mic-btn.rec{opacity:1;animation:pulse2 1s infinite}
-    @keyframes pulse2{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
-    .pron-result{margin-top:6px;font-size:12px;font-weight:700;padding:5px 8px;border-radius:8px;display:none}
-    .pron-result.show{display:block}
-    .pron-result.good{background:var(--green-pale);color:var(--green)}
-    .pron-result.bad{background:var(--red-pale);color:var(--red)}
-    .pron-result.mid{background:var(--gold-pale);color:var(--gold)}
-    @media (max-width:370px){ .quiz-question-text{font-size:24px}.home-header h1{font-size:30px} }
+    @media(max-width:370px){.quiz-question-text{font-size:24px}.home-header h1{font-size:30px}}
   </style>
 </head>
 <body>
 <div id="app">
   <div class="screen active" id="screen-home">
     <div class="home-header">
-      <div class="eyebrow">verze 2 · pro Přemka</div>
-      <h1>Fajn<span>Nederlands</span></h1>
-      <p class="home-sub">Praktičtější holandština pro život v Nizozemsku: práce, bydlení, úřady, restaurace, vztahy i chvíle, kdy člověk nechce být za jelito.</p>
+      <div class="eyebrow">verze 2 &middot; pro P&#345;emka</div>
+      <h1>Fajn<span>Nederlands</span> II</h1>
+      <p class="home-sub">Druh&aacute; &uacute;rove&#328; &mdash; hospoda, kultura, pr&aacute;ce, zdravotnictv&iacute;, doprava a &uacute;&#345;ady. Kdy&382; ji&#382; p&#345;e&#382;ije&#353;, za&#269;ni &382;&iacute;t.</p>
     </div>
-
     <div class="dashboard">
-      <div class="stat-card">
-        <div class="stat-label">Úroveň</div>
-        <div class="stat-value" id="level-name">Začátek v NL</div>
-        <div class="stat-sub" id="xp-summary">0 XP celkem</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Streak</div>
-        <div class="stat-value" id="streak-value">0 dní</div>
-        <div class="stat-sub" id="streak-sub">Dnes ještě nezačato</div>
-      </div>
-      <div class="wide-card">
-        <div class="stat-label">Denní cíl</div>
-        <div class="stat-value" id="daily-goal-value">0 / 50 XP</div>
-        <div class="progress-wrap"><div class="progress-fill" id="daily-goal-bar" style="width:0%"></div></div>
-        <div class="stat-sub" id="daily-goal-sub">Malý krok každý den poráží velké velkolepé plány od pondělí.</div>
-      </div>
-      <div class="wide-card">
-        <div class="stat-label">Postup moduly</div>
-        <div class="stat-value" id="home-progress-main">0 / 8 modulů</div>
-        <div class="progress-wrap"><div class="progress-fill" id="home-progress" style="width:0%"></div></div>
-        <div class="stat-sub" id="home-progress-label">Zatím nic dokončeno. To se urazí i tulipán.</div>
-      </div>
+      <div class="stat-card"><div class="stat-label">&Uacute;rove&#328;</div><div class="stat-value" id="level-name">Expatem na&#269;isto</div><div class="stat-sub" id="xp-summary">0 XP celkem</div></div>
+      <div class="stat-card"><div class="stat-label">Streak</div><div class="stat-value" id="streak-value">0 dn&iacute;</div><div class="stat-sub" id="streak-sub">Dnes je&#353;t&#283; neza&#269;ato</div></div>
+      <div class="wide-card"><div class="stat-label">Denn&iacute; c&iacute;l</div><div class="stat-value" id="daily-goal-value">0 / 50 XP</div><div class="progress-wrap"><div class="progress-fill" id="daily-goal-bar" style="width:0%"></div></div><div class="stat-sub" id="daily-goal-sub">Ka&#382;d&yacute; den kousek d&aacute;l.</div></div>
+      <div class="wide-card"><div class="stat-label">Postup moduly</div><div class="stat-value" id="home-progress-main">0 / 6 modul&#367;</div><div class="progress-wrap"><div class="progress-fill" id="home-progress" style="width:0%"></div></div><div class="stat-sub" id="home-progress-label">Za&#269;ni prvn&iacute;m modulem.</div></div>
     </div>
-
-    <div class="home-section">
-      <div class="section-title">Odznaky</div>
-      <div class="badges-wrap" id="badges-wrap"></div>
-    </div>
-
-    <div class="home-section">
-      <div class="section-title">Moduly</div>
-      <div class="modules-grid" id="modules-grid"></div>
-    </div>
+    <div class="home-section"><div class="section-title">Odznaky</div><div class="badges-wrap" id="badges-wrap"></div></div>
+    <div class="home-section"><div class="section-title">Moduly</div><div class="modules-grid" id="modules-grid"></div></div>
   </div>
 
   <div class="screen" id="screen-module">
     <div class="module-header">
-      <button class="back-btn" onclick="showHome()">←</button>
-      <div class="module-header-info">
-        <h2 id="module-title-header">Modul</h2>
-        <p id="module-subtitle-header">Klikni na frázi pro poslech a výslovnost</p>
-      </div>
-      <div class="module-header-actions">
-        <button class="ghost-btn small" onclick="resetModuleStats()">Reset</button>
-      </div>
+      <button class="back-btn" onclick="showHome()">&#8592;</button>
+      <div class="module-header-info"><h2 id="module-title-header">Modul</h2><p id="module-subtitle-header"></p></div>
+      <div class="module-header-actions"><button class="ghost-btn small" onclick="resetModuleStats()">Reset</button></div>
     </div>
-
     <div class="module-top">
-      <div class="mini-stat">
-        <div class="label">Nejlepší výsledek</div>
-        <div class="value" id="module-best-score">–</div>
-      </div>
-      <div class="mini-stat">
-        <div class="label">Počet frází</div>
-        <div class="value" id="module-phrase-count">–</div>
-      </div>
+      <div class="mini-stat"><div class="label">Nejlep&#353;&iacute; v&yacute;sledek</div><div class="value" id="module-best-score">&ndash;</div></div>
+      <div class="mini-stat"><div class="label">Po&#269;et fr&aacute;z&iacute;</div><div class="value" id="module-phrase-count">&ndash;</div></div>
     </div>
-
-    <div class="pron-note">
-      <h4>🔊 Jak číst výslovnost</h4>
-      <p><b>g/ch</b> = hrdelní zvuk jako v „Bach“ · <b>oe</b> = „ú“ · <b>ij/ei</b> = zhruba „ej“ · klikni na frázi a nech si ji přečíst.</p>
-    </div>
-
-    <div class="tap-hint">Klikni na frázi → poslech + výslovnost</div>
+    <div class="pron-note"><h4>&#128266; Jak &#269;&iacute;st v&yacute;slovnost</h4><p><b>g/ch</b> = hrdeln&iacute; zvuk jako v &bdquo;Bach&ldquo; &middot; <b>oe</b> = &bdquo;&uacute;&ldquo; &middot; <b>ij/ei</b> = zhruba &bdquo;ej&ldquo; &middot; klikni na fr&aacute;zi a nech si ji p&#345;e&#269;&iacute;st.</p></div>
+    <div class="tap-hint">Klikni na fr&aacute;zi &rarr; poslech + v&yacute;slovnost &middot; &#127897; nahraj svou v&yacute;slovnost</div>
     <div class="situations-list" id="situations-list"></div>
-
-    <div class="home-section" style="padding-top:0">
-      <div class="section-title">Mini dialogy</div>
-    </div>
+    <div class="home-section" style="padding-top:0"><div class="section-title">Mini dialogy</div></div>
     <div class="dialogs-list" id="dialogs-list"></div>
-
     <div class="module-actions">
-      <button class="quiz-btn" onclick="startQuiz('cz-nl')">🎯 Kvíz: čeština → holandština</button>
-      <button class="secondary-btn" onclick="startQuiz('nl-cz')">🔁 Kvíz: holandština → čeština</button>
-      <button class="secondary-btn" id="mistakes-btn" onclick="startQuiz('mistakes')">🧠 Zopakovat chyby</button>
+      <button class="quiz-btn" onclick="startQuiz('cz-nl')">&#127919; Kv&iacute;z: &#269;e&#353;tina &rarr; holand&#353;tina</button>
+      <button class="secondary-btn" onclick="startQuiz('nl-cz')">&#128260; Kv&iacute;z: holand&#353;tina &rarr; &#269;e&#353;tina</button>
+      <button class="secondary-btn" id="mistakes-btn" onclick="startQuiz('mistakes')">&#129504; Zopakovat chyby</button>
     </div>
   </div>
 
   <div class="screen" id="screen-quiz">
     <div class="quiz-header">
       <div class="quiz-top">
-        <button class="back-btn" style="background:rgba(255,255,255,.14);color:white" onclick="backToModule()">←</button>
-        <h2 id="quiz-module-name">Kvíz</h2>
+        <button class="back-btn" style="background:rgba(255,255,255,.14);color:white" onclick="backToModule()">&#8592;</button>
+        <h2 id="quiz-module-name">Kv&iacute;z</h2>
         <span class="quiz-progress-text" id="quiz-progress-text">1/10</span>
       </div>
       <div class="quiz-bar-wrap"><div class="quiz-bar-fill" id="quiz-bar" style="width:10%"></div></div>
       <div class="quiz-meta">
-        <div class="meta-pill" id="quiz-mode-pill">Běžný trénink</div>
-        <div class="meta-pill" id="quiz-streak-pill">Série: 0</div>
+        <div class="meta-pill" id="quiz-mode-pill">B&#283;&#382;n&yacute; tr&eacute;nink</div>
+        <div class="meta-pill" id="quiz-streak-pill">S&eacute;rie: 0</div>
         <div class="meta-pill" id="quiz-xp-pill">XP: 0</div>
       </div>
     </div>
-
     <div class="quiz-body">
       <div>
-        <div class="quiz-question-label" id="quiz-question-label">Jak se holandsky řekne:</div>
+        <div class="quiz-question-label" id="quiz-question-label">Jak se holandsky &#345;ekne:</div>
         <div class="quiz-question-text" id="quiz-question"></div>
         <div class="quiz-subtext" id="quiz-context"></div>
       </div>
       <div class="quiz-options" id="quiz-options"></div>
       <div class="quiz-feedback" id="quiz-feedback"></div>
-      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Další →</button>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Dal&#353;&iacute; &rarr;</button>
     </div>
   </div>
 
   <div class="screen" id="screen-result">
     <div class="result-screen">
-      <div class="result-emoji" id="result-emoji">🎉</div>
+      <div class="result-emoji" id="result-emoji">&#127881;</div>
       <div class="result-score" id="result-score">8<span>/10</span></div>
-      <div class="result-msg" id="result-msg">Výborně!</div>
-      <div class="result-sub" id="result-sub">Pokračuj tak dál.</div>
-
+      <div class="result-msg" id="result-msg">V&yacute;born&#283;!</div>
+      <div class="result-sub" id="result-sub">Pokra&#269;uj tak d&aacute;l.</div>
       <div class="result-stats">
-        <div class="result-stat"><div class="k">Získané XP</div><div class="v" id="result-xp">+0 XP</div></div>
-        <div class="result-stat"><div class="k">Nejdelší série</div><div class="v" id="result-best-streak">0</div></div>
-        <div class="result-stat"><div class="k">Nejlepší skóre modulu</div><div class="v" id="result-best-module">0 %</div></div>
-        <div class="result-stat"><div class="k">Nové odznaky</div><div class="v" id="result-badges">žádné</div></div>
+        <div class="result-stat"><div class="k">Z&iacute;skan&eacute; XP</div><div class="v" id="result-xp">+0 XP</div></div>
+        <div class="result-stat"><div class="k">Nejdel&#353;&iacute; s&eacute;rie</div><div class="v" id="result-best-streak">0</div></div>
+        <div class="result-stat"><div class="k">Nejlep&#353;&iacute; sk&oacute;re modulu</div><div class="v" id="result-best-module">0 %</div></div>
+        <div class="result-stat"><div class="k">Nov&eacute; odznaky</div><div class="v" id="result-badges">&aacute;dn&eacute;</div></div>
       </div>
-
       <div class="result-actions">
-        <button class="result-btn primary" onclick="backToModule()">Zpět na modul</button>
+        <button class="result-btn primary" onclick="backToModule()">Zp&#283;t na modul</button>
         <button class="result-btn secondary" id="retry-mistakes-btn" onclick="startQuiz('mistakes')">Zopakovat chyby</button>
       </div>
     </div>
@@ -299,305 +233,308 @@
 <script>
 const MODULES = [
   {
-    id:"pozdravy", icon:"👋", title:"Pozdravy & první kontakt", color:"#1A2744",
-    desc:"Pozdravy, představení, zdvořilost, small talk",
+    id:"hospoda", icon:"&#127866;", title:"Hospoda & spole&#269;ensk&yacute; &#382;ivot", color:"#92400E",
+    desc:"Pivo, konverzace, oslava, rozlu&#269;ka, neform&aacute;ln&iacute; situace",
     situations:[
       {
-        title:"Ráno a první kontakt",
-        ctx:"Potkáš kolegy, sousedy nebo někoho ve vestibulu.",
+        title:"V hospod&#283; a baru",
+        ctx:"Ob\u010dern\u00e1v\u00e1n\u00ed, n\u00e1pioje, placen\u00ed.",
         phrases:[
-          {nl:"Goedemorgen!", cs:"Dobré ráno!", pron:"chude-mor-chen"},
-          {nl:"Hoe gaat het?", cs:"Jak se máš / máte?", pron:"hoe chat et"},
-          {nl:"Alles goed?", cs:"Všechno v pohodě?", pron:"al-es chúd"},
-          {nl:"Ja, prima. En met jou?", cs:"Jo, výborně. A co ty?", pron:"ja, pree-ma, en met jou"},
-          {nl:"Ik ben Premek.", cs:"Jsem Přemek.", pron:"ik ben pree-mek"},
-          {nl:"Ik kom uit Tsjechië.", cs:"Pocházím z Česka.", pron:"ik kom öüt tsje-chi-e"},
-          {nl:"Ik woon nu in Nederland.", cs:"Teď bydlím v Nizozemsku.", pron:"ik von nu in nee-der-land"},
-          {nl:"Leuk je te ontmoeten.", cs:"Rád tě poznávám.", pron:"leuk je te ont-mú-ten"}
+          {nl:"Mag ik een biertje, alsjeblieft?", cs:"Mohl bych dostat pivo, pros\u00edm?", pron:"mach ik en bier-tje, als-je-bleeft"},
+          {nl:"Wat heeft u op de tap?", cs:"Co m\u00e1te na \u010depu?", pron:"vat heft \u00fc op de tap"},
+          {nl:"Doe maar een rondje.", cs:"D\u00e1me kolečko.", pron:"doe mar en ron-tje"},
+          {nl:"Ik trakteer vandaag.", cs:"Dnes pl\u00e1t\u00edm j\u00e1.", pron:"ik trak-teer van-dach"},
+          {nl:"Kunnen we hier een tafel reserveren?", cs:"M\u016f\u017eeme si tady rezervovat st\u016fl?", pron:"kun-en ve hir en ta-fel re-ser-vee-ren"},
+          {nl:"Twee glazen wijn, graag.", cs:"Dva sklenice v\u00edna, pros\u00edm.", pron:"tvee chla-zen vejn, chrach"},
+          {nl:"Ik neem nog een rondje.", cs:"D\u00e1m si je\u0161t\u011b jedno.", pron:"ik neem noch en ron-tje"},
+          {nl:"Mag ik de rekening?", cs:"M\u016f\u017eu dostat \u00fa\u010det?", pron:"mach ik de re-kee-ning"},
+          {nl:"Kunnen we apart afrekenen?", cs:"M\u016f\u017eeme platit zvl\u00e1\u0161\u0165?", pron:"kun-en ve a-part af-ree-ke-nen"},
+          {nl:"Geef mij maar een cola.", cs:"D\u00e1m si colu.", pron:"chef mej mar en ko-la"},
+          {nl:"Is er een happy hour?", cs:"M\u00e1te happy hour?", pron:"is er en hep-ee au-er"},
+          {nl:"Dit is een goede kroeg.", cs:"To je dobr\u00e1 hospoda.", pron:"dit is en choo-de kroech"},
+          {nl:"Waar is het toilet?", cs:"Kde je z\u00e1chod?", pron:"var is et twa-let"},
+          {nl:"Proost!", cs:"Na zdrav\u00ed!", pron:"prohst"},
+          {nl:"Op de vriendschap!", cs:"Na p\u0159\u00e1telstv\u00ed!", pron:"op de vreen-schap"},
+          {nl:"Het is mijn beurt.", cs:"Je \u0159ada na mn\u011b.", pron:"et is mejn b\u00f6rt"},
+          {nl:"Ik heb genoeg gehad.", cs:"U\u017e mám dost.", pron:"ik hep che-noech che-hat"},
+          {nl:"Laten we een taxi bellen.", cs:"Zavolajme taxi.", pron:"la-ten ve en tak-see bel-en"},
+          {nl:"Dat was een gezellige avond.", cs:"Byl to p\u0159\u00edjemn\u00fd ve\u010der.", pron:"dat vas en che-zel-li-che a-vond"},
+          {nl:"We moeten dit vaker doen.", cs:"M\u011bsíme to d\u011blat \u010dast\u011bji.", pron:"ve moe-ten dit va-ker doen"}
         ]
       },
       {
-        title:"Zdvořilost",
-        ctx:"Fráze, bez kterých člověk zbytečně působí tvrdě.",
+        title:"Oslava a spole\u010densk\u00e9 akce",
+        ctx:"Narozeniny, promo, odchod kolegy.",
         phrases:[
-          {nl:"Dank je wel.", cs:"Děkuji.", pron:"dank je vel"},
-          {nl:"Graag gedaan.", cs:"Není zač.", pron:"chrach che-dan"},
-          {nl:"Alsjeblieft.", cs:"Prosím.", pron:"als-je-bleeft"},
-          {nl:"Pardon, mag ik erlangs?", cs:"Promiňte, mohu projít?", pron:"par-don, mach ik er-langs"},
-          {nl:"Sorry, dat was niet mijn bedoeling.", cs:"Promiňte, to nebyl můj úmysl.", pron:"so-ree, dat vas neet mejn be-doe-ling"},
-          {nl:"Fijne dag nog!", cs:"Hezký zbytek dne!", pron:"faj-ne dach noch"},
-          {nl:"Tot ziens.", cs:"Na shledanou.", pron:"tot zeens"}
+          {nl:"Gefeliciteerd!", cs:"Gratuluju!", pron:"che-fe-li-si-teerd"},
+          {nl:"Van harte gefeliciteerd.", cs:"Srdečn\u00e9 blahop\u0159\u00e1n\u00ed.", pron:"van har-te che-fe-li-si-teerd"},
+          {nl:"Op jouw gezondheid!", cs:"Na tvoje zdrav\u00ed!", pron:"op jou che-zont-hejt"},
+          {nl:"Wat een geweldige avond.", cs:"To byl \u00faasn\u00fd ve\u010der.", pron:"vat en che-vel-di-che a-vond"},
+          {nl:"Je hebt het verdiend.", cs:"Zasloužil sis to.", pron:"je hebt et ver-deent"},
+          {nl:"Succes met je nieuwe baan!", cs:"Hodn\u011b \u0161t\u011bst\u00ed v nov\u00e9 pr\u00e1ci!", pron:"suk-ses met je new-ve ban"},
+          {nl:"We gaan je erg missen.", cs:"Budeme t\u011b moc pok\u00e1dat.", pron:"ve chan je erch mis-en"}
         ]
       }
     ],
     dialogs:[
       {
-        title:"První den v práci",
-        ctx:"Krátké seznámení u kávovaru.",
+        title:"Kol\u011bgo plat\u00ed",
+        ctx:"P\u0159emek si n\u011bco objedn\u00e1 a kol\u011bga ho p\u0159edb\u011bhne.",
         lines:[
-          {speaker:"Kolega", nl:"Goedemorgen! Jij bent nieuw, toch?", cs:"Dobré ráno! Ty jsi nový, že?"},
-          {speaker:"Přemek", nl:"Ja, klopt. Ik ben Premek.", cs:"Ano, přesně tak. Jsem Přemek."},
-          {speaker:"Kolega", nl:"Leuk je te ontmoeten.", cs:"Rád tě poznávám."},
-          {speaker:"Přemek", nl:"Dank je, mij ook.", cs:"Díky, mě taky."}
+          {speaker:"P\u0159emek", nl:"Mag ik een biertje, alsjeblieft?", cs:"Mohl bych dostat pivo, pros\u00edm?"},
+          {speaker:"Kol\u011bga", nl:"Laat maar, ik trakteer vandaag.", cs:"Nechej to, dnes pl\u00e1t\u00edm j\u00e1."},
+          {speaker:"P\u0159emek", nl:"Dat is heel aardig van je.", cs:"To je od tebe moc mil\u00e9."},
+          {speaker:"Kol\u011bga", nl:"Proost! Op de samenwerking.", cs:"Na zdrav\u00ed! Na spolupr\u00e1ci."}
         ]
       }
     ]
   },
   {
-    id:"prace", icon:"💼", title:"V práci", color:"#5B21B6",
-    desc:"Kolegové, meetingy, termíny, telefonáty",
+    id:"kultura", icon:"&#127914;", title:"Kultura & z\u00e1bava", color:"#5B21B6",
+    desc:"Koncert, divadlo, festival, kino, v\u00fdstava",
     situations:[
       {
-        title:"Každodenní komunikace",
-        ctx:"Běžná práce s kolegy během dne.",
+        title:"Kino a divadlo",
+        ctx:"L\u00edstky, m\u00edsta, program.",
         phrases:[
-          {nl:"Heb je even tijd?", cs:"Máš chvilku čas?", pron:"hep je ee-ven tejt"},
-          {nl:"Kunnen we dit later bespreken?", cs:"Můžeme to probrat později?", pron:"kun-en ve dit la-ter be-spree-ken"},
-          {nl:"Ik stuur je straks een e-mail.", cs:"Za chvíli ti pošlu e-mail.", pron:"ik stüür je straks en ee-mail"},
-          {nl:"Wanneer is de deadline?", cs:"Kdy je termín?", pron:"va-neer is de dead-lajn"},
-          {nl:"Ik ben bijna klaar.", cs:"Už jsem skoro hotový.", pron:"ik ben bej-na klar"},
-          {nl:"Ik werk vandaag vanuit huis.", cs:"Dnes pracuji z domu.", pron:"ik verk van-dach va-nöüt höüs"},
-          {nl:"Ik kom vandaag iets later.", cs:"Dnes přijdu trochu později.", pron:"ik kom van-dach iets la-ter"},
-          {nl:"Kun je dit even checken?", cs:"Můžeš to rychle zkontrolovat?", pron:"kün je dit ee-ven chek-en"}
+          {nl:"Zijn er nog kaartjes beschikbaar?", cs:"Jsou je\u0161t\u011b l\u00edstky k dispozici?", pron:"zejn er noch kar-tjes be-schik-bar"},
+          {nl:"Twee kaartjes voor vanavond, graag.", cs:"Dva l\u00edstky na dne\u0161n\u00ed ve\u010der, pros\u00edm.", pron:"tvee kar-tjes vor van-a-vond, chrach"},
+          {nl:"Welke rij is dat?", cs:"Jak\u00e1 je to \u0159ada?", pron:"vel-ke rej is dat"},
+          {nl:"Mag ik het programma zien?", cs:"Mohu se pod\u00edvat na program?", pron:"mach ik et pro-chra-ma zeen"},
+          {nl:"Hoe laat begint de voorstelling?", cs:"V kolik za\u010d\u00edn\u00e1 p\u0159edstaven\u00ed?", pron:"hoe lat be-chint de vor-stel-ing"},
+          {nl:"Is er een pauze?", cs:"Je tam p\u0159est\u00e1vka?", pron:"is er en pau-ze"},
+          {nl:"Dat was een geweldige voorstelling.", cs:"To bylo \u00faasn\u00e9 p\u0159edstaven\u00ed.", pron:"dat vas en che-vel-di-che vor-stel-ing"},
+          {nl:"Ik vond het niet zo goed.", cs:"Moc se mi to nel\u00edbilo.", pron:"ik font et neet zo choot"},
+          {nl:"De hoofdrol was uitstekend.", cs:"Hlavn\u00ed role byla vynikaj\u00edc\u00ed.", pron:"de hoofd-rol vas \u00f6\u00fct-stee-kent"},
+          {nl:"Wanneer draait die film?", cs:"Kdy se hraj\u00ed ten film?", pron:"va-neer drajt dee film"},
+          {nl:"Is er ondertiteling?", cs:"Je tam titulkovan\u00e9?", pron:"is er on-der-tee-te-ling"},
+          {nl:"Heeft u een studenten korting?", cs:"M\u00e1te studentskou slevu?", pron:"heft \u00fc en stü-den-ten kor-ting"}
         ]
       },
       {
-        title:"Nerozumím",
-        ctx:"Potřebuješ zpomalit nebo zachránit situaci.",
+        title:"Koncert a festival",
+        ctx:"Hudba, dav, p\u0159\u00e1tel\u00e9.",
         phrases:[
-          {nl:"Ik begrijp het nog niet helemaal.", cs:"Ještě tomu úplně nerozumím.", pron:"ik be-chrejp et noch neet he-le-mal"},
-          {nl:"Kunt u dat herhalen?", cs:"Můžete to zopakovat?", pron:"kunt ü dat her-ha-len"},
-          {nl:"Kunt u iets langzamer praten?", cs:"Můžete mluvit trochu pomaleji?", pron:"kunt ü iets lang-za-mer pra-ten"},
-          {nl:"Kunnen we even Engels spreken?", cs:"Můžeme na chvíli mluvit anglicky?", pron:"kun-en ve ee-ven eng-els spree-ken"},
-          {nl:"Hoe schrijf je dat?", cs:"Jak se to píše?", pron:"hoe schrejf je dat"},
-          {nl:"Wat betekent dat precies?", cs:"Co to přesně znamená?", pron:"vat be-tee-kent dat pre-sees"},
-          {nl:"Ik leer nog Nederlands.", cs:"Ještě se učím holandsky.", pron:"ik leer noch nee-der-lands"}
+          {nl:"Om hoe laat gaat het concert beginnen?", cs:"V kolik za\u010d\u00edn\u00e1 koncert?", pron:"om hoe lat chat et kon-sert be-chin-en"},
+          {nl:"Wie is de headliner vanavond?", cs:"Kdo je dne\u0161n\u00ed hvězda?", pron:"vie is de hed-laj-ner van-a-vond"},
+          {nl:"Dit nummer ken ik!", cs:"Tenhle song zn\u00e1m!", pron:"dit num-er ken ik"},
+          {nl:"Wat een sfeer hier.", cs:"Jaká tady panuje atmosf\u00e9ra.", pron:"vat en sfeer hir"},
+          {nl:"Sta jij ook te dansen?", cs:"Tan\u010d\u00ed\u0161 taky?", pron:"sta jej ook te dan-sen"},
+          {nl:"Het is hier erg druk.", cs:"Je tady hodn\u011b lid\u00ed.", pron:"et is hir erch druk"},
+          {nl:"Zullen we ergens anders heen gaan?", cs:"P\u016fjdeme n\u011bkam jinam?", pron:"z\u00fcl-en ve er-chens an-ders heen chan"},
+          {nl:"Dit festival is elk jaar geweldig.", cs:"Tento festival je ka\u017ed\u00fd rok \u00faasn\u00fd.", pron:"dit fes-tee-val is elk jar che-vel-dich"}
         ]
       }
     ],
     dialogs:[
       {
-        title:"Meeting",
-        ctx:"Přemek chce zdržet rozhodnutí o deset minut.",
+        title:"V\u00fdb\u011br programu",
+        ctx:"P\u0159emek a kol\u011bga \u0159e\u0161\u00ed co v\u00e9 ve\u010der.",
         lines:[
-          {speaker:"Přemek", nl:"Kunnen we dit later bespreken?", cs:"Můžeme to probrat později?"},
-          {speaker:"Kolega", nl:"Ja hoor, wanneer past het jou?", cs:"Jistě, kdy se ti to hodí?"},
-          {speaker:"Přemek", nl:"Over tien minuten ben ik klaar.", cs:"Za deset minut budu hotový."},
-          {speaker:"Kolega", nl:"Prima, dan doen we dat straks.", cs:"Výborně, uděláme to za chvíli."}
+          {speaker:"Kol\u011bga", nl:"Zin om vanavond naar het concert te gaan?", cs:"M\u00e1\u0161 chu\u0165 j\u00edt dnes ve\u010der na koncert?"},
+          {speaker:"P\u0159emek", nl:"Ja, zeker. Hoe laat begint het?", cs:"Jo, ur\u010dit\u011b. V kolik za\u010d\u00edn\u00e1?"},
+          {speaker:"Kol\u011bga", nl:"Om acht uur. Er zijn nog kaartjes.", cs:"Ve osm. Je\u0161t\u011b jsou l\u00edstky."},
+          {speaker:"P\u0159emek", nl:"Top, dan neem ik er twee.", cs:"Super, vezmu dva."}
         ]
       }
     ]
   },
   {
-    id:"obchod", icon:"🛒", title:"Nakupování & služby", color:"#C94A0A",
-    desc:"Supermarket, pokladna, reklamace, praktické nákupy",
+    id:"prace2", icon:"&#128188;", title:"Pr\u00e1ce &mdash; pokro\u010dil\u00e1 komunikace", color:"#0369A1",
+    desc:"Feedback, prezentace, kari\u00e9ra, konflikty, hr\u00e1nice",
     situations:[
       {
-        title:"V supermarketu",
-        ctx:"Hledáš zboží nebo něco nemůžeš najít.",
+        title:"Feedback a hodnocen\u00ed",
+        ctx:"Dost\u00e1v\u00e1\u0161 nebo d\u00e1v\u00e1\u0161 zp\u011btnou vazbu.",
         phrases:[
-          {nl:"Waar is de melk?", cs:"Kde je mléko?", pron:"var is de melk"},
-          {nl:"Ik zoek volkorenbrood.", cs:"Hledám celozrnný chléb.", pron:"ik zoek vol-ko-ren-brot"},
-          {nl:"Heeft u ook lactosevrije melk?", cs:"Máte i bezlaktózové mléko?", pron:"heft ü ook lak-to-se-vraj-e melk"},
-          {nl:"Is dit in de aanbieding?", cs:"Je to v akci?", pron:"is dit in de an-bee-ding"},
-          {nl:"Dat is te duur.", cs:"To je příliš drahé.", pron:"dat is te dür"},
-          {nl:"Ik kan het niet vinden.", cs:"Nemohu to najít.", pron:"ik kan et neet vin-den"},
-          {nl:"Waar is de uitgang?", cs:"Kde je východ?", pron:"var is de öüt-chang"}
+          {nl:"Ik heb wat feedback op je presentatie.", cs:"M\u00e1m n\u011bjakou zp\u011btnou vazbu k tv\u00e9 prezentaci.", pron:"ik hep vat fee-tbek op je pre-zen-ta-tsee"},
+          {nl:"Wat vind jij ervan?", cs:"Co si ty o tom mysl\u00ed\u0161?", pron:"vat fint jej er-van"},
+          {nl:"Ik snap wat je bedoelt.", cs:"Chápu co t\u00edm m\u00ed\u0161.", pron:"ik snap vat je be-doelt"},
+          {nl:"Daar heb je een punt.", cs:"V tom m\u00e1\u0161 pravdu.", pron:"dar hep je en p\u00fcnt"},
+          {nl:"Ik zie dat anders.", cs:"Já to vid\u00edm jinak.", pron:"ik zee dat an-ders"},
+          {nl:"Kunnen we daar later op terugkomen?", cs:"M\u016f\u017eeme se k tomu vr\u00e1tit pozd\u011bji?", pron:"kun-en ve dar la-ter op te-ruch-ko-men"},
+          {nl:"Dat is een goed idee.", cs:"To je dobr\u00fd n\u00e1pad.", pron:"dat is en choot i-dee"},
+          {nl:"Ik twijfel daar nog over.", cs:"Je\u0161t\u011b o tom p\u0159em\u00fd\u0161l\u00edm.", pron:"ik tvej-fel dar noch o-ver"},
+          {nl:"Laten we het even opschrijven.", cs:"Poj\u010fme si to zapsat.", pron:"la-ten ve et ee-ven op-schrej-ven"},
+          {nl:"Ik kom hier later op terug.", cs:"K tomu se vr\u00e1t\u00edm pozd\u011bji.", pron:"ik kom hir la-ter op te-ruch"}
         ]
       },
       {
-        title:"U pokladny a reklamace",
-        ctx:"Platíš nebo řešíš problém.",
+        title:"Kari\u00e9ra a hr\u00e1nice",
+        ctx:"Povýšení, p\u0159et\u00ed\u017een\u00ed, odmítnut\u00ed.",
         phrases:[
-          {nl:"Kan ik met de kaart betalen?", cs:"Mohu platit kartou?", pron:"kan ik met de kart be-ta-len"},
-          {nl:"Mag ik de bon?", cs:"Mohu dostat účtenku?", pron:"mach ik de bon"},
-          {nl:"Dit product werkt niet.", cs:"Tento výrobek nefunguje.", pron:"dit pro-dukt verkt neet"},
-          {nl:"Ik wil dit graag terugbrengen.", cs:"Rád bych to vrátil.", pron:"ik vil dit chrach te-ruch-breng-en"},
-          {nl:"Kan ik mijn geld terugkrijgen?", cs:"Mohu dostat peníze zpět?", pron:"kan ik mejn chelt te-ruch-krej-gen"},
-          {nl:"Waar is de klantenservice?", cs:"Kde je zákaznický servis?", pron:"var is de klan-ten-ser-vis"},
-          {nl:"Bedankt, fijne dag.", cs:"Děkuji, hezký den.", pron:"be-dankt, faj-ne dach"}
+          {nl:"Ik wil graag doorgroeien binnen dit bedrijf.", cs:"R\u00e1d bych v t\u00e9to firm\u011b r\u016fst.", pron:"ik vil chrach dor-chroo-jen bin-en dit be-drejf"},
+          {nl:"Wat zijn mijn groeimogelijkheden?", cs:"Jak\u00e9 mám možnosti r\u016fstu?", pron:"vat zejn mejn chroo-ee-mo-che-lik-hee-den"},
+          {nl:"Ik zit op dit moment aan mijn limiet.", cs:"Te\u010f jsem na sv\u00e9m limitu.", pron:"ik zit op dit mo-ment an mejn li-miet"},
+          {nl:"Ik kan die taak er niet bij hebben.", cs:"Na ten \u00fakol nem\u00e1m kapacitu.", pron:"ik kan dee tak er neet bej heb-en"},
+          {nl:"Ik zou hier graag meer uren voor willen.", cs:"R\u00e1d bych na to m\u011bl v\u00edce \u010dasu.", pron:"ik zou hir chrach meer \u00fc-ren vor vil-en"},
+          {nl:"Kan ik dit met mijn leidinggevende bespreken?", cs:"Mohu to promluvit s nadn\u00edzen\u00fdm?", pron:"kan ik dit met mejn lej-ding-chee-ven-de be-spree-ken"},
+          {nl:"Ik ben niet beschikbaar op vrijdag.", cs:"V p\u00e1tek nejsem k dispozici.", pron:"ik ben neet be-schik-bar op vrej-dach"},
+          {nl:"Dat valt buiten mijn takenpakket.", cs:"To je mimo m\u00e9 pracovn\u00ed n\u00e1pln.", pron:"dat valt b\u00f6\u00fcten mejn ta-ken-pa-ket"},
+          {nl:"Ik wil dit schriftelijk bevestigd hebben.", cs:"Cht\u011bl bych to m\u00edt písemně potvrzeno.", pron:"ik vil dit schrif-te-lik be-ves-ticht heb-en"},
+          {nl:"Wanneer kan ik een salarisverhoging verwachten?", cs:"Kdy mohu o\u010dek\u00e1vat zv\u00fd\u0161en\u00ed platu?", pron:"va-neer kan ik en sa-la-ris-ver-ho-ching ver-vach-ten"}
         ]
       }
     ],
     dialogs:[
       {
-        title:"Vadný výrobek",
-        ctx:"Vrácení nefunkčního zboží.",
+        title:"Povýšení",
+        ctx:"P\u0159emek žád\u00e1 o rozhovor ohledn\u011b kari\u00e9ry.",
         lines:[
-          {speaker:"Přemek", nl:"Dit product werkt niet.", cs:"Tento výrobek nefunguje."},
-          {speaker:"Obsluha", nl:"Heeft u de bon nog?", cs:"Máte ještě účtenku?"},
-          {speaker:"Přemek", nl:"Ja, hier is de bon.", cs:"Ano, tady je účtenka."},
-          {speaker:"Obsluha", nl:"Dan kunnen we het omruilen.", cs:"Pak vám to můžeme vyměnit."}
+          {speaker:"P\u0159emek", nl:"Ik wil graag doorgroeien. Wat zijn de mogelijkheden?", cs:"R\u00e1d bych r\u016fst. Jak\u00e9 jsou možnosti?"},
+          {speaker:"Manager", nl:"Dat waardeer ik. Laten we dat plannen.", cs:"To ocen\u011bním. Naplánujme si to."},
+          {speaker:"P\u0159emek", nl:"Wanneer heeft u tijd?", cs:"Kdy m\u00e1te \u010das?"},
+          {speaker:"Manager", nl:"Volgende week donderdag?", cs:"P\u0159\u00ed\u0161t\u00ed t\u00fdden ve \u010dtvrtek?"}
         ]
       }
     ]
   },
   {
-    id:"bydleni", icon:"🏠", title:"Bydlení & sousedé", color:"#0369A1",
-    desc:"Byt, nájem, závady, sousedi, domácí situace",
+    id:"zdravi", icon:"&#127973;", title:"Zdravotnictv\u00ed", color:"#0F766E",
+    desc:"Huisarts, pojišt\u011bna, l\u00e9k\u00e1rna, pohotovost",
     situations:[
       {
-        title:"Byt a nájem",
-        ctx:"Hledání bytu a základní dotazy.",
+        title:"U l\u00e9ka\u0159e",
+        ctx:"Objedn\u00e1n\u00ed, p\u0159\u00edzn\u00e1ky, recept.",
         phrases:[
-          {nl:"Ik zoek een woning in deze buurt.", cs:"Hledám bydlení v této čtvrti.", pron:"ik zoek en vo-ning in dee-ze bürt"},
-          {nl:"Hoeveel is de huur per maand?", cs:"Kolik je nájem za měsíc?", pron:"hoe-vel is de hür per mant"},
-          {nl:"Zijn de kosten inbegrepen?", cs:"Jsou poplatky v ceně?", pron:"zejn de kos-ten in-be-chre-pen"},
-          {nl:"Wanneer kan ik de woning bezichtigen?", cs:"Kdy si mohu byt prohlédnout?", pron:"va-neer kan ik de vo-ning be-zich-ti-chen"},
-          {nl:"Is inschrijving mogelijk?", cs:"Je možné se tam přihlásit k pobytu?", pron:"is in-schrej-ving mo-che-lik"},
-          {nl:"Hoe groot is het appartement?", cs:"Jak velký je ten byt?", pron:"hoe chroot is et a-par-te-ment"}
+          {nl:"Ik wil een afspraak maken bij de huisarts.", cs:"Chci se objednat k prakti\u010dk\u00e9mu l\u00e9ka\u0159i.", pron:"ik vil en af-sprak ma-ken bej de h\u00f6\u00fc-arts"},
+          {nl:"Ik heb al drie dagen koorts.", cs:"T\u0159i dny mám hore\u010dku.", pron:"ik hep al dree da-chen korts"},
+          {nl:"Het doet hier pijn.", cs:"Tady to bol\u00ed.", pron:"et doot hir pejn"},
+          {nl:"Ik ben allergisch voor penicilline.", cs:"Jsem alergick\u00fd na penicilin.", pron:"ik ben al-er-chis vor pe-ni-si-lee-ne"},
+          {nl:"Kunt u mij een recept geven?", cs:"M\u016f\u017eete mi d\u00e1t recept?", pron:"kunt \u00fc mej en re-sept chee-ven"},
+          {nl:"Moet ik nuchter zijn?", cs:"Mus\u00edm b\u00fdt na l\u00e1\u010dno?", pron:"moet ik nuch-ter zejn"},
+          {nl:"Hoe vaak moet ik dit innemen?", cs:"Jak \u010dasto to mám br\u00e1t?", pron:"hoe vak moet ik dit in-nee-men"},
+          {nl:"Ik heb een verwijzing nodig.", cs:"Pot\u0159ebuji doporučen\u00ed.", pron:"ik hep en ver-vej-zing noo-dich"},
+          {nl:"Is dit dringend?", cs:"Je to naléhav\u00e9?", pron:"is dit dring-ent"},
+          {nl:"Waar is de dichtstbijzijnde apotheek?", cs:"Kde je nejbli\u017e\u0161\u00ed l\u00e9k\u00e1rna?", pron:"var is de dichts-bej-zejn-de a-po-teek"}
         ]
       },
       {
-        title:"Problémy v bytě",
-        ctx:"Topení, voda, elektřina a další radosti dospělého života.",
+        title:"Pojišt\u011bna a byrokracie",
+        ctx:"Registrace, formuláře, platby.",
         phrases:[
-          {nl:"De verwarming werkt niet.", cs:"Topení nefunguje.", pron:"de ver-var-ming verkt neet"},
-          {nl:"Er is een lekkage in de badkamer.", cs:"V koupelně zatéká.", pron:"er is en le-ka-zje in de bat-ka-mer"},
-          {nl:"De stroom is uitgevallen.", cs:"Vypadl proud.", pron:"de stroom is öüt-che-val-en"},
-          {nl:"Kunt u iemand sturen?", cs:"Můžete někoho poslat?", pron:"kunt ü ie-mand stü-ren"},
-          {nl:"Het is dringend.", cs:"Je to naléhavé.", pron:"het is dring-ent"},
-          {nl:"Wanneer wordt dit gerepareerd?", cs:"Kdy se to opraví?", pron:"va-neer vort dit che-re-pa-reert"}
+          {nl:"Ik heb een zorgverzekering nodig.", cs:"Pot\u0159ebuji zdravotn\u00ed poji\u0161t\u011bn\u00ed.", pron:"ik hep en zorch-ver-zee-ke-ring noo-dich"},
+          {nl:"Welke verzekering heeft u?", cs:"Jakou m\u00e1te poji\u0161tovnu?", pron:"vel-ke ver-zee-ke-ring heft \u00fc"},
+          {nl:"Is dit vergoed door mijn verzekering?", cs:"Proplat\u00ed to moje poji\u0161\u0165ovna?", pron:"is dit ver-choot dor mejn ver-zee-ke-ring"},
+          {nl:"Ik ben nieuw ingeschreven in Nederland.", cs:"Jsem nov\u011b registrov\u00e1n v Nizozemsku.", pron:"ik ben nih\u00f6\u00fc in-che-schree-ven in nee-der-land"},
+          {nl:"Heeft u mijn DigiD nodig?", cs:"Pot\u0159ebujete moje DigiD?", pron:"heft \u00fc mejn di-chee-dee noo-dich"},
+          {nl:"Ik begrijp dit formulier niet.", cs:"Tomuto formul\u00e1\u0159i nerozum\u00edm.", pron:"ik be-chrejp dit for-m\u00fc-lier neet"},
+          {nl:"Kunt u mij helpen dit in te vullen?", cs:"M\u016f\u017eete mi pomoci vyplnit to?", pron:"kunt \u00fc mej hel-pen dit in te v\u00fcl-en"},
+          {nl:"Wanneer krijg ik de rekening?", cs:"Kdy dostanu \u00fa\u010det?", pron:"va-neer krejch ik de re-kee-ning"},
+          {nl:"Ik heb een eigen risico van 385 euro.", cs:"Mám vlastn\u00ed sp\u00f3luú\u010dast 385 eur.", pron:"ik hep en ej-chen ree-si-ko van dree-hon-dert vejf-en-tach-tich \u00f6\u00fc-ro"},
+          {nl:"Kunt u dit in het Engels uitleggen?", cs:"M\u016f\u017eete to vysv\u011btlit anglicky?", pron:"kunt \u00fc dit in et eng-els \u00f6\u00fcit-lech-en"}
         ]
       }
     ],
     dialogs:[
       {
-        title:"Závada v bytě",
-        ctx:"Přemek píše majiteli.",
+        title:"U huisartse",
+        ctx:"P\u0159emek p\u0159ich\u00e1z\u00ed s horečkou.",
         lines:[
-          {speaker:"Přemek", nl:"De verwarming werkt niet.", cs:"Topení nefunguje."},
-          {speaker:"Majitel", nl:"Sinds wanneer?", cs:"Od kdy?"},
-          {speaker:"Přemek", nl:"Sinds gisterenavond.", cs:"Od včerejšího večera."},
-          {speaker:"Majitel", nl:"Ik stuur morgen iemand langs.", cs:"Zítra někoho pošlu."}
+          {speaker:"P\u0159emek", nl:"Ik heb al drie dagen koorts en keelpijn.", cs:"T\u0159i dny m\u00e1m hore\u010dku a bolest v kr\u010dku."},
+          {speaker:"Dokter", nl:"Heeft u ook last van hoesten?", cs:"M\u00e1te i ka\u0161el?"},
+          {speaker:"P\u0159emek", nl:"Ja, een beetje. En ik voel me erg moe.", cs:"Ano, trochu. A c\u00edt\u00edm se velmi unaven\u00fd."},
+          {speaker:"Dokter", nl:"Ik schrijf u een recept uit.", cs:"Vypí\u0161u v\u00e1m recept."}
         ]
       }
     ]
   },
   {
-    id:"social", icon:"☕", title:"Kolegové, přátelé & small talk", color:"#92400E",
-    desc:"Oběd, kafe, drink, víkend, běžná konverzace",
+    id:"doprava", icon:"&#128690;", title:"Doprava & m\u011bsto", color:"#1A2744",
+    desc:"OV-chipkaart, vlak, kolo, tramvaj, auto",
     situations:[
       {
-        title:"Kafe a small talk",
-        ctx:"Běžná neformální konverzace.",
+        title:"Veřejn\u00e1 doprava",
+        ctx:"Vlak, bus, tram, metro.",
         phrases:[
-          {nl:"Ga je mee lunchen?", cs:"Jdeš s námi na oběd?", pron:"cha je mee lun-chen"},
-          {nl:"Wil je koffie of thee?", cs:"Dáš si kávu nebo čaj?", pron:"vil je ko-fee of tee"},
-          {nl:"Heb je leuke plannen voor het weekend?", cs:"Máš pěkné plány na víkend?", pron:"hep je leu-ke plan-en vor et vee-kend"},
-          {nl:"Ik ben nog steeds aan het wennen.", cs:"Pořád si ještě zvykám.", pron:"ik ben noch steets an et ven-en"},
-          {nl:"Ik vind het hier gezellig.", cs:"Je mi tady příjemně.", pron:"ik fint et hier che-zel-lich"},
-          {nl:"Bedankt voor de uitnodiging.", cs:"Díky za pozvání.", pron:"be-dankt vor de öüt-no-di-ching"},
-          {nl:"Wat doe je in het weekend?", cs:"Co děláš o víkendu?", pron:"vat doe je in et vee-kend"}
+          {nl:"Hoe kom ik het snelst naar Amsterdam Centraal?", cs:"Jak se nejrychleji dostanu na Amsterdam Centraal?", pron:"hoe kom ik et snel-st na am-ster-dam sen-tral"},
+          {nl:"Welke trein gaat naar Utrecht?", cs:"Kter\u00fd vlak jede do Utrechtu?", pron:"vel-ke trejn chat na \u00fc-trect"},
+          {nl:"Ik heb mijn OV-chipkaart vergeten.", cs:"Zapomn\u011bl jsem OV-chipkaart.", pron:"ik hep mejn oh-vee chip-kart ver-chee-ten"},
+          {nl:"Is er vertraging?", cs:"Je tam zpoždění?", pron:"is er ver-tra-ching"},
+          {nl:"Op welk perron vertrekt de trein?", cs:"Ze kter\u00e9ho peronu vyjíždí vlak?", pron:"op velk pe-ron ver-trekt de trejn"},
+          {nl:"Ik wil inchecken.", cs:"Chci se odbavit.", pron:"ik vil in-chek-en"},
+          {nl:"Vergeet niet uit te checken.", cs:"Nezapomeňte se odhlásit.", pron:"ver-cheet neet \u00f6\u00fcit te chek-en"},
+          {nl:"Welke halte moet ik hebben?", cs:"Na kter\u00e9 zastávce m\u00e1m vystoupit?", pron:"vel-ke hal-te moet ik heb-en"},
+          {nl:"Is dit de goede richting naar het centrum?", cs:"Je to spr\u00e1vn\u00fd sm\u011br do centra?", pron:"is dit de choo-de rich-ting na et sen-trum"},
+          {nl:"Ik heb de trein gemist.", cs:"Zmeš\u00edkal jsem vlak.", pron:"ik hep de trejn che-mist"}
         ]
       },
       {
-        title:"Po práci",
-        ctx:"Drink, nealko, lehká domluva.",
+        title:"Kolo a auto",
+        ctx:"Opravna, parkování, ne\u0161t\u011bst\u00ed.",
         phrases:[
-          {nl:"Ga je mee een drankje doen?", cs:"Jdeš s námi na drink?", pron:"cha je mee en dränk-je doen"},
-          {nl:"Ik drink vanavond geen alcohol.", cs:"Dnes večer nepiju alkohol.", pron:"ik drink van-a-vond chen al-ko-hol"},
-          {nl:"Doe mij maar een bier.", cs:"Dám si pivo.", pron:"doe mej mar en bier"},
-          {nl:"Ik neem liever iets zonder alcohol.", cs:"Radši si dám něco bez alkoholu.", pron:"ik neem lie-ver iets zon-der al-ko-hol"},
-          {nl:"Ik ga niet te laat blijven.", cs:"Nezůstanu moc dlouho.", pron:"ik cha neet te lat blej-ven"},
-          {nl:"Gezellig!", cs:"Příjemné!", pron:"che-zel-lich"},
-          {nl:"Dat is heel Nederlands.", cs:"To je hodně nizozemské.", pron:"dat is heel nee-der-lands"}
+          {nl:"Mijn fiets heeft een lekke band.", cs:"Moje kolo m\u00e1 defekt.", pron:"mejn feets heft en lek-e bant"},
+          {nl:"Waar kan ik mijn fiets repareren?", cs:"Kde mi mohou opravit kolo?", pron:"var kan ik mejn feets re-pa-ree-ren"},
+          {nl:"Is er een fietsenwinkel in de buurt?", cs:"Je v okol\u00ed obd\u00e1r\u0148 s koly?", pron:"is er en feet-sen-ving-kel in de b\u00fcrt"},
+          {nl:"Mijn fiets is gestolen.", cs:"Ukradli mi kolo.", pron:"mejn feets is che-stoo-len"},
+          {nl:"Waar kan ik parkeren?", cs:"Kde mohu parkovat?", pron:"var kan ik par-kee-ren"},
+          {nl:"Is hier betaald parkeren?", cs:"Je tady placen\u00e9 parkování?", pron:"is hir be-talt par-kee-ren"},
+          {nl:"Ik heb een parkeerbon gekregen.", cs:"Dostal jsem pokutu za parkování.", pron:"ik hep en par-keer-bon che-kree-chen"},
+          {nl:"Hoe ver is het op de fiets?", cs:"Jak daleko je to na kole?", pron:"hoe ver is et op de feets"},
+          {nl:"Er is een ongeluk gebeurd.", cs:"Stala se nehoda.", pron:"er is en on-che-luk che-b\u00f6rt"},
+          {nl:"Bel 112 alsjeblieft.", cs:"Zavolejte 112, pros\u00edm.", pron:"bel hon-derd-tvaalf als-je-bleeft"}
         ]
       }
     ],
     dialogs:[
       {
-        title:"Po práci na drink",
-        ctx:"Kolega zve Přemka ven.",
+        title:"Zm\u011bskan\u00fd vlak",
+        ctx:"P\u0159emek zmeškal spoj.",
         lines:[
-          {speaker:"Kolega", nl:"Ga je mee een drankje doen?", cs:"Jdeš s námi na drink?"},
-          {speaker:"Přemek", nl:"Ja, gezellig. Maar ik blijf niet te laat.", cs:"Jo, rád. Ale nezůstanu moc dlouho."},
-          {speaker:"Kolega", nl:"Geen probleem.", cs:"Žádný problém."},
-          {speaker:"Přemek", nl:"Top, dan ga ik mee.", cs:"Super, tak jdu s vámi."}
+          {speaker:"P\u0159emek", nl:"Ik heb de trein gemist. Wanneer is de volgende?", cs:"Zmeš\u00edkal jsem vlak. Kdy jede dal\u0161\u00ed?"},
+          {speaker:"Loket", nl:"Over twintig minuten, spoor drie.", cs:"Za dvacet minut, kolej t\u0159i."},
+          {speaker:"P\u0159emek", nl:"Kan ik met hetzelfde kaartje reizen?", cs:"Mohu jet se stejnou jízdenkou?"},
+          {speaker:"Loket", nl:"Ja, dat is geen probleem.", cs:"Ano, to nen\u00ed probl\u00e9m."}
         ]
       }
     ]
   },
   {
-    id:"eten", icon:"🍽️", title:"Restaurace & bar", color:"#B45309",
-    desc:"Objednávka, účet, rezervace, jídlo, alergie",
+    id:"urady", icon:"&#127963;", title:"\u00da\u0159ady & finance", color:"#065F46",
+    desc:"DigiD, BSN, belastingdienst, bank, n\u00e1jem, smlouvy",
     situations:[
       {
-        title:"Objednávka",
-        ctx:"Přijdeš do podniku a chceš přežít bez paniky.",
+        title:"Registrace a doklady",
+        ctx:"Obecní úřad, inschrijving, BSN.",
         phrases:[
-          {nl:"Hebben jullie nog een tafel voor twee?", cs:"Máte ještě stůl pro dva?", pron:"heb-en jül-lie noch en ta-fel vor tvee"},
-          {nl:"Mag ik de menukaart?", cs:"Mohu jídelní lístek?", pron:"mach ik de me-nü-kart"},
-          {nl:"Wat raadt u aan?", cs:"Co doporučujete?", pron:"vat rat ü an"},
-          {nl:"Ik neem dit gerecht.", cs:"Dám si tohle jídlo.", pron:"ik neem dit che-recht"},
-          {nl:"Voor mij hetzelfde, graag.", cs:"Pro mě to samé, prosím.", pron:"vor mej et-zelv-de, chrach"},
-          {nl:"Mag ik iets te drinken bestellen?", cs:"Mohu si objednat něco k pití?", pron:"mach ik iets te dring-en be-stel-en"}
+          {nl:"Ik wil mij inschrijven in de gemeente.", cs:"Chci se p\u0159ihl\u00e1sit v obci.", pron:"ik vil mej in-schrej-ven in de che-meen-te"},
+          {nl:"Ik heb een BSN-nummer nodig.", cs:"Pot\u0159ebuji BSN č\u00edslo.", pron:"ik hep en bee-es-en num-er noo-dich"},
+          {nl:"Wat zijn de benodigde documenten?", cs:"Jak\u00e9 jsou pot\u0159ebn\u00e9 dokumenty?", pron:"vat zejn de be-noo-dich-de do-k\u00fc-men-ten"},
+          {nl:"Ik heb een afspraak gemaakt.", cs:"Mám domluvenou schůzku.", pron:"ik hep en af-sprak che-makt"},
+          {nl:"Hoe lang duurt de procedure?", cs:"Jak dlouho trv\u00e1 postup?", pron:"hoe lang d\u00f6rt de pro-see-dü-re"},
+          {nl:"Ik heb mijn paspoort bij me.", cs:"Mám u sebe cestovn\u00ed pas.", pron:"ik hep mejn pas-port bej me"},
+          {nl:"Wanneer ontvang ik mijn DigiD?", cs:"Kdy dostanu DigiD?", pron:"va-neer ont-vang ik mejn di-chee-dee"},
+          {nl:"Moet ik hier persoonlijk voor komen?", cs:"Mus\u00edm pro to přijít osobn\u011b?", pron:"moet ik hir per-soo-nik vor ko-men"},
+          {nl:"Kunt u dit in eenvoudige taal uitleggen?", cs:"M\u016f\u017eete to říct jednoduchými slovy?", pron:"kunt \u00fc dit in een-vou-di-che tal \u00f6\u00fcit-lech-en"},
+          {nl:"Ik spreek nog niet goed Nederlands.", cs:"Je\u0161t\u011b neum\u00edm dob\u0159e holandsky.", pron:"ik spreek noch neet choot nee-der-lands"}
         ]
       },
       {
-        title:"Účet a placení",
-        ctx:"Někdy chceš jen rychle zaplatit a nenápadně zmizet.",
+        title:"Finance a da\u0148e",
+        ctx:"Belastingdienst, \u00fa\u010det, n\u00e1jem.",
         phrases:[
-          {nl:"Mogen we de rekening?", cs:"Můžeme poprosit účet?", pron:"mo-chen ve de re-kee-ning"},
-          {nl:"Kunnen we apart betalen?", cs:"Můžeme platit zvlášť?", pron:"kun-en ve a-part be-ta-len"},
-          {nl:"Kan ik met pin betalen?", cs:"Mohu zaplatit kartou?", pron:"kan ik met pin be-ta-len"},
-          {nl:"Nee, het klopt zo.", cs:"To je dobré, vracet nemusíte.", pron:"nee, het klopt zo"},
-          {nl:"Bedankt, het was erg lekker.", cs:"Děkuji, bylo to moc dobré.", pron:"be-dankt, het vas erg lek-er"},
-          {nl:"We komen graag nog eens terug.", cs:"Rádi se sem ještě vrátíme.", pron:"ve ko-men chrach noch eens te-ruch"}
+          {nl:"Ik wil een bankrekening openen.", cs:"Chci si otev\u0159\u00edt bankovn\u00ed \u00fa\u010det.", pron:"ik vil en bank-ree-kee-ning oo-pe-nen"},
+          {nl:"Hoe doe ik aangifte?", cs:"Jak pod\u00e1m dan\u011b?", pron:"hoe doe ik an-chif-te"},
+          {nl:"Ik heb een toeslag aangevraagd.", cs:"Po\u017e\u00e1dal jsem o p\u0159\u00edsp\u011bvek.", pron:"ik hep en too-slach an-che-vrach"},
+          {nl:"Wanneer wordt dit uitbetaald?", cs:"Kdy to bude proplaceno?", pron:"va-neer vort dit \u00f6\u00fcit-be-talt"},
+          {nl:"Mijn huurcontract loopt af.", cs:"Moje n\u00e1jemn\u00ed smlouva kon\u010d\u00ed.", pron:"mejn h\u00fcr-kon-trakt loopt af"},
+          {nl:"Ik wil de huur opzeggen.", cs:"Chci vyp\u00f3v\u011bdet n\u00e1jem.", pron:"ik vil de h\u00fcr op-zech-en"},
+          {nl:"Wat is de opzegtermijn?", cs:"Jak\u00e1 je v\u00fdp\u00f3v\u011bdn\u00ed l\u016fta?", pron:"vat is de op-zech-ter-mejn"},
+          {nl:"Ik heb een brief van de belastingdienst ontvangen.", cs:"Dostal jsem dopis od da\u0148ov\u00e9ho \u00fa\u0159adu.", pron:"ik hep en breef van de be-las-ting-deenst ont-van-chen"},
+          {nl:"Kunt u mij doorverwijzen?", cs:"M\u016f\u017eete m\u011b p\u0159esm\u011brov\u00e1t?", pron:"kunt \u00fc mej dor-ver-vej-zen"},
+          {nl:"Ik begrijp de brief niet helemaal.", cs:"Dopisu úpl\u011bně nerozum\u00edm.", pron:"ik be-chrejp de breef neet hee-le-mal"}
         ]
       }
     ],
     dialogs:[
       {
-        title:"V restauraci",
-        ctx:"Jednoduchá objednávka.",
+        title:"Na obci",
+        ctx:"P\u0159emek se p\u0159ihlašuje.",
         lines:[
-          {speaker:"Obsluha", nl:"Hebben jullie al gekozen?", cs:"Už jste si vybrali?"},
-          {speaker:"Přemek", nl:"Ja, ik neem dit gerecht.", cs:"Ano, dám si tohle jídlo."},
-          {speaker:"Obsluha", nl:"En iets te drinken?", cs:"A něco k pití?"},
-          {speaker:"Přemek", nl:"Een koffie, alstublieft.", cs:"Jednu kávu, prosím."}
-        ]
-      }
-    ]
-  },
-  {
-    id:"randeni", icon:"❤️", title:"Randění & vztahy", color:"#BE123C",
-    desc:"Seznámení, pozvání, rande, slušné odmítnutí",
-    situations:[
-      {
-        title:"První kontakt",
-        ctx:"Seznamuješ se naživo nebo přes aplikaci.",
-        phrases:[
-          {nl:"Hoi, ik ben Premek. Leuk je te leren kennen.", cs:"Ahoj, jsem Přemek. Rád tě poznávám.", pron:"hoj, ik ben pree-mek. leuk je te le-ren ken-en"},
-          {nl:"Je hebt een leuke glimlach.", cs:"Máš hezký úsměv.", pron:"je hebt en leu-ke chlim-lach"},
-          {nl:"Waar kom je vandaan?", cs:"Odkud jsi?", pron:"var kom je van-dan"},
-          {nl:"Woon je al lang in Nederland?", cs:"Bydlíš už dlouho v Nizozemsku?", pron:"von je al lang in nee-der-land"},
-          {nl:"Ik praat nog niet vloeiend Nederlands.", cs:"Ještě nemluvím plynně holandsky.", pron:"ik prat noch neet vloei-end nee-der-lands"},
-          {nl:"Maar ik doe mijn best.", cs:"Ale snažím se.", pron:"mar ik doe mejn best"}
-        ]
-      },
-      {
-        title:"Pozvání a po setkání",
-        ctx:"Kafe, schůzka, jemnost a slušnost.",
-        phrases:[
-          {nl:"Zou je een keer koffie willen drinken?", cs:"Nezašel(a) bys někdy na kávu?", pron:"zou je en keer ko-fee vil-len dring-en"},
-          {nl:"Ben je dit weekend vrij?", cs:"Máš tenhle víkend čas?", pron:"ben je dit vee-kend vraj"},
-          {nl:"Zullen we ergens afspreken?", cs:"Sejdeme se někde?", pron:"zü-len ve er-gens af-spree-ken"},
-          {nl:"Bedankt voor de leuke avond.", cs:"Díky za hezký večer.", pron:"be-dankt vor de leu-ke a-vond"},
-          {nl:"Ik wil eerlijk tegen je zijn.", cs:"Chci k tobě být upřímný.", pron:"ik vil eer-lik te-chen je zejn"},
-          {nl:"Je bent heel aardig, maar ik voel het niet op die manier.", cs:"Jsi moc fajn, ale necítím to takhle.", pron:"je bent heel ar-dich, mar ik voelt et neet op die ma-nier"}
-        ]
-      }
-    ],
-    dialogs:[
-      {
-        title:"Pozvání na kávu",
-        ctx:"Nenucené a použitelné.",
-        lines:[
-          {speaker:"Přemek", nl:"Zou je een keer koffie willen drinken?", cs:"Nezašla bys někdy na kávu?"},
-          {speaker:"Ona", nl:"Ja, lijkt me leuk.", cs:"Jo, to by bylo fajn."},
-          {speaker:"Přemek", nl:"Ben je dit weekend vrij?", cs:"Máš tenhle víkend čas?"},
-          {speaker:"Ona", nl:"Zaterdagmiddag kan wel.", cs:"Sobota odpoledne může být."}
+          {speaker:"P\u0159emek", nl:"Ik wil mij inschrijven. Wat heb ik nodig?", cs:"Chci se p\u0159ihl\u00e1sit. Co pot\u0159ebuji?"},
+          {speaker:"\u00da\u0159ednik", nl:"Uw paspoort en huurcontract.", cs:"V\u00e1\u0161 pas a n\u00e1jemn\u00ed smlouvu."},
+          {speaker:"P\u0159emek", nl:"Ik heb beide bij me.", cs:"Ob\u011b mám u sebe."},
+          {speaker:"\u00da\u0159ednik", nl:"Dan kunnen we beginnen.", cs:"Pak m\u016f\u017eeme za\u010d\u00edt."}
         ]
       }
     ]
@@ -605,603 +542,290 @@ const MODULES = [
 ];
 
 const BADGES = [
-  {id:"first_quiz", icon:"🎯", name:"První výstřel", desc:"Dokonči první kvíz."},
-  {id:"first_module", icon:"✅", name:"První modul", desc:"Dokonči první modul na 90 %."},
-  {id:"streak3", icon:"🔥", name:"Držím sérii", desc:"Udrž 3 dny v řadě."},
-  {id:"xp100", icon:"📈", name:"Přežiju den", desc:"Nasbírej 100 XP."},
-  {id:"xp300", icon:"🧠", name:"Mluvím v obchodě", desc:"Nasbírej 300 XP."},
-  {id:"perfect_quiz", icon:"🏆", name:"Bez chyby", desc:"Dej kvíz bez jediné chyby."},
-  {id:"listener", icon:"🔊", name:"Poslechář", desc:"Přehraj 25 frází."}
+  {id:"first_quiz",icon:"&#127919;",name:"Prvn\u00ed v\u00fdst\u0159el",desc:"Dokon\u010di prvn\u00ed kv\u00edz."},
+  {id:"first_module",icon:"&#10003;",name:"Prvn\u00ed modul",desc:"Dokon\u010di prvn\u00ed modul na 90 %."},
+  {id:"streak3",icon:"&#128293;",name:"Dr\u017e\u00edm s\u00e9rii",desc:"Udr\u017e 3 dny v \u0159ad\u011b."},
+  {id:"xp100",icon:"&#128200;",name:"P\u0159e\u017eiju den",desc:"Nasb\u00edrej 100 XP."},
+  {id:"xp300",icon:"&#129504;",name:"Mluvím v obchod\u011b",desc:"Nasb\u00edrej 300 XP."},
+  {id:"perfect_quiz",icon:"&#127942;",name:"Bez chyby",desc:"Dej kv\u00edz bez jedin\u00e9 chyby."},
+  {id:"listener",icon:"&#128266;",name:"Poslucha\u010d",desc:"P\u0159ehraj 25 fr\u00e1z\u00ed."}
 ];
 
-const STORAGE_KEY = "fajn_nederlands_v2_full_state";
+const STORAGE_KEY = "fajn_nederlands_v2b_state";
 const DAILY_GOAL_XP = 50;
 
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-function getAudioCtx(){ if(!audioCtx && AudioCtx) audioCtx = new AudioCtx(); return audioCtx; }
-function playCorrect(){
-  try{
-    const ctx = getAudioCtx(); if(!ctx) return;
-    const t = ctx.currentTime; const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination); osc.type = "sine";
-    osc.frequency.setValueAtTime(523, t); osc.frequency.setValueAtTime(659, t+0.12); osc.frequency.setValueAtTime(784, t+0.24);
-    gain.gain.setValueAtTime(0.25, t); gain.gain.exponentialRampToValueAtTime(0.001, t+0.5);
-    osc.start(t); osc.stop(t+0.5);
-  }catch(e){}
-}
-function playWrong(){
-  try{
-    const ctx = getAudioCtx(); if(!ctx) return;
-    const t = ctx.currentTime; const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination); osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(320, t); osc.frequency.setValueAtTime(220, t+0.15);
-    gain.gain.setValueAtTime(0.14, t); gain.gain.exponentialRampToValueAtTime(0.001, t+0.35);
-    osc.start(t); osc.stop(t+0.35);
-  }catch(e){}
-}
-function playTap(){
-  try{
-    const ctx = getAudioCtx(); if(!ctx) return;
-    const t = ctx.currentTime; const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination); osc.type = "sine";
-    osc.frequency.setValueAtTime(820, t);
-    gain.gain.setValueAtTime(0.08, t); gain.gain.exponentialRampToValueAtTime(0.001, t+0.09);
-    osc.start(t); osc.stop(t+0.09);
-  }catch(e){}
-}
-// TTS přes OpenAI API — funguje v každém prohlížeči
+// ── TTS ────────────────────────────────────────────────────────────────────
 let ttsCache = {};
 async function speakDutch(text) {
   try {
-    if (ttsCache[text]) {
-      const audio = new Audio(ttsCache[text]);
-      audio.play();
-      return;
-    }
+    if (ttsCache[text]) { new Audio(ttsCache[text]).play(); return; }
     const r = await fetch('https://fdc-gateway.vercel.app/api/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text, lang: 'nl' })
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({text, voice:'alloy'})
     });
-    if (!r.ok) throw new Error('TTS selhalo');
+    if (!r.ok) throw new Error('TTS failed');
     const blob = await r.blob();
     const url = URL.createObjectURL(blob);
     ttsCache[text] = url;
-    const audio = new Audio(url);
-    audio.play();
+    new Audio(url).play();
   } catch(e) {
-    // fallback na browser TTS pokud API selže
     if (window.speechSynthesis) {
-      const utt = new SpeechSynthesisUtterance(text);
-      utt.lang = 'nl-NL'; utt.rate = 0.88;
-      window.speechSynthesis.speak(utt);
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'nl-NL'; u.rate = 0.88;
+      window.speechSynthesis.speak(u);
     }
   }
 }
 
-function getTodayKey(){
-  const d = new Date();
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-}
-function defaultState(){
-  return {
-    xp:0, quizzesCompleted:0, completedModules:[], badges:[], moduleBest:{}, mistakesByModule:{},
-    phrasePlays:0, streak:0, bestStreak:0, lastActiveDate:null, dailyXp:{date:getTodayKey(), value:0}
-  };
-}
-function safeLoadState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return defaultState();
-    const parsed = JSON.parse(raw);
-    const s = {...defaultState(), ...parsed};
-    if(!Array.isArray(s.completedModules)) s.completedModules = [];
-    if(!Array.isArray(s.badges)) s.badges = [];
-    if(!s.moduleBest || typeof s.moduleBest !== "object") s.moduleBest = {};
-    if(!s.mistakesByModule || typeof s.mistakesByModule !== "object") s.mistakesByModule = {};
-    if(!s.dailyXp || typeof s.dailyXp !== "object") s.dailyXp = {date:getTodayKey(), value:0};
-    if(s.dailyXp.date !== getTodayKey()) s.dailyXp = {date:getTodayKey(), value:0};
-    return s;
-  }catch(e){
-    return defaultState();
-  }
-}
-let state = safeLoadState();
-function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
-
-function updateActivityDate(){
-  const today = getTodayKey();
-  if(state.lastActiveDate === today) return;
-  if(!state.lastActiveDate){
-    state.streak = 1;
-  }else{
-    const prev = new Date(state.lastActiveDate+"T00:00:00");
-    const curr = new Date(today+"T00:00:00");
-    const diffDays = Math.round((curr - prev)/86400000);
-    if(diffDays === 1) state.streak += 1;
-    else if(diffDays > 1) state.streak = 1;
-  }
-  state.lastActiveDate = today;
-  state.bestStreak = Math.max(state.bestStreak, state.streak);
-  saveState();
-}
-function addXp(amount){
-  updateActivityDate();
-  state.xp += amount;
-  if(state.dailyXp.date !== getTodayKey()) state.dailyXp = {date:getTodayKey(), value:0};
-  state.dailyXp.value += amount;
-  saveState();
-}
-function unlockBadge(id){
-  if(!state.badges.includes(id)){
-    state.badges.push(id);
-    saveState();
-    return true;
-  }
-  return false;
-}
-function evaluateBadges(lastResult = null){
-  const newBadges = [];
-  if(state.quizzesCompleted >= 1 && unlockBadge("first_quiz")) newBadges.push("První výstřel");
-  if(state.completedModules.length >= 1 && unlockBadge("first_module")) newBadges.push("První modul");
-  if(state.streak >= 3 && unlockBadge("streak3")) newBadges.push("Držím sérii");
-  if(state.xp >= 100 && unlockBadge("xp100")) newBadges.push("Přežiju den");
-  if(state.xp >= 300 && unlockBadge("xp300")) newBadges.push("Mluvím v obchodě");
-  if(state.phrasePlays >= 25 && unlockBadge("listener")) newBadges.push("Poslechář");
-  if(lastResult && lastResult.perfect && unlockBadge("perfect_quiz")) newBadges.push("Bez chyby");
-  return newBadges;
-}
-function levelNameFromXp(xp){
-  if(xp >= 600) return "Skoro domácí";
-  if(xp >= 300) return "Mluvím v obchodě";
-  if(xp >= 100) return "Přežiju den";
-  return "Začátek v NL";
-}
-
-let currentModuleIdx = null;
-let quizQuestions = [];
-let quizCurrent = 0;
-let quizScore = 0;
-let quizAnswered = false;
-let quizMode = "cz-nl";
-let quizBestRunStreak = 0;
-let quizCurrentRunStreak = 0;
-let quizXpEarned = 0;
-
-function showScreen(id){
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById("screen-"+id).classList.add("active");
-}
-function getModuleById(id){ return MODULES.find(m => m.id === id); }
-function getAllPhrasesForModule(mod){
-  const all = [];
-  mod.situations.forEach(sit => {
-    sit.phrases.forEach(ph => all.push({...ph, sitTitle:sit.title, sitCtx:sit.ctx}));
-  });
-  return all;
-}
-function shuffle(arr){
-  const copy = [...arr];
-  for(let i = copy.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
-function uniqueByKey(arr, key){
-  const seen = new Set();
-  return arr.filter(item => {
-    const value = item[key];
-    if(seen.has(value)) return false;
-    seen.add(value);
-    return true;
-  });
-}
-
-
-// ── Pronunciation check ──────────────────────────────────────────────────
-let pronRec = null, pronRecording = false, pronChunks = [], pronNl = null, pronResEl = null;
-
+// ── Pronunciation check ────────────────────────────────────────────────────
+let pronRec=null, pronRecording=false, pronChunks=[], pronNl=null, pronResEl=null;
 async function startPronCheck(nl, resEl, btn) {
   if (pronRecording) { if (pronRec) pronRec.stop(); return; }
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    pronChunks = []; pronNl = nl; pronResEl = resEl;
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    pronChunks=[]; pronNl=nl; pronResEl=resEl;
     pronRec = new MediaRecorder(stream);
     pronRec.ondataavailable = e => pronChunks.push(e.data);
     pronRec.onstop = sendPron;
-    pronRec.start(); pronRecording = true;
-    btn.textContent = '⏹'; btn.classList.add('rec');
-    resEl.className = 'pron-result show'; resEl.textContent = 'Nahrávám…';
-    setTimeout(() => { if (pronRecording && pronRec) pronRec.stop(); }, 5000);
+    pronRec.start(); pronRecording=true;
+    btn.textContent='&#9209;'; btn.classList.add('rec');
+    resEl.className='pron-result show'; resEl.textContent='Nahr\u00e1v\u00e1m\u2026';
+    setTimeout(()=>{ if(pronRecording && pronRec) pronRec.stop(); }, 5000);
   } catch(e) {
-    resEl.className = 'pron-result bad show'; resEl.textContent = 'Mikrofon nedostupný.';
+    resEl.className='pron-result bad show'; resEl.textContent='Mikrofon nedostupn\u00fd.';
+  }
+}
+async function sendPron() {
+  pronRecording=false;
+  document.querySelectorAll('.pron-mic-btn.rec').forEach(b=>{b.textContent='&#127897;';b.classList.remove('rec');});
+  const resEl=pronResEl; if(!resEl) return;
+  resEl.textContent='Zpracov\u00e1v\u00e1m\u2026';
+  const blob=new Blob(pronChunks,{type:'audio/webm'});
+  const fd=new FormData();
+  fd.append('audio',blob,'audio.webm');
+  fd.append('expectedText',pronNl);
+  fd.append('language','nl-NL');
+  try {
+    const r=await fetch('https://fdc-gateway.vercel.app/api/pronunciation',{method:'POST',body:fd});
+    const data=await r.json();
+    const p=data.score||0;
+    const words=(data.words||[]).map(w=>(w.ok?'&#10003;':'&#10007;')+w.word).join(' ');
+    resEl.textContent=p+'% \u2014 '+words;
+    resEl.className='pron-result show '+(p>=75?'good':p>=45?'mid':'bad');
+  } catch(e) {
+    resEl.className='pron-result bad show'; resEl.textContent='Chyba spojen\u00ed.';
   }
 }
 
-async function sendPron() {
-  pronRecording = false;
-  document.querySelectorAll('.pron-mic-btn.rec').forEach(b => { b.textContent = '🎤'; b.classList.remove('rec'); });
-  const resEl = pronResEl; if (!resEl) return;
-  resEl.textContent = 'Zpracovávám…';
-  const blob = new Blob(pronChunks, { type: 'audio/webm' });
-  const fd = new FormData();
-  fd.append('audio', blob, 'audio.webm');
-  fd.append('expectedText', pronNl);
-  fd.append('language', 'nl-NL');
-  try {
-    const r = await fetch('https://fdc-gateway.vercel.app/api/pronunciation', { method: 'POST', body: fd });
-    const data = await r.json();
-    const p = data.score || 0;
-    const words = (data.words || []).map(w => (w.ok ? '✓' : '✗') + w.word).join(' ');
-    resEl.textContent = p + '% — ' + words;
-    resEl.className = 'pron-result show ' + (p >= 75 ? 'good' : p >= 45 ? 'mid' : 'bad');
-  } catch(e) {
-    resEl.className = 'pron-result bad show'; resEl.textContent = 'Chyba spojení.';
-  }
-}
+// ── Audio UI ───────────────────────────────────────────────────────────────
+const AudioCtx=window.AudioContext||window.webkitAudioContext;
+let audioCtx=null;
+function getAudioCtx(){if(!audioCtx&&AudioCtx)audioCtx=new AudioCtx();return audioCtx;}
+function playCorrect(){try{const c=getAudioCtx();if(!c)return;const t=c.currentTime;const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.type="sine";o.frequency.setValueAtTime(523,t);o.frequency.setValueAtTime(659,t+.12);o.frequency.setValueAtTime(784,t+.24);g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.start(t);o.stop(t+.5);}catch(e){}}
+function playWrong(){try{const c=getAudioCtx();if(!c)return;const t=c.currentTime;const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.type="sawtooth";o.frequency.setValueAtTime(320,t);o.frequency.setValueAtTime(220,t+.15);g.gain.setValueAtTime(.14,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.start(t);o.stop(t+.35);}catch(e){}}
+function playTap(){try{const c=getAudioCtx();if(!c)return;const t=c.currentTime;const o=c.createOscillator();const g=c.createGain();o.connect(g);g.connect(c.destination);o.type="sine";o.frequency.setValueAtTime(820,t);g.gain.setValueAtTime(.08,t);g.gain.exponentialRampToValueAtTime(.001,t+.09);o.start(t);o.stop(t+.09);}catch(e){}}
+
+// ── State ──────────────────────────────────────────────────────────────────
+function getTodayKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function defaultState(){return{xp:0,quizzesCompleted:0,completedModules:[],badges:[],moduleBest:{},mistakesByModule:{},phrasePlays:0,streak:0,bestStreak:0,lastActiveDate:null,dailyXp:{date:getTodayKey(),value:0}};}
+function safeLoadState(){try{const r=localStorage.getItem(STORAGE_KEY);if(!r)return defaultState();const p=JSON.parse(r);const s={...defaultState(),...p};if(!Array.isArray(s.completedModules))s.completedModules=[];if(!Array.isArray(s.badges))s.badges=[];if(!s.moduleBest||typeof s.moduleBest!=="object")s.moduleBest={};if(!s.mistakesByModule||typeof s.mistakesByModule!=="object")s.mistakesByModule={};if(!s.dailyXp||typeof s.dailyXp!=="object")s.dailyXp={date:getTodayKey(),value:0};if(s.dailyXp.date!==getTodayKey())s.dailyXp={date:getTodayKey(),value:0};return s;}catch(e){return defaultState();}}
+let state=safeLoadState();
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
+function updateActivityDate(){const today=getTodayKey();if(state.lastActiveDate===today)return;if(!state.lastActiveDate){state.streak=1;}else{const prev=new Date(state.lastActiveDate+"T00:00:00");const curr=new Date(today+"T00:00:00");const diff=Math.round((curr-prev)/86400000);if(diff===1)state.streak+=1;else if(diff>1)state.streak=1;}state.lastActiveDate=today;state.bestStreak=Math.max(state.bestStreak,state.streak);saveState();}
+function addXp(a){updateActivityDate();state.xp+=a;if(state.dailyXp.date!==getTodayKey())state.dailyXp={date:getTodayKey(),value:0};state.dailyXp.value+=a;saveState();}
+function unlockBadge(id){if(!state.badges.includes(id)){state.badges.push(id);saveState();return true;}return false;}
+function evaluateBadges(lr=null){const nb=[];if(state.quizzesCompleted>=1&&unlockBadge("first_quiz"))nb.push("Prvn\u00ed v\u00fdst\u0159el");if(state.completedModules.length>=1&&unlockBadge("first_module"))nb.push("Prvn\u00ed modul");if(state.streak>=3&&unlockBadge("streak3"))nb.push("Dr\u017e\u00edm s\u00e9rii");if(state.xp>=100&&unlockBadge("xp100"))nb.push("P\u0159e\u017eiju den");if(state.xp>=300&&unlockBadge("xp300"))nb.push("Mluv\u00edm v obchod\u011b");if(state.phrasePlays>=25&&unlockBadge("listener"))nb.push("Poslucha\u010d");if(lr&&lr.perfect&&unlockBadge("perfect_quiz"))nb.push("Bez chyby");return nb;}
+function levelNameFromXp(xp){if(xp>=600)return"Skoro dom\u00e1c\u00ed";if(xp>=300)return"Mluv\u00edm v obchod\u011b";if(xp>=100)return"P\u0159e\u017eiju den";return"Expatem na\u010disto";}
+
+// ── Quiz state ─────────────────────────────────────────────────────────────
+let currentModuleIdx=null,quizQuestions=[],quizCurrent=0,quizScore=0,quizAnswered=false,quizMode="cz-nl",quizBestRunStreak=0,quizCurrentRunStreak=0,quizXpEarned=0;
+
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById("screen-"+id).classList.add("active");}
+function getAllPhrasesForModule(mod){const all=[];mod.situations.forEach(sit=>{sit.phrases.forEach(ph=>all.push({...ph,sitTitle:sit.title,sitCtx:sit.ctx}));});return all;}
+function shuffle(arr){const c=[...arr];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]];}return c;}
+function uniqueByKey(arr,key){const seen=new Set();return arr.filter(item=>{const v=item[key];if(seen.has(v))return false;seen.add(v);return true;});}
 
 function renderHome(){
   updateActivityDate();
-  const grid = document.getElementById("modules-grid");
-  grid.innerHTML = "";
-  MODULES.forEach((mod, i) => {
-    const done = state.completedModules.includes(mod.id);
-    const best = state.moduleBest[mod.id] || 0;
-    const mistakesCount = (state.mistakesByModule[mod.id] || []).length;
-
-    const card = document.createElement("div");
-    card.className = "module-card" + (done ? " done" : "");
-    card.onclick = () => showModule(i);
-    card.innerHTML = `
-      <div class="module-icon" style="background:${mod.color}22">${mod.icon}</div>
-      <div class="module-info">
-        <h3>${mod.title}</h3>
-        <div class="module-desc">${mod.desc}</div>
-        <div class="module-meta">
-          <span class="pill ${done ? "good" : ""}">${done ? "Dokončeno" : "K procvičení"}</span>
-          <span class="pill blue">Best: ${best ? best + " %" : "–"}</span>
-          <span class="pill">${mistakesCount} chyb k zopakování</span>
-        </div>
-      </div>
-      <div class="module-arrow">${done ? "✓" : "›"}</div>
-    `;
+  const grid=document.getElementById("modules-grid");
+  grid.innerHTML="";
+  MODULES.forEach((mod,i)=>{
+    const done=state.completedModules.includes(mod.id);
+    const best=state.moduleBest[mod.id]||0;
+    const mc=(state.mistakesByModule[mod.id]||[]).length;
+    const card=document.createElement("div");
+    card.className="module-card"+(done?" done":"");
+    card.onclick=()=>showModule(i);
+    card.innerHTML=`<div class="module-icon" style="background:${mod.color}22">${mod.icon}</div><div class="module-info"><h3>${mod.title}</h3><div class="module-desc">${mod.desc}</div><div class="module-meta"><span class="pill ${done?"good":""}">${done?"Dokon\u010deno":"K procvi\u010den\u00ed"}</span><span class="pill blue">Best: ${best?best+" %":"\u2013"}</span><span class="pill">${mc} chyb</span></div></div><div class="module-arrow">${done?"\u2713":"\u203a"}</div>`;
     grid.appendChild(card);
   });
-
-  const pct = Math.round((state.completedModules.length / MODULES.length) * 100);
-  document.getElementById("home-progress").style.width = pct + "%";
-  document.getElementById("home-progress-main").textContent = state.completedModules.length + " / " + MODULES.length + " modulů";
-  document.getElementById("home-progress-label").textContent =
-    state.completedModules.length === 0 ? "Zatím nic dokončeno. To se urazí i tulipán." : "Jedeš. Pokračuj, ať z Přemka není jen turistická legenda.";
-
-  document.getElementById("level-name").textContent = levelNameFromXp(state.xp);
-  document.getElementById("xp-summary").textContent = state.xp + " XP celkem";
-  document.getElementById("streak-value").textContent = state.streak + " " + (state.streak === 1 ? "den" : state.streak < 5 ? "dny" : "dní");
-  document.getElementById("streak-sub").textContent = state.streak > 0 ? "Nejlepší série: " + state.bestStreak + " dní" : "Dnes ještě nezačato";
-
-  const dailyPct = Math.min(100, Math.round((state.dailyXp.value / DAILY_GOAL_XP) * 100));
-  document.getElementById("daily-goal-value").textContent = state.dailyXp.value + " / " + DAILY_GOAL_XP + " XP";
-  document.getElementById("daily-goal-bar").style.width = dailyPct + "%";
-  document.getElementById("daily-goal-sub").textContent =
-    state.dailyXp.value >= DAILY_GOAL_XP ? "Denní cíl splněn. Přemek dnes nelelkoval." : "Ještě chybí " + Math.max(0, DAILY_GOAL_XP - state.dailyXp.value) + " XP.";
-
+  const pct=Math.round((state.completedModules.length/MODULES.length)*100);
+  document.getElementById("home-progress").style.width=pct+"%";
+  document.getElementById("home-progress-main").textContent=state.completedModules.length+" / "+MODULES.length+" modul\u016f";
+  document.getElementById("home-progress-label").textContent=state.completedModules.length===0?"Za\u010dni prvn\u00edm modulem.":"Jede\u0161. Pokra\u010duj.";
+  document.getElementById("level-name").textContent=levelNameFromXp(state.xp);
+  document.getElementById("xp-summary").textContent=state.xp+" XP celkem";
+  document.getElementById("streak-value").textContent=state.streak+" "+(state.streak===1?"den":state.streak<5?"dny":"dn\u00ed");
+  document.getElementById("streak-sub").textContent=state.streak>0?"Nejlep\u0161\u00ed s\u00e9rie: "+state.bestStreak+" dn\u00ed":"Dnes je\u0161t\u011b neza\u010dato";
+  const dp=Math.min(100,Math.round((state.dailyXp.value/DAILY_GOAL_XP)*100));
+  document.getElementById("daily-goal-value").textContent=state.dailyXp.value+" / "+DAILY_GOAL_XP+" XP";
+  document.getElementById("daily-goal-bar").style.width=dp+"%";
+  document.getElementById("daily-goal-sub").textContent=state.dailyXp.value>=DAILY_GOAL_XP?"Denn\u00ed c\u00edl spln\u011bn!":"Je\u0161t\u011b chyb\u00ed "+(DAILY_GOAL_XP-state.dailyXp.value)+" XP.";
   renderBadges();
 }
+
 function renderBadges(){
-  const wrap = document.getElementById("badges-wrap");
-  wrap.innerHTML = "";
-  BADGES.forEach(b => {
-    const unlocked = state.badges.includes(b.id);
-    const el = document.createElement("div");
-    el.className = "badge-chip " + (unlocked ? "unlocked" : "locked");
-    el.innerHTML = `<div class="badge-icon">${b.icon}</div><div class="badge-name">${b.name}</div><div class="badge-desc">${b.desc}</div>`;
-    wrap.appendChild(el);
-  });
+  const wrap=document.getElementById("badges-wrap");wrap.innerHTML="";
+  BADGES.forEach(b=>{const u=state.badges.includes(b.id);const el=document.createElement("div");el.className="badge-chip "+(u?"unlocked":"locked");el.innerHTML=`<div class="badge-icon">${b.icon}</div><div class="badge-name">${b.name}</div><div class="badge-desc">${b.desc}</div>`;wrap.appendChild(el);});
 }
 
-function showHome(){ renderHome(); showScreen("home"); }
+function showHome(){renderHome();showScreen("home");}
 
 function showModule(idx){
-  currentModuleIdx = idx;
-  const mod = MODULES[idx];
-  const allPhrases = getAllPhrasesForModule(mod);
-
-  document.getElementById("module-title-header").textContent = mod.icon + " " + mod.title;
-  document.getElementById("module-subtitle-header").textContent = mod.desc;
-  document.getElementById("module-phrase-count").textContent = allPhrases.length + " frází";
-  document.getElementById("module-best-score").textContent = state.moduleBest[mod.id] ? state.moduleBest[mod.id] + " %" : "zatím nic";
-
-  const hasMistakes = (state.mistakesByModule[mod.id] || []).length > 0;
-  document.getElementById("mistakes-btn").style.display = hasMistakes ? "block" : "none";
-
+  currentModuleIdx=idx;
+  const mod=MODULES[idx];
+  const all=getAllPhrasesForModule(mod);
+  document.getElementById("module-title-header").textContent=mod.icon+" "+mod.title;
+  document.getElementById("module-subtitle-header").textContent=mod.desc;
+  document.getElementById("module-phrase-count").textContent=all.length+" fr\u00e1z\u00ed";
+  document.getElementById("module-best-score").textContent=state.moduleBest[mod.id]?state.moduleBest[mod.id]+" %":"zat\u00edm nic";
+  const hm=(state.mistakesByModule[mod.id]||[]).length>0;
+  document.getElementById("mistakes-btn").style.display=hm?"block":"none";
   renderSituations(mod);
   renderDialogs(mod);
   showScreen("module");
 }
+
 function renderSituations(mod){
-  const list = document.getElementById("situations-list");
-  list.innerHTML = "";
-  mod.situations.forEach((sit, si) => {
-    const card = document.createElement("div");
-    card.className = "situation-card" + (si === 0 ? " open" : "");
-
-    const header = document.createElement("div");
-    header.className = "situation-header";
-    header.innerHTML = `
-      <div>
-        <div class="situation-title">${sit.title}</div>
-        <div class="situation-ctx">${sit.ctx}</div>
-      </div>
-      <div class="situation-toggle">⌄</div>
-    `;
-    header.onclick = () => card.classList.toggle("open");
-
-    const body = document.createElement("div");
-    body.className = "situation-body";
-    sit.phrases.forEach(ph => {
-      const row = document.createElement("div");
-      row.className = "phrase-row";
-      const pid = 'p_' + si + '_' + sit.phrases.indexOf(ph);
-      const nlEsc = ph.nl.replace(/'/g, "\\'");
-      row.innerHTML = `
-        <div class="phrase-top">
-          <div class="phrase-nl">${ph.nl}</div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <button class="pron-mic-btn" id="mb_${pid}"
-              onclick="event.stopPropagation();startPronCheck('${nlEsc}',document.getElementById('pr_${pid}'),this)">🎤</button>
-            <div class="speak-icon"
-              onclick="event.stopPropagation();playTap();speakDutch('${nlEsc}');state.phrasePlays+=1;evaluateBadges();saveState();">🔊</div>
-          </div>
-        </div>
-        <div class="phrase-cs">${ph.cs}</div>
-        <div class="phrase-pron">[ ${ph.pron} ]</div>
-        <div class="pron-result" id="pr_${pid}"></div>
-      `;
-      const pron = row.querySelector(".phrase-pron");
-      pron.style.display = "none";
-      row.onclick = () => {
-        playTap();
-        speakDutch(ph.nl);
-        pron.style.display = pron.style.display === "none" ? "inline-block" : "none";
-        state.phrasePlays += 1;
-        evaluateBadges();
-        saveState();
-      };
+  const list=document.getElementById("situations-list");list.innerHTML="";
+  mod.situations.forEach((sit,si)=>{
+    const card=document.createElement("div");
+    card.className="situation-card"+(si===0?" open":"");
+    const header=document.createElement("div");header.className="situation-header";
+    header.innerHTML=`<div><div class="situation-title">${sit.title}</div><div class="situation-ctx">${sit.ctx}</div></div><div class="situation-toggle">&#8964;</div>`;
+    header.onclick=()=>card.classList.toggle("open");
+    const body=document.createElement("div");body.className="situation-body";
+    sit.phrases.forEach((ph,pi)=>{
+      const row=document.createElement("div");row.className="phrase-row";
+      const pid=`p_${si}_${pi}`;
+      const nlEsc=ph.nl.replace(/'/g,"\\'");
+      row.innerHTML=`<div class="phrase-top"><div class="phrase-nl">${ph.nl}</div><div style="display:flex;align-items:center;gap:6px"><button class="pron-mic-btn" id="mb_${pid}" onclick="event.stopPropagation();startPronCheck('${nlEsc}',document.getElementById('pr_${pid}'),this)">&#127897;</button><div class="speak-icon" onclick="event.stopPropagation();playTap();speakDutch('${nlEsc}');state.phrasePlays+=1;evaluateBadges();saveState();">&#128266;</div></div></div><div class="phrase-cs">${ph.cs}</div><div class="phrase-pron">[ ${ph.pron} ]</div><div class="pron-result" id="pr_${pid}"></div>`;
+      const pron=row.querySelector(".phrase-pron");pron.style.display="none";
+      row.onclick=()=>{playTap();speakDutch(ph.nl);pron.style.display=pron.style.display==="none"?"inline-block":"none";state.phrasePlays+=1;evaluateBadges();saveState();};
       body.appendChild(row);
     });
-
-    card.appendChild(header);
-    card.appendChild(body);
-    list.appendChild(card);
+    card.appendChild(header);card.appendChild(body);list.appendChild(card);
   });
 }
+
 function renderDialogs(mod){
-  const list = document.getElementById("dialogs-list");
-  list.innerHTML = "";
-  (mod.dialogs || []).forEach(dialog => {
-    const card = document.createElement("div");
-    card.className = "dialog-card";
-    let inner = `<div class="dialog-title">${dialog.title}</div><div class="dialog-ctx">${dialog.ctx}</div>`;
-    dialog.lines.forEach(line => {
-      inner += `
-        <div class="dialog-line">
-          <div class="speaker">${line.speaker}</div>
-          <div class="line-nl">${line.nl}</div>
-          <div class="line-cs">${line.cs}</div>
-        </div>
-      `;
-    });
-    card.innerHTML = inner;
-    list.appendChild(card);
+  const list=document.getElementById("dialogs-list");list.innerHTML="";
+  (mod.dialogs||[]).forEach(dialog=>{
+    const card=document.createElement("div");card.className="dialog-card";
+    let inner=`<div class="dialog-title">${dialog.title}</div><div class="dialog-ctx">${dialog.ctx}</div>`;
+    dialog.lines.forEach(line=>{inner+=`<div class="dialog-line"><div class="speaker">${line.speaker}</div><div class="line-nl">${line.nl}</div><div class="line-cs">${line.cs}</div></div>`;});
+    card.innerHTML=inner;list.appendChild(card);
   });
 }
-function backToModule(){ showModule(currentModuleIdx); }
 
-function buildQuestionPrompt(mode){
-  if(mode === "nl-cz"){
-    return {label:"Co to znamená česky:", getText:q => q.nl};
-  }
-  return {label:"Jak se holandsky řekne:", getText:q => q.cs};
+function backToModule(){showModule(currentModuleIdx);}
+function buildQuestionPrompt(mode){if(mode==="nl-cz")return{label:"Co to znamen\u00e1 \u010desky:",getText:q=>q.nl};return{label:"Jak se holandsky \u0159ekne:",getText:q=>q.cs};}
+function getWrongOptions(all,q,mode){if(mode==="nl-cz")return shuffle(all.filter(p=>p.cs!==q.cs)).slice(0,3).map(p=>p.cs);return shuffle(all.filter(p=>p.nl!==q.nl)).slice(0,3).map(p=>p.nl);}
+
+function startQuiz(mode="cz-nl"){
+  const mod=MODULES[currentModuleIdx];const all=getAllPhrasesForModule(mod);
+  quizMode=mode;quizCurrent=0;quizScore=0;quizAnswered=false;quizBestRunStreak=0;quizCurrentRunStreak=0;quizXpEarned=0;
+  let src=all;
+  if(mode==="mistakes"){const m=state.mistakesByModule[mod.id]||[];src=uniqueByKey(all.filter(ph=>m.includes(ph.nl)),"nl");if(src.length===0){src=shuffle(all).slice(0,10);quizMode="cz-nl";}}
+  quizQuestions=shuffle(src).slice(0,Math.min(10,src.length));
+  if(quizQuestions.length<4){const f=shuffle(all.filter(p=>!quizQuestions.some(q=>q.nl===p.nl))).slice(0,4-quizQuestions.length);quizQuestions=quizQuestions.concat(f);}
+  document.getElementById("quiz-module-name").textContent=mod.icon+" "+mod.title;
+  document.getElementById("quiz-mode-pill").textContent=quizMode==="mistakes"?"Opakov\u00e1n\u00ed chyb":quizMode==="nl-cz"?"NL \u2192 CZ":"CZ \u2192 NL";
+  showScreen("quiz");renderQuestion();
 }
-function getWrongOptions(modulePhrases, q, mode){
-  if(mode === "nl-cz"){
-    return shuffle(modulePhrases.filter(p => p.cs !== q.cs)).slice(0, 3).map(p => p.cs);
-  }
-  return shuffle(modulePhrases.filter(p => p.nl !== q.nl)).slice(0, 3).map(p => p.nl);
-}
 
-function startQuiz(mode = "cz-nl"){
-  const mod = MODULES[currentModuleIdx];
-  const allPhrases = getAllPhrasesForModule(mod);
-
-  quizMode = mode;
-  quizCurrent = 0;
-  quizScore = 0;
-  quizAnswered = false;
-  quizBestRunStreak = 0;
-  quizCurrentRunStreak = 0;
-  quizXpEarned = 0;
-
-  let sourceQuestions = allPhrases;
-  if(mode === "mistakes"){
-    const mistakes = state.mistakesByModule[mod.id] || [];
-    sourceQuestions = uniqueByKey(allPhrases.filter(ph => mistakes.includes(ph.nl)), "nl");
-    if(sourceQuestions.length === 0){
-      sourceQuestions = shuffle(allPhrases).slice(0, 10);
-      quizMode = "cz-nl";
-    }
-  }
-
-  quizQuestions = shuffle(sourceQuestions).slice(0, Math.min(10, sourceQuestions.length));
-  if(quizQuestions.length < 4){
-    const filler = shuffle(allPhrases.filter(p => !quizQuestions.some(q => q.nl === p.nl))).slice(0, 4 - quizQuestions.length);
-    quizQuestions = quizQuestions.concat(filler);
-  }
-
-  document.getElementById("quiz-module-name").textContent = mod.icon + " " + mod.title;
-  document.getElementById("quiz-mode-pill").textContent =
-    quizMode === "mistakes" ? "Opakování chyb" :
-    quizMode === "nl-cz" ? "NL → CZ" : "CZ → NL";
-
-  showScreen("quiz");
-  renderQuestion();
-}
 function renderQuestion(){
-  const q = quizQuestions[quizCurrent];
-  const total = quizQuestions.length;
-  const prompt = buildQuestionPrompt(quizMode);
-
-  quizAnswered = false;
-  document.getElementById("quiz-progress-text").textContent = (quizCurrent + 1) + "/" + total;
-  document.getElementById("quiz-bar").style.width = ((quizCurrent + 1) / total * 100) + "%";
-  document.getElementById("quiz-question-label").textContent = prompt.label;
-  document.getElementById("quiz-question").textContent = prompt.getText(q);
-  document.getElementById("quiz-context").textContent = q.sitTitle + " · " + q.sitCtx;
-  document.getElementById("quiz-feedback").className = "quiz-feedback";
-  document.getElementById("quiz-feedback").innerHTML = "";
-  document.getElementById("next-btn").className = "next-btn";
-  document.getElementById("quiz-streak-pill").textContent = "Série: " + quizCurrentRunStreak;
-  document.getElementById("quiz-xp-pill").textContent = "XP: " + quizXpEarned;
-
-  const modulePhrases = getAllPhrasesForModule(MODULES[currentModuleIdx]);
-  const correctOption = quizMode === "nl-cz" ? q.cs : q.nl;
-  const options = shuffle([...getWrongOptions(modulePhrases, q, quizMode), correctOption]);
-
-  const optContainer = document.getElementById("quiz-options");
-  optContainer.innerHTML = "";
-  options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.className = "quiz-option";
-    btn.textContent = opt;
-    btn.onclick = () => checkAnswer(btn, opt === correctOption, q);
-    optContainer.appendChild(btn);
-  });
+  const q=quizQuestions[quizCurrent];const total=quizQuestions.length;const prompt=buildQuestionPrompt(quizMode);
+  quizAnswered=false;
+  document.getElementById("quiz-progress-text").textContent=(quizCurrent+1)+"/"+total;
+  document.getElementById("quiz-bar").style.width=((quizCurrent+1)/total*100)+"%";
+  document.getElementById("quiz-question-label").textContent=prompt.label;
+  document.getElementById("quiz-question").textContent=prompt.getText(q);
+  document.getElementById("quiz-context").textContent=q.sitTitle+" \u00b7 "+q.sitCtx;
+  document.getElementById("quiz-feedback").className="quiz-feedback";
+  document.getElementById("quiz-feedback").innerHTML="";
+  document.getElementById("next-btn").className="next-btn";
+  document.getElementById("quiz-streak-pill").textContent="S\u00e9rie: "+quizCurrentRunStreak;
+  document.getElementById("quiz-xp-pill").textContent="XP: "+quizXpEarned;
+  const all=getAllPhrasesForModule(MODULES[currentModuleIdx]);
+  const correct=quizMode==="nl-cz"?q.cs:q.nl;
+  const options=shuffle([...getWrongOptions(all,q,quizMode),correct]);
+  const oc=document.getElementById("quiz-options");oc.innerHTML="";
+  options.forEach(opt=>{const btn=document.createElement("button");btn.className="quiz-option";btn.textContent=opt;btn.onclick=()=>checkAnswer(btn,opt===correct,q);oc.appendChild(btn);});
 }
-function checkAnswer(btn, isCorrect, q){
-  if(quizAnswered) return;
-  quizAnswered = true;
 
-  const fb = document.getElementById("quiz-feedback");
-  const nextBtn = document.getElementById("next-btn");
-  const moduleId = MODULES[currentModuleIdx].id;
-  const mistakes = state.mistakesByModule[moduleId] || [];
-  const correctValue = quizMode === "nl-cz" ? q.cs : q.nl;
-
-  document.querySelectorAll(".quiz-option").forEach(b => {
-    b.classList.add("disabled");
-    if(b.textContent === correctValue) b.classList.add("correct");
-  });
-
-  let gained = 0;
+function checkAnswer(btn,isCorrect,q){
+  if(quizAnswered)return;quizAnswered=true;
+  const fb=document.getElementById("quiz-feedback");const nb=document.getElementById("next-btn");
+  const mid=MODULES[currentModuleIdx].id;const mistakes=state.mistakesByModule[mid]||[];
+  const cv=quizMode==="nl-cz"?q.cs:q.nl;
+  document.querySelectorAll(".quiz-option").forEach(b=>{b.classList.add("disabled");if(b.textContent===cv)b.classList.add("correct");});
+  let gained=0;
   if(isCorrect){
-    btn.classList.add("correct");
-    quizScore++;
-    quizCurrentRunStreak++;
-    quizBestRunStreak = Math.max(quizBestRunStreak, quizCurrentRunStreak);
-    gained = quizMode === "mistakes" ? 12 : 10;
-    if(quizCurrentRunStreak >= 3) gained += 2;
-    playCorrect();
-    speakDutch(q.nl);
-
-    const idx = mistakes.indexOf(q.nl);
-    if(idx >= 0) mistakes.splice(idx, 1);
-
-    fb.className = "quiz-feedback correct-fb show";
-    fb.innerHTML = `
-      ✅ Správně!
-      <div class="correct-ans">Holandsky: ${q.nl} · Výslovnost: [ ${q.pron} ]</div>
-      <div class="extra-line">+${gained} XP${quizCurrentRunStreak >= 3 ? " · bonus za sérii" : ""}</div>
-    `;
-  }else{
-    btn.classList.add("wrong");
-    quizCurrentRunStreak = 0;
-    gained = 2;
-    playWrong();
-    setTimeout(() => speakDutch(q.nl), 500);
-    if(!mistakes.includes(q.nl)) mistakes.push(q.nl);
-
-    fb.className = "quiz-feedback wrong-fb show";
-    fb.innerHTML = `
-      ❌ Správně bylo: <b>${correctValue}</b>
-      <div class="correct-ans">Holandsky: ${q.nl} · Výslovnost: [ ${q.pron} ]</div>
-      <div class="extra-line">+${gained} XP za pokus. I to se počítá.</div>
-    `;
+    btn.classList.add("correct");quizScore++;quizCurrentRunStreak++;quizBestRunStreak=Math.max(quizBestRunStreak,quizCurrentRunStreak);
+    gained=quizMode==="mistakes"?12:10;if(quizCurrentRunStreak>=3)gained+=2;
+    playCorrect();speakDutch(q.nl);
+    const idx=mistakes.indexOf(q.nl);if(idx>=0)mistakes.splice(idx,1);
+    fb.className="quiz-feedback correct-fb show";
+    fb.innerHTML=`&#10003; Spr\u00e1vn\u011b!<div class="correct-ans">Holandsky: ${q.nl} &middot; V&yacute;slovnost: [ ${q.pron} ]</div><div class="extra-line">+${gained} XP${quizCurrentRunStreak>=3?" &middot; bonus za s\u00e9rii":""}</div>`;
+  } else {
+    btn.classList.add("wrong");quizCurrentRunStreak=0;gained=2;
+    playWrong();setTimeout(()=>speakDutch(q.nl),500);
+    if(!mistakes.includes(q.nl))mistakes.push(q.nl);
+    fb.className="quiz-feedback wrong-fb show";
+    fb.innerHTML=`&#10007; Spr\u00e1vn\u011b bylo: <b>${cv}</b><div class="correct-ans">Holandsky: ${q.nl} &middot; V&yacute;slovnost: [ ${q.pron} ]</div><div class="extra-line">+${gained} XP za pokus.</div>`;
   }
-
-  state.mistakesByModule[moduleId] = mistakes;
-  addXp(gained);
-  quizXpEarned += gained;
-  saveState();
-
-  document.getElementById("quiz-streak-pill").textContent = "Série: " + quizCurrentRunStreak;
-  document.getElementById("quiz-xp-pill").textContent = "XP: " + quizXpEarned;
-
-  nextBtn.className = "next-btn show";
-  nextBtn.textContent = quizCurrent + 1 < quizQuestions.length ? "Další →" : "Výsledky";
+  state.mistakesByModule[mid]=mistakes;addXp(gained);quizXpEarned+=gained;saveState();
+  document.getElementById("quiz-streak-pill").textContent="S\u00e9rie: "+quizCurrentRunStreak;
+  document.getElementById("quiz-xp-pill").textContent="XP: "+quizXpEarned;
+  nb.className="next-btn show";
+  nb.textContent=quizCurrent+1<quizQuestions.length?"Dal\u0161\u00ed \u2192":"V\u00fdsledky";
 }
-function nextQuestion(){
-  quizCurrent++;
-  if(quizCurrent >= quizQuestions.length) showResult();
-  else renderQuestion();
-}
+
+function nextQuestion(){quizCurrent++;if(quizCurrent>=quizQuestions.length)showResult();else renderQuestion();}
+
 function showResult(){
-  const total = quizQuestions.length;
-  const pct = total ? quizScore / total : 0;
-  const scorePct = Math.round(pct * 100);
-  const mod = MODULES[currentModuleIdx];
-  const prevBest = state.moduleBest[mod.id] || 0;
-
-  state.quizzesCompleted += 1;
-  if(scorePct > prevBest) state.moduleBest[mod.id] = scorePct;
-  if(pct >= 0.9 && !state.completedModules.includes(mod.id)) state.completedModules.push(mod.id);
-
-  const newBadges = evaluateBadges({moduleId:mod.id, pct:pct, perfect:quizScore === total && total > 0});
-  saveState();
-
-  document.getElementById("result-score").innerHTML = quizScore + "<span>/" + total + "</span>";
-  document.getElementById("result-xp").textContent = "+" + quizXpEarned + " XP";
-  document.getElementById("result-best-streak").textContent = String(quizBestRunStreak);
-  document.getElementById("result-best-module").textContent = (state.moduleBest[mod.id] || scorePct) + " %";
-  document.getElementById("result-badges").textContent = newBadges.length ? newBadges.join(", ") : "žádné";
-
-  let emoji = "📖";
-  let msg = "Procvičuj dál";
-  let sub = "Základ tam je. Ještě to chce trochu otesat.";
-
-  if(pct >= 0.95){
-    emoji = "🏆"; msg = "Skoro domácí výkon";
-    sub = "Tohle už je velmi slušné. Přemek by teď v tomhle modulu přežil bez větší ztráty důstojnosti.";
-  }else if(pct >= 0.8){
-    emoji = "🎉"; msg = "Velmi dobré";
-    sub = "Ještě pár opakování a bude to sedět skoro přirozeně.";
-  }else if(pct >= 0.6){
-    emoji = "💪"; msg = "Jde to nahoru";
-    sub = "Zopakuj chyby a projeď to ještě jednou. To je přesně ten moment, kdy se to láme.";
-  }
-
-  document.getElementById("result-emoji").textContent = emoji;
-  document.getElementById("result-msg").textContent = msg;
-  document.getElementById("result-sub").textContent = sub;
-
-  const hasMistakes = (state.mistakesByModule[mod.id] || []).length > 0;
-  document.getElementById("retry-mistakes-btn").style.display = hasMistakes ? "block" : "none";
-
-  renderHome();
-  showScreen("result");
+  const total=quizQuestions.length;const pct=total?quizScore/total:0;const sp=Math.round(pct*100);
+  const mod=MODULES[currentModuleIdx];const pb=state.moduleBest[mod.id]||0;
+  state.quizzesCompleted+=1;if(sp>pb)state.moduleBest[mod.id]=sp;if(pct>=0.9&&!state.completedModules.includes(mod.id))state.completedModules.push(mod.id);
+  const nb=evaluateBadges({moduleId:mod.id,pct,perfect:quizScore===total&&total>0});saveState();
+  document.getElementById("result-score").innerHTML=quizScore+"<span>/"+total+"</span>";
+  document.getElementById("result-xp").textContent="+"+quizXpEarned+" XP";
+  document.getElementById("result-best-streak").textContent=String(quizBestRunStreak);
+  document.getElementById("result-best-module").textContent=(state.moduleBest[mod.id]||sp)+" %";
+  document.getElementById("result-badges").textContent=nb.length?nb.join(", "):"\u017e\u00e1dn\u00e9";
+  let emoji="&#128218;",msg="Procvi\u010duj d\u00e1l",sub="Z\u00e1klad tam je.";
+  if(pct>=0.95){emoji="&#127942;";msg="Skoro dom\u00e1c\u00ed v\u00fdkon";sub="Tohle je u\u017e velmi slu\u0161n\u00e9.";}
+  else if(pct>=0.8){emoji="&#127881;";msg="Velmi dobr\u00e9";sub="Je\u0161t\u011b p\u00e1r opakov\u00e1n\u00ed.";}
+  else if(pct>=0.6){emoji="&#128170;";msg="Jde to nahoru";sub="Zopakuj chyby a jedu znovu."}
+  document.getElementById("result-emoji").textContent=emoji;
+  document.getElementById("result-msg").textContent=msg;
+  document.getElementById("result-sub").textContent=sub;
+  const hm=(state.mistakesByModule[mod.id]||[]).length>0;
+  document.getElementById("retry-mistakes-btn").style.display=hm?"block":"none";
+  renderHome();showScreen("result");
 }
+
 function resetModuleStats(){
-  if(currentModuleIdx == null) return;
-  const mod = MODULES[currentModuleIdx];
-  state.moduleBest[mod.id] = 0;
-  state.mistakesByModule[mod.id] = [];
-  state.completedModules = state.completedModules.filter(id => id !== mod.id);
-  saveState();
-  showModule(currentModuleIdx);
+  if(currentModuleIdx==null)return;
+  const mod=MODULES[currentModuleIdx];
+  state.moduleBest[mod.id]=0;state.mistakesByModule[mod.id]=[];
+  state.completedModules=state.completedModules.filter(id=>id!==mod.id);
+  saveState();showModule(currentModuleIdx);
 }
 
 renderHome();
 </script>
 </body>
 </html>
+
