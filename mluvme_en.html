@@ -139,7 +139,7 @@ function rHome(){
     const done=s.dialogs.every((_,j)=>dn[i+'_'+j]);
     const d=document.createElement('div');
     d.className='sit-card'+(done?' done-card':'');
-    d.innerHTML='<div class="emoji">'+s.emoji+'</div><div class="name">'+s.titleCz+'</div><div class="cnt">'+s.dialogs.length+' dialog&uacute;</div>';
+    d.innerHTML='<div class="emoji">'+s.emoji+'</div><div class="name">'+s.titleCz+'</div><div class="cnt">'+s.dialogs.length+' dialog&#367;</div>';
     d.onclick=()=>oS(i);g.appendChild(d);
   });
 }
@@ -239,13 +239,13 @@ function s4(d,a){
 
 async function tM(){
   if(rec){if(mr)mr.stop();rec=false;const b=document.getElementById('mb');if(b){b.classList.remove('rec');b.textContent='🎙️';}}
-  else{try{const st=await navigator.mediaDevices.getUserMedia({audio:true});ac2=[];mr=new MediaRecorder(st);mr.ondataavailable=ev=>ac2.push(ev.data);mr.onstop=sA;mr.start();rec=true;const b=document.getElementById('mb');if(b){b.classList.add('rec');b.textContent='⏹';}const s=document.getElementById('mSt');if(s)s.textContent='Nahr&aacute;v&aacute;m&hellip;';}catch(err){const s=document.getElementById('mSt');if(s)s.textContent='Mikrofon nedostupn&yacute;.';}}}
+  else{try{const st=await navigator.mediaDevices.getUserMedia({audio:true});ac2=[];mr=new MediaRecorder(st);mr.ondataavailable=ev=>ac2.push(ev.data);mr.onstop=sA;mr.start();rec=true;const b=document.getElementById('mb');if(b){b.classList.add('rec');b.textContent='⏹';}const s=document.getElementById('mSt');if(s)s.innerHTML='Nahr&aacute;v&aacute;m&hellip;';}catch(err){const s=document.getElementById('mSt');if(s)s.innerHTML='Mikrofon nedostupn&yacute;.';}}}
 
 async function sA(){
   const d=S[cS].dialogs[cD];const blob=new Blob(ac2,{type:'audio/webm'});const fd=new FormData();
   fd.append('audio',blob,'a.webm');fd.append('expectedText',d.sentence);fd.append('language',ac);
-  const s=document.getElementById('mSt');if(s)s.textContent='Zpracov&aacute;v&aacute;m&hellip;';
-  try{const r=await fetch('https://fajndoucko.vercel.app/api/pronunciation',{method:'POST',body:fd});const data=await r.json();shP(data);}
+  const s=document.getElementById('mSt');if(s)s.innerHTML='Zpracov&aacute;v&aacute;m&hellip;';
+  try{const r=await fetch('https://fdc-gateway.vercel.app/api/pronunciation',{method:'POST',body:fd});const data=await r.json();shP(data);}
   catch(err){const pr=document.getElementById('pR');if(pr)pr.innerHTML='<div class="fb no">Chyba spojen&iacute;. Pou&rcaron;ij P&rcaron;esko&ccaron;it.</div>';}
 }
 
