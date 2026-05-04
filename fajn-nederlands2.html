@@ -147,6 +147,15 @@
     .result-stat .k{font-size:13px;color:var(--gray);font-weight:700}
     .result-stat .v{font-size:16px;color:var(--navy);font-weight:800}
     .result-actions{display:grid;gap:10px}
+    .pron-mic-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:2px 4px;opacity:.6;transition:opacity .15s;touch-action:manipulation}
+    .pron-mic-btn:hover{opacity:1}
+    .pron-mic-btn.rec{opacity:1;animation:pulse2 1s infinite}
+    @keyframes pulse2{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+    .pron-result{margin-top:6px;font-size:12px;font-weight:700;padding:5px 8px;border-radius:8px;display:none}
+    .pron-result.show{display:block}
+    .pron-result.good{background:var(--green-pale);color:var(--green)}
+    .pron-result.bad{background:var(--red-pale);color:var(--red)}
+    .pron-result.mid{background:var(--gold-pale);color:var(--gold)}
     @media (max-width:370px){ .quiz-question-text{font-size:24px}.home-header h1{font-size:30px} }
   </style>
 </head>
@@ -641,21 +650,34 @@ function playTap(){
     osc.start(t); osc.stop(t+0.09);
   }catch(e){}
 }
-function speakDutch(text){
-  if(!window.speechSynthesis) return;
-  try{
-    window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.lang = "nl-NL"; utt.rate = 0.88; utt.pitch = 1;
-    const voices = window.speechSynthesis.getVoices();
-    const nlVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("nl"));
-    if(nlVoice) utt.voice = nlVoice;
-    window.speechSynthesis.speak(utt);
-  }catch(e){}
-}
-if(window.speechSynthesis){
-  window.speechSynthesis.getVoices();
-  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+// TTS přes OpenAI API — funguje v každém prohlížeči
+let ttsCache = {};
+async function speakDutch(text) {
+  try {
+    if (ttsCache[text]) {
+      const audio = new Audio(ttsCache[text]);
+      audio.play();
+      return;
+    }
+    const r = await fetch('https://fdc-gateway.vercel.app/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, lang: 'nl' })
+    });
+    if (!r.ok) throw new Error('TTS selhalo');
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    ttsCache[text] = url;
+    const audio = new Audio(url);
+    audio.play();
+  } catch(e) {
+    // fallback na browser TTS pokud API selže
+    if (window.speechSynthesis) {
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = 'nl-NL'; utt.rate = 0.88;
+      window.speechSynthesis.speak(utt);
+    }
+  }
 }
 
 function getTodayKey(){
@@ -777,6 +799,49 @@ function uniqueByKey(arr, key){
   });
 }
 
+
+// ── Pronunciation check ──────────────────────────────────────────────────
+let pronRec = null, pronRecording = false, pronChunks = [], pronNl = null, pronResEl = null;
+
+async function startPronCheck(nl, resEl, btn) {
+  if (pronRecording) { if (pronRec) pronRec.stop(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    pronChunks = []; pronNl = nl; pronResEl = resEl;
+    pronRec = new MediaRecorder(stream);
+    pronRec.ondataavailable = e => pronChunks.push(e.data);
+    pronRec.onstop = sendPron;
+    pronRec.start(); pronRecording = true;
+    btn.textContent = '⏹'; btn.classList.add('rec');
+    resEl.className = 'pron-result show'; resEl.textContent = 'Nahrávám…';
+    setTimeout(() => { if (pronRecording && pronRec) pronRec.stop(); }, 5000);
+  } catch(e) {
+    resEl.className = 'pron-result bad show'; resEl.textContent = 'Mikrofon nedostupný.';
+  }
+}
+
+async function sendPron() {
+  pronRecording = false;
+  document.querySelectorAll('.pron-mic-btn.rec').forEach(b => { b.textContent = '🎤'; b.classList.remove('rec'); });
+  const resEl = pronResEl; if (!resEl) return;
+  resEl.textContent = 'Zpracovávám…';
+  const blob = new Blob(pronChunks, { type: 'audio/webm' });
+  const fd = new FormData();
+  fd.append('audio', blob, 'audio.webm');
+  fd.append('expectedText', pronNl);
+  fd.append('language', 'nl-NL');
+  try {
+    const r = await fetch('https://fdc-gateway.vercel.app/api/pronunciation', { method: 'POST', body: fd });
+    const data = await r.json();
+    const p = data.score || 0;
+    const words = (data.words || []).map(w => (w.ok ? '✓' : '✗') + w.word).join(' ');
+    resEl.textContent = p + '% — ' + words;
+    resEl.className = 'pron-result show ' + (p >= 75 ? 'good' : p >= 45 ? 'mid' : 'bad');
+  } catch(e) {
+    resEl.className = 'pron-result bad show'; resEl.textContent = 'Chyba spojení.';
+  }
+}
+
 function renderHome(){
   updateActivityDate();
   const grid = document.getElementById("modules-grid");
@@ -878,13 +943,21 @@ function renderSituations(mod){
     sit.phrases.forEach(ph => {
       const row = document.createElement("div");
       row.className = "phrase-row";
+      const pid = 'p_' + si + '_' + sit.phrases.indexOf(ph);
+      const nlEsc = ph.nl.replace(/'/g, "\\'");
       row.innerHTML = `
         <div class="phrase-top">
           <div class="phrase-nl">${ph.nl}</div>
-          <div class="speak-icon">🔊</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button class="pron-mic-btn" id="mb_${pid}"
+              onclick="event.stopPropagation();startPronCheck('${nlEsc}',document.getElementById('pr_${pid}'),this)">🎤</button>
+            <div class="speak-icon"
+              onclick="event.stopPropagation();playTap();speakDutch('${nlEsc}');state.phrasePlays+=1;evaluateBadges();saveState();">🔊</div>
+          </div>
         </div>
         <div class="phrase-cs">${ph.cs}</div>
         <div class="phrase-pron">[ ${ph.pron} ]</div>
+        <div class="pron-result" id="pr_${pid}"></div>
       `;
       const pron = row.querySelector(".phrase-pron");
       pron.style.display = "none";
