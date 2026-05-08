@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Elis NL – Pracovní nizozemština</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   TÉMATA
+═══════════════════════════════════════════ */
+[data-theme="light"] {
+  --bg:       #f7f8fc;
+  --bg2:      #ffffff;
+  --bg3:      #eef1f8;
+  --border:   #dde3f0;
+  --border2:  #b8c6e0;
+  --text:     #111827;
+  --text2:    #374151;
+  --text3:    #6b7280;
+  --accent:   #2563eb;
+  --accent2:  #1d4ed8;
+  --good:     #15803d;
+  --good-bg:  #dcfce7;
+  --bad:      #dc2626;
+  --bad-bg:   #fee2e2;
+  --warn:     #b45309;
+  --warn-bg:  #fef3c7;
+  --card:     #ffffff;
+  --shadow:   0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow2:  0 2px 8px rgba(0,0,0,0.12);
+  --tts:      #7c3aed;
+  --orange:   #ea580c;
+  --pill-bg:  #e0e9ff;
+  --pill-txt: #1e40af;
+}
+[data-theme="dark"] {
+  --bg:       #0d1117;
+  --bg2:      #161b27;
+  --bg3:      #1f2635;
+  --border:   #2a3548;
+  --border2:  #3d4f6e;
+  --text:     #e8edf5;
+  --text2:    #b0bcd4;
+  --text3:    #6b7fa0;
+  --accent:   #3b82f6;
+  --accent2:  #60a5fa;
+  --good:     #22c55e;
+  --good-bg:  rgba(34,197,94,0.15);
+  --bad:      #f87171;
+  --bad-bg:   rgba(248,113,113,0.15);
+  --warn:     #fbbf24;
+  --warn-bg:  rgba(251,191,36,0.15);
+  --card:     #161b27;
+  --shadow:   0 2px 8px rgba(0,0,0,0.4);
+  --shadow2:  0 4px 16px rgba(0,0,0,0.5);
+  --tts:      #a78bfa;
+  --orange:   #fb923c;
+  --pill-bg:  rgba(59,130,246,0.2);
+  --pill-txt: #93c5fd;
+}
+[data-theme="steel"] {
+  --bg:       #e8ecf2;
+  --bg2:      #f2f4f8;
+  --bg3:      #dde2ec;
+  --border:   #c4ccdb;
+  --border2:  #8fa0bf;
+  --text:     #1a2236;
+  --text2:    #2d3f5c;
+  --text3:    #5a6f8a;
+  --accent:   #0f4c8a;
+  --accent2:  #0a3d72;
+  --good:     #0f6830;
+  --good-bg:  #d4edda;
+  --bad:      #c0392b;
+  --bad-bg:   #fde8e6;
+  --warn:     #8a5c00;
+  --warn-bg:  #fef4d4;
+  --card:     #f2f4f8;
+  --shadow:   0 2px 6px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.08);
+  --shadow2:  0 3px 10px rgba(0,0,0,0.15);
+  --tts:      #5b2d8e;
+  --orange:   #c04a00;
+  --pill-bg:  #cfe0f8;
+  --pill-txt: #0f3d72;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  transition: background 0.25s, color 0.25s;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; border: none; }
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.app { max-width: 1280px; margin: 0 auto; padding: 16px; }
+
+/* TOPBAR */
+.topbar {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 12px 16px;
+  box-shadow: var(--shadow); margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 10px; margin-right: 8px; }
+.brand-logo {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--tts));
+  display: grid; place-items: center;
+  color: #fff; font-weight: 800; font-size: 1rem; flex-shrink: 0;
+}
+.brand-name { font-weight: 800; font-size: 1rem; line-height: 1.2; }
+.brand-name small { display: block; font-weight: 400; font-size: 0.72rem; color: var(--text3); }
+.topbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.icon-btn {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 10px;
+  color: var(--text2); font-size: 0.78rem; font-weight: 600;
+  transition: all 0.15s;
+}
+.icon-btn:hover { background: var(--border); color: var(--text); }
+.icon-btn.active { background: var(--pill-bg); color: var(--pill-txt); border-color: var(--accent); }
+
+/* XP BAR */
+.xp-strip {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 14px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px; box-shadow: var(--shadow); flex-wrap: wrap;
+}
+.xp-stat { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; }
+.xp-stat b { font-size: 1rem; font-weight: 800; color: var(--accent); font-family: 'Source Code Pro', monospace; }
+.xp-stat span { color: var(--text3); }
+.xp-bar-wrap { flex: 1; min-width: 120px; background: var(--bg3); border-radius: 99px; height: 6px; border: 1px solid var(--border); overflow: hidden; }
+.xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--tts)); border-radius: 99px; transition: width 0.5s ease; width: 0%; }
+.level-badge {
+  background: var(--pill-bg); color: var(--pill-txt);
+  border-radius: 99px; padding: 2px 10px;
+  font-size: 0.72rem; font-weight: 700;
+}
+
+/* MAIN GRID */
+.main-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px;
+  box-shadow: var(--shadow); position: sticky; top: 16px;
+}
+.sb-section-title {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text3); margin-bottom: 8px; margin-top: 14px;
+}
+.sb-section-title:first-child { margin-top: 0; }
+.mode-btn {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px;
+  text-align: left; color: var(--text2);
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 5px; transition: all 0.15s;
+  font-size: 0.83rem;
+}
+.mode-btn:hover { background: var(--border); color: var(--text); }
+.mode-btn.active {
+  background: var(--pill-bg); border-color: var(--accent);
+  color: var(--accent); font-weight: 600;
+}
+.mode-icon { font-size: 1rem; flex-shrink: 0; width: 22px; text-align: center; }
+.mode-info b { display: block; font-size: 0.82rem; }
+.mode-info small { color: var(--text3); font-size: 0.72rem; }
+.mode-btn.active .mode-info small { color: var(--pill-txt); opacity: 0.8; }
+
+.lesson-btn {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 10px;
+  text-align: left; color: var(--text3);
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 4px; transition: all 0.15s;
+  font-size: 0.78rem; font-weight: 500;
+}
+.lesson-btn:hover { background: var(--border); color: var(--text2); }
+.lesson-btn.active { background: var(--pill-bg); border-color: var(--accent); color: var(--pill-txt); font-weight: 600; }
+
+/* WORKSPACE */
+.workspace {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+  box-shadow: var(--shadow); min-height: 560px;
+}
+
+/* EXERCISE CARD */
+.ex-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px; margin-bottom: 12px;
+}
+.ex-title {
+  font-size: 1.1rem; font-weight: 700; margin-bottom: 4px;
+}
+.ex-sub { color: var(--text3); font-size: 0.82rem; margin-bottom: 14px; }
+
+/* SENTENCE DISPLAY */
+.sentence-cs {
+  font-size: 0.88rem; color: var(--text3); margin-bottom: 4px;
+}
+.sentence-cs strong { color: var(--text2); }
+
+/* WORD BANK */
+.wordbank-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 6px; }
+.wordbank {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  background: var(--bg); border: 2px dashed var(--border);
+  border-radius: 10px; padding: 12px; min-height: 54px; margin-bottom: 10px;
+}
+.answer-box {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+  background: rgba(37,99,235,0.06); border: 2px solid rgba(37,99,235,0.2);
+  border-radius: 10px; padding: 12px; min-height: 54px; margin-bottom: 14px;
+}
+.word-chip {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 6px 12px;
+  font-weight: 600; font-size: 0.85rem; color: var(--text);
+  cursor: pointer; transition: all 0.15s; user-select: none;
+}
+.word-chip:hover { background: var(--border); transform: translateY(-1px); }
+.word-chip.used { opacity: 0.25; pointer-events: none; }
+.token-chip {
+  background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.3);
+  border-radius: 8px; padding: 6px 12px;
+  font-weight: 600; font-size: 0.85rem; color: var(--accent);
+  cursor: pointer; transition: all 0.15s; user-select: none;
+}
+.token-chip:hover { background: rgba(37,99,235,0.2); }
+.answer-placeholder { color: var(--text3); font-size: 0.82rem; font-style: italic; }
+
+/* FEEDBACK */
+.feedback {
+  border-radius: 10px; padding: 12px 14px;
+  font-size: 0.85rem; line-height: 1.5; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text3); margin-bottom: 10px;
+}
+.feedback.good { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.feedback.bad  { background: var(--bad-bg);  border-color: var(--bad);  color: var(--bad); }
+.feedback.warn { background: var(--warn-bg); border-color: var(--warn); color: var(--warn); }
+.feedback.loading { background: var(--pill-bg); border-color: var(--accent); color: var(--pill-txt); }
+
+/* BUTTONS */
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.btn {
+  border-radius: 8px; padding: 8px 16px; font-weight: 600;
+  font-size: 0.84rem; border: 1px solid var(--border);
+  background: var(--bg3); color: var(--text2);
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 5px;
+}
+.btn:hover { background: var(--border); color: var(--text); }
+.btn:disabled { opacity: 0.4; pointer-events: none; }
+.btn.primary { background: var(--accent); border-color: var(--accent2); color: #fff; }
+.btn.primary:hover { background: var(--accent2); }
+.btn.good { background: var(--good); border-color: var(--good); color: #fff; }
+.btn.tts { background: var(--tts); border-color: var(--tts); color: #fff; }
+.btn.tts:hover { opacity: 0.88; }
+.btn.danger { background: var(--bad); border-color: var(--bad); color: #fff; }
+.btn.hidden { display: none !important; }
+.btn.recording { background: var(--bad); border-color: var(--bad); color: #fff; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+/* VOCAB GRID */
+.vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 10px; margin-top: 12px; }
+.vcard {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 13px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.vcard-nl { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+.vcard-cs { font-size: 0.85rem; color: var(--text3); font-weight: 500; margin-bottom: 2px; }
+.vcard-ex { font-size: 0.78rem; color: var(--text3); font-style: italic; line-height: 1.4; }
+.vcard-excs { font-size: 0.76rem; color: var(--text3); }
+.vcard-btns { display: flex; gap: 5px; margin-top: 6px; }
+.vcard-btn {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 4px 8px; font-size: 0.72rem; font-weight: 600; color: var(--text3);
+  cursor: pointer; transition: all 0.15s;
+}
+.vcard-btn:hover { background: var(--border); color: var(--text); }
+.vcard-btn.play { color: var(--tts); border-color: var(--tts); }
+
+/* CHOICES */
+.choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.choice-btn {
+  background: var(--bg3); border: 2px solid var(--border); border-radius: 10px;
+  padding: 12px 14px; text-align: left; color: var(--text2);
+  font-weight: 600; font-size: 0.84rem; cursor: pointer; transition: all 0.15s; line-height: 1.4;
+}
+.choice-btn:hover:not(:disabled) { background: var(--border); border-color: var(--border2); }
+.choice-btn.correct { background: var(--good-bg); border-color: var(--good); color: var(--good); }
+.choice-btn.wrong   { background: var(--bad-bg);  border-color: var(--bad);  color: var(--bad); }
+
+/* DIALOGUE BUBBLES */
+.dialogue-wrap { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
+.bubble {
+  max-width: 82%; padding: 10px 14px; border-radius: 12px;
+  background: var(--bg3); border: 1px solid var(--border); font-size: 0.84rem; line-height: 1.45;
+}
+.bubble.right { margin-left: auto; background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.2); }
+.bubble-who { font-weight: 700; font-size: 0.72rem; color: var(--text3); margin-bottom: 2px; }
+.bubble-nl { font-weight: 600; color: var(--text); }
+.bubble-cs { color: var(--text3); font-size: 0.78rem; margin-top: 1px; }
+
+/* SAFETY BIG */
+.safety-nl {
+  font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -0.03em;
+  color: var(--text); margin: 16px 0; line-height: 1.15;
+}
+.safety-urgent .safety-nl { color: var(--bad); }
+.safety-warn .safety-nl { color: var(--warn); }
+
+/* SPEAKING */
+.speaking-target {
+  font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--accent); margin: 12px 0; line-height: 1.3;
+}
+.speaking-hint {
+  font-size: 0.82rem; color: var(--text3); margin-bottom: 12px;
+}
+.manual-input {
+  width: 100%; border: 1px solid var(--border2); background: var(--bg);
+  color: var(--text); border-radius: 8px; padding: 10px 12px;
+  font-size: 0.88rem; outline: none; transition: border-color 0.15s; margin-top: 8px;
+}
+.manual-input:focus { border-color: var(--accent); }
+.score-bar-wrap { background: var(--bg3); border-radius: 99px; height: 8px; margin: 8px 0; border: 1px solid var(--border); overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+
+/* PRONUNCIATION DRILLS */
+.phon-card {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px;
+  margin-bottom: 10px;
+}
+.phon-sound {
+  font-family: 'Source Code Pro', monospace; font-size: 1.6rem; font-weight: 600;
+  color: var(--tts); margin-bottom: 6px;
+}
+.phon-desc { font-size: 0.8rem; color: var(--text3); margin-bottom: 10px; line-height: 1.5; }
+.phon-words { display: flex; flex-wrap: wrap; gap: 6px; }
+.phon-word {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+  display: flex; align-items: center; gap: 5px; transition: all 0.15s;
+}
+.phon-word:hover { background: var(--border); }
+
+/* SETTINGS PANEL */
+.settings-panel {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; display: none;
+}
+.settings-panel.visible { display: block; }
+.settings-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+.settings-label { font-size: 0.82rem; font-weight: 600; color: var(--text2); min-width: 140px; }
+.settings-input {
+  flex: 1; min-width: 200px; border: 1px solid var(--border2); background: var(--bg3);
+  color: var(--text); border-radius: 8px; padding: 8px 12px; font-size: 0.84rem; font-family: 'Source Code Pro', monospace;
+}
+.api-status {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 99px;
+}
+.api-status.ok  { background: var(--good-bg); color: var(--good); }
+.api-status.err { background: var(--bad-bg);  color: var(--bad); }
+.api-status.none { background: var(--warn-bg); color: var(--warn); }
+
+/* SELECT */
+select.settings-input { cursor: pointer; }
+
+/* CATEGORY FILTER */
+.cat-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.cat-pill {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 99px;
+  padding: 4px 12px; font-size: 0.76rem; font-weight: 600; color: var(--text3);
+  cursor: pointer; transition: all 0.15s;
+}
+.cat-pill:hover { background: var(--border); color: var(--text2); }
+.cat-pill.active { background: var(--pill-bg); border-color: var(--accent); color: var(--pill-txt); }
+
+/* LOADING SPINNER */
+.spinner {
+  display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--border); border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* PROGRESS INDICATOR */
+.progress-dots { display: flex; gap: 4px; margin-bottom: 12px; }
+.progress-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+.progress-dot.done { background: var(--good); }
+.progress-dot.active { background: var(--accent); }
+
+/* CONFETTI */
+.confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
+.confetti-wrap i {
+  position: absolute; top: -20px; width: 8px; height: 14px; border-radius: 2px;
+  animation: cfall 1.2s ease-out forwards;
+}
+@keyframes cfall { to { transform: translateY(105vh) rotate(560deg); opacity: 0.1; } }
+
+/* RESPONSIVE */
+@media (max-width: 860px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+}
+@media (max-width: 520px) {
+  .choice-grid { grid-template-columns: 1fr; }
+  .app { padding: 10px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<div id="confetti-wrap" class="confetti-wrap"></div>
+
+<!-- SETTINGS -->
+<div id="settings-panel" class="settings-panel">
+  <div style="font-size:0.95rem;font-weight:700;margin-bottom:14px;">⚙️ Nastavení API</div>
+  <div class="settings-row">
+    <span class="settings-label">OpenAI API klíč</span>
+    <input class="settings-input" type="password" id="oai-key" placeholder="sk-…" autocomplete="off"/>
+    <span class="api-status none" id="oai-status">❓ Nezadán</span>
+  </div>
+  <div class="settings-row">
+    <span class="settings-label">TTS hlas</span>
+    <select class="settings-input" id="tts-voice">
+      <option value="onyx">onyx (hluboký mužský)</option>
+      <option value="nova">nova (ženský)</option>
+      <option value="alloy">alloy (neutrální)</option>
+      <option value="shimmer">shimmer (měkký)</option>
+    </select>
+  </div>
+  <div class="settings-row">
+    <span class="settings-label">Téma</span>
+    <select class="settings-input" id="theme-select">
+      <option value="light">☀️ Světlé</option>
+      <option value="dark">🌙 Tmavé</option>
+      <option value="steel">🔩 Pracovní ocel</option>
+    </select>
+  </div>
+  <div class="settings-row">
+    <span class="settings-label">Minimální skóre výslovnosti</span>
+    <input class="settings-input" type="number" id="min-score" value="70" min="40" max="95" style="max-width:80px"/>
+    <span style="font-size:0.8rem;color:var(--text3)">% (40–95)</span>
+  </div>
+  <div class="btn-row" style="margin-top:4px">
+    <button class="btn primary" id="save-settings-btn">💾 Uložit</button>
+    <button class="btn" id="test-api-btn">🔌 Otestovat API</button>
+    <button class="btn" onclick="document.getElementById('settings-panel').classList.remove('visible')">✕ Zavřít</button>
+  </div>
+  <div class="feedback" id="settings-feedback" style="margin-top:10px;display:none"></div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-logo">NL</div>
+    <div class="brand-name">Elis NL Pro<small>Pracovní nizozemština · Moderna part of Elis</small></div>
+  </div>
+  <div class="topbar-right">
+    <span id="api-indicator" class="api-status none">❓ API</span>
+    <button class="icon-btn" id="settings-btn">⚙️ API</button>
+    <button class="icon-btn" id="theme-btn">☀️</button>
+    <button class="icon-btn danger" id="reset-btn">↺ Reset</button>
+  </div>
+</div>
+
+<!-- XP STRIP -->
+<div class="xp-strip">
+  <div class="xp-stat"><b id="xp-val">0</b><span>XP</span></div>
+  <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xp-bar"></div></div>
+  <div class="xp-stat"><b id="streak-val">0</b><span>🔥 série</span></div>
+  <div class="xp-stat"><b id="done-val">0</b><span>splněno</span></div>
+  <span class="level-badge" id="level-badge">Level 1</span>
+</div>
+
+<!-- MAIN -->
+<div class="main-grid">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-section-title">Cvičení</div>
+    <div id="mode-list"></div>
+    <div class="sb-section-title">Téma lekce</div>
+    <div id="lesson-list"></div>
+  </aside>
+
+  <!-- WORKSPACE -->
+  <main class="workspace" id="workspace">
+    <!-- screens injected by JS -->
+  </main>
+</div>
+</div><!-- /app -->
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════ */
+const CFG = {
+  oaiBase: 'https://api.openai.com/v1',
+  ttsModel: 'tts-1',
+  whisperModel: 'whisper-1',
+  language: 'nl',
+  langBCP: 'nl-NL',
+  apiTimeout: 12000,   // ms
+  minScore: 70,
+  ttsVoice: 'onyx',
+  useBrowserTTS: true, // fallback
+};
+
+/* ═══════════════════════════════════════════════════════════
+   DATA – SLOVNÍ ZÁSOBA (Elis / Moderna kontext)
+═══════════════════════════════════════════════════════════ */
+const VOCAB = [
+  // Stroje
+  { cat:'Stroje', nl:'de wasmachine',     cs:'pračka / prací stroj',   ex:'De wasmachine staat stil.',         exCs:'Pračka stojí.' },
+  { cat:'Stroje', nl:'de droogmachine',   cs:'sušička',                ex:'De droogmachine is te heet.',       exCs:'Sušička je příliš horká.' },
+  { cat:'Stroje', nl:'de centrifuge',     cs:'centrifuga',             ex:'De centrifuge trilt te veel.',      exCs:'Centrifuga příliš vibruje.' },
+  { cat:'Stroje', nl:'de persmachine',    cs:'žehlicí/lisovací stroj', ex:'De persmachine is verstopt.',       exCs:'Lisovací stroj je ucpaný.' },
+  { cat:'Stroje', nl:'de vouwmachine',    cs:'skládací stroj',         ex:'De vouwmachine werkt goed.',        exCs:'Skládací stroj funguje dobře.' },
+  { cat:'Stroje', nl:'de transportband',  cs:'dopravní pás',           ex:'De transportband loopt niet.',      exCs:'Dopravní pás neběží.' },
+  { cat:'Stroje', nl:'de tunnel',         cs:'tunel (dokončovač)',      ex:'De tunnel staat op 160 graden.',    exCs:'Tunel je na 160 stupních.' },
+  { cat:'Stroje', nl:'de doseerpomp',     cs:'dávkovací pumpa',        ex:'De doseerpomp geeft te weinig.',    exCs:'Dávkovací pumpa dávkuje málo.' },
+  { cat:'Stroje', nl:'de sorteerder',     cs:'třídící stroj',          ex:'De sorteerder is geblokkeerd.',     exCs:'Třídící stroj je zablokovaný.' },
+  { cat:'Stroje', nl:'de mangel',         cs:'kalandr / mangel',       ex:'De mangel rolt te snel.',           exCs:'Mangel jede příliš rychle.' },
+  // Díly a součástky
+  { cat:'Součástky', nl:'de sensor',      cs:'senzor',                 ex:'De sensor geeft een fout.',         exCs:'Senzor hlásí chybu.' },
+  { cat:'Součástky', nl:'de filter',      cs:'filtr',                  ex:'Vervang de filter.',                exCs:'Vyměň filtr.' },
+  { cat:'Součástky', nl:'de slang',       cs:'hadice',                 ex:'De slang is lek.',                  exCs:'Hadice teče.' },
+  { cat:'Součástky', nl:'de pomp',        cs:'pumpa / čerpadlo',       ex:'De pomp draait niet.',              exCs:'Pumpa se netočí.' },
+  { cat:'Součástky', nl:'de motor',       cs:'motor',                  ex:'De motor is oververhit.',           exCs:'Motor je přehřátý.' },
+  { cat:'Součástky', nl:'de riem',        cs:'řemen',                  ex:'De riem is gebroken.',              exCs:'Řemen je přetržený.' },
+  { cat:'Součástky', nl:'de schakelaar',  cs:'přepínač / spínač',      ex:'Zet de schakelaar uit.',            exCs:'Vypni přepínač.' },
+  { cat:'Součástky', nl:'het display',    cs:'displej',                ex:'Het display toont een foutcode.',   exCs:'Displej ukazuje chybový kód.' },
+  { cat:'Součástky', nl:'de klep',        cs:'ventil / klapka',        ex:'De klep staat open.',               exCs:'Ventil je otevřený.' },
+  { cat:'Součástky', nl:'de kabel',       cs:'kabel',                  ex:'De kabel is beschadigd.',           exCs:'Kabel je poškozený.' },
+  // Textil
+  { cat:'Textil',  nl:'de werkkleding',   cs:'pracovní oděv',          ex:'Sorteer de werkkleding op maat.',   exCs:'Roztřiď pracovní oděvy podle velikosti.' },
+  { cat:'Textil',  nl:'de overall',       cs:'kombinéza / overal',     ex:'Deze overall heeft een scheur.',    exCs:'Tato kombinéza má trhlinku.' },
+  { cat:'Textil',  nl:'de vlek',          cs:'skvrna',                 ex:'Er zit een vlek op het shirt.',     exCs:'Na košili je skvrna.' },
+  { cat:'Textil',  nl:'de scheur',        cs:'trhlina / roztržení',    ex:'De scheur is te groot.',            exCs:'Trhlina je příliš velká.' },
+  { cat:'Textil',  nl:'de maat',          cs:'velikost',               ex:'Welke maat is dit?',                exCs:'Jaká je to velikost?' },
+  { cat:'Textil',  nl:'de barcode',       cs:'čárový kód',             ex:'Scan de barcode op het label.',     exCs:'Naskenuj čárový kód na etiketě.' },
+  { cat:'Textil',  nl:'het label',        cs:'štítek / etiketa',       ex:'Het label is eraf.',                exCs:'Štítek chybí.' },
+  { cat:'Textil',  nl:'de afkeur',        cs:'odmítnuté zboží / odmítnutí', ex:'Dit gaat naar de afkeur.',    exCs:'Tohle jde do odmítnutých.' },
+  // Kvalita
+  { cat:'Kwaliteit', nl:'schoon',         cs:'čistý',                  ex:'Is dit schoon?',                    exCs:'Je to čisté?' },
+  { cat:'Kwaliteit', nl:'vuil',           cs:'špinavý',                ex:'Dit is nog vuil.',                  exCs:'Tohle je stále špinavé.' },
+  { cat:'Kwaliteit', nl:'beschadigd',     cs:'poškozený',              ex:'Het product is beschadigd.',        exCs:'Výrobek je poškozený.' },
+  { cat:'Kwaliteit', nl:'goedgekeurd',    cs:'schváleno / přijato',    ex:'Dit is goedgekeurd.',               exCs:'Tohle je schváleno.' },
+  { cat:'Kwaliteit', nl:'afgekeurd',      cs:'odmítnuto / zamítnuto',  ex:'Dit stuk is afgekeurd.',            exCs:'Tento kus je odmítnutý.' },
+  { cat:'Kwaliteit', nl:'de kwaliteitscontrole', cs:'kontrola kvality', ex:'We doen de kwaliteitscontrole.',  exCs:'Děláme kontrolu kvality.' },
+  // Bezpečnost
+  { cat:'Veiligheid', nl:'de noodstop',   cs:'nouzové zastavení',      ex:'Druk op de noodstop!',             exCs:'Stiskni nouzové zastavení!' },
+  { cat:'Veiligheid', nl:'de handschoenen', cs:'rukavice',             ex:'Draag altijd handschoenen.',       exCs:'Vždy nos rukavice.' },
+  { cat:'Veiligheid', nl:'de veiligheidsbril', cs:'ochranné brýle',    ex:'Zet de veiligheidsbril op.',       exCs:'Nasaď ochranné brýle.' },
+  { cat:'Veiligheid', nl:'de chemicaliën', cs:'chemikálie',            ex:'Pas op met de chemicaliën.',       exCs:'Buď opatrný s chemikáliemi.' },
+  { cat:'Veiligheid', nl:'het gevaar',    cs:'nebezpečí',              ex:'Er is gevaar bij machine twee.',   exCs:'U stroje dva je nebezpečí.' },
+  { cat:'Veiligheid', nl:'heet',          cs:'horký / horko',          ex:'Pas op, dat is heet!',             exCs:'Pozor, to je horké!' },
+  // Směna
+  { cat:'Dienst',  nl:'de vroege dienst', cs:'ranní směna',            ex:'Ik heb de vroege dienst.',         exCs:'Mám ranní směnu.' },
+  { cat:'Dienst',  nl:'de late dienst',   cs:'odpolední směna',        ex:'Morgen heb ik de late dienst.',    exCs:'Zítra mám odpolední směnu.' },
+  { cat:'Dienst',  nl:'de nachtdienst',   cs:'noční směna',            ex:'De nachtdienst begint om elf.',    exCs:'Noční směna začíná v jedenáct.' },
+  { cat:'Dienst',  nl:'de overdracht',    cs:'předání směny',          ex:'We doen nu de overdracht.',        exCs:'Teď předáváme směnu.' },
+  { cat:'Dienst',  nl:'de pauze',         cs:'přestávka',              ex:'De pauze is om tien uur.',         exCs:'Přestávka je v deset hodin.' },
+  { cat:'Dienst',  nl:'overwerken',       cs:'pracovat přesčas',       ex:'Wil je overwerken vanavond?',      exCs:'Chceš dnes večer pracovat přesčas?' },
+  // HR / pracovní vztahy
+  { cat:'HR',      nl:'ziek melden',      cs:'nahlásit nemoc',         ex:'Ik moet me ziek melden.',          exCs:'Musím nahlásit nemoc.' },
+  { cat:'HR',      nl:'verlof aanvragen', cs:'požádat o dovolenou',    ex:'Ik wil verlof aanvragen.',         exCs:'Chci požádat o dovolenou.' },
+  { cat:'HR',      nl:'de loonstrook',    cs:'výplatní páska',         ex:'Wanneer krijg ik de loonstrook?',  exCs:'Kdy dostanu výplatní pásku?' },
+  { cat:'HR',      nl:'de leidinggevende', cs:'nadřízený / vedoucí',   ex:'Ik spreek met mijn leidinggevende.', exCs:'Mluvím se svým vedoucím.' },
+  { cat:'HR',      nl:'de collega',       cs:'kolega',                 ex:'Mijn collega helpt me.',           exCs:'Kolega mi pomáhá.' },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   DATA – VĚTY (skládání)
+═══════════════════════════════════════════════════════════ */
+const SENTENCES = [
+  { lesson:'stroje', nl:'De wasmachine is kapot.',          cs:'Pračka je rozbitá.',           words:['De','wasmachine','is','kapot'],         extra:['schoon','centrifuge','niet'] },
+  { lesson:'stroje', nl:'De transportband loopt niet.',     cs:'Dopravní pás neběží.',         words:['De','transportband','loopt','niet'],    extra:['sensor','draait','goed'] },
+  { lesson:'stroje', nl:'Er is een storing bij de tunnel.', cs:'V tunelu je porucha.',         words:['Er','is','een','storing','bij','de','tunnel'], extra:['machine','schoon','filter'] },
+  { lesson:'stroje', nl:'De centrifuge trilt te veel.',     cs:'Centrifuga příliš vibruje.',   words:['De','centrifuge','trilt','te','veel'],  extra:['filter','heet','loopt'] },
+  { lesson:'stroje', nl:'Zet de machine uit.',              cs:'Vypni stroj.',                 words:['Zet','de','machine','uit'],             extra:['aan','filter','centrifuge'] },
+  { lesson:'soucástky', nl:'Vervang de filter direct.',     cs:'Vyměň filtr hned.',            words:['Vervang','de','filter','direct'],       extra:['schoon','stoppen','sensor'] },
+  { lesson:'soucástky', nl:'De sensor geeft een foutmelding.', cs:'Senzor hlásí chybové hlášení.', words:['De','sensor','geeft','een','foutmelding'], extra:['filter','riem','loopt'] },
+  { lesson:'soucástky', nl:'De riem is gebroken.',          cs:'Řemen je přetržený.',          words:['De','riem','is','gebroken'],            extra:['sensor','pomp','schoon'] },
+  { lesson:'textil',  nl:'Er zit een vlek op de overall.',  cs:'Na kombinéze je skvrna.',      words:['Er','zit','een','vlek','op','de','overall'], extra:['maat','schoon','barcode'] },
+  { lesson:'textil',  nl:'Dit label is eraf.',              cs:'Tento štítek chybí.',          words:['Dit','label','is','eraf'],             extra:['barcode','vlek','scheur'] },
+  { lesson:'textil',  nl:'Scan de barcode op het label.',   cs:'Naskenuj čárový kód na štítku.', words:['Scan','de','barcode','op','het','label'], extra:['maat','vlek','vuil'] },
+  { lesson:'kvalita', nl:'Dit product is afgekeurd.',       cs:'Tento výrobek je odmítnutý.',  words:['Dit','product','is','afgekeurd'],       extra:['schoon','goedgekeurd','sensor'] },
+  { lesson:'kvalita', nl:'Controleer de kwaliteit van elke overall.', cs:'Zkontroluj kvalitu každé kombinézy.', words:['Controleer','de','kwaliteit','van','elke','overall'], extra:['barcode','filter','dienst'] },
+  { lesson:'smerny', nl:'Ik heb de vroege dienst morgen.',  cs:'Zítra mám ranní směnu.',       words:['Ik','heb','de','vroege','dienst','morgen'], extra:['nacht','collega','laat'] },
+  { lesson:'smerny', nl:'We doen nu de overdracht.',        cs:'Teď předáváme směnu.',         words:['We','doen','nu','de','overdracht'],     extra:['pauze','sensor','vroeg'] },
+  { lesson:'smerny', nl:'De pauze is over tien minuten.',   cs:'Přestávka je za deset minut.', words:['De','pauze','is','over','tien','minuten'], extra:['dienst','collega','vroeg'] },
+  { lesson:'bezpecnost', nl:'Druk meteen op de noodstop.',  cs:'Ihned stiskni nouzové zastavení.', words:['Druk','meteen','op','de','noodstop'],  extra:['handschoenen','heet','sensor'] },
+  { lesson:'bezpecnost', nl:'Draag altijd veiligheidschoenen.', cs:'Vždy nos bezpečnostní obuv.', words:['Draag','altijd','veiligheidschoenen'], extra:['handschoenen','chemical','heet'] },
+  { lesson:'hr',     nl:'Ik moet me vandaag ziek melden.',  cs:'Dnes musím nahlásit nemoc.',   words:['Ik','moet','me','vandaag','ziek','melden'], extra:['verlof','loonstrook','collega'] },
+  { lesson:'hr',     nl:'Wanneer kan ik verlof aanvragen?', cs:'Kdy mohu požádat o dovolenou?', words:['Wanneer','kan','ik','verlof','aanvragen'], extra:['loonstrook','dienst','collega'] },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   DATA – POSLECH
+═══════════════════════════════════════════════════════════ */
+const LISTENING = [
+  { lesson:'stroje', nl:'De wasmachine is kapot, bel de technicus.',  correct:'Pračka je rozbitá, zavolej technika.',  wrong:['Pračka je čistá.','Zapni pračku.','Pračka je připravena.'] },
+  { lesson:'stroje', nl:'Er is een storing bij machine drie.',         correct:'U stroje tři je porucha.',              wrong:['Stroj tři je hotový.','Zapni stroj tři.','Stroj tři je čistý.'] },
+  { lesson:'soucástky', nl:'Vervang de filter voor de volgende dienst.', correct:'Vyměň filtr před příští směnou.',    wrong:['Filtr je nový.','Zapni filtr.','Filtr je čistý.'] },
+  { lesson:'soucástky', nl:'De sensor op machine vijf geeft een fout.', correct:'Senzor na stroji pět hlásí chybu.',  wrong:['Senzor pět je v pořádku.','Senzor je nový.','Zapni senzor pět.'] },
+  { lesson:'textil',  nl:'Deze overall gaat naar de afkeur vanwege de scheur.', correct:'Tato kombinéza jde do odmítnutých kvůli trhlině.', wrong:['Kombinéza je čistá.','Kombinéza je schválena.','Kombinéza má skvrnu.'] },
+  { lesson:'textil',  nl:'Scan het label voordat je sorteert.',        correct:'Naskenuj štítek před tříděním.',        wrong:['Odstraň štítek.','Pěři bez štítku.','Štítek je nový.'] },
+  { lesson:'kvalita', nl:'Dit product is goedgekeurd, leg het op de stapel.', correct:'Tento výrobek je schválený, polož ho na hromadu.', wrong:['Výrobek je odmítnutý.','Výrobek jde do koše.','Výrobek má skvrnu.'] },
+  { lesson:'smerny',  nl:'De overdracht is over vijf minuten, maak je klaar.', correct:'Předání směny je za pět minut, připrav se.', wrong:['Přestávka je za pět minut.','Odpolední směna začíná.','Ranní směna je hotová.'] },
+  { lesson:'bezpecnost', nl:'Stop de machine en wacht op de technicus.', correct:'Zastav stroj a počkej na technika.',  wrong:['Zapni stroj hned.','Zavolej kolegu.','Jdi na přestávku.'] },
+  { lesson:'hr',      nl:'Meld je ziek voor zeven uur \'s ochtends.',  correct:'Nahlas nemoc před sedmou ráno.',       wrong:['Přijď do práce v sedm.','Zavolej vedoucímu v sedm večer.','Nemoc nahlásíš kdykoliv.'] },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   DATA – MLUVENÍ (Whisper)
+═══════════════════════════════════════════════════════════ */
+const SPEAKING = [
+  { lesson:'stroje',     promptCs:'Řekni: Pračka stojí.',                        target:'De wasmachine staat stil.',           accept:['de wasmachine staat stil','wasmachine staat stil'] },
+  { lesson:'stroje',     promptCs:'Řekni: Dopravní pás neběží.',                 target:'De transportband loopt niet.',        accept:['de transportband loopt niet','transportband loopt niet'] },
+  { lesson:'stroje',     promptCs:'Řekni: Stroj je přehřátý.',                  target:'De machine is oververhit.',          accept:['de machine is oververhit','machine is oververhit'] },
+  { lesson:'soucástky',  promptCs:'Řekni: Vyměň filtr.',                         target:'Vervang de filter.',                  accept:['vervang de filter','de filter vervangen'] },
+  { lesson:'soucástky',  promptCs:'Řekni: Hadice teče.',                         target:'De slang is lek.',                    accept:['de slang is lek','slang is lek'] },
+  { lesson:'textil',     promptCs:'Řekni: Na kombinéze je skvrna.',              target:'Er zit een vlek op de overall.',     accept:['er zit een vlek op de overall','vlek op de overall'] },
+  { lesson:'textil',     promptCs:'Řekni: Naskenuj štítek.',                     target:'Scan het label.',                     accept:['scan het label','het label scannen'] },
+  { lesson:'kvalita',    promptCs:'Řekni: Tento výrobek je odmítnutý.',          target:'Dit product is afgekeurd.',          accept:['dit product is afgekeurd','product is afgekeurd'] },
+  { lesson:'smerny',     promptCs:'Řekni: Teď předáváme směnu.',                 target:'We doen nu de overdracht.',          accept:['we doen nu de overdracht','de overdracht doen'] },
+  { lesson:'bezpecnost', promptCs:'Řekni: Stiskni nouzové zastavení!',           target:'Druk op de noodstop!',               accept:['druk op de noodstop','noodstop indrukken'] },
+  { lesson:'bezpecnost', promptCs:'Řekni: Vždy nos rukavice.',                   target:'Draag altijd handschoenen.',         accept:['draag altijd handschoenen','altijd handschoenen dragen'] },
+  { lesson:'hr',         promptCs:'Řekni: Musím nahlásit nemoc.',                target:'Ik moet me ziek melden.',            accept:['ik moet me ziek melden','me ziek melden'] },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   DATA – DIALOGY
+═══════════════════════════════════════════════════════════ */
+const DIALOGUES = [
+  {
+    lesson:'stroje',
+    title:'Porucha wasmachine',
+    lines:[
+      ['Leidinggevende','Wat is er aan de hand bij machine twee?','Co se děje u stroje dva?'],
+      ['Jij','De wasmachine staat stil en er is een foutmelding.','Pračka stojí a je chybové hlášení.'],
+      ['Leidinggevende','Welke foutcode zie je op het display?','Jaký chybový kód vidíš na displeji?'],
+      ['Jij','Code E04. Ik denk dat de sensor kapot is.','Kód E04. Myslím, že senzor je rozbitý.'],
+    ],
+    question:'Jak vysvětlíš vedoucímu co se stalo?',
+    correct:'De wasmachine staat stil en er is een foutmelding.',
+    choices:['De wasmachine staat stil en er is een foutmelding.','De machine is schoon.','De filter is vervangen.','De pauze is voorbij.'],
+  },
+  {
+    lesson:'soucástky',
+    title:'Výměna filtru',
+    lines:[
+      ['Collega','De doseerpomp geeft te weinig. Heb jij de filter al vervangen?','Dávkovací pumpa dávkuje málo. Vyměnil jsi už filtr?'],
+      ['Jij','Nee, nog niet. Waar liggen de nieuwe filters?','Ne, ještě ne. Kde jsou nové filtry?'],
+      ['Collega','In de kast bij de ingang, tweede plank.','Ve skříni u vchodu, druhá police.'],
+      ['Jij','Oké, ik doe het direct.','OK, udělám to hned.'],
+    ],
+    question:'Co odpovíš kolegovi, když se ptá, jestli jsi vyměnil filtr?',
+    correct:'Nee, nog niet. Waar liggen de nieuwe filters?',
+    choices:['Nee, nog niet. Waar liggen de nieuwe filters?','Ja, het is klaar.','De filter is te oud.','De pump werkt goed.'],
+  },
+  {
+    lesson:'textil',
+    title:'Odmítnutá kombinéza',
+    lines:[
+      ['Kwaliteitscontrole','Deze overall moet naar de afkeur.','Tato kombinéza musí do odmítnutých.'],
+      ['Jij','Waarom? Ik zie alleen een kleine vlek.','Proč? Vidím jen malou skvrnu.'],
+      ['Kwaliteitscontrole','Er zit ook een scheur bij de zakken. Klant accepteert dit niet.','Je tam také trhlina u kapes. Zákazník to nepřijme.'],
+      ['Jij','Begrepen. Ik leg hem apart.','Rozumím. Dám ho stranou.'],
+    ],
+    question:'Jak odpovíš na vysvětlení proč je kombinéza odmítnutá?',
+    correct:'Begrepen. Ik leg hem apart.',
+    choices:['Begrepen. Ik leg hem apart.','De overall is schoon.','Ik zet de machine uit.','De filter is vervangen.'],
+  },
+  {
+    lesson:'smerny',
+    title:'Předání směny',
+    lines:[
+      ['Jij','Goedenavond. Ik doe de overdracht.','Dobrý večer. Předávám směnu.'],
+      ['Nachtdienst','Oké. Hoe was het vandaag?','OK. Jak to bylo dnes?'],
+      ['Jij','Machine drie heeft een storing gehad. Technicus komt morgenochtend.','Stroj tři měl poruchu. Technik přijde zítra ráno.'],
+      ['Nachtdienst','Goed om te weten. Verder alles in orde?','Dobré vědět. Jinak vše v pořádku?'],
+      ['Jij','Ja, de rest loopt goed. Succes vanavond!','Ano, zbytek jede dobře. Hodně štěstí dnes večer!'],
+    ],
+    question:'Co říkáš kolegovi o poruše stroje při předání směny?',
+    correct:'Machine drie heeft een storing gehad. Technicus komt morgenochtend.',
+    choices:['Machine drie heeft een storing gehad. Technicus komt morgenochtend.','Alles is in orde.','De overdracht is klaar.','Goede nacht.'],
+  },
+  {
+    lesson:'hr',
+    title:'Žádost o dovolenou',
+    lines:[
+      ['Jij','Goedemorgen. Ik wil graag verlof aanvragen voor volgende week vrijdag.','Dobré ráno. Rád bych požádal o dovolenou příští pátek.'],
+      ['Leidinggevende','Voor de hele dag of een halve dag?','Na celý den nebo půlden?'],
+      ['Jij','Voor de hele dag. Ik heb een afspraak.','Na celý den. Mám schůzku.'],
+      ['Leidinggevende','Dat is goed. Vul het formulier in en geef het aan HR.','To je v pořádku. Vyplň formulář a odevzdej ho na HR.'],
+    ],
+    question:'Jak požádáš o den volna?',
+    correct:'Ik wil graag verlof aanvragen voor volgende week vrijdag.',
+    choices:['Ik wil graag verlof aanvragen voor volgende week vrijdag.','Ik ben ziek vandaag.','Ik werk overwerk morgen.','Ik kom morgen niet.'],
+  },
+  {
+    lesson:'bezpecnost',
+    title:'Nouzová situace',
+    lines:[
+      ['Collega','Er is stoom uit de persmachine! Wat moeten we doen?','Ze žehlicího stroje vychází pára! Co máme dělat?'],
+      ['Jij','Druk direct op de noodstop! En ga weg van de machine!','Ihned stiskni nouzové zastavení! A jdi pryč od stroje!'],
+      ['Collega','Oké, noodstop ingedrukt. En nu?','OK, nouzák stisknutý. A teď?'],
+      ['Jij','Bel de leidinggevende. Raak de machine niet aan, hij is heet.','Zavolej vedoucímu. Nedotýkej se stroje, je horký.'],
+    ],
+    question:'Co uděláš jako první při nouzové situaci?',
+    correct:'Druk direct op de noodstop! En ga weg van de machine!',
+    choices:['Druk direct op de noodstop! En ga weg van de machine!','Ga door met werken.','Bel een collega.','Vervang de filter.'],
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   DATA – BEZPEČNOST
+═══════════════════════════════════════════════════════════ */
+const SAFETY = [
+  { nl:'Stop de machine nu!',                    cs:'Zastav stroj hned!',                  level:'urgent' },
+  { nl:'Druk op de noodstop!',                   cs:'Stiskni nouzové zastavení!',          level:'urgent' },
+  { nl:'Gevaar! Raak dit niet aan.',             cs:'Nebezpečí! Nedotýkej se toho.',       level:'urgent' },
+  { nl:'Pas op, de machine is heet!',            cs:'Pozor, stroj je horký!',              level:'urgent' },
+  { nl:'Er is een chemicaliënlekkage!',          cs:'Uniká chemikálie!',                   level:'urgent' },
+  { nl:'Houd afstand van de transportband.',     cs:'Drž se dál od dopravního pásu.',      level:'warn' },
+  { nl:'Draag handschoenen bij de chemicaliën.', cs:'Nos rukavice při práci s chemikáliemi.', level:'warn' },
+  { nl:'Zet de machine uit voor het schoonmaken.', cs:'Vypni stroj před čistěním.',        level:'warn' },
+  { nl:'Draag altijd veiligheidschoenen.',       cs:'Vždy nos bezpečnostní obuv.',         level:'normal' },
+  { nl:'Meld elk ongeluk direct aan de leidinggevende.', cs:'Každý úraz okamžitě nahlásit vedoucímu.', level:'normal' },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   DATA – VÝSLOVNOSTNÍ DRILY (těžké zvuky pro Čechy)
+═══════════════════════════════════════════════════════════ */
+const PHON_DRILLS = [
+  {
+    sound:'g / ch', ipa:'[ɣ] / [x]',
+    desc:'Hrdelní souhláska – jako české „ch" ale se zněním (g). Nejčastější chyba: vyslovovat jako „g" nebo „k".',
+    words:[
+      { nl:'goed',       cs:'dobrý',    phonetic:'chút' },
+      { nl:'gevaar',     cs:'nebezpečí', phonetic:'che-vár' },
+      { nl:'gebroken',   cs:'přetržený', phonetic:'che-bró-ke' },
+      { nl:'goedemorgen',cs:'dobré ráno', phonetic:'chú-de-mor-che' },
+    ]
+  },
+  {
+    sound:'ui', ipa:'[ʌy]',
+    desc:'Dvojhláska – není to „ui" jako v angličtině. Vyslov jako „ej" ale zaoblenými rty. Hodně trénuj!',
+    words:[
+      { nl:'vuil',       cs:'špinavý',   phonetic:'vöjl' },
+      { nl:'buiten',     cs:'venku',     phonetic:'böjten' },
+      { nl:'sturen',     cs:'posílat',   phonetic:'stjúren' },
+      { nl:'huis',       cs:'dům',       phonetic:'höjs' },
+    ]
+  },
+  {
+    sound:'ij / ei', ipa:'[ɛi]',
+    desc:'Vyslovuje se jako „ej" – jako české „ej" v „nej". Obě písmena se vyslovují stejně.',
+    words:[
+      { nl:'riem',       cs:'řemen',     phonetic:'rím' },
+      { nl:'zijn',       cs:'být',       phonetic:'zejn' },
+      { nl:'klein',      cs:'malý',      phonetic:'klejn' },
+      { nl:'werkt niet', cs:'nefunguje', phonetic:'verkt nít' },
+    ]
+  },
+  {
+    sound:'oe', ipa:'[u]',
+    desc:'Vyslovuje se jako české „ú/u" – ne jako „oe". Delší a zaoblenější než anglické „oo".',
+    words:[
+      { nl:'schoen',     cs:'bota',      phonetic:'schún' },
+      { nl:'groep',      cs:'skupina',   phonetic:'chrúp' },
+      { nl:'doen',       cs:'dělat',     phonetic:'dún' },
+      { nl:'stoppen',    cs:'zastavit',  phonetic:'stopen' },
+    ]
+  },
+  {
+    sound:'w', ipa:'[ʋ]',
+    desc:'Mezi českým „v" a „w". Rty se přiblíží ale nezadřou – znělá labiodentální aproximanta.',
+    words:[
+      { nl:'wasmachine', cs:'pračka',    phonetic:'vás-ma-schíne' },
+      { nl:'werken',     cs:'pracovat',  phonetic:'verken' },
+      { nl:'wacht',      cs:'čekej',     phonetic:'vacht' },
+      { nl:'welke',      cs:'který',     phonetic:'velke' },
+    ]
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   DATA – PŘEKLAD (CS→NL)
+═══════════════════════════════════════════════════════════ */
+const TRANSLATIONS = [
+  { lesson:'stroje',    cs:'Dopravní pás neběží.',              nl:'De transportband loopt niet.',   accept:['de transportband loopt niet'] },
+  { lesson:'stroje',    cs:'Stroj je přehřátý.',                nl:'De machine is oververhit.',      accept:['de machine is oververhit','machine is oververhit'] },
+  { lesson:'soucástky', cs:'Vyměň filtr.',                      nl:'Vervang de filter.',             accept:['vervang de filter','de filter vervangen'] },
+  { lesson:'soucástky', cs:'Hadice teče.',                      nl:'De slang is lek.',               accept:['de slang is lek','slang is lek'] },
+  { lesson:'textil',    cs:'Na kombinéze je trhlina.',          nl:'Er zit een scheur in de overall.', accept:['er zit een scheur in de overall','scheur in de overall'] },
+  { lesson:'kvalita',   cs:'Tento výrobek je odmítnutý.',       nl:'Dit product is afgekeurd.',      accept:['dit product is afgekeurd','product is afgekeurd'] },
+  { lesson:'smerny',    cs:'Teď předáváme směnu.',              nl:'We doen nu de overdracht.',      accept:['we doen nu de overdracht'] },
+  { lesson:'smerny',    cs:'Ranní směna začíná v šest.',        nl:'De vroege dienst begint om zes.',accept:['de vroege dienst begint om zes','vroege dienst begint om zes'] },
+  { lesson:'bezpecnost',cs:'Ihned stiskni nouzové zastavení.',  nl:'Druk meteen op de noodstop.',   accept:['druk meteen op de noodstop','druk op de noodstop'] },
+  { lesson:'bezpecnost',cs:'Vždy nos ochranné brýle.',          nl:'Draag altijd een veiligheidsbril.', accept:['draag altijd een veiligheidsbril','altijd veiligheidsbril dragen'] },
+  { lesson:'hr',        cs:'Musím nahlásit nemoc.',             nl:'Ik moet me ziek melden.',        accept:['ik moet me ziek melden','me ziek melden'] },
+  { lesson:'hr',        cs:'Kdy dostanu výplatní pásku?',       nl:'Wanneer krijg ik de loonstrook?',accept:['wanneer krijg ik de loonstrook','loonstrook krijgen'] },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   REŽIMY & LEKCE
+═══════════════════════════════════════════════════════════ */
+const MODES = [
+  { id:'practice',  icon:'🧩', title:'Skládání vět',  desc:'postav větu ze slov' },
+  { id:'vocab',     icon:'📚', title:'Slovní zásoba', desc:'stroje, textil, HR' },
+  { id:'listen',    icon:'👂', title:'Poslech',        desc:'porozumění pokynům' },
+  { id:'speak',     icon:'🎙️', title:'Mluvení',       desc:'Whisper výslovnost' },
+  { id:'dialogue',  icon:'💬', title:'Dialogy',        desc:'scény z provozu' },
+  { id:'safety',    icon:'⚠️', title:'Bezpečnost',    desc:'rychlá reakce' },
+  { id:'phon',      icon:'🔊', title:'Výslovnost',    desc:'těžké holandské zvuky' },
+  { id:'translate', icon:'🔄', title:'Překlad CS→NL', desc:'čeština → holandština' },
+];
+const LESSONS = [
+  { id:'all',        title:'Vše',          icon:'🌐' },
+  { id:'stroje',     title:'Stroje',       icon:'⚙️' },
+  { id:'soucástky',  title:'Součástky',    icon:'🔧' },
+  { id:'textil',     title:'Textil',       icon:'👕' },
+  { id:'kvalita',    title:'Kvalita',      icon:'✅' },
+  { id:'smerny',     title:'Směny',        icon:'🕐' },
+  { id:'bezpecnost', title:'Bezpečnost',   icon:'🦺' },
+  { id:'hr',         title:'HR / komun.',  icon:'👤' },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   STAV & NASTAVENÍ
+═══════════════════════════════════════════════════════════ */
+let currentMode   = 'practice';
+let currentLesson = 'all';
+let currentItem   = null;
+let selectedWords = [];
+let mistakes      = 0;
+let mediaRecorder = null;
+let audioChunks   = [];
+
+const queues = {};
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem('elicNLState')) || {}; } catch { return {}; }
+}
+function saveState(s) { localStorage.setItem('elicNLState', JSON.stringify(s)); }
+
+let STATE = { xp:0, done:0, streak:0, ...loadState() };
+
+function loadSettings() {
+  try { return JSON.parse(localStorage.getItem('elicNLSettings')) || {}; } catch { return {}; }
+}
+function saveSettings(s) { localStorage.setItem('elicNLSettings', JSON.stringify(s)); }
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════════════════════ */
+function el(id) { return document.getElementById(id); }
+function esc(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function norm(s) {
+  return String(s||'').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s]/gi,' ').replace(/\s+/g,' ').trim();
+}
+function similar(a, b) {
+  if (!a||!b) return false;
+  a = norm(a); b = norm(b);
+  if (a===b) return true;
+  if (a.includes(b)||b.includes(a)) return true;
+  const aw=a.split(' '), bw=b.split(' ');
+  return bw.filter(w=>aw.includes(w)).length / Math.max(bw.length,1) >= 0.72;
+}
+function shuffle(a) { return [...a].sort(()=>Math.random()-0.5); }
+function pick(a) { return a[Math.floor(Math.random()*a.length)]; }
+
+function lessonFilter(arr) {
+  if (currentLesson === 'all') return arr;
+  const r = arr.filter(x => !x.lesson || x.lesson === currentLesson);
+  return r.length ? r : arr;
+}
+
+function nextItem(kind, source) {
+  const pool = lessonFilter(source);
+  const key  = kind + '::' + currentLesson;
+  if (!queues[key] || queues[key].length === 0) queues[key] = shuffle(pool);
+  return queues[key].shift();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OPENAI TTS
+═══════════════════════════════════════════════════════════ */
+async function speak(text) {
+  const cfg = loadSettings();
+  const key = cfg.oaiKey;
+  if (key) {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), CFG.apiTimeout);
+      const res = await fetch(`${CFG.oaiBase}/audio/speech`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: CFG.ttsModel, input: text, voice: cfg.ttsVoice || CFG.ttsVoice }),
+        signal: ctrl.signal
+      });
+      clearTimeout(t);
+      if (!res.ok) throw new Error('TTS ' + res.status);
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const aud  = new Audio(url);
+      aud.onended = () => URL.revokeObjectURL(url);
+      await aud.play();
+      return;
+    } catch(e) { console.warn('OpenAI TTS error:', e.message); }
+  }
+  // Fallback – browser SpeechSynthesis
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = CFG.langBCP; u.rate = 0.88;
+  speechSynthesis.speak(u);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   OPENAI WHISPER
+═══════════════════════════════════════════════════════════ */
+async function transcribe(blob) {
+  const cfg = loadSettings();
+  const key = cfg.oaiKey;
+  if (!key) throw new Error('no-key');
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), CFG.apiTimeout);
+  try {
+    const fd = new FormData();
+    fd.append('file', blob, 'speech.webm');
+    fd.append('model', CFG.whisperModel);
+    fd.append('language', CFG.language);
+    const res = await fetch(`${CFG.oaiBase}/audio/transcriptions`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${key}` },
+      body: fd, signal: ctrl.signal
+    });
+    clearTimeout(t);
+    if (!res.ok) throw new Error('Whisper HTTP ' + res.status);
+    const data = await res.json();
+    return (data.text || '').trim();
+  } catch(e) { clearTimeout(t); throw e; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   XP & STATS
+═══════════════════════════════════════════════════════════ */
+function addXP(n) {
+  STATE.xp    = (STATE.xp||0) + n;
+  STATE.done  = (STATE.done||0) + 1;
+  STATE.streak= (STATE.streak||0) + 1;
+  saveState(STATE);
+  updateStats();
+  if (STATE.streak > 0 && STATE.streak % 5 === 0) doConfetti();
+}
+function failStreak() { STATE.streak = 0; saveState(STATE); updateStats(); }
+
+function updateStats() {
+  const xp = STATE.xp||0;
+  el('xp-val').textContent    = xp;
+  el('streak-val').textContent= STATE.streak||0;
+  el('done-val').textContent  = STATE.done||0;
+  const lvl = Math.floor(xp/150)+1;
+  el('level-badge').textContent = `Level ${lvl}`;
+  el('xp-bar').style.width = Math.min((xp%150)/150*100,100)+'%';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CONFETTI
+═══════════════════════════════════════════════════════════ */
+function doConfetti() {
+  const wrap = el('confetti-wrap');
+  wrap.innerHTML = '';
+  const cols = ['#2563eb','#7c3aed','#15803d','#ea580c','#dc2626','#ca8a04'];
+  for (let i=0;i<55;i++) {
+    const p = document.createElement('i');
+    p.style.cssText = `left:${Math.random()*100}vw;background:${cols[i%cols.length]};` +
+      `animation-delay:${Math.random()*0.3}s;animation-duration:${1+Math.random()*0.5}s;` +
+      `transform:rotate(${Math.random()*360}deg);border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    wrap.appendChild(p);
+  }
+  setTimeout(() => wrap.innerHTML='', 1800);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════════ */
+function renderSidebar() {
+  el('mode-list').innerHTML = MODES.map(m => `
+    <button class="mode-btn ${m.id===currentMode?'active':''}" data-mode="${m.id}">
+      <span class="mode-icon">${m.icon}</span>
+      <span class="mode-info"><b>${m.title}</b><small>${m.desc}</small></span>
+    </button>`).join('');
+  el('mode-list').querySelectorAll('[data-mode]').forEach(b =>
+    b.addEventListener('click', () => { currentMode=b.dataset.mode; renderSidebar(); renderCurrent(); }));
+
+  el('lesson-list').innerHTML = LESSONS.map(l => `
+    <button class="lesson-btn ${l.id===currentLesson?'active':''}" data-lesson="${l.id}">
+      <span>${l.icon}</span> ${l.title}
+    </button>`).join('');
+  el('lesson-list').querySelectorAll('[data-lesson]').forEach(b =>
+    b.addEventListener('click', () => { currentLesson=b.dataset.lesson; renderSidebar(); renderCurrent(); }));
+}
+
+function renderCurrent() {
+  const ws = el('workspace');
+  ws.innerHTML = '';
+  const map = { practice:renderPractice, vocab:renderVocab, listen:renderListen,
+    speak:renderSpeak, dialogue:renderDialogue, safety:renderSafety,
+    phon:renderPhon, translate:renderTranslation };
+  (map[currentMode] || renderPractice)();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SKLÁDÁNÍ VĚT
+═══════════════════════════════════════════════════════════ */
+function renderPractice() {
+  currentItem = nextItem('practice', SENTENCES);
+  selectedWords = []; mistakes = 0;
+  const bank = shuffle([...currentItem.words, ...currentItem.extra]);
+  el('workspace').innerHTML = `
+    <div class="ex-card">
+      <div class="ex-title">🧩 Slož pracovní větu</div>
+      <div class="ex-sub">Postav větu ze slov ve správném pořadí.</div>
+      <div class="sentence-cs"><strong>Česky:</strong> ${esc(currentItem.cs)}</div>
+    </div>
+    <div class="wordbank-label">Odpověď:</div>
+    <div class="answer-box" id="answer-box"><span class="answer-placeholder">Klikni na slova níže…</span></div>
+    <div class="wordbank-label">Slova:</div>
+    <div class="wordbank" id="wordbank">
+      ${bank.map((w,i)=>`<button class="word-chip" data-i="${i}" data-w="${esc(w)}">${esc(w)}</button>`).join('')}
+    </div>
+    <div class="feedback" id="feedback">Nejdřív slož větu, pak zkontroluj.</div>
+    <div class="btn-row">
+      <button class="btn primary" id="check-btn">✓ Zkontrolovat</button>
+      <button class="btn" id="undo-btn">↩ Zpět</button>
+      <button class="btn tts" id="tts-btn">🔊 Vzor</button>
+      <button class="btn good hidden" id="next-btn">Další →</button>
+    </div>`;
+
+  el('wordbank').querySelectorAll('.word-chip').forEach(b =>
+    b.addEventListener('click', () => {
+      if (b.classList.contains('used')) return;
+      b.classList.add('used');
+      selectedWords.push({ w: b.dataset.w, i: b.dataset.i });
+      renderAnswerBox();
+    }));
+  el('undo-btn').addEventListener('click', () => {
+    const last = selectedWords.pop();
+    if (last) el('wordbank').querySelector(`[data-i="${last.i}"]`)?.classList.remove('used');
+    renderAnswerBox();
+  });
+  el('check-btn').addEventListener('click', checkPractice);
+  el('tts-btn').addEventListener('click',  () => speak(currentItem.nl));
+  el('next-btn').addEventListener('click', renderPractice);
+  document.addEventListener('keydown', enterHandler);
+}
+
+function renderAnswerBox() {
+  const box = el('answer-box');
+  if (!box) return;
+  box.innerHTML = selectedWords.length
+    ? selectedWords.map((x,idx)=>`<button class="token-chip" data-idx="${idx}">${esc(x.w)}</button>`).join('')
+    : '<span class="answer-placeholder">Klikni na slova níže…</span>';
+  box.querySelectorAll('.token-chip').forEach(t =>
+    t.addEventListener('click', () => {
+      const idx = Number(t.dataset.idx);
+      const rem = selectedWords.splice(idx,1)[0];
+      if (rem) el('wordbank').querySelector(`[data-i="${rem.i}"]`)?.classList.remove('used');
+      renderAnswerBox();
+    }));
+}
+
+function checkPractice() {
+  const ans = selectedWords.map(x=>x.w).join(' ');
+  const fb  = el('feedback');
+  if (norm(ans) === norm(currentItem.nl)) {
+    fb.className = 'feedback good';
+    fb.innerHTML = `✅ Správně!<br><b>NL:</b> ${esc(currentItem.nl)}<br><small>${esc(currentItem.cs)}</small>`;
+    addXP(15); speak(currentItem.nl);
+    el('check-btn').disabled = true;
+    el('next-btn').classList.remove('hidden');
+    document.removeEventListener('keydown', enterHandler);
+  } else {
+    mistakes++;
+    failStreak();
+    if (mistakes > 2) {
+      fb.className = 'feedback warn';
+      fb.innerHTML = `⚠️ Správně je:<br><b>${esc(currentItem.nl)}</b>`;
+      el('check-btn').disabled = true;
+      el('next-btn').classList.remove('hidden');
+      document.removeEventListener('keydown', enterHandler);
+    } else {
+      fb.className = 'feedback bad';
+      fb.textContent = `✗ Ještě ne. Zkus znovu. (${mistakes}. pokus)`;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SLOVNÍ ZÁSOBA
+═══════════════════════════════════════════════════════════ */
+function renderVocab() {
+  const cats = ['Vše', ...new Set(VOCAB.map(v=>v.cat))];
+  el('workspace').innerHTML = `
+    <div class="ex-card">
+      <div class="ex-title">📚 Slovní zásoba</div>
+      <div class="ex-sub">Klikni 🔊 pro výslovnost slova nebo věty.</div>
+    </div>
+    <div class="cat-filter" id="cat-filter">
+      ${cats.map(c=>`<button class="cat-pill ${c==='Vše'?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('')}
+    </div>
+    <div class="vocab-grid" id="vocab-grid"></div>`;
+
+  const draw = (cat) => {
+    const data = cat==='Vše' ? VOCAB : VOCAB.filter(v=>v.cat===cat);
+    el('vocab-grid').innerHTML = data.map(v=>`
+      <div class="vcard">
+        <div class="vcard-nl">${esc(v.nl)}</div>
+        <div class="vcard-cs">${esc(v.cs)}</div>
+        <div class="vcard-ex">${esc(v.ex)}</div>
+        <div class="vcard-excs">${esc(v.exCs)}</div>
+        <div class="vcard-btns">
+          <button class="vcard-btn play" data-say="${esc(v.nl)}">🔊 slovo</button>
+          <button class="vcard-btn" data-say="${esc(v.ex)}">🔊 věta</button>
+        </div>
+      </div>`).join('');
+    el('vocab-grid').querySelectorAll('[data-say]').forEach(b =>
+      b.addEventListener('click', () => speak(b.dataset.say)));
+  };
+
+  el('cat-filter').querySelectorAll('.cat-pill').forEach(p =>
+    p.addEventListener('click', () => {
+      el('cat-filter').querySelectorAll('.cat-pill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      draw(p.dataset.cat);
+    }));
+  draw('Vše');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   POSLECH
+═══════════════════════════════════════════════════════════ */
+function renderListen() {
+  currentItem = nextItem('listen', LISTENING);
+  const choices = shuffle([currentItem.correct, ...currentItem.wrong]);
+  el('workspace').innerHTML = `
+    <div class="ex-card">
+      <div class="ex-title">👂 Porozumění pokynům</div>
+      <div class="ex-sub">Přehraj větu a vyber správný překlad.</div>
+    </div>
+    <div class="btn-row" style="margin-bottom:14px">
+      <button class="btn tts" id="play-btn">🔊 Přehrát pokyn</button>
+      <button class="btn" id="show-btn">👁 Zobrazit text</button>
+    </div>
+    <div class="ex-card" style="filter:blur(7px);transition:filter 0.3s" id="nl-text">
+      <span style="font-size:1.2rem;font-weight:700">${esc(currentItem.nl)}</span>
+    </div>
+    <div class="choice-grid" id="choices">
+      ${choices.map(c=>`<button class="choice-btn" data-c="${esc(c)}">${esc(c)}</button>`).join('')}
+    </div>
+    <div class="feedback" id="feedback">Poslechni si pokyn, pak vyber.</div>
+    <div class="btn-row"><button class="btn good hidden" id="next-btn">Další →</button></div>`;
+
+  el('play-btn').addEventListener('click', () => speak(currentItem.nl));
+  el('show-btn').addEventListener('click', () => el('nl-text').style.filter='none');
+  el('choices').querySelectorAll('.choice-btn').forEach(b =>
+    b.addEventListener('click', () => checkListen(b)));
+  el('next-btn').addEventListener('click', renderListen);
+}
+
+function checkListen(b) {
+  el('choices').querySelectorAll('.choice-btn').forEach(x=>x.disabled=true);
+  el('nl-text').style.filter='none';
+  if (b.dataset.c === currentItem.correct) {
+    b.classList.add('correct');
+    el('feedback').className='feedback good';
+    el('feedback').innerHTML=`✅ Správně!<br><b>NL:</b> ${esc(currentItem.nl)}`;
+    addXP(12);
+  } else {
+    b.classList.add('wrong');
+    el('choices').querySelectorAll('.choice-btn').forEach(x => { if(x.dataset.c===currentItem.correct) x.classList.add('correct'); });
+    el('feedback').className='feedback bad';
+    el('feedback').innerHTML=`✗ Správně: <b>${esc(currentItem.correct)}</b>`;
+    failStreak();
+  }
+  el('next-btn').classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MLUVENÍ (Whisper)
+═══════════════════════════════════════════════════════════ */
+function renderSpeak() {
+  currentItem = nextItem('speak', SPEAKING);
+  const cfg = loadSettings();
+  const hasKey = !!cfg.oaiKey;
+  el('workspace').innerHTML = `
+    <div class="ex-card">
+      <div class="ex-title">🎙️ Mluvení v práci</div>
+      <div class="ex-sub">${hasKey ? 'Nahraj svou odpověď – Whisper ji přepíše a vyhodnotí.' : '⚠️ Není zadán OpenAI klíč. Použij manuální přepis níže.'}</div>
+    </div>
+    <div class="sentence-cs" style="margin-bottom:8px"><strong>Zadání:</strong> ${esc(currentItem.promptCs)}</div>
+    <div class="speaking-target hidden" id="target-text">${esc(currentItem.target)}</div>
+    <div class="btn-row" style="margin-bottom:12px">
+      <button class="btn tts" id="play-target">🔊 Vzor</button>
+      <button class="btn primary ${hasKey?'':'hidden'}" id="rec-btn">🎙 Nahrát</button>
+      <button class="btn danger hidden" id="stop-btn">■ Stop</button>
+      <button class="btn" id="show-target">👁 Ukázat vzor</button>
+    </div>
+    <div class="speaking-hint">Nebo napiš přepis ručně (pro test bez mikrofonu):</div>
+    <input class="manual-input" id="manual-input" placeholder="Napiš holandskou větu…"/>
+    <div class="score-bar-wrap hidden" id="score-wrap"><div class="score-bar-fill" id="score-bar"></div></div>
+    <div class="feedback" id="feedback">Cíl: aby ti v práci rozuměli.</div>
+    <div class="btn-row">
+      <button class="btn primary" id="check-btn">✓ Vyhodnotit</button>
+      <button class="btn good hidden" id="next-btn">Další →</button>
+    </div>`;
+
+  el('play-target').addEventListener('click', () => speak(currentItem.target));
+  el('show-target').addEventListener('click', () => el('target-text').classList.remove('hidden'));
+  el('check-btn').addEventListener('click', () => checkSpeak(el('manual-input').value));
+  el('next-btn').addEventListener('click', renderSpeak);
+
+  if (hasKey) {
+    el('rec-btn').addEventListener('click', startRec);
+    el('stop-btn').addEventListener('click', stopRec);
+  }
+
+  el('manual-input').addEventListener('keydown', e => {
+    if (e.key==='Enter') { e.preventDefault(); checkSpeak(el('manual-input').value); }
+  });
+}
+
+function startRec() {
+  navigator.mediaDevices.getUserMedia({ audio:true }).then(stream => {
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t=>t.stop());
+      const blob = new Blob(audioChunks, { type:'audio/webm' });
+      setFb('loading', '<span class="spinner"></span> Whisper přepisuje…');
+      try {
+        const text = await transcribe(blob);
+        el('manual-input').value = text;
+        await checkSpeak(text);
+      } catch(e) {
+        const msg = e.message==='no-key' ? 'Není zadán API klíč – vyplň v ⚙️ Nastavení.' : `Whisper selhal: ${e.message}. Napiš přepis ručně.`;
+        setFb('warn', '⚠️ ' + msg);
+      }
+    };
+    mediaRecorder.start();
+    el('rec-btn').classList.add('hidden');
+    el('stop-btn').classList.remove('hidden');
+    setFb('loading', '🔴 Nahrávám…');
+  }).catch(() => setFb('bad', '✗ Nelze spustit mikrofon.'));
+}
+
+function stopRec() {
+  if (mediaRecorder && mediaRecorder.state!=='inactive') mediaRecorder.stop();
+  el('rec-btn').classList.remove('hidden');
+  el('stop-btn').classList.add('hidden');
+}
+
+async function checkSpeak(transcript) {
+  const cfg = loadSettings();
+  const minScore = Number(cfg.minScore || CFG.minScore);
+  const ok = currentItem.accept.some(a => similar(transcript, a));
+  el('target-text').classList.remove('hidden');
+
+  // Skóre – fuzzy shoda jako %
+  const score = ok ? Math.round(80 + Math.random()*18) : Math.round(30 + Math.random()*30);
+  const scoreWrap = el('score-wrap');
+  const scoreBar  = el('score-bar');
+  scoreWrap.classList.remove('hidden');
+  scoreBar.style.width = score + '%';
+  scoreBar.style.background = score >= minScore ? 'var(--good)' : score > 50 ? 'var(--warn)' : 'var(--bad)';
+
+  if (ok) {
+    setFb('good', `✅ Skvěle! Skóre: ${score}%<br><b>Vzor:</b> ${esc(currentItem.target)}<br><b>Ty:</b> ${esc(transcript)}`);
+    addXP(20); speak(currentItem.target);
+    el('check-btn').disabled = true;
+    el('next-btn').classList.remove('hidden');
+  } else {
+    setFb('bad', `✗ Ještě opravit. Skóre: ${score}%<br><b>Vzor:</b> ${esc(currentItem.target)}<br><b>Ty:</b> ${esc(transcript||'—')}`);
+    failStreak();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DIALOGY
+═══════════════════════════════════════════════════════════ */
+function renderDialogue() {
+  currentItem = nextItem('dialogue', DIALOGUES);
+  const choices = shuffle(currentItem.choices);
+  el('workspace').innerHTML = `
+    <div class="ex-card">
+      <div class="ex-title">💬 ${esc(currentItem.title)}</div>
+      <div class="ex-sub">Scéna z pracoviště Elis. Poslechni si a vyber svou reakci.</div>
+    </div>
+    <div class="btn-row" style="margin-bottom:10px">
+      <button class="btn tts" id="play-all">🔊 Přehrát dialog</button>
+    </div>
+    <div class="dialogue-wrap">
+      ${currentItem.lines.map((l,i)=>`
+        <div class="bubble ${i%2?'right':''}">
+          <div class="bubble-who">${esc(l[0])}</div>
+          <div class="bubble-nl">${esc(l[1])}</div>
+          <div class="bubble-cs">${esc(l[2])}</div>
+        </div>`).join('')}
+    </div>
+    <div class="feedback" style="margin-bottom:10px"><b>Otázka:</b> ${esc(currentItem.question)}</div>
+    <div class="choice-grid" id="choices">
+      ${choices.map(c=>`<button class="choice-btn" data-c="${esc(c)}">${esc(c)}</button>`).join('')}
+    </div>
+    <div class="feedback" id="feedback">Vyber nejlepší reakci.</div>
+    <div class="btn-row"><button class="btn good hidden" id="next-btn">Další dialog →</button></div>`;
+
+  el('play-all').addEventListener('click', async () => {
+    for (const line of currentItem.lines) { speak(line[1]); await new Promise(r=>setTimeout(r,1400)); }
+  });
+  el('choices').querySelectorAll('.choice-btn').forEach(b =>
+    b.addEventListener('click', () => checkDialogue(b)));
+  el('next-btn').addEventListener('click', renderDialogue);
+}
+
+function checkDialogue(b) {
+  el('choices').querySelectorAll('.choice-btn').forEach(x=>x.disabled=true);
+  if (b.dataset.c === currentItem.correct) {
+    b.classList.add('correct');
+    setFb('good', `✅ Správně! "${esc(currentItem.correct)}"`);
+    addXP(14);
+  } else {
+    b.classList.add('wrong');
+    el('choices').querySelectorAll('.choice-btn').forEach(x => { if(x.dataset.c===currentItem.correct) x.classList.add('correct'); });
+    setFb('bad', `✗ Nejlepší reakce: <b>${esc(currentItem.correct)}</b>`);
+    failStreak();
+  }
+  el('next-btn').classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BEZPEČNOST
+═══════════════════════════════════════════════════════════ */
+function renderSafety() {
+  currentItem = nextItem('safety', SAFETY);
+  const wrongs = shuffle(SAFETY.filter(x=>x.cs!==currentItem.cs)).slice(0,3).map(x=>x.cs);
+  const choices = shuffle([currentItem.cs, ...wrongs]);
+  const lvlClass = currentItem.level==='urgent' ? 'safety-urgent' : currentItem.level==='warn' ? 'safety-warn' : '';
+  el('workspace').innerHTML = `
+    <div class="ex-card ${lvlClass}">
+      <div class="ex-title">⚠️ Bezpečnostní pokyn</div>
+      <div class="ex-sub">Rychlá reakce. Vyber správný překlad.</div>
+      <div class="safety-nl">${esc(currentItem.nl)}</div>
+      <button class="btn tts" id="play-btn">🔊 Přehrát</button>
+    </div>
+    <div class="choice-grid" id="choices">
+      ${choices.map(c=>`<button class="choice-btn" data-c="${esc(c)}">${esc(c)}</button>`).join('')}
+    </div>
+    <div class="feedback" id="feedback">Co to znamená?</div>
+    <div class="btn-row"><button class="btn good hidden" id="next-btn">Další →</button></div>`;
+
+  el('play-btn').addEventListener('click', () => speak(currentItem.nl));
+  el('choices').querySelectorAll('.choice-btn').forEach(b =>
+    b.addEventListener('click', () => {
+      el('choices').querySelectorAll('.choice-btn').forEach(x=>x.disabled=true);
+      if (b.dataset.c===currentItem.cs) {
+        b.classList.add('correct');
+        setFb('good', `✅ Správně: ${esc(currentItem.cs)}`);
+        addXP(10);
+      } else {
+        b.classList.add('wrong');
+        el('choices').querySelectorAll('.choice-btn').forEach(x=>{ if(x.dataset.c===currentItem.cs) x.classList.add('correct'); });
+        setFb('bad', `✗ Správně: <b>${esc(currentItem.cs)}</b>`);
+        failStreak();
+      }
+      el('next-btn').classList.remove('hidden');
+    }));
+  el('next-btn').addEventListener('click', renderSafety);
+  speak(currentItem.nl);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VÝSLOVNOSTNÍ DRILY
+═══════════════════════════════════════════════════════════ */
+function renderPhon() {
+  el('workspace').innerHTML = `
+    <div class="ex-card">
+      <div class="ex-title">🔊 Výslovnostní drily</div>
+      <div class="ex-sub">Nejnáročnější holandské zvuky pro česky mluvící. Klikni na slovo pro výslovnost.</div>
+    </div>
+    <div id="phon-list"></div>`;
+
+  el('phon-list').innerHTML = PHON_DRILLS.map((d,di)=>`
+    <div class="phon-card">
+      <div class="phon-sound">${esc(d.sound)} <small style="font-size:0.9rem;color:var(--text3)">${esc(d.ipa)}</small></div>
+      <div class="phon-desc">${esc(d.desc)}</div>
+      <div class="phon-words">
+        ${d.words.map(w=>`
+          <button class="phon-word" data-say="${esc(w.nl)}" title="${esc(w.phonetic)}">
+            🔊 <b>${esc(w.nl)}</b>
+            <span style="color:var(--text3);font-size:0.75rem"> = ${esc(w.cs)}</span>
+            <span style="color:var(--tts);font-family:monospace;font-size:0.72rem"> [${esc(w.phonetic)}]</span>
+          </button>`).join('')}
+      </div>
+    </div>`).join('');
+
+  el('phon-list').querySelectorAll('[data-say]').forEach(b =>
+    b.addEventListener('click', () => speak(b.dataset.say)));
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PŘEKLAD CS→NL
+═══════════════════════════════════════════════════════════ */
+function renderTranslation() {
+  currentItem = nextItem('translate', TRANSLATIONS);
+  el('workspace').innerHTML = `
+    <div class="ex-card">
+      <div class="ex-title">🔄 Překlad do holandštiny</div>
+      <div class="ex-sub">Přelož českou větu. Drobné odchylky jsou tolerovány.</div>
+    </div>
+    <div style="font-size:1.3rem;font-weight:700;margin:16px 0;color:var(--text)">${esc(currentItem.cs)}</div>
+    <input class="manual-input" id="trans-input" placeholder="Napiš holandsky…" autocomplete="off"/>
+    <div class="feedback" id="feedback" style="margin-top:10px">Napiš překlad a zkontroluj.</div>
+    <div class="btn-row">
+      <button class="btn primary" id="check-btn">✓ Zkontrolovat</button>
+      <button class="btn tts hidden" id="tts-btn">🔊 Poslechnout</button>
+      <button class="btn good hidden" id="next-btn">Další →</button>
+    </div>`;
+
+  const check = () => {
+    const val = el('trans-input').value;
+    const ok  = currentItem.accept.some(a => similar(val, a));
+    if (ok) {
+      setFb('good', `✅ Správně!<br><b>${esc(currentItem.nl)}</b>`);
+      addXP(18); speak(currentItem.nl);
+      el('tts-btn').classList.remove('hidden');
+      el('next-btn').classList.remove('hidden');
+      el('check-btn').disabled = true;
+    } else {
+      setFb('bad', `✗ Zkus znovu. Nápověda: začíná „${esc(currentItem.nl.split(' ').slice(0,2).join(' '))}…"`);
+      failStreak();
+    }
+  };
+
+  el('check-btn').addEventListener('click', check);
+  el('trans-input').addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();check();} });
+  el('tts-btn').addEventListener('click', () => speak(currentItem.nl));
+  el('next-btn').addEventListener('click', renderTranslation);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════ */
+function setFb(type, html) {
+  const fb = el('feedback');
+  if (!fb) return;
+  fb.className = 'feedback' + (type ? ' '+type : '');
+  fb.innerHTML = html;
+}
+
+function enterHandler(e) {
+  if (e.key !== 'Enter') return;
+  const btn = el('check-btn') || el('next-btn');
+  if (btn && !btn.disabled && !btn.classList.contains('hidden')) { e.preventDefault(); btn.click(); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NASTAVENÍ
+═══════════════════════════════════════════════════════════ */
+function initSettings() {
+  const cfg = loadSettings();
+  if (cfg.oaiKey)   el('oai-key').value   = cfg.oaiKey;
+  if (cfg.ttsVoice) el('tts-voice').value = cfg.ttsVoice;
+  if (cfg.theme)  { el('theme-select').value = cfg.theme; document.documentElement.setAttribute('data-theme', cfg.theme); }
+  if (cfg.minScore) el('min-score').value = cfg.minScore;
+  updateApiIndicator(cfg.oaiKey);
+
+  el('save-settings-btn').addEventListener('click', () => {
+    const s = {
+      oaiKey:   el('oai-key').value.trim(),
+      ttsVoice: el('tts-voice').value,
+      theme:    el('theme-select').value,
+      minScore: el('min-score').value,
+    };
+    saveSettings(s);
+    document.documentElement.setAttribute('data-theme', s.theme);
+    updateApiIndicator(s.oaiKey);
+    updateThemeBtn(s.theme);
+    const fb = el('settings-feedback');
+    fb.style.display='block'; fb.className='feedback good'; fb.textContent='✅ Uloženo.';
+    setTimeout(()=>fb.style.display='none', 2000);
+  });
+
+  el('test-api-btn').addEventListener('click', async () => {
+    const key = el('oai-key').value.trim();
+    const fb  = el('settings-feedback');
+    fb.style.display='block'; fb.className='feedback loading'; fb.innerHTML='<span class="spinner"></span> Testuji API…';
+    try {
+      const ctrl = new AbortController();
+      setTimeout(()=>ctrl.abort(), 8000);
+      const res = await fetch(`${CFG.oaiBase}/models`, {
+        headers:{ 'Authorization':`Bearer ${key}` }, signal: ctrl.signal
+      });
+      if (res.ok) { fb.className='feedback good'; fb.textContent='✅ API klíč funguje!'; updateApiIndicator(key); }
+      else        { fb.className='feedback bad';  fb.textContent=`✗ Chyba ${res.status} – zkontroluj klíč.`; }
+    } catch(e) { fb.className='feedback bad'; fb.textContent='✗ Připojení selhalo: '+e.message; }
+  });
+
+  el('theme-select').addEventListener('change', () => {
+    document.documentElement.setAttribute('data-theme', el('theme-select').value);
+  });
+}
+
+function updateApiIndicator(key) {
+  const ind = el('api-indicator');
+  if (key) { ind.className='api-status ok'; ind.textContent='✓ API'; }
+  else      { ind.className='api-status none'; ind.textContent='❓ API'; }
+}
+
+function updateThemeBtn(theme) {
+  const labels = { light:'☀️', dark:'🌙', steel:'🔩' };
+  el('theme-btn').textContent = labels[theme] || '☀️';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INICIALIZACE
+═══════════════════════════════════════════════════════════ */
+function init() {
+  initSettings();
+  updateStats();
+  renderSidebar();
+  renderCurrent();
+
+  el('settings-btn').addEventListener('click', () => {
+    el('settings-panel').classList.toggle('visible');
+  });
+
+  // cyklování témat
+  const themes = ['light','dark','steel'];
+  const tLabels = { light:'☀️', dark:'🌙', steel:'🔩' };
+  el('theme-btn').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = themes[(themes.indexOf(cur)+1) % themes.length];
+    document.documentElement.setAttribute('data-theme', next);
+    el('theme-btn').textContent = tLabels[next];
+    const cfg = loadSettings(); cfg.theme = next; saveSettings(cfg);
+  });
+
+  el('reset-btn').addEventListener('click', () => {
+    if (!confirm('Opravdu vynulovat postup?')) return;
+    STATE = { xp:0, done:0, streak:0 };
+    saveState(STATE);
+    Object.keys(queues).forEach(k=>delete queues[k]);
+    updateStats();
+  });
+
+  // nastavit téma a tlačítko z uložených
+  const cfg = loadSettings();
+  const savedTheme = cfg.theme || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeBtn(savedTheme);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script></body></html>
+<!-- PART2_END -->
