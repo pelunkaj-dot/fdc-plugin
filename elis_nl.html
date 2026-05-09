@@ -368,11 +368,7 @@ button { cursor: pointer; border: none; }
 .phon-word:hover { background: var(--border); }
 
 /* SETTINGS PANEL */
-.settings-panel {
-  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
-  padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; display: none;
-}
-.settings-panel.visible { display: block; }
+
 .settings-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
 .settings-label { font-size: 0.82rem; font-weight: 600; color: var(--text2); min-width: 140px; }
 .settings-input {
@@ -437,43 +433,7 @@ select.settings-input { cursor: pointer; }
 <div class="app">
 <div id="confetti-wrap" class="confetti-wrap"></div>
 
-<!-- SETTINGS -->
-<div id="settings-panel" class="settings-panel">
-  <div style="font-size:0.95rem;font-weight:700;margin-bottom:14px;">⚙️ Nastavení API</div>
-  <div class="settings-row">
-    <span class="settings-label">OpenAI API klíč</span>
-    <input class="settings-input" type="password" id="oai-key" placeholder="sk-…" autocomplete="off"/>
-    <span class="api-status none" id="oai-status">❓ Nezadán</span>
-  </div>
-  <div class="settings-row">
-    <span class="settings-label">TTS hlas</span>
-    <select class="settings-input" id="tts-voice">
-      <option value="onyx">onyx (hluboký mužský)</option>
-      <option value="nova">nova (ženský)</option>
-      <option value="alloy">alloy (neutrální)</option>
-      <option value="shimmer">shimmer (měkký)</option>
-    </select>
-  </div>
-  <div class="settings-row">
-    <span class="settings-label">Téma</span>
-    <select class="settings-input" id="theme-select">
-      <option value="light">☀️ Světlé</option>
-      <option value="dark">🌙 Tmavé</option>
-      <option value="steel">🔩 Pracovní ocel</option>
-    </select>
-  </div>
-  <div class="settings-row">
-    <span class="settings-label">Minimální skóre výslovnosti</span>
-    <input class="settings-input" type="number" id="min-score" value="70" min="40" max="95" style="max-width:80px"/>
-    <span style="font-size:0.8rem;color:var(--text3)">% (40–95)</span>
-  </div>
-  <div class="btn-row" style="margin-top:4px">
-    <button class="btn primary" id="save-settings-btn">💾 Uložit</button>
-    <button class="btn" id="test-api-btn">🔌 Otestovat API</button>
-    <button class="btn" onclick="document.getElementById('settings-panel').classList.remove('visible')">✕ Zavřít</button>
-  </div>
-  <div class="feedback" id="settings-feedback" style="margin-top:10px;display:none"></div>
-</div>
+
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -482,8 +442,7 @@ select.settings-input { cursor: pointer; }
     <div class="brand-name">Elis NL Pro<small>Pracovní nizozemština · Moderna part of Elis</small></div>
   </div>
   <div class="topbar-right">
-    <span id="api-indicator" class="api-status none">❓ API</span>
-    <button class="icon-btn" id="settings-btn">⚙️ API</button>
+
     <button class="icon-btn" id="theme-btn">☀️</button>
     <button class="icon-btn danger" id="reset-btn">↺ Reset</button>
   </div>
@@ -531,6 +490,7 @@ const CFG = {
   minScore: 70,
   ttsVoice: 'onyx',
   useBrowserTTS: true, // fallback
+  proxyUrl: 'https://fajndoucko.vercel.app/api/pronunciation',
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -876,10 +836,10 @@ function saveState(s) { localStorage.setItem('elicNLState', JSON.stringify(s)); 
 
 let STATE = { xp:0, done:0, streak:0, ...loadState() };
 
-function loadSettings() {
-  try { return JSON.parse(localStorage.getItem('elicNLSettings')) || {}; } catch { return {}; }
+function loadTheme() {
+  return localStorage.getItem('elicNLTheme') || 'light';
 }
-function saveSettings(s) { localStorage.setItem('elicNLSettings', JSON.stringify(s)); }
+function saveTheme(t) { localStorage.setItem('elicNLTheme', t); }
 
 /* ═══════════════════════════════════════════════════════════
    UTILITY
@@ -918,60 +878,39 @@ function nextItem(kind, source) {
 /* ═══════════════════════════════════════════════════════════
    OPENAI TTS
 ═══════════════════════════════════════════════════════════ */
-async function speak(text) {
-  const cfg = loadSettings();
-  const key = cfg.oaiKey;
-  if (key) {
-    try {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), CFG.apiTimeout);
-      const res = await fetch(`${CFG.oaiBase}/audio/speech`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: CFG.ttsModel, input: text, voice: cfg.ttsVoice || CFG.ttsVoice }),
-        signal: ctrl.signal
-      });
-      clearTimeout(t);
-      if (!res.ok) throw new Error('TTS ' + res.status);
-      const blob = await res.blob();
-      const url  = URL.createObjectURL(blob);
-      const aud  = new Audio(url);
-      aud.onended = () => URL.revokeObjectURL(url);
-      await aud.play();
-      return;
-    } catch(e) { console.warn('OpenAI TTS error:', e.message); }
-  }
-  // Fallback – browser SpeechSynthesis
+function speak(text) {
   if (!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = CFG.langBCP; u.rate = 0.88;
+  u.lang = CFG.langBCP;   // nl-NL
+  u.rate = 0.82;          // trochu pomalejší pro lepší srozumitelnost
+  u.pitch = 1.0;
+  // Preferuj holandský hlas pokud je k dispozici
+  const voices = speechSynthesis.getVoices();
+  const nlVoice = voices.find(v => v.lang.startsWith('nl'));
+  if (nlVoice) u.voice = nlVoice;
   speechSynthesis.speak(u);
 }
 
 /* ═══════════════════════════════════════════════════════════
    OPENAI WHISPER
 ═══════════════════════════════════════════════════════════ */
-async function transcribe(blob) {
-  const cfg = loadSettings();
-  const key = cfg.oaiKey;
-  if (!key) throw new Error('no-key');
+async function callPronunciationAPI(blob, expectedText) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), CFG.apiTimeout);
   try {
     const fd = new FormData();
-    fd.append('file', blob, 'speech.webm');
-    fd.append('model', CFG.whisperModel);
-    fd.append('language', CFG.language);
-    const res = await fetch(`${CFG.oaiBase}/audio/transcriptions`, {
+    fd.append('audio', blob, 'speech.webm');
+    fd.append('expectedText', expectedText);
+    fd.append('language', CFG.langBCP);   // nl-NL
+    const res = await fetch(CFG.proxyUrl, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${key}` },
-      body: fd, signal: ctrl.signal
+      body: fd,
+      signal: ctrl.signal
     });
     clearTimeout(t);
-    if (!res.ok) throw new Error('Whisper HTTP ' + res.status);
-    const data = await res.json();
-    return (data.text || '').trim();
+    if (!res.ok) throw new Error('Proxy HTTP ' + res.status);
+    return await res.json();  // { score, transcript, words, tip }
   } catch(e) { clearTimeout(t); throw e; }
 }
 
@@ -1225,18 +1164,16 @@ function checkListen(b) {
 ═══════════════════════════════════════════════════════════ */
 function renderSpeak() {
   currentItem = nextItem('speak', SPEAKING);
-  const cfg = loadSettings();
-  const hasKey = !!cfg.oaiKey;
   el('workspace').innerHTML = `
     <div class="ex-card">
       <div class="ex-title">🎙️ Mluvení v práci</div>
-      <div class="ex-sub">${hasKey ? 'Nahraj svou odpověď – Whisper ji přepíše a vyhodnotí.' : '⚠️ Není zadán OpenAI klíč. Použij manuální přepis níže.'}</div>
+      <div class="ex-sub">Nahraj svou odpověď – Whisper ji vyhodnotí. Nebo napiš text ručně.</div>
     </div>
     <div class="sentence-cs" style="margin-bottom:8px"><strong>Zadání:</strong> ${esc(currentItem.promptCs)}</div>
     <div class="speaking-target hidden" id="target-text">${esc(currentItem.target)}</div>
     <div class="btn-row" style="margin-bottom:12px">
       <button class="btn tts" id="play-target">🔊 Vzor</button>
-      <button class="btn primary ${hasKey?'':'hidden'}" id="rec-btn">🎙 Nahrát</button>
+      <button class="btn primary" id="rec-btn">🎙 Nahrát</button>
       <button class="btn danger hidden" id="stop-btn">■ Stop</button>
       <button class="btn" id="show-target">👁 Ukázat vzor</button>
     </div>
@@ -1254,10 +1191,8 @@ function renderSpeak() {
   el('check-btn').addEventListener('click', () => checkSpeak(el('manual-input').value));
   el('next-btn').addEventListener('click', renderSpeak);
 
-  if (hasKey) {
-    el('rec-btn').addEventListener('click', startRec);
-    el('stop-btn').addEventListener('click', stopRec);
-  }
+  el('rec-btn').addEventListener('click', startRec);
+  el('stop-btn').addEventListener('click', stopRec);
 
   el('manual-input').addEventListener('keydown', e => {
     if (e.key==='Enter') { e.preventDefault(); checkSpeak(el('manual-input').value); }
@@ -1274,12 +1209,11 @@ function startRec() {
       const blob = new Blob(audioChunks, { type:'audio/webm' });
       setFb('loading', '<span class="spinner"></span> Whisper přepisuje…');
       try {
-        const text = await transcribe(blob);
-        el('manual-input').value = text;
-        await checkSpeak(text);
+        const result = await callPronunciationAPI(blob, currentItem.target);
+        el('manual-input').value = result.transcript || '';
+        await checkSpeak(result.transcript || '', result);
       } catch(e) {
-        const msg = e.message==='no-key' ? 'Není zadán API klíč – vyplň v ⚙️ Nastavení.' : `Whisper selhal: ${e.message}. Napiš přepis ručně.`;
-        setFb('warn', '⚠️ ' + msg);
+        setFb('warn', `⚠️ Připojení selhalo: ${e.message}. Napiš přepis ručně.`);
       }
     };
     mediaRecorder.start();
@@ -1295,27 +1229,41 @@ function stopRec() {
   el('stop-btn').classList.add('hidden');
 }
 
-async function checkSpeak(transcript) {
-  const cfg = loadSettings();
-  const minScore = Number(cfg.minScore || CFG.minScore);
-  const ok = currentItem.accept.some(a => similar(transcript, a));
+async function checkSpeak(transcript, apiResult) {
+  const minScore = CFG.minScore;
   el('target-text').classList.remove('hidden');
 
-  // Skóre – fuzzy shoda jako %
-  const score = ok ? Math.round(80 + Math.random()*18) : Math.round(30 + Math.random()*30);
+  // Použij skóre z API, nebo fallback fuzzy shoda
+  let score, wordFeedback = '', tip = '';
+  if (apiResult && typeof apiResult.score === 'number') {
+    score = apiResult.score;
+    tip   = apiResult.tip ? `<br><small>💡 ${esc(apiResult.tip)}</small>` : '';
+    // Barevné zvýraznění slov
+    if (apiResult.words && apiResult.words.length) {
+      wordFeedback = '<br><span style="font-size:0.8rem">' +
+        apiResult.words.map(w =>
+          `<span style="color:${w.ok ? 'var(--good)' : 'var(--bad)'}">` +
+          esc(w.word) + '</span>'
+        ).join(' ') + '</span>';
+    }
+  } else {
+    const ok = currentItem.accept.some(a => similar(transcript, a));
+    score = ok ? Math.round(82 + Math.random()*15) : Math.round(30 + Math.random()*28);
+  }
+
   const scoreWrap = el('score-wrap');
   const scoreBar  = el('score-bar');
   scoreWrap.classList.remove('hidden');
   scoreBar.style.width = score + '%';
   scoreBar.style.background = score >= minScore ? 'var(--good)' : score > 50 ? 'var(--warn)' : 'var(--bad)';
 
-  if (ok) {
-    setFb('good', `✅ Skvěle! Skóre: ${score}%<br><b>Vzor:</b> ${esc(currentItem.target)}<br><b>Ty:</b> ${esc(transcript)}`);
+  if (score >= minScore) {
+    setFb('good', `✅ Skvěle! Skóre: ${score}%${wordFeedback}${tip}<br><small>Vzor: ${esc(currentItem.target)}</small>`);
     addXP(20); speak(currentItem.target);
     el('check-btn').disabled = true;
     el('next-btn').classList.remove('hidden');
   } else {
-    setFb('bad', `✗ Ještě opravit. Skóre: ${score}%<br><b>Vzor:</b> ${esc(currentItem.target)}<br><b>Ty:</b> ${esc(transcript||'—')}`);
+    setFb('bad', `✗ Skóre: ${score}% – zkus znovu.${wordFeedback}${tip}<br><small>Vzor: ${esc(currentItem.target)} | Ty: ${esc(transcript||'—')}</small>`);
     failStreak();
   }
 }
@@ -1502,47 +1450,9 @@ function enterHandler(e) {
    NASTAVENÍ
 ═══════════════════════════════════════════════════════════ */
 function initSettings() {
-  const cfg = loadSettings();
-  if (cfg.oaiKey)   el('oai-key').value   = cfg.oaiKey;
-  if (cfg.ttsVoice) el('tts-voice').value = cfg.ttsVoice;
-  if (cfg.theme)  { el('theme-select').value = cfg.theme; document.documentElement.setAttribute('data-theme', cfg.theme); }
-  if (cfg.minScore) el('min-score').value = cfg.minScore;
-  updateApiIndicator(cfg.oaiKey);
-
-  el('save-settings-btn').addEventListener('click', () => {
-    const s = {
-      oaiKey:   el('oai-key').value.trim(),
-      ttsVoice: el('tts-voice').value,
-      theme:    el('theme-select').value,
-      minScore: el('min-score').value,
-    };
-    saveSettings(s);
-    document.documentElement.setAttribute('data-theme', s.theme);
-    updateApiIndicator(s.oaiKey);
-    updateThemeBtn(s.theme);
-    const fb = el('settings-feedback');
-    fb.style.display='block'; fb.className='feedback good'; fb.textContent='✅ Uloženo.';
-    setTimeout(()=>fb.style.display='none', 2000);
-  });
-
-  el('test-api-btn').addEventListener('click', async () => {
-    const key = el('oai-key').value.trim();
-    const fb  = el('settings-feedback');
-    fb.style.display='block'; fb.className='feedback loading'; fb.innerHTML='<span class="spinner"></span> Testuji API…';
-    try {
-      const ctrl = new AbortController();
-      setTimeout(()=>ctrl.abort(), 8000);
-      const res = await fetch(`${CFG.oaiBase}/models`, {
-        headers:{ 'Authorization':`Bearer ${key}` }, signal: ctrl.signal
-      });
-      if (res.ok) { fb.className='feedback good'; fb.textContent='✅ API klíč funguje!'; updateApiIndicator(key); }
-      else        { fb.className='feedback bad';  fb.textContent=`✗ Chyba ${res.status} – zkontroluj klíč.`; }
-    } catch(e) { fb.className='feedback bad'; fb.textContent='✗ Připojení selhalo: '+e.message; }
-  });
-
-  el('theme-select').addEventListener('change', () => {
-    document.documentElement.setAttribute('data-theme', el('theme-select').value);
-  });
+  const theme = loadTheme();
+  document.documentElement.setAttribute('data-theme', theme);
+  updateThemeBtn(theme);
 }
 
 function updateApiIndicator(key) {
@@ -1565,10 +1475,6 @@ function init() {
   renderSidebar();
   renderCurrent();
 
-  el('settings-btn').addEventListener('click', () => {
-    el('settings-panel').classList.toggle('visible');
-  });
-
   // cyklování témat
   const themes = ['light','dark','steel'];
   const tLabels = { light:'☀️', dark:'🌙', steel:'🔩' };
@@ -1577,7 +1483,7 @@ function init() {
     const next = themes[(themes.indexOf(cur)+1) % themes.length];
     document.documentElement.setAttribute('data-theme', next);
     el('theme-btn').textContent = tLabels[next];
-    const cfg = loadSettings(); cfg.theme = next; saveSettings(cfg);
+    saveTheme(next);
   });
 
   el('reset-btn').addEventListener('click', () => {
@@ -1587,12 +1493,6 @@ function init() {
     Object.keys(queues).forEach(k=>delete queues[k]);
     updateStats();
   });
-
-  // nastavit téma a tlačítko z uložených
-  const cfg = loadSettings();
-  const savedTheme = cfg.theme || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeBtn(savedTheme);
 }
 
 document.addEventListener('DOMContentLoaded', init);
