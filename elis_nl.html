@@ -878,14 +878,34 @@ function nextItem(kind, source) {
 /* ═══════════════════════════════════════════════════════════
    OPENAI TTS
 ═══════════════════════════════════════════════════════════ */
-function speak(text) {
+async function speak(text) {
+  if (!text) return;
+  const ttsUrl = CFG.proxyUrl.replace('/pronunciation', '/tts');
+  try {
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), 8000);
+    const res = await fetch(ttsUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, voice: 'onyx' }),
+      signal: ctrl.signal,
+    });
+    if (!res.ok) throw new Error('TTS HTTP ' + res.status);
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const aud  = new Audio(url);
+    aud.onended = () => URL.revokeObjectURL(url);
+    await aud.play();
+    return;
+  } catch (e) {
+    console.warn('Vercel TTS selhal, fallback na browser:', e.message);
+  }
+  // Fallback – browser SpeechSynthesis (Chrome/Edge)
   if (!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = CFG.langBCP;   // nl-NL
-  u.rate = 0.82;          // trochu pomalejší pro lepší srozumitelnost
-  u.pitch = 1.0;
-  // Preferuj holandský hlas pokud je k dispozici
+  u.lang = CFG.langBCP;
+  u.rate = 0.82;
   const voices = speechSynthesis.getVoices();
   const nlVoice = voices.find(v => v.lang.startsWith('nl'));
   if (nlVoice) u.voice = nlVoice;
