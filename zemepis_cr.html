@@ -190,7 +190,7 @@ const CATS=[
   {id:'hory',     name:'Hory a pohoří',     emoji:'⛰️', desc:'Nejvyšší vrcholy, pohoří, hřebeny'},
   {id:'kraje',    name:'Kraje a regiony',   emoji:'🗺️', desc:'Krajské zřízení, sídla, poloha'},
   {id:'priroda',  name:'Příroda a parky',   emoji:'🌿', desc:'Národní parky, CHKO, fauna, flora'},
-  {id:'rekordy',  name:'Česká rekorda',     emoji:'🏆', desc:'Největší, nejdelší, nejhlubší, nejstarší'},
+  {id:'rekordy',  name:'České rekordy',     emoji:'🏆', desc:'Největší, nejdelší, nejhlubší, nejstarší'},
   {id:'soused',   name:'Sousedé a hranice', emoji:'🧭', desc:'Sousední státy, hraniční přechody, délky'},
 ];
 
@@ -220,7 +220,7 @@ f:'Mělník leží přímo na soutoku – na vyvýšeném ostrohu nad oběma ře
 o:['Ostrava','Olomouc','Zlín','Opava'],a:0,
 f:'Ostrava je třetím největším městem ČR s přibližně 280 000 obyvateli. Byla centrem těžkého průmyslu – těžby uhlí a hutnictví. Dnes prochází rozsáhlou přeměnou na moderní kulturní a vzdělávací centrum.'},
 
-{c:'mesta',t:'q',q:'Které krajské město leží nejblíže k centru České republiky?',
+{c:'mesta',t:'q',q:'Které krajské město leží nejblíže ke středu České republiky?',
 o:['Jihlava','Brno','Pardubice','Havlíčkův Brod'],a:0,
 f:'Jihlava leží přibližně uprostřed České republiky a je tradičně považována za pomyslný střed Čech a Moravy. Leží přímo na zemské hranici Čech a Moravy a je krajským městem Kraje Vysočina.'},
 
@@ -228,12 +228,12 @@ f:'Jihlava leží přibližně uprostřed České republiky a je tradičně pova
 o:['Liberec','Praha','Brno','Olomouc'],a:0,
 f:'Zoologická zahrada v Liberci byla otevřena roku 1919 a je nejstarší zoo v České republice. Praha má největší a nejnavštěvovanější zoo v zemi, ale liberecká je historicky první.'},
 
-{c:'mesta',t:'q',q:'Které město leží na řece Olomouc?',
+{c:'mesta',t:'q',q:'Na které řece leží město Olomouc?',
 o:['Olomouc leží na řece Moravě','Olomouc leží na Bečvě','Olomouc leží na Odře','Olomouc leží na Hané'],a:0,
-f:'Olomouc leží na Moravě. Byl druhým nejvýznamnějším moravským městem po Brně a do roku 1641 sídlila v Olomouci moravská zemská vláda. Dnešní Olomouc je proslulá barokní kašnou Nejsvětější Trojice zapsanou na seznam UNESCO.'},
+f:'Olomouc leží na řece Moravě. Byla druhým nejvýznamnějším moravským městem po Brně a do roku 1641 sídlila v Olomouci moravská zemská vláda. Dnešní Olomouc je proslulá barokní kašnou Nejsvětější Trojice zapsanou na seznam UNESCO.'},
 
 {c:'mesta',t:'q',q:'Ve kterém městě se narodil Sigmund Freud?',
-o:['Příbor (tehdy Freiberg)','Brno','Olomouc','Opava'],a:0,
+o:['Příbor','Brno','Olomouc','Opava'],a:0,
 f:'Sigmund Freud se narodil roku 1856 v Příboře (tehdy Freiberg in Mähren) na severní Moravě. Do Vídně se přestěhoval jako tříleté dítě. V Příboře je dodnes jeho rodný dům i pamětní deska.'},
 
 {c:'mesta',t:'q',q:'Které město je sídlem Jihomoravského kraje?',
@@ -254,12 +254,12 @@ f:'Litoměřice leží přesně na místě, kde se Ohře vlévá do Labe. Jsou t
 
 {c:'mesta',t:'q',q:'Které město je vstupní branou do Moravského krasu?',
 o:['Blansko','Brno','Vyškov','Boskovice'],a:0,
-f:'Blansko je nejbližším větším městem k Moravskému krasu a jeho Punkevním jeskyním. Samotné hlavní jeskynní středisko – Skalní mlýn – leží jen asi 6 km od Blanska.'},
+f:'Blansko je nejbližším větším městem od Moravského krasu a jeho Punkevních jeskyní. Samotné hlavní jeskynní středisko – Skalní mlýn – leží jen asi 6 km od Blanska.'},
 
 // ŘEKY A VODA
 {c:'reky',t:'q',q:'Která je nejdelší řeka pramenící přímo v České republice?',
 o:['Vltava','Labe','Morava','Odra'],a:0,
-f:'Vltava pramení na Šumavě a má délku přibližně 430 km. Labe je sice dlouhé 1091 km, ale pramení taky v Čechách – na Krkonoších. Vltava je ale delší čistě na území ČR než tok Labe v ČR.'},
+f:'Vltava pramení na Šumavě a má délku přibližně 430 km. Labe je sice dlouhé 1091 km, ale pramení taky v Čechách – v Krkonoších. Vltava je ale delší čistě na území ČR než tok Labe v ČR.'},
 
 {c:'reky',t:'q',q:'Kde pramení řeka Labe?',
 o:['V Krkonoších, na Labské louce pod Sněžkou','Na Šumavě u Churáňova','Na Českomoravské vrchovině','Na Jizerských horách'],a:0,
@@ -267,11 +267,11 @@ f:'Labe pramení na Labské louce v Krkonoších ve výšce přibližně 1387 m 
 
 {c:'reky',t:'q',q:'Kde pramení Vltava?',
 o:['Na Šumavě, na Černé hoře u Kvildy','Na Šumavě, u Lipna','V Novohradských horách','Na Českomoravské vrchovině'],a:0,
-f:'Vltava má dva zdrojové potoky – Teplou a Studenou Vltavu – které se spojují u Šeberova na Šumavě. Teplá Vltava pramení na Černé hoře u Kvildy a bývá označována za hlavní zdrojnici řeky.'},
+f:'Vltava má dva zdrojové potoky – Teplou a Studenou Vltavu – které se spojují u Šeberova na Šumavě. Teplá Vltava pramení na Černé hoře u Kvildy a bývá označována za hlavní pramen řeky.'},
 
 {c:'reky',t:'q',q:'Která přehrada je největší vodní nádrží v České republice?',
 o:['Lipno','Orlík','Nechranice','Vír'],a:0,
-f:'Lipno na Šumavě má rozlohu hladiny přibližně 48,7 km² a je největší vodní nádrží v ČR. Orlík je hlubší a zadržuje větší objem vody, ale Lipno je plošně největší.'},
+f:'Lipno na Šumavě má rozlohu hladiny přibližně 48,7 km² a je největší vodní nádrží v ČR. Orlík je hlubší a zadržuje větší objem vody, ale Lipno má největší plochu.'},
 
 {c:'reky',t:'q',q:'Která řeka tvoří přirozenou hranici mezi Českou republikou a Polskem na části společné hranice?',
 o:['Olše','Odra','Opava','Ostravice'],a:0,
@@ -282,12 +282,12 @@ o:['Do Vltavy u Smíchova v Praze','Do Labe u Mělníka','Do Ohře u Kadaně','D
 f:'Berounka ústí do Vltavy u Smíchova (Praha) zprava. Vzniká soutokem Mže a Radbuzy u Plzně. Protéká Křivoklátskem – jednou z nejcennějších přírodních oblastí středních Čech.'},
 
 {c:'reky',t:'q',q:'Kde se nachází pramen řeky Moravy?',
-o:['Na Králickém Sněžníku','Na Jeseníkách','Na Bílých Karpatech','Na Hostýnských vrších'],a:0,
-f:'Morava pramení na svazích Králického Sněžníku v Parku Česká republika–Polsko ve výšce přibližně 1380 m n. m. Teče přes Olomouc, Uherské Hradiště a vstupuje do Slovenska, kde se vlévá do Dunaje.'},
+o:['Na Králickém Sněžníku','V Jeseníkách','V Bílých Karpatech','Na Hostýnských vrších'],a:0,
+f:'Morava pramení na svazích Králického Sněžníku v Parku Česká republika–Polsko ve výšce přibližně 1380 m n. m. Teče přes Olomouc, Uherské Hradiště a pokračuje na Slovensko, kde se vlévá do Dunaje.'},
 
 {c:'reky',t:'q',q:'Která přehrada zásobuje Prahu pitnou vodou?',
 o:['Želivka','Slapy','Lipno','Orlík'],a:0,
-f:'Vodní nádrž Želivka (Švihov) na řece Želivce je největší zdrojem pitné vody pro Prahu a střední Čechy. Zásobuje přibližně 1,5 milionu lidí. Pro ochranu kvality vody je rozsáhlé okolí přehrady přísně chráněno.'},
+f:'Vodní nádrž Želivka (Švihov) na řece Želivce je největším zdrojem pitné vody pro Prahu a střední Čechy. Zásobuje přibližně 1,5 milionu lidí. Pro ochranu kvality vody je rozsáhlé okolí přehrady přísně chráněno.'},
 
 {c:'reky',t:'q',q:'Která řeka protéká Brnem a následně se vlévá do Dyje?',
 o:['Svratka','Svitava','Jihlava','Oslava'],a:0,
@@ -295,7 +295,7 @@ f:'Svratka protéká Brnem ze severu na jih a u Přísnotice se vlévá do Dyje.
 
 {c:'reky',t:'q',q:'Kde se nachází jediné přirozené jezero na území České republiky?',
 o:['Černé jezero na Šumavě','Máchovo jezero','Rožmberk','Lipno'],a:0,
-f:'Černé jezero na Šumavě je největším přirozeným jezerem v Čechách s plochou asi 18,4 ha. Je karového původu – vydloubla ho tající ledovec. Má tmavé zbarvení od huminových látek, které do něj natékají z okolních rašelinišť.'},
+f:'Černé jezero na Šumavě je největším přirozeným jezerem v Čechách s plochou asi 18,4 ha. Je karového původu – vyhloubil jej tající ledovec. Má tmavé zbarvení od huminových látek, které do něj natékají z okolních rašelinišť.'},
 
 {c:'reky',t:'q',q:'Která řeka odvodňuje Olomoucko a protéká starým centrem Olomouce?',
 o:['Morava','Bečva','Haná','Trusovka'],a:0,
