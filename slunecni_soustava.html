@@ -417,86 +417,1350 @@ const CATS = [
 // ── QUESTIONS (77) ──
 const QS = [
 // PLANETY
-{c:'planety',t:'planet',pid:'merkur',q:'Nejblíže Slunci, bez atmosféry, extrémní teploty. Která planeta?',o:['Merkur','Venuše','Mars','Pluto'],a:0,f:'Merkur má povrchovou teplotu od −180 °C v noci do +430 °C ve dne — největší teplotní rozdíl v celé sluneční soustavě. Přitom není nejblíže Slunci jen vzdáleností, ale i délkou roku — rok trvá 88 dní.'},
-{c:'planety',t:'planet',pid:'venuse',q:'Nejhořejší planeta sluneční soustavy — horká víc než Merkur. Která?',o:['Venuše','Merkur','Mars','Jupiter'],a:0,f:'Venuše má průměrnou teplotu +465 °C díky skleníkovému efektu CO₂. Je horčejší než Merkur přestože je dál od Slunce. Rotuje pozpátku — na Venuši vychází Slunce na západě.'},
-{c:'planety',t:'planet',pid:'zeme',q:'Jediná planeta se známým životem, tekutou vodou a kyslíkovou atmosférou. Která?',o:['Země','Mars','Europa (měsíc)','Titan'],a:0,f:'Země je na perfektní vzdálenosti od Slunce — v tzv. "obyvatelné zóně". Má magnetické pole chránící před slunečním větrem. Tato kombinace je v celé galaxii vzácná.'},
-{c:'planety',t:'planet',pid:'mars',q:'Červená planeta s největší sopkou a nejhlubším kaňonem ve sluneční soustavě. Která?',o:['Mars','Merkur','Venuše','Pluto'],a:0,f:'Olympus Mons na Marsu je 21 km vysoký — 2,5× výše než Everest. Valles Marineris je 4000 km dlouhý a 7 km hluboký — jako od Prahy na Ural!'},
-{c:'planety',t:'planet',pid:'jupiter',q:'Největší planeta sluneční soustavy s Velkou rudou skvrnou. Která?',o:['Jupiter','Saturn','Uran','Neptun'],a:0,f:'Jupiter je tak velký, že by se do něj vešly všechny ostatní planety dohromady a ještě by zbylo místo. Velká rudá skvrna je bouře trvající přes 400 let.'},
-{c:'planety',t:'planet',pid:'saturn',q:'Planeta s nejvýraznějšími prstenci ve sluneční soustavě. Která?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,f:'Saturnovy prstence jsou z ledu a kamene a sahají až 282 000 km od planety. Přesto jsou tenké jen 20–200 metrů. Saturn je tak lehký, že by plavával na vodě!'},
-{c:'planety',t:'planet',pid:'uran',q:'Planeta otočená téměř na bok, rotuje jako kutálející se míč. Která?',o:['Uran','Neptun','Saturn','Jupiter'],a:0,f:'Uran rotuje s osou nakloněnou 98° — prakticky leží na boku. Jeden pól míří ke Slunci 42 let, pak druhý. Nejchladnější atmosféra v soustavě: −224 °C.'},
-{c:'planety',t:'planet',pid:'neptun',q:'Nejvetrnější planeta s větry přes 2100 km/h. Která?',o:['Neptun','Uran','Jupiter','Saturn'],a:0,f:'Neptun nikdo nikdy neviděl okem, než byl matematicky předpovězen. Astronomové spočítali jeho polohu z gravitačních odchylek Uranu — a tam opravdu byl!'},
-{c:'planety',t:'q',q:'Kolik planet má sluneční soustava?',o:['8','9','10','12'],a:0,f:'Od roku 2006, kdy byl Pluto překlasifikován na trpasličí planetu, je planet 8. Mnohé děti protestovaly — NASA dostala dopisy plné smutku kvůli "vyhazovu Pluta".'},
-{c:'planety',t:'q',q:'Která planeta má den delší než rok?',o:['Venuše','Merkur','Mars','Jupiter'],a:0,f:'Venuše se otočí kolem své osy za 243 zemských dní, ale oběhne Slunce za 225 dní. Její den je tedy delší než rok! A rotuje pozpátku.'},
-{c:'planety',t:'q',q:'Která planeta je nejmenší v sluneční soustavě?',o:['Merkur','Mars','Venuše','Pluto'],a:0,f:'Merkur je jen o málo větší než náš Měsíc. Ztratil většinu atmosféry kvůli blízkosti Slunce a slabé gravitaci. Povrch je pokryt krátery jako Měsíc.'},
-{c:'planety',t:'q',q:'Která z planet je nejdál od Slunce?',o:['Neptun','Uran','Saturn','Pluto'],a:0,f:'Neptun je průměrně 4,5 miliardy km od Slunce. Světlo tam doputuje za 4 hodiny. Pro srovnání — na Zemi doletí za 8 minut.'},
+{c:'planety',t:'planet',pid:'merkur',q:'Nejbližší planeta ke Slunci s obrovskými rozdíly teplot. Která?',o:['Merkur','Venuše','Mars','Pluto'],a:0,
+f:'Merkur je nejbližší planeta ke Slunci. Ve dne tam teploty přesahují +400 °C, v noci klesají hluboko pod bod mrazu.'},
 
+{c:'planety',t:'planet',pid:'venuse',q:'Nejžhavější planeta sluneční soustavy. Která?',o:['Venuše','Merkur','Mars','Jupiter'],a:0,
+f:'Venuše má hustou atmosféru plnou oxidu uhličitého, která způsobuje silný skleníkový efekt. Proto je ještě teplejší než Merkur.'},
+
+{c:'planety',t:'planet',pid:'zeme',q:'Jediná známá planeta s životem, kapalnou vodou a kyslíkovou atmosférou. Která?',o:['Země','Mars','Europa','Titan'],a:0,
+f:'Země obíhá ve správné vzdálenosti od Slunce a má atmosféru vhodnou pro život.'},
+
+{c:'planety',t:'planet',pid:'mars',q:'Červená planeta s obří sopkou Olympus Mons. Která?',o:['Mars','Merkur','Venuše','Pluto'],a:0,
+f:'Olympus Mons na Marsu je největší známá sopka ve sluneční soustavě.'},
+
+{c:'planety',t:'planet',pid:'jupiter',q:'Největší planeta sluneční soustavy s Velkou rudou skvrnou. Která?',o:['Jupiter','Saturn','Uran','Neptun'],a:0,
+f:'Jupiter je největší planetou sluneční soustavy. Velká rudá skvrna je obrovská bouře pozorovaná už stovky let.'},
+
+{c:'planety',t:'planet',pid:'saturn',q:'Planeta s nejvýraznějšími prstenci. Která?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,
+f:'Saturnovy prstence jsou tvořeny hlavně ledem a kamennými částicemi.'},
+
+{c:'planety',t:'planet',pid:'uran',q:'Planeta, která je při oběhu kolem Slunce výrazně nakloněná „na bok“. Která?',o:['Uran','Neptun','Saturn','Jupiter'],a:0,
+f:'Osa Uranu je nakloněna téměř o 98°, takže planeta působí, jako by se kutálela.'},
+
+{c:'planety',t:'planet',pid:'neptun',q:'Nejvzdálenější planeta sluneční soustavy s velmi silnými větry. Která?',o:['Neptun','Uran','Jupiter','Saturn'],a:0,
+f:'Na Neptunu vanou jedny z nejsilnějších větrů ve sluneční soustavě.'},
+
+{c:'planety',t:'q',q:'Kolik planet má sluneční soustava?',
+o:['8','9','10','12'],a:0,
+f:'Od roku 2006 je Pluto považováno za trpasličí planetu, takže sluneční soustava má 8 planet.'},
+
+{c:'planety',t:'q',q:'Která planeta má den delší než rok?',
+o:['Venuše','Merkur','Mars','Jupiter'],a:0,
+f:'Venuše se otočí kolem své osy pomaleji, než oběhne Slunce.'},
+
+{c:'planety',t:'q',q:'Která planeta je nejmenší ve sluneční soustavě?',
+o:['Merkur','Mars','Venuše','Pluto'],a:0,
+f:'Merkur je nejmenší planetou sluneční soustavy.'},
+
+{c:'planety',t:'q',q:'Která planeta je nejdále od Slunce?',
+o:['Neptun','Uran','Saturn','Pluto'],a:0,
+f:'Neptun je nejvzdálenější planetou sluneční soustavy.'},
+
+{c:'planety',t:'q',q:'Která planeta má nejvýraznější prstence?',
+o:['Saturn','Mars','Merkur','Venuše'],a:0,
+f:'Prstence Saturnu patří mezi nejvýraznější útvary ve sluneční soustavě.'},
+
+{c:'planety',t:'q',q:'Která planeta je známá jako rudá planeta?',
+o:['Mars','Venuše','Jupiter','Merkur'],a:0,
+f:'Mars působí načervenale kvůli velkému množství oxidů železa na povrchu.'},
+
+{c:'planety',t:'q',q:'Která planeta je největší?',
+o:['Jupiter','Saturn','Neptun','Země'],a:0,
+f:'Jupiter je největší planetou sluneční soustavy.'},
+
+{c:'planety',t:'q',q:'Která planeta je nejblíže Slunci?',
+o:['Merkur','Venuše','Země','Mars'],a:0,
+f:'Merkur obíhá nejblíže ke Slunci.'},
+
+{c:'planety',t:'q',q:'Která planeta má hustou atmosféru tvořenou hlavně oxidem uhličitým?',
+o:['Venuše','Mars','Merkur','Jupiter'],a:0,
+f:'Atmosféra Venuše je velmi hustá a způsobuje extrémní skleníkový efekt.'},
+
+{c:'planety',t:'q',q:'Která planeta má nejvíce známých měsíců?',
+o:['Saturn','Mars','Země','Merkur'],a:0,
+f:'Saturn má podle současných poznatků nejvíce objevených měsíců.'},
+
+{c:'planety',t:'q',q:'Která planeta má jeden přirozený měsíc?',
+o:['Země','Mars','Jupiter','Saturn'],a:0,
+f:'Země má jediný přirozený měsíc – Měsíc.'},
+
+{c:'planety',t:'q',q:'Které planety patří mezi plynné obry?',
+o:['Jupiter a Saturn','Merkur a Venuše','Země a Mars','Mars a Jupiter'],a:0,
+f:'Jupiter a Saturn jsou velké planety tvořené převážně plyny.'},
+
+{c:'planety',t:'q',q:'Které planety patří mezi kamenné planety?',
+o:['Merkur, Venuše, Země a Mars','Jupiter, Saturn, Uran a Neptun','Mars, Jupiter a Saturn','Venuše, Uran a Neptun'],a:0,
+f:'Kamenné planety mají pevný povrch. Patří mezi ně Merkur, Venuše, Země a Mars.'},
+
+{c:'planety',t:'q',q:'Která planeta má největší známou sopku ve sluneční soustavě?',
+o:['Mars','Země','Venuše','Jupiter'],a:0,
+f:'Olympus Mons na Marsu je největší známou sopkou ve sluneční soustavě.'},
+
+{c:'planety',t:'q',q:'Která planeta rotuje opačným směrem než většina ostatních?',
+o:['Venuše','Mars','Jupiter','Neptun'],a:0,
+f:'Na Venuši vychází Slunce na západě a zapadá na východě.'},
+
+{c:'planety',t:'q',q:'Která planeta má výraznou Velkou rudou skvrnu?',
+o:['Jupiter','Saturn','Mars','Uran'],a:0,
+f:'Velká rudá skvrna na Jupiteru je obří bouře větší než Země.'},
+
+{c:'planety',t:'q',q:'Která planeta má nejnižší průměrnou teplotu?',
+o:['Uran','Merkur','Mars','Venuše'],a:0,
+f:'Uran patří mezi nejchladnější planety sluneční soustavy.'},
+  {c:'planety',t:'q',q:'Která planeta je od Slunce druhá v pořadí?',
+o:['Venuše','Merkur','Země','Mars'],a:0,
+f:'Venuše obíhá mezi Merkurem a Zemí.'},
+
+{c:'planety',t:'q',q:'Která planeta je od Slunce třetí v pořadí?',
+o:['Země','Mars','Venuše','Jupiter'],a:0,
+f:'Země je třetí planetou od Slunce.'},
+
+{c:'planety',t:'q',q:'Která planeta je od Slunce čtvrtá v pořadí?',
+o:['Mars','Země','Jupiter','Venuše'],a:0,
+f:'Mars obíhá za Zemí jako čtvrtá planeta od Slunce.'},
+
+{c:'planety',t:'q',q:'Která planeta je od Slunce pátá v pořadí?',
+o:['Jupiter','Saturn','Mars','Uran'],a:0,
+f:'Jupiter je pátou planetou od Slunce.'},
+
+{c:'planety',t:'q',q:'Která planeta je od Slunce šestá v pořadí?',
+o:['Saturn','Jupiter','Uran','Neptun'],a:0,
+f:'Saturn obíhá jako šestá planeta od Slunce.'},
+
+{c:'planety',t:'q',q:'Která planeta je od Slunce sedmá v pořadí?',
+o:['Uran','Neptun','Saturn','Jupiter'],a:0,
+f:'Uran je sedmou planetou od Slunce.'},
+
+{c:'planety',t:'q',q:'Která planeta je od Slunce osmá v pořadí?',
+o:['Neptun','Uran','Saturn','Jupiter'],a:0,
+f:'Neptun je nejvzdálenější planetou sluneční soustavy.'},
+
+{c:'planety',t:'q',q:'Která planeta má dva malé měsíce jménem Phobos a Deimos?',
+o:['Mars','Jupiter','Saturn','Merkur'],a:0,
+f:'Mars má dva malé měsíce – Phobos a Deimos.'},
+
+{c:'planety',t:'q',q:'Která planeta nemá žádný měsíc?',
+o:['Merkur a Venuše','Mars a Země','Jupiter a Saturn','Uran a Neptun'],a:0,
+f:'Merkur ani Venuše nemají žádný přirozený měsíc.'},
+
+{c:'planety',t:'q',q:'Která planeta má největší prstence?',
+o:['Saturn','Jupiter','Mars','Merkur'],a:0,
+f:'Saturnovy prstence jsou největší a nejvýraznější ve sluneční soustavě.'},
+
+{c:'planety',t:'q',q:'Která planeta má známý měsíc Titan?',
+o:['Saturn','Jupiter','Neptun','Mars'],a:0,
+f:'Titan je největší měsíc Saturnu a má hustou atmosféru.'},
+
+{c:'planety',t:'q',q:'Která planeta má známý měsíc Europa?',
+o:['Jupiter','Saturn','Mars','Venuše'],a:0,
+f:'Europa je ledový měsíc Jupiteru, pod jehož povrchem může být oceán.'},
+
+{c:'planety',t:'q',q:'Která planeta je nejlehčí vzhledem ke své velikosti?',
+o:['Saturn','Jupiter','Mars','Merkur'],a:0,
+f:'Saturn má velmi malou hustotu. Často se říká, že by plaval na vodě.'},
+
+{c:'planety',t:'q',q:'Která planeta má nejkratší rok?',
+o:['Merkur','Venuše','Mars','Jupiter'],a:0,
+f:'Merkur oběhne Slunce za pouhých 88 pozemských dní.'},
+
+{c:'planety',t:'q',q:'Která planeta má nejdelší rok?',
+o:['Neptun','Uran','Saturn','Jupiter'],a:0,
+f:'Neptun oběhne Slunce přibližně za 165 pozemských let.'},
+
+{c:'planety',t:'q',q:'Která planeta má nejrychlejší rotaci?',
+o:['Jupiter','Mars','Saturn','Neptun'],a:0,
+f:'Jupiter se otočí kolem své osy za necelých 10 hodin.'},
+
+{c:'planety',t:'q',q:'Která planeta má obrovský kaňon Valles Marineris?',
+o:['Mars','Merkur','Venuše','Saturn'],a:0,
+f:'Valles Marineris je obří kaňon na Marsu dlouhý tisíce kilometrů.'},
+
+{c:'planety',t:'q',q:'Která planeta bývá nazývána rannicí nebo večernicí?',
+o:['Venuše','Mars','Jupiter','Saturn'],a:0,
+f:'Venuše je na obloze velmi jasná a bývá vidět ráno nebo večer.'},
+
+{c:'planety',t:'q',q:'Která planeta má nejsilnější gravitaci?',
+o:['Jupiter','Saturn','Neptun','Země'],a:0,
+f:'Jupiter je nejhmotnější planetou sluneční soustavy.'},
+
+{c:'planety',t:'q',q:'Která planeta má modrou barvu kvůli metanu v atmosféře?',
+o:['Neptun','Mars','Merkur','Venuše'],a:0,
+f:'Metan v atmosféře Neptunu pohlcuje část světla a planeta proto působí modře.'},
+
+{c:'planety',t:'q',q:'Která planeta má podobnou velikost jako Země?',
+o:['Venuše','Mars','Merkur','Neptun'],a:0,
+f:'Venuše bývá někdy označována jako „sesterská planeta Země“.'},
+
+{c:'planety',t:'q',q:'Která planeta má nejvíce viditelné krátery?',
+o:['Merkur','Venuše','Neptun','Saturn'],a:0,
+f:'Povrch Merkuru je silně pokryt krátery podobně jako Měsíc.'},
+
+{c:'planety',t:'q',q:'Která planeta má výrazné polární ledové čepičky?',
+o:['Mars','Jupiter','Merkur','Venuše'],a:0,
+f:'Na pólech Marsu se nachází led z vody a oxidu uhličitého.'},
+
+{c:'planety',t:'q',q:'Která planeta byla objevena pomocí matematických výpočtů dříve, než byla spatřena dalekohledem?',
+o:['Neptun','Uran','Saturn','Mars'],a:0,
+f:'Astronomové vypočítali existenci Neptunu podle pohybu Uranu.'},
+
+{c:'planety',t:'q',q:'Která planeta má největší počet známých prstenců?',
+o:['Saturn','Mars','Merkur','Venuše'],a:0,
+f:'Saturn má rozsáhlou soustavu prstenců tvořenou ledem a prachem.'},
+  
 // MĚSÍCE & PRSTENCE
-{c:'mesice',t:'planet',pid:'mesic',q:'Největší přirozený satelit Země. Jak se jmenuje?',o:['Měsíc (Luna)','Phobos','Deimos','Ganymedes'],a:0,f:'Měsíc je relativně největší satelit ve srovnání s jeho planetou v celé sluneční soustavě. Způsobuje přílivy a odlivy a zpomaluje rotaci Země. Vznikl srážkou s protoplanetou Theia.'},
-{c:'mesice',t:'planet',pid:'io',q:'Tento měsíc Jupiteru je nejvulkanicky aktivní těleso sluneční soustavy. Který?',o:['Io','Europa','Ganymedes','Callisto'],a:0,f:'Io má přes 400 aktivních sopek. Některé vyvrhují síru 300 km do výšky. Gravitační přílivy Jupiteru doslova hnětou Io jako gumový míč, čímž generují ohromné teplo.'},
-{c:'mesice',t:'planet',pid:'europa',q:'Tento hladký měsíc Jupiteru má pod ledem oceán a možná život. Který?',o:['Europa','Io','Ganymedes','Titan'],a:0,f:'Europa má pod 10–30 km silnou ledovou kůrou tekutý oceán dvakrát větší než všechny pozemské oceány. Hydrotermální průduchy na dně mohou živit život podobný tomu v hloubkách Tichého oceánu.'},
-{c:'mesice',t:'planet',pid:'titan',q:'Tento měsíc Saturnu má hustou atmosféru a jezera z kapalného metanu. Který?',o:['Titan','Io','Europa','Triton'],a:0,f:'Titan je jediné těleso kromě Země se stabilními povrchových kapalinami. Jsou to ale jezera metanu při −179 °C. Sonda Huygens na něm přistála v roce 2005.'},
-{c:'mesice',t:'q',q:'Jak vznikl náš Měsíc?',o:['Srážkou Země s protoplanetou Theia','Byl zachycen gravitací','Vznikl ze stejného mračna jako Země','Odštěpil se od Slunce'],a:0,f:'Před 4,5 miliardami let se do protoZemě srazila planeta velikosti Marsu — Theia. Trosky vystřelené na oběžnou dráhu se spojily v Měsíc. Teorie je podpořena složením hornin z Apolla.'},
-{c:'mesice',t:'q',q:'Kolik měsíců má Jupiter?',o:['95','4','12','67'],a:0,f:'Jupiter má přes 95 známých měsíců — nejvíce ze všech planet. Čtyři největší (Io, Europa, Ganymedes, Callisto) objevil Galileo Galilei v roce 1610 pouhým dalekohledem.'},
-{c:'mesice',t:'q',q:'Který měsíc je největší v sluneční soustavě?',o:['Ganymedes (Jupiter)','Titan (Saturn)','Měsíc (Země)','Triton (Neptun)'],a:0,f:'Ganymedes je větší než planeta Merkur! Má dokonce vlastní magnetické pole — jako malá planeta. Je to jediný měsíc v soustavě s magnetosférou.'},
-{c:'mesice',t:'q',q:'Z čeho jsou prstence Saturnu?',o:['Z ledu a kamenných úlomků','Z prachu a plynu','Z pevného ledu','Ze zlata a stříbra'],a:0,f:'Saturnovy prstence jsou z miliard kousků ledu a kamenů od prachu po balvany. Přestože sahají stovky tisíc km, jsou tenké jen 20–200 metrů — proporčně tenčí než papír!'},
-{c:'mesice',t:'q',q:'Mají prstence jen Saturn?',o:['Ne — prstence mají Jupiter, Uran i Neptun','Ano, jen Saturn','Saturn a Jupiter','Saturn a Uran'],a:0,f:'Prstence mají všechny čtyři plynní obři. Saturny jsou ale zdaleka nejvýraznější a nejkrásnější. Jupiterovy prstence jsou velmi tenké a temné.'},
-{c:'mesice',t:'q',q:'Proč vidíme vždy jen jednu stranu Měsíce?',o:['Měsíc rotuje stejnou rychlostí jako obíhá Zemi','Měsíc nerotuje vůbec','Druhá strana je zakryta stínem','Náhoda'],a:0,f:'Tento jev se nazývá vázaná rotace. Gravitační příliv Země zpomalil rotaci Měsíce přesně na dobu jeho oběhu. Odvrácená strana je normálně osvětlená — je jen jiná, ne "temná".'},
+{c:'mesice',t:'planet',pid:'mesic',q:'Jak se jmenuje přirozená družice Země?',o:['Měsíc','Phobos','Europa','Titan'],a:0,
+f:'Měsíc je jedinou přirozenou družicí Země.'},
+
+{c:'mesice',t:'planet',pid:'io',q:'Který měsíc Jupiteru je nejvíce vulkanicky aktivní ve sluneční soustavě?',o:['Io','Europa','Ganymedes','Callisto'],a:0,
+f:'Na měsíci Io se nachází stovky aktivních sopek.'},
+
+{c:'mesice',t:'planet',pid:'europa',q:'Který měsíc Jupiteru má pod ledovým povrchem pravděpodobně oceán?',o:['Europa','Io','Titan','Phobos'],a:0,
+f:'Europa je pokryta ledem, pod kterým se pravděpodobně nachází kapalný oceán.'},
+
+{c:'mesice',t:'planet',pid:'titan',q:'Který měsíc Saturnu má hustou atmosféru a jezera kapalného metanu?',o:['Titan','Europa','Io','Triton'],a:0,
+f:'Titan je největší měsíc Saturnu a má hustou atmosféru bohatou na dusík.'},
+
+{c:'mesice',t:'q',q:'Jak podle nejrozšířenější teorie vznikl Měsíc?',o:['Srážkou mladé Země s tělesem velikosti Marsu','Oddělením od Slunce','Zachycením cizí planety','Vznikem z prstenců Saturnu'],a:0,
+f:'Podle teorie velké srážky vznikl Měsíc z materiálu vyvrženého po srážce Země s tělesem nazývaným Theia.'},
+
+{c:'mesice',t:'q',q:'Která planeta má nejvíce známých měsíců?',
+o:['Saturn','Mars','Venuše','Merkur'],a:0,
+f:'Saturn má podle současných objevů nejvíce známých měsíců.'},
+
+{c:'mesice',t:'q',q:'Který měsíc je největší ve sluneční soustavě?',
+o:['Ganymedes','Titan','Měsíc','Europa'],a:0,
+f:'Ganymedes obíhá Jupiter a je větší než planeta Merkur.'},
+
+{c:'mesice',t:'q',q:'Z čeho jsou tvořeny prstence Saturnu?',
+o:['Z ledu a kamenných částic','Z plynu','Z kapalného metanu','Z lávy'],a:0,
+f:'Prstence Saturnu tvoří hlavně led a drobné kamenné částice.'},
+
+{c:'mesice',t:'q',q:'Mají prstence pouze planety Saturn?',
+o:['Ne, prstence mají i Jupiter, Uran a Neptun','Ano, jen Saturn','Jen Saturn a Jupiter','Jen Saturn a Uran'],a:0,
+f:'Prstence mají všechny čtyři velké plynné planety.'},
+
+{c:'mesice',t:'q',q:'Proč vidíme z Měsíce stále stejnou stranu?',
+o:['Měsíc rotuje stejně rychle, jako obíhá Zemi','Měsíc se neotáčí','Druhá strana je stále ve tmě','Měsíc stojí na místě'],a:0,
+f:'Měsíc má takzvanou vázanou rotaci, proto k Zemi obrací stále stejnou polokouli.'},
+
+{c:'mesice',t:'q',q:'Který měsíc obíhá kolem Marsu?',
+o:['Phobos','Titan','Europa','Ganymedes'],a:0,
+f:'Mars má dva malé měsíce – Phobos a Deimos.'},
+
+{c:'mesice',t:'q',q:'Jak se jmenuje druhý měsíc Marsu?',
+o:['Deimos','Io','Titan','Callisto'],a:0,
+f:'Deimos je menší a vzdálenější měsíc Marsu.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Saturnu je větší než planeta Merkur?',
+o:['Titan','Europa','Io','Phobos'],a:0,
+f:'Titan je obrovský měsíc Saturnu s hustou atmosférou.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Jupiteru objevil Galileo Galilei?',
+o:['Io','Titan','Triton','Měsíc'],a:0,
+f:'Galileo Galilei objevil čtyři velké měsíce Jupiteru v roce 1610.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Neptunu obíhá opačným směrem než většina měsíců?',
+o:['Triton','Titan','Europa','Io'],a:0,
+f:'Triton pravděpodobně vznikl jinde a Neptun jej zachytil gravitací.'},
+
+{c:'mesice',t:'q',q:'Která planeta nemá žádný měsíc?',
+o:['Merkur a Venuše','Mars a Země','Jupiter a Saturn','Uran a Neptun'],a:0,
+f:'Merkur ani Venuše nemají přirozené družice.'},
+
+{c:'mesice',t:'q',q:'Jak se nazývá největší měsíc Saturnu?',
+o:['Titan','Europa','Io','Callisto'],a:0,
+f:'Titan je největším měsícem Saturnu.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Jupiteru je pokryt mnoha krátery?',
+o:['Callisto','Europa','Io','Titan'],a:0,
+f:'Callisto má velmi starý povrch plný impaktních kráterů.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Jupiteru má pravděpodobně pod ledem oceán vhodný pro vznik života?',
+o:['Europa','Io','Callisto','Phobos'],a:0,
+f:'Europa patří mezi hlavní kandidáty pro hledání mimozemského života.'},
+
+{c:'mesice',t:'q',q:'Která planeta má nejvýraznější prstence?',
+o:['Saturn','Mars','Merkur','Venuše'],a:0,
+f:'Saturnovy prstence jsou viditelné i menším dalekohledem.'},
+
+{c:'mesice',t:'q',q:'Jak se nazývá největší měsíc Země?',
+o:['Měsíc','Europa','Titan','Io'],a:0,
+f:'Země má jediný přirozený měsíc nazývaný Měsíc.'},
+
+{c:'mesice',t:'q',q:'Která planeta má známé měsíce Europa, Io, Ganymedes a Callisto?',
+o:['Jupiter','Saturn','Mars','Neptun'],a:0,
+f:'Tyto čtyři velké měsíce obíhají kolem Jupiteru.'},
+
+{c:'mesice',t:'q',q:'Který měsíc je známý oranžovým zbarvením a hustou atmosférou?',
+o:['Titan','Europa','Io','Deimos'],a:0,
+f:'Titan má hustou atmosféru a oranžový vzhled způsobený chemickými látkami v ovzduší.'},
+
+{c:'mesice',t:'q',q:'Jak se nazývá období, kdy je Měsíc celý osvětlený?',
+o:['Úplněk','Nov','První čtvrť','Poslední čtvrť'],a:0,
+f:'Při úplňku vidíme osvětlenou celou přivrácenou stranu Měsíce.'},
+
+{c:'mesice',t:'q',q:'Jak se nazývá období, kdy Měsíc na obloze téměř nevidíme?',
+o:['Nov','Úplněk','První čtvrť','Dorůstání'],a:0,
+f:'Při novu je osvětlená strana Měsíce otočená od Země.'},
+
+  {c:'mesice',t:'q',q:'Který měsíc Jupiteru je největší?',
+o:['Ganymedes','Europa','Io','Callisto'],a:0,
+f:'Ganymedes je největší měsíc Jupiteru i celé sluneční soustavy.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Saturnu má pod povrchem pravděpodobně vodní oceán?',
+o:['Enceladus','Titan','Io','Europa'],a:0,
+f:'Enceladus vyvrhuje gejzíry vody a ledu z podpovrchového oceánu.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Marsu obíhá velmi blízko planety a postupně se k ní přibližuje?',
+o:['Phobos','Deimos','Europa','Titan'],a:0,
+f:'Phobos se pomalu přibližuje k Marsu a jednou se pravděpodobně rozpadne.'},
+
+{c:'mesice',t:'q',q:'Jak se nazývá největší měsíc Neptunu?',
+o:['Triton','Titan','Callisto','Europa'],a:0,
+f:'Triton je největší měsíc Neptunu.'},
+
+{c:'mesice',t:'q',q:'Který měsíc má silnou vulkanickou činnost způsobenou gravitací Jupiteru?',
+o:['Io','Europa','Titan','Ganymedes'],a:0,
+f:'Gravitační síly Jupiteru zahřívají nitro měsíce Io.'},
+
+{c:'mesice',t:'q',q:'Který měsíc má větší průměr než planeta Merkur?',
+o:['Ganymedes','Phobos','Deimos','Měsíc'],a:0,
+f:'Ganymedes je větší než Merkur, ale má mnohem menší hmotnost.'},
+
+{c:'mesice',t:'q',q:'Která planeta má nejznámější soustavu prstenců?',
+o:['Saturn','Mars','Země','Merkur'],a:0,
+f:'Saturnovy prstence jsou nejlépe viditelné ze všech planet.'},
+
+{c:'mesice',t:'q',q:'Který měsíc je druhý největší ve sluneční soustavě?',
+o:['Titan','Ganymedes','Europa','Callisto'],a:0,
+f:'Titan je po Ganymedu druhým největším měsícem sluneční soustavy.'},
+
+{c:'mesice',t:'q',q:'Jak se nazývá tmavá lávová oblast na povrchu Měsíce?',
+o:['Měsíční moře','Ledová pole','Kráterové pláně','Prachové oblasti'],a:0,
+f:'Měsíční moře jsou rozsáhlé tmavé oblasti vzniklé dávnou sopečnou činností.'},
+
+{c:'mesice',t:'q',q:'Který měsíc má velmi hladký ledový povrch s malým počtem kráterů?',
+o:['Europa','Io','Callisto','Phobos'],a:0,
+f:'Europa má mladý ledový povrch s malým množstvím kráterů.'},
+
+{c:'mesice',t:'q',q:'Která planeta má měsíce pojmenované podle postav z řecké mytologie?',
+o:['Jupiter','Mars','Merkur','Venuše'],a:0,
+f:'Mnoho měsíců Jupiteru nese jména postav spojených s bohem Diem (Jupiterem).'},
+
+{c:'mesice',t:'q',q:'Který měsíc Země způsobuje příliv a odliv?',
+o:['Měsíc','Europa','Titan','Io'],a:0,
+f:'Gravitace Měsíce způsobuje na Zemi příliv a odliv oceánů.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Saturnu je známý gejzíry ledu?',
+o:['Enceladus','Titan','Triton','Phobos'],a:0,
+f:'Na Enceladu byly objeveny gejzíry vodní páry a ledu.'},
+
+{c:'mesice',t:'q',q:'Který měsíc má vlastní slabé magnetické pole?',
+o:['Ganymedes','Europa','Titan','Deimos'],a:0,
+f:'Ganymedes je jediným známým měsícem s vlastním magnetickým polem.'},
+
+{c:'mesice',t:'q',q:'Který měsíc je největší vzhledem ke své planetě?',
+o:['Měsíc','Titan','Europa','Io'],a:0,
+f:'Měsíc je ve srovnání se Zemí neobvykle velký.'},
+
+{c:'mesice',t:'q',q:'Jak se nazývá první člověkem vytvořený objekt, který přistál na Měsíci?',
+o:['Luna 2','Apollo 11','Voyager 1','Sputnik 1'],a:0,
+f:'Sovětská sonda Luna 2 dopadla na Měsíc v roce 1959.'},
+
+{c:'mesice',t:'q',q:'Kdo jako první člověk vstoupil na povrch Měsíce?',
+o:['Neil Armstrong','Jurij Gagarin','Buzz Aldrin','John Glenn'],a:0,
+f:'Neil Armstrong vystoupil na Měsíc při misi Apollo 11 v roce 1969.'},
+
+{c:'mesice',t:'q',q:'Jak se jmenoval program pilotovaných letů na Měsíc?',
+o:['Apollo','Voyager','Gemini','Mercury'],a:0,
+f:'Program Apollo dopravil astronauty NASA na Měsíc.'},
+
+{c:'mesice',t:'q',q:'Který měsíc obíhá kolem Neptunu?',
+o:['Triton','Titan','Europa','Io'],a:0,
+f:'Triton je největším měsícem Neptunu.'},
+
+{c:'mesice',t:'q',q:'Který měsíc je pravděpodobně zachyceným tělesem z Kuiperova pásu?',
+o:['Triton','Phobos','Deimos','Měsíc'],a:0,
+f:'Triton pravděpodobně vznikl mimo okolí Neptunu a byl zachycen jeho gravitací.'},
+
+{c:'mesice',t:'q',q:'Která planeta má nejvíce výrazných a jasných prstenců?',
+o:['Saturn','Jupiter','Neptun','Mars'],a:0,
+f:'Prstence Saturnu jsou tvořeny hlavně ledem, který dobře odráží světlo.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Jupiteru je nejvíce pokryt krátery?',
+o:['Callisto','Europa','Io','Titan'],a:0,
+f:'Callisto má velmi starý povrch s velkým množstvím kráterů.'},
+
+{c:'mesice',t:'q',q:'Který měsíc Saturnu je větší než planeta Merkur?',
+o:['Titan','Enceladus','Triton','Europa'],a:0,
+f:'Titan je obrovský měsíc s hustou atmosférou.'},
+
+{c:'mesice',t:'q',q:'Jak se nazývá nejjasnější fáze Měsíce?',
+o:['Úplněk','Nov','Dorůstání','Couvání'],a:0,
+f:'Při úplňku je z pohledu Země osvětlen celý měsíční kotouč.'},
+
+{c:'mesice',t:'q',q:'Která planeta má velmi slabé a tmavé prstence, které byly objeveny až pomocí sond?',
+o:['Jupiter','Mars','Venuše','Merkur'],a:0,
+f:'Prstence Jupiteru jsou velmi slabé a ze Země téměř neviditelné.'},
 
 // SLUNCE & HVĚZDY
-{c:'slunce',t:'planet',pid:'slunce',q:'Naše hvězda — srdce sluneční soustavy. Co je to za hvězdu?',o:['Žlutý trpaslík (typ G)','Červený obr','Modrý veleobr','Bílý trpaslík'],a:0,f:'Slunce je průměrná hvězda. Ve vesmíru existují hvězdy milionkrát jasnější i milionkrát slabší. Přesto je naše Slunce jasnější než 85 % hvězd v Mléčné dráze — většina hvězd jsou malí červení trpaslíci.'},
-{c:'slunce',t:'q',q:'Z čeho se skládá Slunce?',o:['Vodík (73 %) a hélium (25 %)','Kyslík a dusík','Pevné horniny a kovy','Oxid uhličitý a metan'],a:0,f:'Slunce je obrovský reaktor jaderné fúze — každou sekundu přemění 600 milionů tun vodíku na hélium. Při tom vzniká energie, která k nám doputuje za 8 minut.'},
-{c:'slunce',t:'q',q:'Jak velké je Slunce ve srovnání se Zemí?',o:['Do Slunce by se vešlo 1,3 milionu Zemí','10× větší než Země','100× větší než Země','Asi stejně velké'],a:0,f:'Průměr Slunce je 1,4 milionu km — 109× průměr Země. Hmotnost Slunce tvoří 99,86 % veškeré hmoty celé sluneční soustavy.'},
-{c:'slunce',t:'q',q:'Jaká je teplota povrchu Slunce?',o:['Asi 5 500 °C','100 000 °C','500 °C','1 000 000 °C'],a:0,f:'Povrch Slunce má 5 500 °C. Paradoxně korona (vnější atmosféra) je ale miliony stupňů horká. Tento záhadný jev vědci vysvětlují magnetickými vlnami — a stále ho plně nechápou.'},
-{c:'slunce',t:'q',q:'Jak daleko je Slunce od Země?',o:['Asi 150 milionů km','15 milionů km','1,5 miliardy km','150 km'],a:0,f:'150 milionů km je tzv. 1 astronomická jednotka (AU). Světlo tam doletí za 8 minut 20 sekund. Kdybychom jeli autem 130 km/h, dorazili bychom za 130 let.'},
-{c:'slunce',t:'q',q:'Jak dlouho bude Slunce ještě svítit?',o:['Asi 5 miliard let','Zanikne za 100 let','Věčně','Zanikne za milion let'],a:0,f:'Slunce je ve středu svého života. Za 5 miliard let se rozroste v červeného obra — pohltí Merkur a Venuši, Zemi pravděpodobně spálí. Pak zkolabuje v bílého trpaslíka.'},
-{c:'slunce',t:'q',q:'Co jsou sluneční skvrny?',o:['Chladnější oblasti s silným mag. polem','Místa výbuchů na Slunci','Stíny planet','Krátery na Slunci'],a:0,f:'Sluneční skvrny jsou oblasti s extrémně silným magnetickým polem, kde je povrch o 1500 °C chladnější než okolí — proto vypadají tmavé. Jejich počet kolísá v 11letém cyklu.'},
+{c:'hvezdy',t:'q',q:'Jak se jmenuje hvězda ve středu naší sluneční soustavy?',
+o:['Slunce','Polárka','Sirius','Proxima Centauri'],a:0,
+f:'Slunce je hvězda, kolem které obíhají planety sluneční soustavy.'},
+
+{c:'hvezdy',t:'q',q:'Co je Slunce?',
+o:['Hvězda','Planeta','Měsíc','Kometa'],a:0,
+f:'Slunce je běžná hvězda tvořená hlavně vodíkem a heliem.'},
+
+{c:'hvezdy',t:'q',q:'Jak získává Slunce energii?',
+o:['Jadernou fúzí','Hořením kyslíku','Spalováním uhlíku','Výbuchy meteorů'],a:0,
+f:'Ve středu Slunce se slučují atomy vodíku na helium a uvolňuje se obrovské množství energie.'},
+
+{c:'hvezdy',t:'q',q:'Jak dlouho přibližně putuje světlo ze Slunce k Zemi?',
+o:['8 minut','8 sekund','1 hodinu','24 hodin'],a:0,
+f:'Světlo ze Slunce dorazí k Zemi asi za 8 minut.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá nejbližší hvězda k Zemi po Slunci?',
+o:['Proxima Centauri','Sirius','Polárka','Betelgeuse'],a:0,
+f:'Proxima Centauri je nejbližší známá hvězda mimo sluneční soustavu.'},
+
+{c:'hvezdy',t:'q',q:'Která hvězda je na noční obloze nejjasnější?',
+o:['Sirius','Polárka','Rigel','Vega'],a:0,
+f:'Sirius ze souhvězdí Velkého psa je nejjasnější hvězdou noční oblohy.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá galaxie, ve které leží sluneční soustava?',
+o:['Mléčná dráha','Andromeda','Velký Magellanův mrak','Orion'],a:0,
+f:'Sluneční soustava je součástí galaxie nazývané Mléčná dráha.'},
+
+{c:'hvezdy',t:'q',q:'Co je Polárka?',
+o:['Hvězda poblíž severního nebeského pólu','Největší planeta','Měsíc Saturnu','Kometa'],a:0,
+f:'Polárka pomáhala po staletí určovat severní směr.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá proces zániku velmi hmotné hvězdy obrovským výbuchem?',
+o:['Supernova','Zatmění','Eroze','Rotace'],a:0,
+f:'Při výbuchu supernovy hvězda uvolní obrovské množství energie.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá nejbližší galaxie podobná Mléčné dráze?',
+o:['Galaxie v Andromedě','Orion','Sombrero','Centaurus A'],a:0,
+f:'Galaxie v Andromedě je nejbližší velkou galaxií k Mléčné dráze.'},
+
+{c:'hvezdy',t:'q',q:'Co vzniká po zhroucení velmi hmotné hvězdy?',
+o:['Černá díra','Kometa','Asteroid','Měsíc'],a:0,
+f:'Velmi hmotné hvězdy mohou po svém zániku vytvořit černou díru.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá vrstva Slunce, kterou běžně vidíme?',
+o:['Fotosféra','Jádro','Chromosféra','Koróna'],a:0,
+f:'Fotosféra je viditelný povrch Slunce.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývají tmavší chladnější oblasti na povrchu Slunce?',
+o:['Sluneční skvrny','Krátery','Polární záře','Prachové mraky'],a:0,
+f:'Sluneční skvrny vznikají působením silného magnetického pole.'},
+
+{c:'hvezdy',t:'q',q:'Co způsobuje polární záři na Zemi?',
+o:['Částice ze Slunce','Déšť','Sopečný popel','Meteority'],a:0,
+f:'Polární záře vzniká při střetu nabitých částic ze Slunce s atmosférou Země.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá období, kdy Měsíc zakryje Slunce?',
+o:['Zatmění Slunce','Zatmění Měsíce','Úplněk','Nov'],a:0,
+f:'Při zatmění Slunce se Měsíc dostane mezi Zemi a Slunce.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá období, kdy Země vrhá stín na Měsíc?',
+o:['Zatmění Měsíce','Zatmění Slunce','Nov','Rovnodennost'],a:0,
+f:'Při zatmění Měsíce prochází Měsíc zemským stínem.'},
+
+{c:'hvezdy',t:'q',q:'Jaká je přibližná teplota povrchu Slunce?',
+o:['Asi 5500 °C','Asi 500 °C','Asi 50 °C','Asi 50 000 °C'],a:0,
+f:'Povrch Slunce má teplotu přibližně 5500 °C.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá největší typ hvězd?',
+o:['Nadobři','Bílí trpaslíci','Neutronové hvězdy','Hnědí trpaslíci'],a:0,
+f:'Nadobři patří mezi největší známé hvězdy ve vesmíru.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá zbytek malé hvězdy po vyčerpání paliva?',
+o:['Bílý trpaslík','Černá díra','Kometa','Asteroid'],a:0,
+f:'Na bílého trpaslíka se jednou promění i Slunce.'},
+
+{c:'hvezdy',t:'q',q:'Která hvězda tvoří „ocas“ Malého vozu?',
+o:['Polárka','Sirius','Vega','Rigel'],a:0,
+f:'Polárka je součástí souhvězdí Malého medvěda.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá obrovský oblak plynu a prachu, kde vznikají hvězdy?',
+o:['Mlhovina','Galaxie','Kometa','Meteorit'],a:0,
+f:'V mlhovinách vznikají nové hvězdy a planetární soustavy.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá nejbližší hvězdokupa k Zemi?',
+o:['Plejády','Orion','Kasiopeja','Perseus'],a:0,
+f:'Plejády jsou známá otevřená hvězdokupa viditelná i pouhým okem.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá souhvězdí připomínající lovce?',
+o:['Orion','Lyra','Drak','Labuť'],a:0,
+f:'Orion patří mezi nejvýraznější souhvězdí zimní oblohy.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá obří červená hvězda v souhvězdí Orionu?',
+o:['Betelgeuse','Sirius','Polárka','Vega'],a:0,
+f:'Betelgeuse je červený veleobr v souhvězdí Orionu.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá modrobílá jasná hvězda v souhvězdí Lyry?',
+o:['Vega','Sirius','Rigel','Arktur'],a:0,
+f:'Vega patří mezi nejjasnější hvězdy severní oblohy.'},
+
+  {c:'hvezdy',t:'q',q:'Jak se nazývá naše galaxie?',
+o:['Mléčná dráha','Andromeda','Orion','Sombrero'],a:0,
+f:'Sluneční soustava je součástí galaxie nazývané Mléčná dráha.'},
+
+{c:'hvezdy',t:'q',q:'Co je hvězda?',
+o:['Rozžhavená koule plynů','Kamenné těleso','Ledový měsíc','Kosmická loď'],a:0,
+f:'Hvězdy jsou obrovská žhavá tělesa tvořená hlavně vodíkem a heliem.'},
+
+{c:'hvezdy',t:'q',q:'Která hvězda je středem sluneční soustavy?',
+o:['Slunce','Polárka','Sirius','Vega'],a:0,
+f:'Všechny planety sluneční soustavy obíhají kolem Slunce.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá nejjasnější hvězda souhvězdí Orionu?',
+o:['Rigel','Polárka','Vega','Arktur'],a:0,
+f:'Rigel je velmi jasná modrobílá hvězda v souhvězdí Orionu.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá nejbližší hvězda po Slunci?',
+o:['Proxima Centauri','Sirius','Vega','Betelgeuse'],a:0,
+f:'Proxima Centauri je od Země vzdálená asi 4,2 světelného roku.'},
+
+{c:'hvezdy',t:'q',q:'Co znamená pojem světelný rok?',
+o:['Vzdálenost, kterou světlo urazí za rok','Doba oběhu Země kolem Slunce','Rychlost světla za hodinu','Vzdálenost mezi planetami'],a:0,
+f:'Světelný rok je jednotka vzdálenosti používaná v astronomii.'},
+
+{c:'hvezdy',t:'q',q:'Jakou barvu mají nejžhavější hvězdy?',
+o:['Modrou','Červenou','Žlutou','Oranžovou'],a:0,
+f:'Nejžhavější hvězdy září modře nebo modrobíle.'},
+
+{c:'hvezdy',t:'q',q:'Jakou barvu mají chladnější hvězdy?',
+o:['Červenou','Modrou','Bílou','Fialovou'],a:0,
+f:'Chladnější hvězdy mají červené nebo oranžové zbarvení.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá hvězda, která náhle velmi zesílí svůj jas?',
+o:['Nova','Kometa','Asteroid','Meteor'],a:0,
+f:'Nova je hvězda, která na čas výrazně zvýší svůj jas.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá velmi hustý pozůstatek po výbuchu hvězdy?',
+o:['Neutronová hvězda','Kometa','Planeta','Mlhovina'],a:0,
+f:'Neutronové hvězdy patří mezi nejhustší známé objekty ve vesmíru.'},
+
+{c:'hvezdy',t:'q',q:'Co je to souhvězdí?',
+o:['Skupina hvězd tvořící obrazec','Skupina planet','Obří galaxie','Pás asteroidů'],a:0,
+f:'Souhvězdí jsou obrazce hvězd, které lidé pojmenovali už ve starověku.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá známé souhvězdí připomínající velký vůz?',
+o:['Velký vůz','Orion','Kasiopeja','Labuť'],a:0,
+f:'Velký vůz je část souhvězdí Velké medvědice.'},
+
+{c:'hvezdy',t:'q',q:'Které souhvězdí má tvar písmene W?',
+o:['Kasiopeja','Orion','Lyra','Drak'],a:0,
+f:'Kasiopeja patří mezi snadno rozpoznatelná souhvězdí severní oblohy.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá největší známý typ hvězd?',
+o:['Červený veleobr','Bílý trpaslík','Neutronová hvězda','Hnědý trpaslík'],a:0,
+f:'Červení veleobři mají obrovské rozměry a vysokou svítivost.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá místo, kde vznikají nové hvězdy?',
+o:['Mlhovina','Kometa','Asteroid','Meteorit'],a:0,
+f:'Hvězdy vznikají v obrovských oblacích plynu a prachu zvaných mlhoviny.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá naše nejbližší galaxie viditelná pouhým okem?',
+o:['Andromeda','Orion','Sombrero','Pegas'],a:0,
+f:'Galaxie v Andromedě je viditelná i bez dalekohledu.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá skupina miliard hvězd držených pohromadě gravitací?',
+o:['Galaxie','Mlhovina','Kometa','Planetka'],a:0,
+f:'Galaxie obsahují obrovské množství hvězd, plynu a prachu.'},
+
+{c:'hvezdy',t:'q',q:'Která část Slunce je nejteplejší?',
+o:['Jádro','Fotosféra','Chromosféra','Koróna'],a:0,
+f:'V jádru Slunce probíhá jaderná fúze a teploty dosahují milionů stupňů.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá vnější řídká vrstva sluneční atmosféry?',
+o:['Koróna','Fotosféra','Jádro','Plášť'],a:0,
+f:'Koróna je viditelná například při úplném zatmění Slunce.'},
+
+{c:'hvezdy',t:'q',q:'Co je to padající hvězda?',
+o:['Meteor','Kometa','Planeta','Satelit'],a:0,
+f:'Padající hvězda je světelný jev vznikající při průletu meteoru atmosférou.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá těleso, které obíhá kolem hvězdy?',
+o:['Planeta','Mlhovina','Galaxie','Kometa'],a:0,
+f:'Planety obíhají kolem hvězd díky gravitaci.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá hvězda, která pravidelně mění jas?',
+o:['Proměnná hvězda','Bílý trpaslík','Pulsar','Meteor'],a:0,
+f:'Proměnné hvězdy mění svou jasnost v pravidelných nebo nepravidelných intervalech.'},
+
+{c:'hvezdy',t:'q',q:'Která hvězda je součástí souhvězdí Malého medvěda?',
+o:['Polárka','Sirius','Rigel','Betelgeuse'],a:0,
+f:'Polárka leží téměř přesně nad severním pólem Země.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá výbuch na povrchu Slunce spojený s uvolněním energie?',
+o:['Sluneční erupce','Zatmění','Příliv','Rotace'],a:0,
+f:'Sluneční erupce mohou ovlivňovat družice i radiové spojení na Zemi.'},
+
+{c:'hvezdy',t:'q',q:'Jak se nazývá nejbližší hvězda viditelná ze severní polokoule téměř stále na stejném místě?',
+o:['Polárka','Vega','Sirius','Arktur'],a:0,
+f:'Polárka pomáhá určovat severní směr už po staletí.'},
 
 // MISE & ASTRONAUTI
-{c:'mise',t:'q',q:'Kdo byl první člověk ve vesmíru?',o:['Jurij Gagarin (1961)','Neil Armstrong (1969)','Alan Shepard (1961)','Valentina Těreškovová (1963)'],a:0,f:'Jurij Gagarin letěl 12. dubna 1961 na lodi Vostok 1 a obletěl Zemi za 108 minut. „Pali!" bylo jeho výkřik při startu. Svátek 12. dubna se slaví jako Den kosmonautiky.'},
-{c:'mise',t:'q',q:'Kdo byl první člověk na Měsíci?',o:['Neil Armstrong','Buzz Aldrin','Jurij Gagarin','Alan Shepard'],a:0,f:'"To je jeden malý krok pro člověka, obrovský skok pro lidstvo." Neil Armstrong vstoupil na Měsíc 21. července 1969. Celkem na Měsíci stálo 12 lidí v programu Apollo.'},
-{c:'mise',t:'q',q:'Která sonda jako první opustila sluneční soustavu?',o:['Voyager 1','Pioneer 10','New Horizons','Cassini'],a:0,f:'Voyager 1 byl vypuštěn v roce 1977 a v roce 2012 jako první lidský výtvor opustil heliosféru. Je nejdál od Země ze všech objektů, jaký člověk kdy vytvořil — přes 23 miliard km.'},
-{c:'mise',t:'q',q:'Která mise přistála na Marsu a hledá stopy života?',o:['Curiosity a Perseverance (NASA)','Voyager 2','Apollo 13','Cassini'],a:0,f:'Perseverance přistál na Marsu v únoru 2021 a vozí vrtulník Ingenuity — první motorové letadlo na jiné planetě. Odebírá vzorky hornin, které se snad jednou vrátí na Zemi.'},
-{c:'mise',t:'q',q:'Co je ISS?',o:['Mezinárodní vesmírná stanice','Výzkumné středisko na Marsu','Dalekohled na oběžné dráze','Raketa SpaceX'],a:0,f:'ISS obíhá Zemi ve výšce 400 km rychlostí 27 600 km/h — oběhne Zemi 16× za den. Nepřetržitě je obydlena od roku 2000 a je největší lidská stavba ve vesmíru.'},
-{c:'mise',t:'q',q:'Která sonda přeletěla kolem Pluta v roce 2015?',o:['New Horizons','Voyager 1','Cassini','Juno'],a:0,f:'New Horizons odhalil, že Pluto má srdce — obrovskou rovinu z dusíkového ledu ve tvaru srdce. Přeletěla 14. července 2015 — 9 let a 5 miliard km od Země.'},
-{c:'mise',t:'q',q:'Co byl program Apollo?',o:['Americký program přistání na Měsíci','Průzkum Marsu','Stavba ISS','Průlet kolem Saturnu'],a:0,f:'Apollo 11 byl vrchol závodu o Měsíc. Celkem 6 misí úspěšně přistálo. Apollo 13 havaroval — ale posádka se vrátila živá díky improvizaci, která je dodnes lekcí krizového managementu.'},
-{c:'mise',t:'q',q:'Která sonda studovala Saturn a jeho měsíce?',o:['Cassini-Huygens','Voyager 2','New Horizons','Juno'],a:0,f:'Cassini obíhala Saturn 13 let a odhalila gejzíry na Enceladu. Sonda Huygens se oddělila a přistála na Titanu. V roce 2017 Cassini záměrně vstoupila do Saturnovy atmosféry, aby ji neznečistila.'},
-{c:'mise',t:'q',q:'Kdo byla první žena ve vesmíru?',o:['Valentina Těreškovová','Sally Ride','Eileen Collins','Mae Jemison'],a:0,f:'Valentina Těreškovová letěla v roce 1963 na Vostoku 6 — jako nekvalifikovaný pilot, vybraný z 400 dobrovolnic. Strávila ve vesmíru 3 dny a 22 hodin.'},
+{c:'mise',t:'q',q:'Kdo byl prvním člověkem ve vesmíru?',
+o:['Jurij Gagarin','Neil Armstrong','Alan Shepard','Valentina Těreškovová'],a:0,
+f:'Jurij Gagarin obletěl Zemi 12. dubna 1961 v kosmické lodi Vostok 1.'},
 
-// SROVNÁNÍ
-{c:'srovnani',t:'q',q:'Která planeta je největší v sluneční soustavě?',o:['Jupiter','Saturn','Uran','Neptun'],a:0,f:'Jupiter je tak velký, že by se v něm vešla Země 1300×. Přitom ale Jupiter není "pevná" planeta — je to obří koule plynu bez pevného povrchu.'},
-{c:'srovnani',t:'q',q:'Která planeta je nejrychlejší — oběhne Slunce nejrychleji?',o:['Merkur','Venuše','Země','Mars'],a:0,f:'Merkur obíhá Slunce za 88 dní rychlostí 47 km/s. Čím blíže k Slunci, tím rychleji musí planeta obíhat, aby gravitace nestáhla ji dovnitř.'},
-{c:'srovnani',t:'q',q:'Která planeta je nejpomalejší — obíhá Slunce nejdéle?',o:['Neptun','Uran','Saturn','Jupiter'],a:0,f:'Neptun oběhne Slunce za 165 zemských let. Od svého objevení v roce 1846 dokončil teprve svůj první známý oběh — v roce 2011!'},
-{c:'srovnani',t:'q',q:'Která planeta má nejvíce měsíců?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,f:'Saturn má přes 146 známých měsíců — v posledních letech předstihl Jupiter. Většina jsou malé nepravidelné tělesa zachycená gravitací. Jupiter má 95 měsíců.'},
-{c:'srovnani',t:'q',q:'Jaký je průměr Slunce?',o:['1,4 milionu km','150 000 km','15 milionů km','140 000 km'],a:0,f:'Průměr Slunce 1,4 milionu km — to je 109× průměr Země. Přesto je Slunce průměrná hvězda. Betelgeuse je 1000× větší než Slunce!'},
-{c:'srovnani',t:'q',q:'Jak dlouhý je rok na Neptunu?',o:['165 zemských let','365 dní','12 let','84 let'],a:0,f:'Rok na Neptunu trvá 165 zemských let. To znamená, že od svého objevení v roce 1846 obletěl Slunce jen jednou — dokončil první oběh v roce 2011.'},
-{c:'srovnani',t:'q',q:'Jak velká je gravitace na Jupiteru oproti Zemi?',o:['2,5× silnější než na Zemi','10× silnější','Stejná','Slabší'],a:0,f:'Na Jupiteru bys vážil 2,5× více. Ale protože nemá pevný povrch, nemůžeš tam stát. Gravitace Jupiteru ale chrání Zemi — zachytává komety a asteroidy mířící dovnitř soustavy.'},
-{c:'srovnani',t:'q',q:'Která planeta má nejdelší den?',o:['Venuše','Merkur','Jupiter','Saturn'],a:0,f:'Venuše se otočí kolem osy za 243 zemských dní. Přitom oběhne Slunce za 225 dní — den je delší než rok! Jupiter se naopak otočí za necelých 10 hodin.'},
-{c:'srovnani',t:'q',q:'Kde je v sluneční soustavě nejvyšší hora?',o:['Olympus Mons na Marsu (21 km)','Everest na Zemi (8,8 km)','Na Io','Na Venuši'],a:0,f:'Olympus Mons je 21 km vysoký a 600 km v průměru — tak velký, že z vrcholu nevidíš kraj, protože planeta se za ním zakřivuje. Je to vyhaslý štítový vulkán.'},
+{c:'mise',t:'q',q:'Kdo byl prvním člověkem na Měsíci?',
+o:['Neil Armstrong','Buzz Aldrin','Jurij Gagarin','John Glenn'],a:0,
+f:'Neil Armstrong vystoupil na Měsíc během mise Apollo 11 v roce 1969.'},
+
+{c:'mise',t:'q',q:'Která sonda jako první opustila heliosféru sluneční soustavy?',
+o:['Voyager 1','Pioneer 10','Cassini','New Horizons'],a:0,
+f:'Voyager 1 překročil hranici heliosféry v roce 2012.'},
+
+{c:'mise',t:'q',q:'Které vozítko NASA zkoumá povrch Marsu od roku 2021?',
+o:['Perseverance','Voyager','Cassini','Apollo'],a:0,
+f:'Perseverance hledá stopy dávného života na Marsu.'},
+
+{c:'mise',t:'q',q:'Co znamená zkratka ISS?',
+o:['Mezinárodní vesmírná stanice','Mezinárodní satelitní síť','Institut slunečních sond','Integrovaný systém satelitů'],a:0,
+f:'ISS je velká vesmírná stanice obíhající kolem Země.'},
+
+{c:'mise',t:'q',q:'Která sonda proletěla kolem Pluta v roce 2015?',
+o:['New Horizons','Voyager 2','Cassini','Juno'],a:0,
+f:'New Horizons pořídila první detailní snímky Pluta.'},
+
+{c:'mise',t:'q',q:'Co byl program Apollo?',
+o:['Americký program letů na Měsíc','Program výzkumu Marsu','Sovětský kosmický program','Program stavby ISS'],a:0,
+f:'Program Apollo dopravil astronauty NASA na Měsíc.'},
+
+{c:'mise',t:'q',q:'Která sonda zkoumala Saturn a jeho měsíce?',
+o:['Cassini-Huygens','Voyager 1','New Horizons','Sputnik'],a:0,
+f:'Sonda Cassini zkoumala Saturn více než 13 let.'},
+
+{c:'mise',t:'q',q:'Kdo byla první žena ve vesmíru?',
+o:['Valentina Těreškovová','Sally Ride','Mae Jemison','Svetlana Savická'],a:0,
+f:'Valentina Těreškovová letěla do vesmíru v roce 1963.'},
+
+{c:'mise',t:'q',q:'Která země vyslala prvního člověka do vesmíru?',
+o:['Sovětský svaz','USA','Čína','Francie'],a:0,
+f:'Prvním člověkem ve vesmíru byl sovětský kosmonaut Jurij Gagarin.'},
+
+{c:'mise',t:'q',q:'Jak se jmenovala loď, ve které letěl Jurij Gagarin?',
+o:['Vostok 1','Apollo 11','Sojuz 1','Sputnik 1'],a:0,
+f:'Vostok 1 byla první pilotovaná kosmická loď.'},
+
+{c:'mise',t:'q',q:'Který astronaut byl druhým člověkem na Měsíci?',
+o:['Buzz Aldrin','Neil Armstrong','Michael Collins','Alan Shepard'],a:0,
+f:'Buzz Aldrin vystoupil na Měsíc krátce po Armstrongovi.'},
+
+{c:'mise',t:'q',q:'Kdo zůstal během mise Apollo 11 na oběžné dráze Měsíce?',
+o:['Michael Collins','Buzz Aldrin','Neil Armstrong','John Glenn'],a:0,
+f:'Michael Collins pilotoval velitelský modul kolem Měsíce.'},
+
+{c:'mise',t:'q',q:'Která mise byla první úspěšnou pilotovanou výpravou na Měsíc?',
+o:['Apollo 11','Apollo 13','Apollo 8','Apollo 1'],a:0,
+f:'Apollo 11 přistálo na Měsíci v červenci 1969.'},
+
+{c:'mise',t:'q',q:'Která mise je známá havárií během letu na Měsíc?',
+o:['Apollo 13','Apollo 10','Apollo 15','Apollo 7'],a:0,
+f:'Apollo 13 nedoletělo na Měsíc kvůli explozi na palubě.'},
+
+{c:'mise',t:'q',q:'Jak se jmenoval první umělý satelit Země?',
+o:['Sputnik 1','Voyager 1','Apollo 11','Vostok 1'],a:0,
+f:'Sputnik 1 vypustil Sovětský svaz v roce 1957.'},
+
+{c:'mise',t:'q',q:'Která země jako první přistála s lidmi na Měsíci?',
+o:['USA','Sovětský svaz','Čína','Japonsko'],a:0,
+f:'Spojené státy přistály na Měsíci během programu Apollo.'},
+
+{c:'mise',t:'q',q:'Která sonda zkoumá Jupiter od roku 2016?',
+o:['Juno','Cassini','Voyager 2','Hubble'],a:0,
+f:'Sonda Juno studuje atmosféru a nitro Jupiteru.'},
+
+{c:'mise',t:'q',q:'Jak se jmenuje americká kosmická agentura?',
+o:['NASA','ESA','CNSA','Roskosmos'],a:0,
+f:'NASA byla založena v roce 1958.'},
+
+{c:'mise',t:'q',q:'Jak se jmenuje evropská kosmická agentura?',
+o:['ESA','NASA','JAXA','ISRO'],a:0,
+f:'ESA sdružuje mnoho evropských států včetně České republiky.'},
+
+{c:'mise',t:'q',q:'Která země vyslala do vesmíru první družici?',
+o:['Sovětský svaz','USA','Čína','Velká Británie'],a:0,
+f:'Sputnik 1 byl první umělou družicí Země.'},
+
+{c:'mise',t:'q',q:'Jak se nazývá český astronaut, který letěl do vesmíru v roce 1978?',
+o:['Vladimír Remek','Miroslav Grégr','Aleš Svoboda','Pavel Bělobrádek'],a:0,
+f:'Vladimír Remek byl prvním československým kosmonautem.'},
+
+{c:'mise',t:'q',q:'Na které stanici pobýval Vladimír Remek?',
+o:['Saljut 6','ISS','Mir','Skylab'],a:0,
+f:'Vladimír Remek letěl na sovětskou stanici Saljut 6.'},
+
+{c:'mise',t:'q',q:'Která sonda přistála na měsíci Titan?',
+o:['Huygens','Cassini','Voyager 1','Juno'],a:0,
+f:'Sonda Huygens přistála na Titanu v roce 2005.'},
+
+{c:'mise',t:'q',q:'Jak se jmenoval první americký astronaut ve vesmíru?',
+o:['Alan Shepard','Neil Armstrong','John Glenn','Buzz Aldrin'],a:0,
+f:'Alan Shepard letěl do vesmíru v roce 1961.'},
+
+  {c:'mise',t:'q',q:'Která kosmická loď dopravuje astronauty na ISS od roku 2020?',
+o:['Crew Dragon','Apollo','Voyager','Sputnik'],a:0,
+f:'Crew Dragon od společnosti SpaceX vozí astronauty na Mezinárodní vesmírnou stanici.'},
+
+{c:'mise',t:'q',q:'Která společnost vyvinula raketu Falcon 9?',
+o:['SpaceX','NASA','ESA','Boeing'],a:0,
+f:'Raketa Falcon 9 patří společnosti SpaceX Elona Muska.'},
+
+{c:'mise',t:'q',q:'Jak se jmenuje první americký raketoplán?',
+o:['Columbia','Discovery','Atlantis','Challenger'],a:0,
+f:'Raketoplán Columbia poprvé vzlétl v roce 1981.'},
+
+{c:'mise',t:'q',q:'Který raketoplán havaroval krátce po startu v roce 1986?',
+o:['Challenger','Atlantis','Discovery','Endeavour'],a:0,
+f:'Raketoplán Challenger explodoval 73 sekund po startu.'},
+
+{c:'mise',t:'q',q:'Který raketoplán zanikl při návratu do atmosféry v roce 2003?',
+o:['Columbia','Discovery','Atlantis','Enterprise'],a:0,
+f:'Raketoplán Columbia se rozpadl při návratu na Zemi.'},
+
+{c:'mise',t:'q',q:'Jak se jmenovala první americká stanice ve vesmíru?',
+o:['Skylab','Mir','Saljut 1','ISS'],a:0,
+f:'Skylab byla první americká vesmírná stanice.'},
+
+{c:'mise',t:'q',q:'Jak se jmenovala slavná sovětská vesmírná stanice?',
+o:['Mir','Skylab','ISS','Apollo'],a:0,
+f:'Stanice Mir byla dlouhá léta obývána kosmonauty.'},
+
+{c:'mise',t:'q',q:'Která země přistála jako první se sondou na Měsíci?',
+o:['Sovětský svaz','USA','Čína','Japonsko'],a:0,
+f:'Sovětská sonda Luna 9 měkce přistála na Měsíci v roce 1966.'},
+
+{c:'mise',t:'q',q:'Jak se jmenovala první sonda, která přistála na Marsu?',
+o:['Viking 1','Voyager 1','Curiosity','Cassini'],a:0,
+f:'Viking 1 přistál na Marsu v roce 1976.'},
+
+{c:'mise',t:'q',q:'Které marsovské vozítko přivezlo na Mars malý vrtulník Ingenuity?',
+o:['Perseverance','Spirit','Opportunity','Curiosity'],a:0,
+f:'Ingenuity byl první stroj s motorem, který vzlétl na jiné planetě.'},
+
+{c:'mise',t:'q',q:'Které vozítko NASA pracovalo na Marsu rekordních téměř 15 let?',
+o:['Opportunity','Curiosity','Spirit','Perseverance'],a:0,
+f:'Opportunity překonal plánovanou dobu činnosti mnohonásobně.'},
+
+{c:'mise',t:'q',q:'Jak se jmenuje největší kosmický dalekohled vypuštěný v roce 1990?',
+o:['Hubbleův teleskop','James Webb','Kepler','Gaia'],a:0,
+f:'Hubbleův teleskop pořídil mnoho slavných snímků vesmíru.'},
+
+{c:'mise',t:'q',q:'Který kosmický teleskop byl vypuštěn v roce 2021 jako nástupce Hubbleova teleskopu?',
+o:['James Webbův teleskop','Kepler','Voyager','Sputnik'],a:0,
+f:'James Webbův teleskop zkoumá velmi vzdálené galaxie a vznik hvězd.'},
+
+{c:'mise',t:'q',q:'Která sonda zkoumala kometu 67P/Čurjumov–Gerasimenko?',
+o:['Rosetta','Cassini','Juno','Voyager 2'],a:0,
+f:'Sonda Rosetta vysadila na kometu modul Philae.'},
+
+{c:'mise',t:'q',q:'Jak se jmenoval modul, který přistál na kometě v roce 2014?',
+o:['Philae','Huygens','Eagle','Luna'],a:0,
+f:'Philae byl prvním lidským strojem na povrchu komety.'},
+
+{c:'mise',t:'q',q:'Která sonda jako první navštívila Uran a Neptun?',
+o:['Voyager 2','Voyager 1','Pioneer 11','Cassini'],a:0,
+f:'Voyager 2 je jedinou sondou, která proletěla kolem Uranu i Neptunu.'},
+
+{c:'mise',t:'q',q:'Která mise poprvé dopravila lidi na oběžnou dráhu Měsíce?',
+o:['Apollo 8','Apollo 11','Apollo 13','Gemini 4'],a:0,
+f:'Apollo 8 obletělo Měsíc v roce 1968.'},
+
+{c:'mise',t:'q',q:'Který astronaut jako první vystoupil do volného vesmíru?',
+o:['Alexej Leonov','Jurij Gagarin','Neil Armstrong','John Glenn'],a:0,
+f:'Alexej Leonov provedl první výstup do volného prostoru v roce 1965.'},
+
+{c:'mise',t:'q',q:'Kdo byla první Američanka ve vesmíru?',
+o:['Sally Ride','Valentina Těreškovová','Mae Jemison','Peggy Whitson'],a:0,
+f:'Sally Ride letěla do vesmíru v roce 1983.'},
+
+{c:'mise',t:'q',q:'Která země jako třetí samostatně vyslala člověka do vesmíru?',
+o:['Čína','Japonsko','Indie','Francie'],a:0,
+f:'Čína vyslala prvního tajkonauta do vesmíru v roce 2003.'},
+
+{c:'mise',t:'q',q:'Jak se jmenoval první čínský kosmonaut?',
+o:['Jang Li-wej','Čang Cheng','Liu Wang','Jing Haipeng'],a:0,
+f:'Jang Li-wej letěl do vesmíru v lodi Šen-čou 5.'},
+
+{c:'mise',t:'q',q:'Jak se nazývá česká družice vypuštěná v roce 2022 pro sledování Země?',
+o:['Planetum-1','Sputnik CZ','RemekSat','Bohemia 1'],a:0,
+f:'České firmy a univerzity se podílejí na vývoji malých družic.'},
+
+{c:'mise',t:'q',q:'Která sonda zkoumala planetu Jupiter před příletem sondy Juno?',
+o:['Galileo','Cassini','Voyager 1','Rosetta'],a:0,
+f:'Sonda Galileo obíhala Jupiter v letech 1995–2003.'},
+
+{c:'mise',t:'q',q:'Jak se nazývá americký program návratu lidí na Měsíc?',
+o:['Artemis','Apollo','Mercury','Gemini'],a:0,
+f:'Program Artemis má dopravit astronauty znovu na Měsíc.'},
+
+{c:'mise',t:'q',q:'Který astronaut strávil ve vesmíru nejvíce času ze všech Američanů?',
+o:['Frank Rubio','Scott Kelly','Peggy Whitson','John Glenn'],a:0,
+f:'Frank Rubio vytvořil rekord NASA nejdelším nepřetržitým pobytem ve vesmíru.'},
+  
+// POROVNÁNÍ
+{c:'porovnani',t:'q',q:'Která planeta je největší ve sluneční soustavě?',o:['Jupiter','Saturn','Uran','Neptun'],a:0,
+f:'Jupiter je největší planeta sluneční soustavy. Vešlo by se do něj přibližně 1300 Zemí.'},
+
+{c:'porovnani',t:'q',q:'Která planeta oběhne Slunce nejrychleji?',o:['Merkur','Venuše','Země','Mars'],a:0,
+f:'Merkur oběhne Slunce za pouhých 88 dní.'},
+
+{c:'porovnani',t:'q',q:'Která planeta oběhne Slunce nejpomaleji?',o:['Neptun','Uran','Saturn','Jupiter'],a:0,
+f:'Neptun oběhne Slunce přibližně za 165 pozemských let.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejvíce známých měsíců?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,
+f:'Saturn má v současnosti nejvíce známých měsíců ze všech planet.'},
+
+{c:'porovnani',t:'q',q:'Jaký je přibližný průměr Slunce?',o:['1,4 milionu km','150 000 km','15 milionů km','140 000 km'],a:0,
+f:'Průměr Slunce je asi 1,4 milionu kilometrů, tedy přibližně 109× více než průměr Země.'},
+
+{c:'porovnani',t:'q',q:'Jak dlouho trvá rok na Neptunu?',o:['165 pozemských let','365 dní','12 let','84 let'],a:0,
+f:'Neptun oběhne Slunce jednou za přibližně 165 pozemských let.'},
+
+{c:'porovnani',t:'q',q:'Jaká je gravitace na Jupiteru ve srovnání se Zemí?',o:['Přibližně 2,5× silnější','Přibližně 10× silnější','Stejná','Slabší'],a:0,
+f:'Na Jupiteru by člověk vážil asi 2,5× více než na Zemi.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejdelší den?',o:['Venuše','Merkur','Jupiter','Saturn'],a:0,
+f:'Venuše se otočí kolem své osy za 243 pozemských dní.'},
+
+{c:'porovnani',t:'q',q:'Kde se nachází nejvyšší známá hora ve sluneční soustavě?',o:['Na Marsu – Olympus Mons','Na Zemi – Mount Everest','Na Venuši','Na Jupiteru'],a:0,
+f:'Olympus Mons na Marsu je nejvyšší známá sopka ve sluneční soustavě.'},
+
+  {c:'porovnani',t:'q',q:'Která planeta je nejmenší ve sluneční soustavě?',o:['Merkur','Mars','Venuše','Pluto'],a:0,
+f:'Merkur je nejmenší planeta sluneční soustavy. Je jen o něco větší než Měsíc.'},
+
+{c:'porovnani',t:'q',q:'Která planeta je nejžhavější?',o:['Venuše','Merkur','Mars','Jupiter'],a:0,
+f:'Venuše je nejžhavější planeta díky husté atmosféře a silnému skleníkovému efektu.'},
+
+{c:'porovnani',t:'q',q:'Která planeta je nejdále od Slunce?',o:['Neptun','Uran','Saturn','Jupiter'],a:0,
+f:'Neptun je osmá a nejvzdálenější planeta sluneční soustavy.'},
+
+{c:'porovnani',t:'q',q:'Která planeta se otáčí kolem své osy nejrychleji?',o:['Jupiter','Saturn','Země','Mars'],a:0,
+f:'Jupiter se otočí kolem své osy za necelých 10 hodin.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejvýraznější prstence?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,
+f:'Saturnovy prstence jsou nejjasnější a nejlépe pozorovatelné.'},
+
+{c:'porovnani',t:'q',q:'Který měsíc je největší ve sluneční soustavě?',o:['Ganymedes','Titan','Měsíc','Europa'],a:0,
+f:'Ganymedes obíhá Jupiter a je větší než planeta Merkur.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejkratší rok?',o:['Merkur','Venuše','Země','Mars'],a:0,
+f:'Merkur oběhne Slunce za pouhých 88 pozemských dní.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejdelší rok?',o:['Neptun','Uran','Saturn','Jupiter'],a:0,
+f:'Neptun potřebuje k jednomu oběhu kolem Slunce asi 165 pozemských let.'},
+
+{c:'porovnani',t:'q',q:'Která kamenná planeta je největší?',o:['Země','Venuše','Mars','Merkur'],a:0,
+f:'Země je největší z kamenných planet sluneční soustavy.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejhustší atmosféru z kamenných planet?',o:['Venuše','Země','Mars','Merkur'],a:0,
+f:'Venuše má velmi hustou atmosféru tvořenou hlavně oxidem uhličitým.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejvíce hmoty?',o:['Jupiter','Saturn','Neptun','Země'],a:0,
+f:'Jupiter je nejhmotnější planeta sluneční soustavy.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejmenší gravitaci na povrchu?',o:['Merkur','Mars','Venuše','Země'],a:0,
+f:'Merkur má ze všech planet nejslabší povrchovou gravitaci.'},
+
+{c:'porovnani',t:'q',q:'Která planeta je nejpodobnější Zemi velikostí?',o:['Venuše','Mars','Merkur','Neptun'],a:0,
+f:'Venuše má velikost a hmotnost nejbližší Zemi, proto se jí někdy říká sesterská planeta Země.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejsilnější větry?',o:['Neptun','Jupiter','Saturn','Uran'],a:0,
+f:'Na Neptunu vanou jedny z nejsilnějších větrů ve sluneční soustavě.'},
+
+{c:'porovnani',t:'q',q:'Která planeta je nejchladnější podle teploty v atmosféře?',o:['Uran','Neptun','Saturn','Mars'],a:0,
+f:'Uran má mimořádně chladnou atmosféru a patří k nejchladnějším planetám.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší rozdíly teplot mezi dnem a nocí?',o:['Merkur','Venuše','Země','Mars'],a:0,
+f:'Merkur nemá hustou atmosféru, proto se ve dne silně rozpálí a v noci prudce ochladí.'},
+
+{c:'porovnani',t:'q',q:'Které těleso je větší: Měsíc, nebo Merkur?',
+o:['Merkur','Měsíc','Jsou stejně velké','Záleží na vzdálenosti od Slunce'],a:0,
+f:'Merkur je větší než Měsíc, ale rozdíl není obrovský.'},
+
+{c:'porovnani',t:'q',q:'Které těleso je větší: Ganymedes, nebo Merkur?',
+o:['Ganymedes','Merkur','Jsou stejně velké','Ganymedes je menší než Měsíc'],a:0,
+f:'Ganymedes je největší měsíc sluneční soustavy a je větší než Merkur.'},
+
+  {c:'porovnani',t:'q',q:'Která planeta je nejblíže Slunci?',o:['Merkur','Venuše','Země','Mars'],a:0,
+f:'Merkur obíhá nejblíže ke Slunci.'},
+
+{c:'porovnani',t:'q',q:'Která planeta je nejblíže Zemi velikostí?',o:['Venuše','Mars','Merkur','Neptun'],a:0,
+f:'Venuše je Zemi velmi podobná velikostí i hmotností.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejvíce viditelné krátery?',o:['Merkur','Venuše','Neptun','Saturn'],a:0,
+f:'Povrch Merkuru je hustě pokryt impaktními krátery.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší známou bouři?',o:['Jupiter','Saturn','Neptun','Země'],a:0,
+f:'Velká rudá skvrna na Jupiteru je obří bouře trvající stovky let.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejvýraznější skleníkový efekt?',o:['Venuše','Země','Mars','Merkur'],a:0,
+f:'Na Venuši zadržuje hustá atmosféra obrovské množství tepla.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší počet prstenců?',o:['Saturn','Jupiter','Mars','Merkur'],a:0,
+f:'Saturn má rozsáhlou soustavu tisíců prstenců a prstencových pásů.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejslabší atmosféru?',o:['Merkur','Venuše','Země','Titan'],a:0,
+f:'Merkur má jen velmi řídký obal plynů.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší hustotu?',o:['Země','Merkur','Jupiter','Mars'],a:0,
+f:'Země je nejhustší planetou sluneční soustavy.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejnižší hustotu?',o:['Saturn','Jupiter','Neptun','Mars'],a:0,
+f:'Saturn má tak malou hustotu, že by teoreticky plaval na vodě.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejvíce aktivních sopek?',o:['Země','Mars','Venuše','Merkur'],a:0,
+f:'Na Zemi je nejvíce aktivních sopek známých ve sluneční soustavě.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejvyšší známou sopku?',o:['Mars','Země','Venuše','Io'],a:0,
+f:'Olympus Mons na Marsu je nejvyšší známá sopka ve sluneční soustavě.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší magnetické pole?',o:['Jupiter','Saturn','Země','Neptun'],a:0,
+f:'Magnetické pole Jupiteru je mnohonásobně silnější než zemské.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší počet známých prstencových měsíců?',o:['Saturn','Mars','Merkur','Venuše'],a:0,
+f:'Kolem Saturnu obíhá velké množství měsíců spojených s prstenci.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejvíce měsíců objevených Galileem?',
+o:['Jupiter','Saturn','Mars','Neptun'],a:0,
+f:'Galileo Galilei objevil čtyři největší měsíce Jupiteru.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší objem?',o:['Jupiter','Saturn','Neptun','Země'],a:0,
+f:'Jupiter je objemově největší planeta sluneční soustavy.'},
+
+{c:'porovnani',t:'q',q:'Která planeta je nejjasnější na noční obloze?',o:['Venuše','Mars','Jupiter','Saturn'],a:0,
+f:'Venuše bývá po Měsíci nejjasnějším objektem noční oblohy.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší počet obřích měsíců?',o:['Jupiter','Mars','Merkur','Venuše'],a:0,
+f:'Jupiter má několik velmi velkých měsíců, například Ganymedes nebo Callisto.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejdelší vzdálenost od Slunce?',o:['Neptun','Uran','Saturn','Jupiter'],a:0,
+f:'Neptun obíhá nejdále od Slunce ze všech planet.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejkratší den?',o:['Jupiter','Saturn','Mars','Země'],a:0,
+f:'Jupiter se otočí kolem své osy nejrychleji.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má nejdelší oběžnou dráhu?',o:['Neptun','Uran','Saturn','Jupiter'],a:0,
+f:'Neptun urazí při oběhu kolem Slunce nejdelší dráhu.'},
+
+{c:'porovnani',t:'q',q:'Která planeta je nejlehčí vzhledem ke své velikosti?',o:['Saturn','Jupiter','Země','Mars'],a:0,
+f:'Saturn má velmi nízkou hustotu ve srovnání se svou velikostí.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší počet výrazných pásů v atmosféře?',o:['Jupiter','Mars','Merkur','Venuše'],a:0,
+f:'Na Jupiteru jsou dobře viditelné světlé a tmavé pásy oblačnosti.'},
+
+{c:'porovnani',t:'q',q:'Která planeta má největší známý kaňon?',o:['Mars','Země','Merkur','Venuše'],a:0,
+f:'Valles Marineris na Marsu je obří kaňon dlouhý tisíce kilometrů.'},
 
 // ZÁHADY VESMÍRU
-{c:'zajimavosti',t:'q',q:'Co je to černá díra?',o:['Oblast s tak silnou gravitací, že neunikne ani světlo','Planeta bez hvězdy','Prázdný prostor','Explodující hvězda'],a:0,f:'Černé díry vznikají kolapsem obrovských hvězd. Jejich gravitace je tak silná, že deformuje samotný čas. U horizontu událostí čas pro vzdáleného pozorovatele zastaví.'},
-{c:'zajimavosti',t:'q',q:'Co je Velký třesk?',o:['Počátek vesmíru před 13,8 miliardami let','Největší supernova','Srážka dvou galaxií','Exploze na Slunci'],a:0,f:'Velký třesk nebyla exploze v prostoru — byl to vznik samotného prostoru a času. Za první sekundu vznikly základní částice, za 380 000 let první atomy vodíku a hélia.'},
-{c:'zajimavosti',t:'q',q:'Proč je noční obloha tmavá, když je plná hvězd?',o:['Vesmír je konečného věku — světlo vzdálených hvězd k nám nedorazilo','Hvězdy svítí jen přes den','Atmosféra pohlcuje světlo','Hvězdy jsou příliš malé'],a:0,f:'Toto je Olbersův paradox. Pokud by byl vesmír nekonečný a věčný, obloha by svítila jasně jako povrch hvězdy. Temná noční obloha je důkazem, že vesmír má konečný věk.'},
-{c:'zajimavosti',t:'q',q:'Co je to světelný rok?',o:['Vzdálenost, kterou světlo urazí za rok (9,46 bilionu km)','Čas, za který světlo doletí na Zemi','Rok na planetě s rychlostí světla','Hmotnost světelného paprsku'],a:0,f:'Světelný rok = 9,46 bilionu km. Nejbližší hvězda Proxima Centauri je 4,24 světelného roku. Raketa cestující 40 000 km/h by tam doletěla za 115 000 let.'},
-{c:'zajimavosti',t:'q',q:'Co je to temná hmota?',o:['Neviditelná hmota tvořící 27 % vesmíru','Černé díry','Mezihvězdný prach','Planeta bez hvězdy'],a:0,f:'Temná hmota neemituje ani neabsorbuje světlo, ale projevuje se gravitací. Tvoří 27 % vesmíru. Co to je? Nevíme. Je to jedna z největších záhad fyziky.'},
-{c:'zajimavosti',t:'q',q:'Kolik hvězd je v Mléčné dráze?',o:['100–400 miliard hvězd','Milion hvězd','Bilion hvězd','Asi 1000 hvězd'],a:0,f:'Mléčná dráha má 100–400 miliard hvězd. Kdybychom počítali hvězdu za sekundu, trvalo by to 3200 let. A to je jen naše galaxie — ve vesmíru je přes 2 biliony galaxií!'},
-{c:'zajimavosti',t:'q',q:'Co je to supernova?',o:['Exploze obrovské hvězdy na konci jejího života','Srážka dvou planet','Nová planeta','Výbuch na Slunci'],a:0,f:'Supernova je nejnásilnější jev ve vesmíru po Velkém třesku. Na zlomek sekundy svítí jasněji než celá galaxie. Všechny těžké prvky — zlato, uran, železo v tvé krvi — vznikly v supernové.'},
-{c:'zajimavosti',t:'q',q:'Proč planety obíhají Slunce?',o:['Gravitace Slunce je drží, rychlost orbity brání pádu','Magnetické pole','Odpor meziplanetárního prachu','Náhoda'],a:0,f:'Planety jsou ve stavu "volného pádu" kolem Slunce. Pohybují se dostatečnou rychlostí, aby pád vždy "minul" Slunce. Je to jako pohazovat míčem — dostatečně rychle a obleťte Zemi.'},
-{c:'zajimavosti',t:'q',q:'Co je tzv. obyvatelná zóna?',o:['Oblast kolem hvězdy kde může existovat tekutá voda','Pás asteroidů','Vzdálenost kam dosáhne satelit','Oblast bez záření'],a:0,f:'Obyvatelná zóna (Goldilocks zone) je vzdálenost od hvězdy kde planeta není ani příliš horká, ani příliš studená pro tekutou vodu. Země je na skvělém místě — ale nemusíme být sami.'},
-{c:'zajimavosti',t:'q',q:'Jak staré jsou nejstarší horniny nalezené na Měsíci?',o:['Asi 4,5 miliardy let','1 miliarda let','100 milionů let','500 milionů let'],a:0,f:'Horniny přivezené misemi Apollo jsou staré 4,5 miliardy let — stejně staré jako Sluneční soustava. Měsíc nemá tektoniku desek ani erozi, proto se horniny zachovaly jako "časová kapsle".'},
+{c:'zahady',t:'q',q:'Co je černá díra?',
+o:['Oblast s tak silnou gravitací, že z ní neunikne ani světlo','Planeta bez atmosféry','Prázdné místo ve vesmíru','Velká tmavá mlhovina'],a:0,
+f:'Černé díry vznikají nejčastěji zhroucením velmi hmotných hvězd.'},
+
+{c:'zahady',t:'q',q:'Co označuje pojem Velký třesk?',
+o:['Vznik vesmíru před asi 13,8 miliardy let','Výbuch hvězdy','Srážku galaxií','Vznik Slunce'],a:0,
+f:'Velký třesk označuje počátek rozpínání vesmíru.'},
+
+{c:'zahady',t:'q',q:'Proč je noční obloha tmavá?',
+o:['Světlo z nejvzdálenějších hvězd k nám ještě nedorazilo','Hvězdy v noci nesvítí','Atmosféra všechno světlo pohltí','Měsíc zastiňuje hvězdy'],a:0,
+f:'Vesmír má konečný věk, proto nevidíme světlo všech hvězd.'},
+
+{c:'zahady',t:'q',q:'Co je světelný rok?',
+o:['Vzdálenost, kterou světlo urazí za rok','Doba oběhu Země kolem Slunce','Rychlost světla za hodinu','Typ hvězdy'],a:0,
+f:'Jeden světelný rok odpovídá asi 9,46 bilionu kilometrů.'},
+
+{c:'zahady',t:'q',q:'Co je temná hmota?',
+o:['Neviditelná hmota působící gravitací','Černé díry','Prach mezi hvězdami','Temná strana Měsíce'],a:0,
+f:'Temná hmota není přímo viditelná, ale projevuje se gravitačními účinky.'},
+
+{c:'zahady',t:'q',q:'Přibližně kolik hvězd obsahuje Mléčná dráha?',
+o:['100 až 400 miliard','Asi milion','Asi tisíc','10 bilionů'],a:0,
+f:'Mléčná dráha obsahuje stovky miliard hvězd.'},
+
+{c:'zahady',t:'q',q:'Co je supernova?',
+o:['Výbuch velmi hmotné hvězdy','Srážka planet','Vznik nové planety','Sluneční erupce'],a:0,
+f:'Při supernově hvězda uvolní obrovské množství energie.'},
+
+{c:'zahady',t:'q',q:'Proč planety obíhají kolem Slunce?',
+o:['Kvůli gravitaci Slunce','Kvůli magnetismu','Kvůli slunečnímu větru','Náhodou'],a:0,
+f:'Gravitace Slunce udržuje planety na oběžných drahách.'},
+
+{c:'zahady',t:'q',q:'Co je obyvatelná zóna kolem hvězdy?',
+o:['Oblast, kde může existovat kapalná voda','Místo bez gravitace','Pás asteroidů','Oblast bez hvězd'],a:0,
+f:'V obyvatelné zóně nejsou teploty ani příliš vysoké, ani příliš nízké.'},
+
+{c:'zahady',t:'q',q:'Jak staré jsou nejstarší horniny z Měsíce?',
+o:['Asi 4,5 miliardy let','1 miliarda let','100 milionů let','500 milionů let'],a:0,
+f:'Měsíční horniny jsou téměř stejně staré jako sluneční soustava.'},
+
+{c:'zahady',t:'q',q:'Co je galaxie?',
+o:['Obrovská soustava hvězd, plynu a prachu','Jedna hvězda','Velká planeta','Skupina komet'],a:0,
+f:'Galaxie obsahují miliardy hvězd držených pohromadě gravitací.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá naše galaxie?',
+o:['Mléčná dráha','Andromeda','Orion','Pegas'],a:0,
+f:'Sluneční soustava se nachází v galaxii Mléčná dráha.'},
+
+{c:'zahady',t:'q',q:'Co je neutronová hvězda?',
+o:['Velmi hustý pozůstatek po výbuchu hvězdy','Malá planeta','Temná mlhovina','Měsíc Jupiteru'],a:0,
+f:'Neutronové hvězdy patří mezi nejhustší objekty ve vesmíru.'},
+
+{c:'zahady',t:'q',q:'Co je pulsar?',
+o:['Rychle rotující neutronová hvězda','Typ komety','Výbuch supernovy','Kosmická sonda'],a:0,
+f:'Pulsary vysílají pravidelné rádiové signály.'},
+
+{c:'zahady',t:'q',q:'Co je mlhovina?',
+o:['Oblak plynu a prachu ve vesmíru','Typ planety','Pás asteroidů','Druh galaxie'],a:0,
+f:'V mlhovinách často vznikají nové hvězdy.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá nejbližší galaxie k Mléčné dráze?',
+o:['Galaxie v Andromedě','Orion','Sombrero','Drak'],a:0,
+f:'Galaxie v Andromedě je od nás vzdálena asi 2,5 milionu světelných let.'},
+
+{c:'zahady',t:'q',q:'Co je horizont událostí u černé díry?',
+o:['Hranice, za kterou už nic neunikne','Místo vzniku hvězd','Okraj galaxie','Dráha komety'],a:0,
+f:'Za horizontem událostí je gravitace černé díry příliš silná.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá jev, kdy světlo mění směr kvůli gravitaci?',
+o:['Gravitační čočka','Odraz světla','Zatmění','Rozptyl'],a:0,
+f:'Silná gravitace může zakřivovat světlo podobně jako čočka.'},
+
+{c:'zahady',t:'q',q:'Co je exoplaneta?',
+o:['Planeta obíhající jinou hvězdu než Slunce','Malý měsíc','Trpasličí planeta','Planetka'],a:0,
+f:'Astronomové už objevili tisíce exoplanet.'},
+
+{c:'zahady',t:'q',q:'Co je kosmické mikrovlnné pozadí?',
+o:['Slabé záření z raného vesmíru','Záření Slunce','Rádiový signál z Marsu','Světlo z Měsíce'],a:0,
+f:'Kosmické mikrovlnné pozadí je pozůstatek po Velkém třesku.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá hypotetická energie způsobující rozpínání vesmíru?',
+o:['Temná energie','Sluneční vítr','Antihmota','Kosmický prach'],a:0,
+f:'Temná energie patří mezi největší nevyřešené záhady vesmíru.'},
+
+{c:'zahady',t:'q',q:'Co je meteor?',
+o:['Těleso shořívající v atmosféře','Měsíc planety','Obří hvězda','Kosmická stanice'],a:0,
+f:'Meteor vytváří na obloze světelnou stopu známou jako „padající hvězda“.'},
+
+{c:'zahady',t:'q',q:'Co je asteroid?',
+o:['Malé kamenné těleso obíhající kolem Slunce','Druh hvězdy','Ledový měsíc','Černá díra'],a:0,
+f:'Většina asteroidů se nachází mezi Marsem a Jupiterem.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá oblak ledových těles na okraji sluneční soustavy?',
+o:['Oortův oblak','Kuiperův pás','Pás asteroidů','Mlhovina Orion'],a:0,
+f:'Oortův oblak je pravděpodobným zdrojem dlouhoperiodických komet.'},
+
+{c:'zahady',t:'q',q:'Co je kometa?',
+o:['Ledové těleso s ohonem','Typ hvězdy','Malá planeta','Druh galaxie'],a:0,
+f:'Při přiblížení ke Slunci se z komety uvolňuje plyn a prach tvořící ohon.'},
+
+  {c:'zahady',t:'q',q:'Co je Kuiperův pás?',
+o:['Oblast za Neptunem plná ledových těles','Pás mezi Zemí a Marsem','Oblak plynu kolem Slunce','Prstenec Saturnu'],a:0,
+f:'Kuiperův pás obsahuje trpasličí planety a mnoho kometárních těles.'},
+
+{c:'zahady',t:'q',q:'Co je antihmota?',
+o:['Hmota složená z antičástic','Temná hmota','Velmi hustý plyn','Prach mezi hvězdami'],a:0,
+f:'Při setkání hmoty a antihmoty dochází k uvolnění velkého množství energie.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá hranice, za kterou už světlo neunikne z černé díry?',
+o:['Horizont událostí','Magnetosféra','Fotosféra','Oběžná dráha'],a:0,
+f:'Horizont událostí je pomyslná hranice černé díry.'},
+
+{c:'zahady',t:'q',q:'Co je bílý trpaslík?',
+o:['Hustý pozůstatek menší hvězdy','Typ galaxie','Velká planeta','Obří mlhovina'],a:0,
+f:'Na bílého trpaslíka se jednou promění i Slunce.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá největší známá struktura ve vesmíru?',
+o:['Kosmická pavučina','Mlhovina Orion','Kuiperův pás','Pás asteroidů'],a:0,
+f:'Galaxie ve vesmíru vytvářejí rozsáhlou síť nazývanou kosmická pavučina.'},
+
+{c:'zahady',t:'q',q:'Co je gravitační vlna?',
+o:['Zvlnění časoprostoru','Silný sluneční vítr','Výbuch hvězdy','Rádiový signál'],a:0,
+f:'Gravitační vlny předpověděl Albert Einstein.'},
+
+{c:'zahady',t:'q',q:'Kdo formuloval obecnou teorii relativity?',
+o:['Albert Einstein','Isaac Newton','Galileo Galilei','Nikola Tesla'],a:0,
+f:'Einsteinova teorie popisuje gravitaci jako zakřivení časoprostoru.'},
+
+{c:'zahady',t:'q',q:'Co je rudý posuv světla?',
+o:['Posun světla k červené části spektra při vzdalování objektu','Změna barvy hvězdy při výbuchu','Odraz světla od planety','Zatmění hvězdy'],a:0,
+f:'Rudý posuv ukazuje, že se vesmír rozpíná.'},
+
+{c:'zahady',t:'q',q:'Který astronom objevil rozpínání vesmíru?',
+o:['Edwin Hubble','Galileo Galilei','Johannes Kepler','Tycho Brahe'],a:0,
+f:'Edwin Hubble zjistil, že se vzdálené galaxie od sebe vzdalují.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá nejbližší černá díra známá astronomům?',
+o:['Gaia BH1','Sagittarius A*','Cygnus X-1','M87*'],a:0,
+f:'Gaia BH1 byla objevena poměrně blízko sluneční soustavy.'},
+
+{c:'zahady',t:'q',q:'Co se nachází ve středu Mléčné dráhy?',
+o:['Superhmotná černá díra','Obří planeta','Mlhovina','Kulová hvězdokupa'],a:0,
+f:'Ve středu naší galaxie leží superhmotná černá díra Sagittarius A*.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá největší typ černých děr?',
+o:['Superhmotné černé díry','Hvězdné černé díry','Mikročerné díry','Bílé díry'],a:0,
+f:'Superhmotné černé díry se nacházejí v centrech galaxií.'},
+
+{c:'zahady',t:'q',q:'Co je kvazar?',
+o:['Velmi aktivní jádro vzdálené galaxie','Typ komety','Měsíc planety','Druh mlhoviny'],a:0,
+f:'Kvazary patří mezi nejjasnější objekty ve vesmíru.'},
+
+{c:'zahady',t:'q',q:'Co je meteorid?',
+o:['Malé těleso pohybující se vesmírem','Padající hvězda v atmosféře','Velký asteroid','Druh komety'],a:0,
+f:'Meteorid se po vstupu do atmosféry mění v meteor.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá kámen z vesmíru dopadlý na Zem?',
+o:['Meteorit','Meteor','Kometa','Asteroid'],a:0,
+f:'Meteorit je část tělesa, která přežila průlet atmosférou.'},
+
+{c:'zahady',t:'q',q:'Co je sluneční vítr?',
+o:['Proud nabitých částic ze Slunce','Silný vítr na Merkuru','Výbuch supernovy','Pohyb komet'],a:0,
+f:'Sluneční vítr ovlivňuje magnetické pole Země i polární záře.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá ochranné magnetické pole Země?',
+o:['Magnetosféra','Atmosféra','Ionosféra','Stratosféra'],a:0,
+f:'Magnetosféra chrání Zemi před částí kosmického záření.'},
+
+{c:'zahady',t:'q',q:'Co je kosmické záření?',
+o:['Proud vysokoenergetických částic z vesmíru','Světlo hvězd','Teplo Slunce','Radiové vlny'],a:0,
+f:'Kosmické záření přichází z různých částí vesmíru.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá nejbližší hvězdná porodnice k Zemi?',
+o:['Mlhovina v Orionu','Krabí mlhovina','Mlhovina Koňská hlava','Andromeda'],a:0,
+f:'V mlhovině v Orionu vznikají nové hvězdy.'},
+
+{c:'zahady',t:'q',q:'Co je Krabí mlhovina?',
+o:['Pozůstatek po supernově','Typ galaxie','Obří planeta','Pás asteroidů'],a:0,
+f:'Krabí mlhovina vznikla po výbuchu supernovy pozorované v roce 1054.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá nejznámější prstenec asteroidů?',
+o:['Hlavní pás asteroidů','Kuiperův pás','Oortův oblak','Kosmická pavučina'],a:0,
+f:'Hlavní pás asteroidů leží mezi Marsem a Jupiterem.'},
+
+{c:'zahady',t:'q',q:'Co je exoměsíc?',
+o:['Měsíc obíhající exoplanetu','Měsíc mimo Mléčnou dráhu','Malá kometa','Druh planetky'],a:0,
+f:'Exoměsíce zatím patří mezi obtížně potvrditelné objevy.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá největší známá hvězda?',
+o:['UY Scuti','Sirius','Polárka','Slunce'],a:0,
+f:'UY Scuti patří mezi největší známé hvězdy podle objemu.'},
+
+{c:'zahady',t:'q',q:'Co je hnědý trpaslík?',
+o:['Objekt mezi planetou a hvězdou','Malá černá díra','Typ komety','Ledový asteroid'],a:0,
+f:'Hnědí trpaslíci jsou příliš malí na běžnou hvězdnou fúzi.'},
+
+{c:'zahady',t:'q',q:'Jak se nazývá oblast vesmíru, kterou dnes můžeme pozorovat?',
+o:['Pozorovatelný vesmír','Temná oblast','Galaktické jádro','Místní skupina'],a:0,
+f:'Pozorovatelný vesmír je omezen rychlostí světla a stářím vesmíru.'},
 
 // TĚLESA & JEVY
-{c:'telesa',t:'planet',pid:'pluton',q:'V roce 2006 byl překlasifikován na trpasličí planetu. Co to je?',o:['Pluto','Ceres','Eris','Makemake'],a:0,f:'Pluto bylo objeveno v roce 1930 a bylo považováno za 9. planetu. V roce 2006 astronomové vytvořili novou kategorii "trpasličích planet" — Pluto splňovalo podmínky víc pro ni.'},
-{c:'telesa',t:'q',q:'Co je to asteroid?',o:['Kamenné těleso obíhající Slunce, menší než planeta','Zmrzlá kometka','Odlomený měsíc','Miniaturní planeta s atmosférou'],a:0,f:'Asteroidy jsou zbytky ze vzniku sluneční soustavy. Většina obíhá v pásu asteroidů mezi Marsem a Jupiterem. Jsou to "stavební materiál", ze kterého by mohla vzniknout planeta — ale Jupiter to svou gravitací zabrání.'},
-{c:'telesa',t:'q',q:'Kde se nachází pás asteroidů?',o:['Mezi Marsem a Jupiterem','Za Neptunem','Mezi Zemí a Marsem','Kolem Slunce'],a:0,f:'V pásu asteroidů je miliony těles, ale dohromady by tvořily méně než 4 % hmotnosti Měsíce. Filmy lžou — pro sondu je průlet pásem asteroidů prosto bezpečný.'},
-{c:'telesa',t:'q',q:'Co je to kometa?',o:['Ledové těleso z okraje soustavy s ohon z par při přiblížení','Rychlý asteroid','Umělá družice','Odlomený kus planety'],a:0,f:'Komety jsou ze Oortova oblaku nebo Kuiperova pásu. Když se přiblíží Slunci, led se odpaří a vznikne ohon délky až 150 milionů km. Ohon vždy míří od Slunce — ne za kometou!'},
-{c:'telesa',t:'q',q:'Co je to meteorit?',o:['Kousek asteroidu nebo komety, který dopadl na Zemi','Hvězda padající z nebe','Malý měsíc','Sopečná hmota ze Slunce'],a:0,f:'"Padající hvězdy" jsou meteory — úlomky vesmíru, které shoří v atmosféře. Pokud dopadnou na zem, jsou to meteority. V Antarktidě bylo nalezeno přes 50 000 meteoritů — ideální podmínky pro zachování.'},
-{c:'telesa',t:'q',q:'Co je Kuiperův pás?',o:['Pás ledových těles za oběžnou dráhou Neptunu','Pas asteroidů mezi Marsem a Jupiterem','Oblast komet za sluneční soustavou','Gravitační pole Slunce'],a:0,f:'Kuiperův pás sahá od Neptunu na 50× vzdálenost Země-Slunce. Je tam Pluto, Eris, Makemake a stovky dalších trpasličích planet. Je 20× širší než pás asteroidů.'},
-{c:'telesa',t:'q',q:'Co je Oortův oblak?',o:['Sférický obal komet na okraji sluneční soustavy','Mezihvězdný prach','Magnetické pole soustavy','Neviditelná temná hmota'],a:0,f:'Oortův oblak je sféra bilionů ledových těles ve vzdálenosti 1–100 000 AU. Nebyl nikdy přímě pozorován — je odvozen z drah komet. Je to rezervoár komet dlouhé periody.'},
-{c:'telesa',t:'q',q:'Jak velký byl asteroid, který vyhubil dinosaury?',o:['Asi 10–15 km','1 km','100 km','500 metrů'],a:0,f:'Asteroid Chicxulub měl průměr 10–15 km. Dopad odpovídal miliardám atomových bomb. Kráter v Mexickém zálivu má průměr přes 180 km a stále je viditelný ze satelitu.'},
-{c:'telesa',t:'q',q:'Co jsou polární záře (aurora)?',o:['Světlo z interakce slunečního větru s magnetosférou','Reflexe Slunce na sněhu','Zářivé oblaka','Elektrické bouře'],a:0,f:'Aurora vzniká, když nabité částice slunečního větru vstoupí do atmosféry u magnetických pólů a rozsvítí atomy kyslíku a dusíku. Zelená = kyslík 100 km, červená = kyslík 200 km, modrá = dusík.'},
-{c:'telesa',t:'q',q:'Co je sluneční vítr?',o:['Proud nabitých částic (plazma) ze Slunce','Vzdušné proudy na Slunci','Světelné záření','Magnetické pole Slunce'],a:0,f:'Sluneční vítr je nepřetržitý proud protonů a elektronů ze Slunce rychlostí 400–800 km/s. Bez magnetického pole by Země ztratila atmosféru jako Mars.'},
-];
+{c:'telesa',t:'planet',pid:'pluto',q:'Které těleso bylo v roce 2006 přeřazeno mezi trpasličí planety?',
+o:['Pluto','Ceres','Eris','Makemake'],a:0,
+f:'Pluto bylo dlouho považováno za devátou planetu sluneční soustavy.'},
+
+{c:'telesa',t:'q',q:'Co je asteroid?',
+o:['Kamenné těleso obíhající kolem Slunce','Ledové těleso s ohonem','Plynné těleso','Umělá družice'],a:0,
+f:'Většina asteroidů se nachází v hlavním pásu mezi Marsem a Jupiterem.'},
+
+{c:'telesa',t:'q',q:'Kde leží hlavní pás asteroidů?',
+o:['Mezi Marsem a Jupiterem','Za Neptunem','Mezi Zemí a Marsem','Kolem Saturnu'],a:0,
+f:'Hlavní pás asteroidů obsahuje miliony menších těles.'},
+
+{c:'telesa',t:'q',q:'Co je kometa?',
+o:['Ledové těleso vytvářející při přiblížení ke Slunci ohon','Kamenná planeta','Měsíc planety','Druh hvězdy'],a:0,
+f:'Ohon komety vzniká odpařováním ledu a prachu.'},
+
+{c:'telesa',t:'q',q:'Co je meteorit?',
+o:['Těleso z vesmíru dopadlé na Zemi','Padající hvězda','Měsíc planety','Sluneční erupce'],a:0,
+f:'Meteority jsou zbytky asteroidů nebo komet, které dopadly na zemský povrch.'},
+
+{c:'telesa',t:'q',q:'Co je Kuiperův pás?',
+o:['Oblast ledových těles za Neptunem','Pás asteroidů mezi Marsem a Jupiterem','Vrstva sluneční atmosféry','Proud kosmického záření'],a:0,
+f:'V Kuiperově pásu se nachází například Pluto.'},
+
+{c:'telesa',t:'q',q:'Co je Oortův oblak?',
+o:['Hypotetický oblak komet na okraji sluneční soustavy','Pás asteroidů','Mlhovina kolem Slunce','Prstenec Saturnu'],a:0,
+f:'Oortův oblak je pravděpodobným zdrojem dlouhoperiodických komet.'},
+
+{c:'telesa',t:'q',q:'Jak velký byl asteroid spojený s vyhynutím dinosaurů?',
+o:['Přibližně 10–15 km','Asi 500 m','Přibližně 100 km','Méně než 1 km'],a:0,
+f:'Dopad asteroidu Chicxulub způsobil obrovské změny klimatu na Zemi.'},
+
+{c:'telesa',t:'q',q:'Co způsobuje polární záři?',
+o:['Nabité částice ze Slunce','Odraz světla od ledu','Meteory v atmosféře','Měsíční světlo'],a:0,
+f:'Polární záře vzniká při střetu částic slunečního větru s atmosférou Země.'},
+
+{c:'telesa',t:'q',q:'Co je sluneční vítr?',
+o:['Proud nabitých částic ze Slunce','Vítr v atmosféře Slunce','Zářivé světlo hvězd','Pohyb komet'],a:0,
+f:'Sluneční vítr ovlivňuje magnetické pole Země.'},
+
+{c:'telesa',t:'q',q:'Co je meteor?',
+o:['Světelný jev při průletu tělesa atmosférou','Kámen dopadlý na Zem','Ledový měsíc','Druh planety'],a:0,
+f:'Meteor bývá lidově označován jako „padající hvězda“.'},
+
+{c:'telesa',t:'q',q:'Co je meteorid?',
+o:['Malé těleso pohybující se vesmírem','Kráter na Měsíci','Druh komety','Plynné těleso'],a:0,
+f:'Meteorid se může po vstupu do atmosféry změnit v meteor.'},
+
+{c:'telesa',t:'q',q:'Jak se nazývá největší asteroid hlavního pásu?',
+o:['Ceres','Vesta','Eris','Pluto'],a:0,
+f:'Ceres je zároveň klasifikována jako trpasličí planeta.'},
+
+{c:'telesa',t:'q',q:'Co je trpasličí planeta?',
+o:['Kulovité těleso menší než planeta','Malý měsíc','Velký asteroid','Planeta bez atmosféry'],a:0,
+f:'Trpasličí planety obíhají kolem Slunce, ale nevyčistily své okolí od dalších těles.'},
+
+{c:'telesa',t:'q',q:'Které těleso má výrazný ohon?',
+o:['Kometa','Asteroid','Meteorit','Měsíc'],a:0,
+f:'Ohon komety vždy směřuje od Slunce.'},
+
+{c:'telesa',t:'q',q:'Co je kráter?',
+o:['Prohlubeň vzniklá dopadem tělesa','Druh sopky','Ledová oblast na Marsu','Měsíční moře'],a:0,
+f:'Mnoho kráterů vzniklo dopadem asteroidů nebo meteoritů.'},
+
+{c:'telesa',t:'q',q:'Kde se nachází nejvíce komet krátké periody?',
+o:['V Kuiperově pásu','V hlavním pásu asteroidů','Na oběžné dráze Marsu','V atmosféře Slunce'],a:0,
+f:'Komety krátké periody pocházejí většinou z Kuiperova pásu.'},
+
+{c:'telesa',t:'q',q:'Co je planetka?',
+o:['Jiný název pro asteroid','Malá planeta s atmosférou','Druh komety','Měsíc Jupiteru'],a:0,
+f:'Slovo planetka se často používá jako označení pro asteroid.'},
+
+{c:'telesa',t:'q',q:'Jak se nazývá jasný meteor s výrazným zábleskem?',
+o:['Bolid','Kometa','Aurora','Nova'],a:0,
+f:'Bolíd je velmi jasný meteor viditelný na velkou vzdálenost.'},
+
+{c:'telesa',t:'q',q:'Které těleso obíhá kolem planety?',
+o:['Měsíc','Kometa','Asteroid','Meteor'],a:0,
+f:'Měsíce jsou přirozené družice planet.'},
+
+{c:'telesa',t:'q',q:'Co tvoří jádro většiny komet?',
+o:['Led a prach','Roztavené železo','Plyn','Kapalná voda'],a:0,
+f:'Komety obsahují led, prach i zmrzlé plyny.'},
+
+{c:'telesa',t:'q',q:'Jak se nazývá ochranné magnetické pole Země?',
+o:['Magnetosféra','Atmosféra','Ionosféra','Stratosféra'],a:0,
+f:'Magnetosféra chrání Zemi před částí kosmického záření.'},
+
+{c:'telesa',t:'q',q:'Co je kosmické záření?',
+o:['Proud vysokoenergetických částic z vesmíru','Viditelné světlo hvězd','Proud meteoritů','Sluneční světlo'],a:0,
+f:'Kosmické záření přichází z různých částí vesmíru.'},
+
+{c:'telesa',t:'q',q:'Jak se nazývá kámen z vesmíru nalezený na Zemi?',
+o:['Meteorit','Meteor','Meteorid','Kometa'],a:0,
+f:'Meteority pomáhají vědcům zkoumat vznik sluneční soustavy.'},
+
+{c:'telesa',t:'q',q:'Co je aurora?',
+o:['Jiný název pro polární záři','Druh komety','Měsíc Saturnu','Kosmická sonda'],a:0,
+f:'Aurora vzniká v atmosféře poblíž magnetických pólů Země.'},
+
+  {c:'telesa',t:'q',q:'Co je planetární mlhovina?',
+o:['Oblak plynu odvržený umírající hvězdou','Místo vzniku planet','Pás asteroidů','Obří kometa'],a:0,
+f:'Planetární mlhoviny vznikají na konci života hvězd podobných Slunci.'},
+
+{c:'telesa',t:'q',q:'Co je sluneční erupce?',
+o:['Výron energie a částic ze Slunce','Výbuch planety','Srážka asteroidů','Vznik komety'],a:0,
+f:'Silné sluneční erupce mohou narušit družice i radiové spojení na Zemi.'},
+
+{c:'telesa',t:'q',q:'Jak se nazývá obří oblak plynu a prachu ve vesmíru?',
+o:['Mlhovina','Galaxie','Meteorid','Pulsar'],a:0,
+f:'V některých mlhovinách vznikají nové hvězdy.'},
+
+{c:'telesa',t:'q',q:'Co je gejzír na Enceladu?',
+o:['Výtrysk vody a ledu z nitra měsíce','Sopečný výbuch na Marsu','Proud lávy na Io','Bouře na Jupiteru'],a:0,
+f:'Měsíc Enceladus vyvrhuje vodní páru a led do okolního vesmíru.'},
+
+{c:'telesa',t:'q',q:'Co je sluneční skvrna?',
+o:['Chladnější tmavší oblast na povrchu Slunce','Kráter na Slunci','Obří erupce','Měsíc Merkuru'],a:0,
+f:'Sluneční skvrny souvisejí se silnou magnetickou aktivitou Slunce.'},
+
+{c:'telesa',t:'q',q:'Co je zatmění Slunce?',
+o:['Měsíc zakryje Slunce','Země zakryje Měsíc','Planeta zakryje Slunce','Mraky zakryjí Slunce'],a:0,
+f:'K zatmění Slunce dochází při novu Měsíce.'},
+
+{c:'telesa',t:'q',q:'Co je zatmění Měsíce?',
+o:['Země vrhá stín na Měsíc','Slunce zakryje Měsíc','Mars zakryje Měsíc','Měsíc zakryje Zemi'],a:0,
+f:'Při úplném zatmění může mít Měsíc načervenalou barvu.'},
+
+{c:'telesa',t:'q',q:'Co je úplněk?',
+o:['Fáze, kdy vidíme celý osvětlený Měsíc','Fáze bez viditelného Měsíce','Zatmění Měsíce','Přiblížení Měsíce k Zemi'],a:0,
+f:'Při úplňku je osvětlená celá přivrácená strana Měsíce.'},
+
+{c:'telesa',t:'q',q:'Co je nov Měsíce?',
+o:['Fáze, kdy Měsíc téměř nevidíme','Úplně osvětlený Měsíc','Zatmění Slunce','Pád meteoritu'],a:0,
+f:'Při novu je osvětlená strana Měsíce obrácena od Země.'},
+
+{c:'telesa',t:'q',q:'Co je slapová síla?',
+o:['Gravitační působení způsobující příliv a odliv','Proudění vzduchu','Sluneční erupce','Magnetická bouře'],a:0,
+f:'Slapové síly vytváří hlavně gravitace Měsíce.'},
+
+{c:'telesa',t:'q',q:'Co je geostacionární družice?',
+o:['Družice pohybující se stejnou rychlostí jako Země','Sonda letící k Marsu','Družice obíhající Měsíc','Kosmická stanice'],a:0,
+f:'Geostacionární družice se vůči Zemi zdánlivě nepohybuje.'},
+
+{c:'telesa',t:'q',q:'Co je kosmická sonda?',
+o:['Nepilotované zařízení pro výzkum vesmíru','Velký teleskop','Pilotovaná raketa','Měsíc planety'],a:0,
+f:'Kosmické sondy zkoumají planety, měsíce i vzdálený vesmír.'},
+
+{c:'telesa',t:'q',q:'Co je rover?',
+o:['Pojízdné vozidlo pro průzkum jiného tělesa','Typ rakety','Druh satelitu','Kosmická stanice'],a:0,
+f:'Rover Curiosity zkoumá povrch Marsu od roku 2012.'},
+
+{c:'telesa',t:'q',q:'Jak se nazývá největší sopka na Marsu?',
+o:['Olympus Mons','Mauna Loa','Valles Marineris','Etna'],a:0,
+f:'Olympus Mons je největší známá sopka ve sluneční soustavě.'},
+
+{c:'telesa',t:'q',q:'Co je Valles Marineris?',
+o:['Obří kaňon na Marsu','Kráter na Měsíci','Prstenec Saturnu','Mlhovina'],a:0,
+f:'Valles Marineris patří mezi největší kaňony ve sluneční soustavě.'},
+
+{c:'telesa',t:'q',q:'Co je exoplaneta?',
+o:['Planeta obíhající jinou hvězdu než Slunce','Měsíc mimo sluneční soustavu','Velký asteroid','Planeta bez atmosféry'],a:0,
+f:'Astronomové objevili tisíce exoplanet.'},
+
+{c:'telesa',t:'q',q:'Co je trpasličí hvězda?',
+o:['Menší hvězda s nižší hmotností','Vyhaslá hvězda','Planeta podobná hvězdě','Malá galaxie'],a:0,
+f:'Slunce patří mezi žluté trpaslíky.'},
+
+{c:'telesa',t:'q',q:'Co je rudý obr?',
+o:['Hvězda v pozdní fázi vývoje','Velká planeta','Výbuch supernovy','Typ galaxie'],a:0,
+f:'Za několik miliard let se Slunce promění v rudého obra.'},
+
+{c:'telesa',t:'q',q:'Co je bílý trpaslík?',
+o:['Husté jádro vyhaslé hvězdy','Ledová planeta','Malý měsíc','Druh komety'],a:0,
+f:'Bílí trpaslíci jsou velmi husté hvězdné pozůstatky.'},
+
+{c:'telesa',t:'q',q:'Co je světelná minuta?',
+o:['Vzdálenost, kterou světlo urazí za minutu','Doba rotace hvězdy','Čas oběhu planety','Typ záření'],a:0,
+f:'Světlo ze Slunce dorazí k Zemi asi za 8 minut.'},
+
+{c:'telesa',t:'q',q:'Co je astronomická jednotka (AU)?',
+o:['Průměrná vzdálenost Země od Slunce','Vzdálenost Měsíce od Země','Průměr Slunce','Rychlost světla'],a:0,
+f:'Jedna astronomická jednotka je asi 150 milionů kilometrů.'},
+
+{c:'telesa',t:'q',q:'Co je heliosféra?',
+o:['Oblast ovlivněná slunečním větrem','Povrch Slunce','Pás asteroidů','Mlhovina'],a:0,
+f:'Heliosféra chrání sluneční soustavu před částí kosmického záření.'},
+
+{c:'telesa',t:'q',q:'Co je protuberance na Slunci?',
+o:['Obrovský oblouk žhavého plynu','Sluneční skvrna','Kráter na Slunci','Druh erupce'],a:0,
+f:'Protuberance mohou dosahovat délky stovek tisíc kilometrů.'},
+
+{c:'telesa',t:'q',q:'Co je koróna Slunce?',
+o:['Vnější vrstva sluneční atmosféry','Pevné jádro Slunce','Sluneční skvrna','Magnetické pole Země'],a:0,
+f:'Koróna je dobře viditelná při úplném zatmění Slunce.'},
+
+{c:'telesa',t:'q',q:'Co je fotosféra?',
+o:['Viditelný povrch Slunce','Jádro Slunce','Vrstva atmosféry Země','Pás asteroidů'],a:0,
+f:'Fotosféra je část Slunce, kterou běžně pozorujeme.'},
 
 // ── BADGES (18) ──
 const BADGES = [
