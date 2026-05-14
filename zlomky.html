@@ -1340,8 +1340,8 @@ const messages = {
     "Úžasné! Jen tak dál! 🚀","Skvělá práce! Jsi moje hvězda! 🌟","Jo jo jo! To byl ale výkon! 💪",
     "Wow! Počítáš jako počítač! 🤖","Takhle se to dělá! Jsem na tebe pyšný! 😊",
   ],
-  wrong1:  ["Hmm, to nebylo ono. Zkus to znovu! 💪","Nevadí! Každý se někdy splete. Ještě jednou! 🎯","Ještě jednou zkus – věřím ti! 😊","Skoro! Oprav výpočet a zkus znovu."],
-  wrong2:  ["Nevadí! Podívej se na nápovědu. 💡","Nic se nestalo – nápověda pomůže! 💡","Teď ti pomůžu – koukni na postup. 💡"],
+  wrong1:  ["Hmm, to nebylo ono. Zkus to znovu! 💪","Nevadí! Každý se někdy splete. Ještě jednou! 🎯","Ještě jednou zkus – věřím ti! 😊","Skoro! Oprav výpočet a zkus to znovu."],
+  wrong2:  ["Nevadí! Podívej se na nápovědu. 💡","Nic se nestalo – nápověda pomůže! 💡","Teď ti pomůžu – koukni se na postup. 💡"],
   simplify:["Správně, ale zlomek jde ještě zkrátit! ✂️","Téměř! Zkus zlomek zjednodušit. 🔍","Výsledek je správný – ale dá se zkrátit!"],
   streak:  ["🔥 Skvělá série! Ty máš formu!","🔥 Neuvěřitelné – stále správně!","🔥 Takhle to miluju! Pokračuj!"],
   levelUp: ["🎊 Postoupil jsi na novou úroveň!","🏆 Fantastické! Nová úroveň odemčena!","⚡ Přechod na vyšší level!"],
@@ -1481,7 +1481,7 @@ function generateProblem() {
 
 function getStartMessage() {
   const opNames   = { '+': 'sečteme', '-': 'odečteme', '*': 'vynásobíme', '/': 'vydělíme' };
-  const diffNames = { easy: 'lehký', medium: 'střední', hard: 'těžký' };
+  const diffNames = { easy: 'lehká', medium: 'střední', hard: 'těžká' };
   const msgs = [
     `Pojďme ${opNames[currentProblem.op]} zlomky! 🎯`,
     `${diffNames[difficulty].charAt(0).toUpperCase() + diffNames[difficulty].slice(1)} příklad – dáš to! 💪`,
@@ -1670,7 +1670,7 @@ function checkAnswer() {
       } else {
         // Second time: show reveal dialog
         document.getElementById('simplifyHint').classList.add('show');
-        document.getElementById('revealQuestion').textContent = 'Pořád si nevíš rady se zkrácením? Chceš vidět výsledek?';
+        document.getElementById('revealQuestion').textContent = 'Pořád si nevíš rady s krácením? Chceš vidět výsledek?';
         showRevealDialog();
         setSpeech("Zobrazím ti správnou odpověď. Příště to zvládneš! 💪", 'sad');
       }
@@ -1699,8 +1699,8 @@ function showSimplifyHintSteps() {
 
   const steps = [
     `Tvůj zlomek <strong>${numVal}/${denVal}</strong> je správně, ale jde zkrátit.`,
-    `Najdi největší společný dělitel (GCD) čitatele a jmenovatele. GCD(${Math.abs(numVal)}, ${Math.abs(denVal)}) = <strong>${g}</strong>`,
-    `Vydel oba čísla tímto GCD: čitatel ${numVal} ÷ ${g} = <strong>${result.num}</strong>, jmenovatel ${denVal} ÷ ${g} = <strong>${result.den}</strong>`,
+    `Najdi největší společný dělitel čitatele a jmenovatele. (${Math.abs(numVal)}, ${Math.abs(denVal)}) = <strong>${g}</strong>`,
+    `Vyděl obě čísla tímto: čitatel ${numVal} ÷ ${g} = <strong>${result.num}</strong>, jmenovatel ${denVal} ÷ ${g} = <strong>${result.den}</strong>`,
     `Zjednodušený výsledek: <strong>${result.num}/${result.den}</strong> — zkus ho zadat!`,
   ];
 
@@ -1875,7 +1875,7 @@ function generateHintSteps(f1, f2, op) {
       const resultNum = op === '+' ? f1.num*m1 + f2.num*m2 : f1.num*m1 - f2.num*m2;
       const sim = simplifyFraction(resultNum, l);
       const steps = [
-        `Najdeme nejmenší společný jmenovatel (NSJ) čísel <strong>${f1.den}</strong> a <strong>${f2.den}</strong>. NSJ = <strong>${l}</strong>`,
+        `Najdeme nejmenší společný jmenovatel NSJ čísel <strong>${f1.den}</strong> a <strong>${f2.den}</strong>. NSJ = <strong>${l}</strong>`,
         `Převedeme oba zlomky: ${f1.num}/${f1.den} = <strong>${f1.num*m1}/${l}</strong> &nbsp;&nbsp; ${f2.num}/${f2.den} = <strong>${f2.num*m2}/${l}</strong>`,
         `${opStr.charAt(0).toUpperCase() + opStr.slice(1)} čitatele: ${f1.num*m1} ${opChar} ${f2.num*m2} = <strong>${resultNum}</strong>, jmenovatel zůstává <strong>${l}</strong>`,
       ];
@@ -1908,7 +1908,7 @@ function generateHintSteps(f1, f2, op) {
       return steps;
     }
   }
-  return ['Přemysli o základním postupu.'];
+  return ['Přemýšlej o základním postupu.'];
 }
 
 function showRevealDialog() {
@@ -2235,7 +2235,7 @@ function showDemoFinish() {
     Správnost: <strong>${getAccuracy()} %</strong><br>
     Vyřešeno: <strong>${demoSolved} / ${DEMO_MAX_EXERCISES}</strong>`;
   document.getElementById('demoFinishOverlay').classList.add('show');
-  setSpeech("Demo je u konce. Když chceš, otevři si plnou verzi! 🚀", 'happy');
+  setSpeech("Demo je u konce. Jestli chceš, otevři si plnou verzi! 🚀", 'happy');
 }
 
 function goToFullVersion()  { window.location.href = FULL_VERSION_URL; }
