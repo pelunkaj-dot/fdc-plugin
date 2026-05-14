@@ -667,23 +667,44 @@ function proc_urok() {
 // ════════════════════════════════════════════════════════
 
 function vek_soucetRozdil() {
-  const diff = ri(2,20);
-  const sum  = ri(20,80);
-  if ((sum+diff)%2!==0) return vek_soucetRozdil();
-  const older = (sum+diff)/2, younger = (sum-diff)/2;
-  if (younger<=0) return vek_soucetRozdil();
-  // [nominativ A, genitiv A, dativ A, nominativ B, genitiv B]
-  const [Anom,Agen,Adat,Bnom,Bgen] = rFrom([
-    ['Pavel',  'Pavla',           'Pavlovi',          'Jana',          'Jany'],
-    ['Tomáš',  'Tomáše',          'Tomášovi',         'Eva',           'Evy'],
-    ['otec',   'otce',            'otci',             'syn',           'syna'],
-    ['matka',  'matky',           'matce',            'dcera',         'dcery'],
-    ['starší bratr', 'staršího bratra', 'staršímu bratru', 'mladší sestra', 'mladší sestry'],
+  const cfg = rFrom([
+    {
+      names:['Pavel', 'Pavla', 'Pavlovi', 'Jana', 'Jany'],
+      diff:rFrom([2,3,4,5,6,7,8,9,10,12,15]),
+      younger:ri(8,55)
+    },
+    {
+      names:['Tomáš', 'Tomáše', 'Tomášovi', 'Eva', 'Evy'],
+      diff:rFrom([2,3,4,5,6,7,8,9,10,12,15]),
+      younger:ri(8,55)
+    },
+    {
+      names:['otec', 'otce', 'otci', 'syn', 'syna'],
+      diff:rFrom([22,24,25,26,28,30,32,35]),
+      younger:ri(5,25)
+    },
+    {
+      names:['matka', 'matky', 'matce', 'dcera', 'dcery'],
+      diff:rFrom([20,22,24,25,26,28,30,32]),
+      younger:ri(5,23)
+    },
+    {
+      names:['starší bratr', 'staršího bratra', 'staršímu bratru', 'mladší sestra', 'mladší sestry'],
+      diff:rFrom([2,3,4,5,6,7,8,10,12]),
+      younger:ri(6,25)
+    },
   ]);
+
+  const [Anom,Agen,Adat,Bnom,Bgen] = cfg.names;
+  const diff = cfg.diff;
+  const younger = cfg.younger;
+  const older = younger + diff;
+  const sum = older + younger;
+
   const A=Anom, B=Bnom;
   return {
     emoji:'👥', category:'Věkové úlohy',
-    text:`Součet věků <strong>${Agen} a ${Bgen}</strong> je <strong>${sum} let</strong>. <strong>${A}</strong> je o <strong>${diff} let starší</strong>.`,
+    text:`Součet věků <strong>${Agen} a ${Bgen}</strong> je <strong>${sum} let</strong>. <strong>${A}</strong> je o <strong>${diff} let starší</strong> než <strong>${B}</strong>.`,
     question:`Kolik let je ${Adat}?`,
     equation:`x + (x − ${diff}) = ${sum}`,
     distractors:[
@@ -697,21 +718,29 @@ function vek_soucetRozdil() {
 }
 
 function vek_zaLet() {
-  const nowA = ri(25,45), nowB = ri(5,15);
+  const cfg = rFrom([
+    { names:['otec',  'syn',     'synovi'],  olderRange:[30,55], youngerRange:[5,22], minDiff:18 },
+    { names:['matka', 'dcera',   'dceři'],   olderRange:[28,50], youngerRange:[5,22], minDiff:18 },
+    { names:['strýc', 'neteř',   'neteři'],  olderRange:[25,60], youngerRange:[4,24], minDiff:12 },
+    { names:['teta',  'synovec', 'synovci'], olderRange:[25,60], youngerRange:[4,24], minDiff:12 },
+  ]);
+
+  const [A,B,Bdat] = cfg.names;
+  const nowA = ri(cfg.olderRange[0], cfg.olderRange[1]);
   const years = ri(2,15);
   const k = ri(2,4);
   const nowBcalc = (nowA+years)/k - years;
-  if (!Number.isInteger(nowBcalc)||nowBcalc<=0||nowBcalc>=nowA) return vek_zaLet();
-  // [nominativ A, nominativ B, dativ B]
-  const [A,B,Bdat] = rFrom([
-    ['otec',  'syn',     'synovi'],
-    ['matka', 'dcera',   'dceři'],
-    ['strýc', 'neteř',   'neteři'],
-    ['teta',  'synovec', 'synovci'],
-  ]);
+
+  if (
+    !Number.isInteger(nowBcalc) ||
+    nowBcalc < cfg.youngerRange[0] ||
+    nowBcalc > cfg.youngerRange[1] ||
+    nowA - nowBcalc < cfg.minDiff
+  ) return vek_zaLet();
+
   return {
     emoji:'🎂', category:'Věkové úlohy',
-    text:`<strong>${A}</strong> je nyní <strong>${nowA} let</strong>. Za <strong>${years} ${years===1?'rok':years<=4?'roky':'let'}</strong> bude ${k}× starší než <strong>${B}</strong> tehdy.`,
+    text:`<strong>${A}</strong> je nyní <strong>${nowA} let</strong>. Za <strong>${years} ${years===1?'rok':years<=4?'roky':'let'}</strong> bude ${k}× starší než <strong>${B}</strong> v té době.`,
     question:`Kolik let je nyní ${Bdat}?`,
     equation:`${nowA} + ${years} = ${k} · (x + ${years})`,
     distractors:[
@@ -738,11 +767,11 @@ function vek_pomer() {
   const A=Anom, B=Bnom;
   return {
     emoji:'⚖️', category:'Věkové úlohy',
-    text:`Věky <strong>${Agen} a ${Bgen}</strong> jsou v poměru <strong>${k1} : ${k2}</strong>. Jejich věkový součet je <strong>${sum} let</strong>.`,
+    text:`Věky <strong>${Agen} a ${Bgen}</strong> jsou v tomto pořadí v poměru <strong>${k1} : ${k2}</strong>. Jejich věkový součet je <strong>${sum} let</strong>.`,
     question:`Kolik let je ${Adat}?`,
     equation:`x/${k1} = (${sum} − x)/${k2}`,
     distractors:[
-      `x · ${k2} = (${sum} − x) · ${k1}`,
+      `x/${k2} = (${sum} − x)/${k1}`,
       `x + ${k2}x = ${sum}`,
       `${k1}x + ${k2}x = ${sum} · ${k1}`,
     ],
