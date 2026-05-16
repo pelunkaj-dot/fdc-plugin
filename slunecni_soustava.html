@@ -10,29 +10,20 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-/* Vrstvené vesmírné pozadí */
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    /* Mlhovina fialová vlevo nahoře */
     radial-gradient(ellipse 70% 50% at 5% 10%, rgba(120,60,220,.28) 0%, transparent 60%),
-    /* Mlhovina modrá vpravo */
     radial-gradient(ellipse 60% 60% at 95% 30%, rgba(30,100,220,.22) 0%, transparent 55%),
-    /* Mlhovina tyrkysová uprostřed */
     radial-gradient(ellipse 80% 40% at 50% 55%, rgba(20,180,180,.1) 0%, transparent 60%),
-    /* Mlhovina růžová dole */
     radial-gradient(ellipse 60% 50% at 80% 90%, rgba(200,60,160,.18) 0%, transparent 55%),
-    /* Mlhovina zlatá dole vlevo */
     radial-gradient(ellipse 50% 40% at 15% 85%, rgba(180,120,20,.12) 0%, transparent 55%),
-    /* Základ — hluboká noční modř */
     linear-gradient(160deg, #0A0C24 0%, #0D1035 35%, #080A20 65%, #0C0D28 100%);
 }
 
-/* Hvězdy — tři vrstvy různých velikostí */
 body::after{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:
-    /* Drobné hvězdy */
     radial-gradient(1px 1px at 8% 12%, rgba(255,255,255,.9) 0%, transparent 100%),
     radial-gradient(1px 1px at 18% 35%, rgba(255,255,255,.7) 0%, transparent 100%),
     radial-gradient(1px 1px at 28% 8%, rgba(255,255,255,.8) 0%, transparent 100%),
@@ -53,7 +44,6 @@ body::after{
     radial-gradient(1px 1px at 42% 72%, rgba(255,255,255,.6) 0%, transparent 100%),
     radial-gradient(1px 1px at 62% 32%, rgba(255,255,255,.8) 0%, transparent 100%),
     radial-gradient(1px 1px at 96% 75%, rgba(255,255,255,.7) 0%, transparent 100%),
-    /* Střední hvězdy */
     radial-gradient(1.8px 1.8px at 15% 25%, rgba(200,225,255,.95) 0%, transparent 100%),
     radial-gradient(1.8px 1.8px at 45% 18%, rgba(255,240,200,.9) 0%, transparent 100%),
     radial-gradient(2px 2px at 72% 60%, rgba(200,225,255,.95) 0%, transparent 100%),
@@ -62,7 +52,6 @@ body::after{
     radial-gradient(1.8px 1.8px at 60% 88%, rgba(255,240,200,.85) 0%, transparent 100%),
     radial-gradient(2px 2px at 7% 48%, rgba(200,225,255,.9) 0%, transparent 100%),
     radial-gradient(1.8px 1.8px at 85% 18%, rgba(255,220,180,.85) 0%, transparent 100%),
-    /* Jasné hvězdy */
     radial-gradient(2.5px 2.5px at 25% 15%, rgba(255,255,255,1) 0%, transparent 100%),
     radial-gradient(2.5px 2.5px at 75% 35%, rgba(255,255,240,1) 0%, transparent 100%),
     radial-gradient(3px 3px at 50% 70%, rgba(255,240,255,1) 0%, transparent 100%),
@@ -404,17 +393,18 @@ pluton:`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
 };
 
 // ── CATEGORIES ──
+// OPRAVA: id musí odpovídat hodnotám c: v poli QS
 const CATS = [
-  {id:'planety',    name:'Planety',        emoji:'🪐', desc:'8 planet sluneční soustavy'},
-  {id:'mesice',     name:'Měsíce & Prstence', emoji:'🌙', desc:'Měsíce, prstence, tajemství'},
-  {id:'slunce',     name:'Slunce & Hvězdy', emoji:'☀️', desc:'Naše hvězda a její moc'},
-  {id:'mise',       name:'Mise & Astronauti', emoji:'🚀', desc:'Průzkum vesmíru člověkem'},
-  {id:'srovnani',   name:'Kdo je větší?',  emoji:'📏', desc:'Rekordy a srovnání'},
-  {id:'zajimavosti',name:'Záhady vesmíru', emoji:'🔭', desc:'Fakta která šokují'},
-  {id:'telesa',     name:'Tělesa & Jevy',  emoji:'☄️', desc:'Asteroidy, komety, černé díry'},
+  {id:'planety',   name:'Planety',           emoji:'🪐', desc:'8 planet sluneční soustavy'},
+  {id:'mesice',    name:'Měsíce & Prstence', emoji:'🌙', desc:'Měsíce, prstence, tajemství'},
+  {id:'hvezdy',    name:'Slunce & Hvězdy',   emoji:'☀️', desc:'Naše hvězda a její moc'},
+  {id:'mise',      name:'Mise & Astronauti', emoji:'🚀', desc:'Průzkum vesmíru člověkem'},
+  {id:'porovnani', name:'Kdo je větší?',     emoji:'📏', desc:'Rekordy a srovnání'},
+  {id:'zahady',    name:'Záhady vesmíru',    emoji:'🔭', desc:'Fakta která šokují'},
+  {id:'telesa',    name:'Tělesa & Jevy',     emoji:'☄️', desc:'Asteroidy, komety, černé díry'},
 ];
 
-// ── QUESTIONS (77) ──
+// ── QUESTIONS ──
 const QS = [
 // PLANETY
 {c:'planety',t:'planet',pid:'merkur',q:'Nejbližší planeta ke Slunci s obrovskými rozdíly teplot. Která?',o:['Merkur','Venuše','Mars','Pluto'],a:0,
@@ -435,7 +425,7 @@ f:'Jupiter je největší planetou sluneční soustavy. Velká rudá skvrna je o
 {c:'planety',t:'planet',pid:'saturn',q:'Planeta s nejvýraznějšími prstenci. Která?',o:['Saturn','Jupiter','Uran','Neptun'],a:0,
 f:'Saturnovy prstence jsou tvořeny hlavně ledem a kamennými částicemi.'},
 
-{c:'planety',t:'planet',pid:'uran',q:'Planeta, která je při oběhu kolem Slunce výrazně nakloněná „na bok“. Která?',o:['Uran','Neptun','Saturn','Jupiter'],a:0,
+{c:'planety',t:'planet',pid:'uran',q:'Planeta, která je při oběhu kolem Slunce výrazně nakloněná „na bok". Která?',o:['Uran','Neptun','Saturn','Jupiter'],a:0,
 f:'Osa Uranu je nakloněna téměř o 98°, takže planeta působí, jako by se kutálela.'},
 
 {c:'planety',t:'planet',pid:'neptun',q:'Nejvzdálenější planeta sluneční soustavy s velmi silnými větry. Která?',o:['Neptun','Uran','Jupiter','Saturn'],a:0,
@@ -508,7 +498,8 @@ f:'Velká rudá skvrna na Jupiteru je obří bouře větší než Země.'},
 {c:'planety',t:'q',q:'Která planeta má nejnižší průměrnou teplotu?',
 o:['Uran','Merkur','Mars','Venuše'],a:0,
 f:'Uran patří mezi nejchladnější planety sluneční soustavy.'},
-  {c:'planety',t:'q',q:'Která planeta je od Slunce druhá v pořadí?',
+
+{c:'planety',t:'q',q:'Která planeta je od Slunce druhá v pořadí?',
 o:['Venuše','Merkur','Země','Mars'],a:0,
 f:'Venuše obíhá mezi Merkurem a Zemí.'},
 
@@ -590,7 +581,7 @@ f:'Metan v atmosféře Neptunu pohlcuje část světla a planeta proto působí 
 
 {c:'planety',t:'q',q:'Která planeta má podobnou velikost jako Země?',
 o:['Venuše','Mars','Merkur','Neptun'],a:0,
-f:'Venuše bývá někdy označována jako „sesterská planeta Země“.'},
+f:'Venuše bývá někdy označována jako „sesterská planeta Země".'},
 
 {c:'planety',t:'q',q:'Která planeta má nejvíce viditelné krátery?',
 o:['Merkur','Venuše','Neptun','Saturn'],a:0,
@@ -607,7 +598,7 @@ f:'Astronomové vypočítali existenci Neptunu podle pohybu Uranu.'},
 {c:'planety',t:'q',q:'Která planeta má největší počet známých prstenců?',
 o:['Saturn','Mars','Merkur','Venuše'],a:0,
 f:'Saturn má rozsáhlou soustavu prstenců tvořenou ledem a prachem.'},
-  
+
 // MĚSÍCE & PRSTENCE
 {c:'mesice',t:'planet',pid:'mesic',q:'Jak se jmenuje přirozená družice Země?',o:['Měsíc','Phobos','Europa','Titan'],a:0,
 f:'Měsíc je jedinou přirozenou družicí Země.'},
@@ -684,7 +675,7 @@ f:'Europa patří mezi hlavní kandidáty pro hledání mimozemského života.'}
 o:['Saturn','Mars','Merkur','Venuše'],a:0,
 f:'Saturnovy prstence jsou viditelné i menším dalekohledem.'},
 
-{c:'mesice',t:'q',q:'Jak se nazývá největší měsíc Země?',
+{c:'mesice',t:'q',q:'Jak se jmenuje největší měsíc Země?',
 o:['Měsíc','Europa','Titan','Io'],a:0,
 f:'Země má jediný přirozený měsíc nazývaný Měsíc.'},
 
@@ -704,7 +695,7 @@ f:'Při úplňku vidíme osvětlenou celou přivrácenou stranu Měsíce.'},
 o:['Nov','Úplněk','První čtvrť','Dorůstání'],a:0,
 f:'Při novu je osvětlená strana Měsíce otočená od Země.'},
 
-  {c:'mesice',t:'q',q:'Který měsíc Jupiteru je největší?',
+{c:'mesice',t:'q',q:'Který měsíc Jupiteru je největší?',
 o:['Ganymedes','Europa','Io','Callisto'],a:0,
 f:'Ganymedes je největší měsíc Jupiteru i celé sluneční soustavy.'},
 
@@ -881,7 +872,7 @@ f:'Nadobři patří mezi největší známé hvězdy ve vesmíru.'},
 o:['Bílý trpaslík','Černá díra','Kometa','Asteroid'],a:0,
 f:'Na bílého trpaslíka se jednou promění i Slunce.'},
 
-{c:'hvezdy',t:'q',q:'Která hvězda tvoří „ocas“ Malého vozu?',
+{c:'hvezdy',t:'q',q:'Která hvězda tvoří „ocas" Malého vozu?',
 o:['Polárka','Sirius','Vega','Rigel'],a:0,
 f:'Polárka je součástí souhvězdí Malého medvěda.'},
 
@@ -905,7 +896,7 @@ f:'Betelgeuse je červený veleobr v souhvězdí Orionu.'},
 o:['Vega','Sirius','Rigel','Arktur'],a:0,
 f:'Vega patří mezi nejjasnější hvězdy severní oblohy.'},
 
-  {c:'hvezdy',t:'q',q:'Jak se nazývá naše galaxie?',
+{c:'hvezdy',t:'q',q:'Jak se nazývá naše galaxie?',
 o:['Mléčná dráha','Andromeda','Orion','Sombrero'],a:0,
 f:'Sluneční soustava je součástí galaxie nazývané Mléčná dráha.'},
 
@@ -1106,7 +1097,7 @@ f:'Sonda Huygens přistála na Titanu v roce 2005.'},
 o:['Alan Shepard','Neil Armstrong','John Glenn','Buzz Aldrin'],a:0,
 f:'Alan Shepard letěl do vesmíru v roce 1961.'},
 
-  {c:'mise',t:'q',q:'Která kosmická loď dopravuje astronauty na ISS od roku 2020?',
+{c:'mise',t:'q',q:'Která kosmická loď dopravuje astronauty na ISS od roku 2020?',
 o:['Crew Dragon','Apollo','Voyager','Sputnik'],a:0,
 f:'Crew Dragon od společnosti SpaceX vozí astronauty na Mezinárodní vesmírnou stanici.'},
 
@@ -1190,10 +1181,6 @@ f:'Čína vyslala prvního tajkonauta do vesmíru v roce 2003.'},
 o:['Jang Li-wej','Čang Cheng','Liu Wang','Jing Haipeng'],a:0,
 f:'Jang Li-wej letěl do vesmíru v lodi Šen-čou 5.'},
 
-{c:'mise',t:'q',q:'Jak se nazývá česká družice vypuštěná v roce 2022 pro sledování Země?',
-o:['Planetum-1','Sputnik CZ','RemekSat','Bohemia 1'],a:0,
-f:'České firmy a univerzity se podílejí na vývoji malých družic.'},
-
 {c:'mise',t:'q',q:'Která sonda zkoumala planetu Jupiter před příletem sondy Juno?',
 o:['Galileo','Cassini','Voyager 1','Rosetta'],a:0,
 f:'Sonda Galileo obíhala Jupiter v letech 1995–2003.'},
@@ -1205,7 +1192,7 @@ f:'Program Artemis má dopravit astronauty znovu na Měsíc.'},
 {c:'mise',t:'q',q:'Který astronaut strávil ve vesmíru nejvíce času ze všech Američanů?',
 o:['Frank Rubio','Scott Kelly','Peggy Whitson','John Glenn'],a:0,
 f:'Frank Rubio vytvořil rekord NASA nejdelším nepřetržitým pobytem ve vesmíru.'},
-  
+
 // POROVNÁNÍ
 {c:'porovnani',t:'q',q:'Která planeta je největší ve sluneční soustavě?',o:['Jupiter','Saturn','Uran','Neptun'],a:0,
 f:'Jupiter je největší planeta sluneční soustavy. Vešlo by se do něj přibližně 1300 Zemí.'},
@@ -1234,7 +1221,7 @@ f:'Venuše se otočí kolem své osy za 243 pozemských dní.'},
 {c:'porovnani',t:'q',q:'Kde se nachází nejvyšší známá hora ve sluneční soustavě?',o:['Na Marsu – Olympus Mons','Na Zemi – Mount Everest','Na Venuši','Na Jupiteru'],a:0,
 f:'Olympus Mons na Marsu je nejvyšší známá sopka ve sluneční soustavě.'},
 
-  {c:'porovnani',t:'q',q:'Která planeta je nejmenší ve sluneční soustavě?',o:['Merkur','Mars','Venuše','Pluto'],a:0,
+{c:'porovnani',t:'q',q:'Která planeta je nejmenší ve sluneční soustavě?',o:['Merkur','Mars','Venuše','Pluto'],a:0,
 f:'Merkur je nejmenší planeta sluneční soustavy. Je jen o něco větší než Měsíc.'},
 
 {c:'porovnani',t:'q',q:'Která planeta je nejžhavější?',o:['Venuše','Merkur','Mars','Jupiter'],a:0,
@@ -1290,7 +1277,7 @@ f:'Merkur je větší než Měsíc, ale rozdíl není obrovský.'},
 o:['Ganymedes','Merkur','Jsou stejně velké','Ganymedes je menší než Měsíc'],a:0,
 f:'Ganymedes je největší měsíc sluneční soustavy a je větší než Merkur.'},
 
-  {c:'porovnani',t:'q',q:'Která planeta je nejblíže Slunci?',o:['Merkur','Venuše','Země','Mars'],a:0,
+{c:'porovnani',t:'q',q:'Která planeta je nejblíže Slunci?',o:['Merkur','Venuše','Země','Mars'],a:0,
 f:'Merkur obíhá nejblíže ke Slunci.'},
 
 {c:'porovnani',t:'q',q:'Která planeta je nejblíže Zemi velikostí?',o:['Venuše','Mars','Merkur','Neptun'],a:0,
@@ -1325,9 +1312,6 @@ f:'Olympus Mons na Marsu je nejvyšší známá sopka ve sluneční soustavě.'}
 
 {c:'porovnani',t:'q',q:'Která planeta má největší magnetické pole?',o:['Jupiter','Saturn','Země','Neptun'],a:0,
 f:'Magnetické pole Jupiteru je mnohonásobně silnější než zemské.'},
-
-{c:'porovnani',t:'q',q:'Která planeta má největší počet známých prstencových měsíců?',o:['Saturn','Mars','Merkur','Venuše'],a:0,
-f:'Kolem Saturnu obíhá velké množství měsíců spojených s prstenci.'},
 
 {c:'porovnani',t:'q',q:'Která planeta má nejvíce měsíců objevených Galileem?',
 o:['Jupiter','Saturn','Mars','Neptun'],a:0,
@@ -1447,7 +1431,7 @@ f:'Temná energie patří mezi největší nevyřešené záhady vesmíru.'},
 
 {c:'zahady',t:'q',q:'Co je meteor?',
 o:['Těleso shořívající v atmosféře','Měsíc planety','Obří hvězda','Kosmická stanice'],a:0,
-f:'Meteor vytváří na obloze světelnou stopu známou jako „padající hvězda“.'},
+f:'Meteor vytváří na obloze světelnou stopu známou jako „padající hvězda".'},
 
 {c:'zahady',t:'q',q:'Co je asteroid?',
 o:['Malé kamenné těleso obíhající kolem Slunce','Druh hvězdy','Ledový měsíc','Černá díra'],a:0,
@@ -1461,7 +1445,7 @@ f:'Oortův oblak je pravděpodobným zdrojem dlouhoperiodických komet.'},
 o:['Ledové těleso s ohonem','Typ hvězdy','Malá planeta','Druh galaxie'],a:0,
 f:'Při přiblížení ke Slunci se z komety uvolňuje plyn a prach tvořící ohon.'},
 
-  {c:'zahady',t:'q',q:'Co je Kuiperův pás?',
+{c:'zahady',t:'q',q:'Co je Kuiperův pás?',
 o:['Oblast za Neptunem plná ledových těles','Pás mezi Zemí a Marsem','Oblak plynu kolem Slunce','Prstenec Saturnu'],a:0,
 f:'Kuiperův pás obsahuje trpasličí planety a mnoho kometárních těles.'},
 
@@ -1474,7 +1458,7 @@ o:['Horizont událostí','Magnetosféra','Fotosféra','Oběžná dráha'],a:0,
 f:'Horizont událostí je pomyslná hranice černé díry.'},
 
 {c:'zahady',t:'q',q:'Co je bílý trpaslík?',
-o:['Hustý pozůstatek menší hvězdy','Typ galaxie','Velká planeta','Obří mlhovina'],a:0,
+o:['Hustý pozůstatek menší hvězdy','Ledová planeta','Malý měsíc','Druh komety'],a:0,
 f:'Na bílého trpaslíka se jednou promění i Slunce.'},
 
 {c:'zahady',t:'q',q:'Jak se nazývá největší známá struktura ve vesmíru?',
@@ -1562,7 +1546,7 @@ o:['Pozorovatelný vesmír','Temná oblast','Galaktické jádro','Místní skupi
 f:'Pozorovatelný vesmír je omezen rychlostí světla a stářím vesmíru.'},
 
 // TĚLESA & JEVY
-{c:'telesa',t:'planet',pid:'pluto',q:'Které těleso bylo v roce 2006 přeřazeno mezi trpasličí planety?',
+{c:'telesa',t:'planet',pid:'pluton',q:'Které těleso bylo v roce 2006 přeřazeno mezi trpasličí planety?',
 o:['Pluto','Ceres','Eris','Makemake'],a:0,
 f:'Pluto bylo dlouho považováno za devátou planetu sluneční soustavy.'},
 
@@ -1604,7 +1588,7 @@ f:'Sluneční vítr ovlivňuje magnetické pole Země.'},
 
 {c:'telesa',t:'q',q:'Co je meteor?',
 o:['Světelný jev při průletu tělesa atmosférou','Kámen dopadlý na Zem','Ledový měsíc','Druh planety'],a:0,
-f:'Meteor bývá lidově označován jako „padající hvězda“.'},
+f:'Meteor bývá lidově označován jako „padající hvězda".'},
 
 {c:'telesa',t:'q',q:'Co je meteorid?',
 o:['Malé těleso pohybující se vesmírem','Kráter na Měsíci','Druh komety','Plynné těleso'],a:0,
@@ -1662,7 +1646,7 @@ f:'Meteority pomáhají vědcům zkoumat vznik sluneční soustavy.'},
 o:['Jiný název pro polární záři','Druh komety','Měsíc Saturnu','Kosmická sonda'],a:0,
 f:'Aurora vzniká v atmosféře poblíž magnetických pólů Země.'},
 
-  {c:'telesa',t:'q',q:'Co je planetární mlhovina?',
+{c:'telesa',t:'q',q:'Co je planetární mlhovina?',
 o:['Oblak plynu odvržený umírající hvězdou','Místo vzniku planet','Pás asteroidů','Obří kometa'],a:0,
 f:'Planetární mlhoviny vznikají na konci života hvězd podobných Slunci.'},
 
@@ -1761,11 +1745,11 @@ f:'Koróna je dobře viditelná při úplném zatmění Slunce.'},
 {c:'telesa',t:'q',q:'Co je fotosféra?',
 o:['Viditelný povrch Slunce','Jádro Slunce','Vrstva atmosféry Země','Pás asteroidů'],a:0,
 f:'Fotosféra je část Slunce, kterou běžně pozorujeme.'},
+];
 
 // ── BADGES (18) ──
+// OPRAVA: id v ok() musí odpovídat id v CATS (hvezdy, porovnani, zahady)
 const BADGES = [
-  ];
-  
   {id:'first',    ico:'🚀', n:'První start!',      d:'Odpoviň na první otázku',             ok:s=>s.ta>=1},
   {id:'streak3',  ico:'⭐', n:'Série 3',            d:'3 správné za sebou',                  ok:s=>s.ms>=3},
   {id:'streak5',  ico:'🌟', n:'Série 5',            d:'5 správných za sebou',                ok:s=>s.ms>=5},
@@ -1773,10 +1757,10 @@ const BADGES = [
   {id:'streak15', ico:'✨', n:'Ostrý navigátor',    d:'15 správných za sebou',               ok:s=>s.ms>=15},
   {id:'cat_pla',  ico:'🪐', n:'Planetolog',         d:'Dokonči Planety',                     ok:s=>(s.cb.planety||0)>0},
   {id:'cat_mes',  ico:'🌙', n:'Lunární expert',     d:'Dokonči Měsíce & Prstence',           ok:s=>(s.cb.mesice||0)>0},
-  {id:'cat_slu',  ico:'☀️', n:'Sluneční vědec',    d:'Dokonči Slunce & Hvězdy',             ok:s=>(s.cb.slunce||0)>0},
+  {id:'cat_slu',  ico:'☀️', n:'Sluneční vědec',    d:'Dokonči Slunce & Hvězdy',             ok:s=>(s.cb.hvezdy||0)>0},
   {id:'cat_mis',  ico:'🚀', n:'Kosmonaut',          d:'Dokonči Mise & Astronauti',           ok:s=>(s.cb.mise||0)>0},
-  {id:'cat_srv',  ico:'📏', n:'Kosmický měřič',    d:'Dokonči Kdo je větší?',               ok:s=>(s.cb.srovnani||0)>0},
-  {id:'cat_zaj',  ico:'🔭', n:'Vesmírný záhadolog', d:'Dokonči Záhady vesmíru',              ok:s=>(s.cb.zajimavosti||0)>0},
+  {id:'cat_srv',  ico:'📏', n:'Kosmický měřič',    d:'Dokonči Kdo je větší?',               ok:s=>(s.cb.porovnani||0)>0},
+  {id:'cat_zaj',  ico:'🔭', n:'Vesmírný záhadolog', d:'Dokonči Záhady vesmíru',              ok:s=>(s.cb.zahady||0)>0},
   {id:'cat_tel',  ico:'☄️', n:'Astronom',           d:'Dokonči Tělesa & Jevy',              ok:s=>(s.cb.telesa||0)>0},
   {id:'perfect',  ico:'🌠', n:'Perfektní!',         d:'3 hvězdy v jakékoliv kategorii',      ok:s=>Object.values(s.cb).some(v=>v===3)},
   {id:'allcat',   ico:'🏆', n:'Průzkumník vesmíru', d:'Dokonči všech 7 kategorií',           ok:s=>CATS.every(c=>(s.cb[c.id]||0)>0)},
@@ -2005,7 +1989,6 @@ function goHome(){renderHome();}
 function playAgain(){startCat(SES.cat);}
 
 renderHome();
-
 </script>
 </body>
 </html>
