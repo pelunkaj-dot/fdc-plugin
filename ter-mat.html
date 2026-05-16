@@ -2090,11 +2090,54 @@ if (window.speechSynthesis) {
   window.speechSynthesis.addEventListener('voiceschanged', _loadVoices);
 }
 
-const speakEN = (text, rate=1.0) => {
-  text = stripEmoji(text); if (!text || !text.trim()) return;
-  const synth = window.speechSynthesis; if (!synth) return;
-  // Android bug: cancel + malý timeout
+let _ttsAudio = null;
+
+const speakEN = async (text, rate = 1.0) => {
+  text = stripEmoji(text);
+  if (!text || !text.trim()) return;
+
+  const speed = rate < 0.8 ? 0.55 : 1.0;
+
+  // 1) Primárně zkusíme API TTS
+  try {
+    if (_ttsAudio) {
+      _ttsAudio.pause();
+      _ttsAudio.currentTime = 0;
+    }
+
+    const res = await fetch('https://fdc-gateway.vercel.app/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text,
+        lang: 'en',
+        voice: 'english-female',
+        speed
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error('TTS API chyba: ' + res.status);
+    }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    _ttsAudio = new Audio(url);
+    _ttsAudio.onended = () => URL.revokeObjectURL(url);
+    await _ttsAudio.play();
+
+    return;
+  } catch (err) {
+    console.warn('API TTS selhalo, používám nouzově Web Speech:', err);
+  }
+
+  // 2) Nouzově původní Web Speech API
+  const synth = window.speechSynthesis;
+  if (!synth) return;
+
   synth.cancel();
+
   const doSpeak = () => {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'en-GB';
@@ -2104,15 +2147,15 @@ const speakEN = (text, rate=1.0) => {
     if (_enVoice) u.voice = _enVoice;
     synth.speak(u);
   };
-  // Na Androidu hlasy nemusí být hned připraveny
+
   if (_enVoice || synth.getVoices().length > 0) {
     setTimeout(doSpeak, 50);
   } else {
-    synth.addEventListener('voiceschanged', () => setTimeout(doSpeak, 50), {once:true});
-    setTimeout(doSpeak, 600); // fallback
+    synth.addEventListener('voiceschanged', () => setTimeout(doSpeak, 50), { once: true });
+    setTimeout(doSpeak, 600);
   }
 };
-
+  
 // ── AUDIO ─────────────────────────────────────────────────────────────────────
 let actx = null;
 const getCtx = () => {
