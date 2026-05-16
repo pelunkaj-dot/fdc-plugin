@@ -13,10 +13,44 @@
   --text:#142014;--muted:#5A7A5A;
   --correct:#2E6B2E;--wrong:#C62828;--xp:#6D28D9;
   --border:rgba(27,94,32,.16);
+  --bg-grad1:rgba(56,142,60,.09);--bg-grad2:rgba(2,136,209,.07);
 }
+
+/* ── DARK THEME ── */
+body.theme-dark{
+  --bg:#0A1A0A;--bg2:#112211;--card:rgba(18,38,18,.92);--card2:rgba(14,28,14,.95);
+  --zelena:#66BB6A;--zelena2:#81C784;--zelena3:#A5D6A7;
+  --modra:#40C4FF;--modra2:#29B6F6;--zluta:#FFD54F;
+  --text:#E8F5E9;--muted:#7AAB7A;
+  --correct:#66BB6A;--wrong:#EF5350;--xp:#CE93D8;
+  --border:rgba(102,187,106,.22);
+  --bg-grad1:rgba(102,187,106,.08);--bg-grad2:rgba(64,196,255,.06);
+}
+
+/* ── HOLČIČÍ THEME ── */
+body.theme-girl{
+  --bg:#FFF0F7;--bg2:#FFD6EA;--card:#FFFFFF;--card2:#FFF5FA;
+  --zelena:#C2185B;--zelena2:#E91E63;--zelena3:#F48FB1;
+  --modra:#7B1FA2;--modra2:#AB47BC;--zluta:#FF8F00;
+  --text:#4A0030;--muted:#A05070;
+  --correct:#388E3C;--wrong:#C62828;--xp:#7B1FA2;
+  --border:rgba(233,30,99,.2);
+  --bg-grad1:rgba(233,30,99,.09);--bg-grad2:rgba(171,71,188,.07);
+}
+
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
-background-image:radial-gradient(ellipse at 5% 5%,rgba(56,142,60,.09) 0%,transparent 50%),radial-gradient(ellipse at 95% 95%,rgba(2,136,209,.07) 0%,transparent 50%);}
+  background-image:radial-gradient(ellipse at 5% 5%,var(--bg-grad1) 0%,transparent 50%),
+                   radial-gradient(ellipse at 95% 95%,var(--bg-grad2) 0%,transparent 50%);
+  transition:background .3s,color .3s;
+}
+
+/* ── THEME SWITCHER ── */
+.theme-sw{position:fixed;top:10px;right:10px;z-index:300;display:flex;gap:3px;background:var(--card);border:1.5px solid var(--border);border-radius:999px;padding:4px 7px;box-shadow:0 2px 10px rgba(0,0,0,.12);transition:background .3s,border-color .3s;}
+.theme-sw button{background:none;border:none;font-size:1.05rem;cursor:pointer;padding:3px 5px;border-radius:50%;transition:all .18s;opacity:.5;line-height:1;}
+.theme-sw button:hover{opacity:1;transform:scale(1.2)}
+.theme-sw button.active{opacity:1;background:var(--bg2);}
+
 .screen{display:none;min-height:100vh;padding:0 16px 40px;max-width:600px;margin:0 auto;animation:fadeIn .3s ease}
 .screen.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -69,11 +103,13 @@ background-image:radial-gradient(ellipse at 5% 5%,rgba(56,142,60,.09) 0%,transpa
 .answers.solo{grid-template-columns:1fr}
 .ans-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:12px;padding:13px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:all .18s;text-align:center;line-height:1.35;}
 .ans-btn:hover:not(:disabled){border-color:var(--zelena2);background:rgba(56,142,60,.07);color:var(--zelena)}
-.ans-btn.correct{background:rgba(46,107,46,.12);border-color:var(--correct);color:var(--correct);animation:correctPulse .5s ease}
+.ans-btn.correct{background:rgba(46,107,46,.15);border-color:var(--correct);color:var(--correct);animation:correctPulse .5s ease}
 .ans-btn.wrong{background:rgba(198,40,40,.09);border-color:var(--wrong);color:var(--wrong);animation:wrongShake .4s ease}
-.ans-btn.show-correct{background:rgba(46,107,46,.1);border-color:var(--correct);color:var(--correct)}
+.ans-btn.show-correct{background:rgba(46,107,46,.12);border-color:var(--correct);color:var(--correct)}
 .ans-btn:disabled{cursor:default}
 .fact-box{background:linear-gradient(135deg,rgba(56,142,60,.08),rgba(2,136,209,.04));border:1.5px solid rgba(56,142,60,.2);border-radius:12px;padding:14px;margin-bottom:13px;display:none;animation:popIn .3s ease;}
+body.theme-dark .fact-box{background:linear-gradient(135deg,rgba(102,187,106,.09),rgba(64,196,255,.05));border-color:rgba(102,187,106,.25);}
+body.theme-girl .fact-box{background:linear-gradient(135deg,rgba(233,30,99,.07),rgba(171,71,188,.05));border-color:rgba(233,30,99,.22);}
 .fact-box.on{display:block}
 .fact-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.14em;color:var(--zelena);font-weight:800;margin-bottom:5px}
 .fact-text{font-size:.86rem;color:var(--text);line-height:1.6}
@@ -112,6 +148,7 @@ background-image:radial-gradient(ellipse at 5% 5%,rgba(56,142,60,.09) 0%,transpa
 .badge-c{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 9px;text-align:center;transition:all .3s;}
 .badge-c.locked{opacity:.3;filter:grayscale(.7)}
 .badge-c.unlocked{border-color:rgba(56,142,60,.4);box-shadow:0 0 12px rgba(56,142,60,.1)}
+body.theme-girl .badge-c.unlocked{border-color:rgba(233,30,99,.4);box-shadow:0 0 12px rgba(233,30,99,.12)}
 .badge-ico{font-size:2.1rem;margin-bottom:7px;display:block}
 .badge-n{font-size:.68rem;font-weight:800;color:var(--zelena);text-transform:uppercase;letter-spacing:.07em;line-height:1.25}
 .badge-d{font-size:.61rem;color:var(--muted);margin-top:3px;line-height:1.35}
@@ -123,6 +160,14 @@ background-image:radial-gradient(ellipse at 5% 5%,rgba(56,142,60,.09) 0%,transpa
 </style>
 </head>
 <body>
+
+<!-- PŘEPÍNAČ TÉMATU -->
+<div class="theme-sw" id="themeSw">
+  <button id="btnLight" onclick="setTheme('light')" title="Světlé">☀️</button>
+  <button id="btnDark"  onclick="setTheme('dark')"  title="Tmavé">🌙</button>
+  <button id="btnGirl"  onclick="setTheme('girl')"  title="Holčičí">💗</button>
+</div>
+
 <div class="xp-popup" id="xpPopup"></div>
 
 <div class="screen" id="homeScreen">
@@ -185,13 +230,13 @@ background-image:radial-gradient(ellipse at 5% 5%,rgba(56,142,60,.09) 0%,transpa
 
 <script>
 const CATS=[
-  {id:'mesta',    name:'Města a sídla',     emoji:'🏙️', desc:'Krajská města, zajímavosti, poloha'},
-  {id:'reky',     name:'Řeky a voda',       emoji:'🌊', desc:'Řeky, přehrady, jezera, prameny'},
-  {id:'hory',     name:'Hory a pohoří',     emoji:'⛰️', desc:'Nejvyšší vrcholy, pohoří, hřebeny'},
-  {id:'kraje',    name:'Kraje a regiony',   emoji:'🗺️', desc:'Krajské zřízení, sídla, poloha'},
-  {id:'priroda',  name:'Příroda a parky',   emoji:'🌿', desc:'Národní parky, CHKO, fauna, flora'},
-  {id:'rekordy',  name:'České rekordy',     emoji:'🏆', desc:'Největší, nejdelší, nejhlubší, nejstarší'},
-  {id:'soused',   name:'Sousedé a hranice', emoji:'🧭', desc:'Sousední státy, hraniční přechody, délky'},
+  {id:'mesta',   name:'Města a sídla',     emoji:'🏙️', desc:'Krajská města, zajímavosti, poloha'},
+  {id:'reky',    name:'Řeky a voda',       emoji:'🌊', desc:'Řeky, přehrady, jezera, prameny'},
+  {id:'hory',    name:'Hory a pohoří',     emoji:'⛰️', desc:'Nejvyšší vrcholy, pohoří, hřebeny'},
+  {id:'kraje',   name:'Kraje a regiony',   emoji:'🗺️', desc:'Krajské zřízení, sídla, poloha'},
+  {id:'priroda', name:'Příroda a parky',   emoji:'🌿', desc:'Národní parky, CHKO, fauna, flora'},
+  {id:'rekordy', name:'České rekordy',     emoji:'🏆', desc:'Největší, nejdelší, nejhlubší, nejstarší'},
+  {id:'soused',  name:'Sousedé a hranice', emoji:'🧭', desc:'Sousední státy, hraniční přechody, délky'},
 ];
 
 const QS=[
@@ -210,7 +255,7 @@ f:'Brno leží na soutoku řek Svratky a Svitavy. Řeka Morava protéká východ
 
 {c:'mesta',t:'q',q:'Které město je známé pivovarem Pilsner Urquell?',
 o:['Plzeň','České Budějovice','Brno','Olomouc'],a:0,
-f:'Pilsner Urquell byl poprvé uvařen roku 1842 v Plzni. Podle něj vznikl název pivního stylu „pilsner“, který se rozšířil do celého světa.'},
+f:'Pilsner Urquell byl poprvé uvařen roku 1842 v Plzni. Podle něj vznikl název pivního stylu „pilsner", který se rozšířil do celého světa.'},
 
 {c:'mesta',t:'q',q:'Které město leží na soutoku Labe a Vltavy?',
 o:['Mělník','Litoměřice','Ústí nad Labem','Nymburk'],a:0,
@@ -256,7 +301,7 @@ f:'Litoměřice leží poblíž soutoku Ohře a Labe. Patří k nejstarším mě
 o:['Blansko','Brno','Vyškov','Boskovice'],a:0,
 f:'Blansko leží v blízkosti Moravského krasu a Punkevních jeskyní. Proto bývá označováno jako vstupní brána do této oblasti.'},
 
-  {c:'mesta',t:'q',q:'Které město je sídlem Plzeňského kraje?',
+{c:'mesta',t:'q',q:'Které město je sídlem Plzeňského kraje?',
 o:['Plzeň','Klatovy','Domažlice','Rokycany'],a:0,
 f:'Plzeň je čtvrtým největším městem České republiky. Proslavila se především pivovarnictvím a strojírenstvím.'},
 
@@ -373,7 +418,7 @@ f:'Odra pramení v Oderských vrších nedaleko města Odry.'},
 o:['Umělý kanál spojující Nežárku a Lužnici','Přirozený říční tok','Regulovaná část Vltavy','Odpadní kanál rybníka Rožmberk'],a:0,
 f:'Nová řeka je umělý kanál vybudovaný v 16. století pro ochranu jihočeských rybníků před povodněmi.'},
 
-  {c:'reky',t:'q',q:'Do kterého moře odvádí voda většina českých řek?',
+{c:'reky',t:'q',q:'Do kterého moře odvádí voda většina českých řek?',
 o:['Do Severního moře','Do Baltského moře','Do Černého moře','Do Jaderského moře'],a:0,
 f:'Většina území České republiky patří do úmoří Severního moře. Voda odtéká hlavně prostřednictvím Labe.'},
 
@@ -478,7 +523,7 @@ f:'Adršpašsko-teplické skály jsou známé pískovcové skalní město v Brou
 o:['Jeseníky','Orlické hory','Jizerské hory','Beskydy'],a:0,
 f:'Jeseníky patří mezi nejvyšší pohoří České republiky. Nejvyšším vrcholem je Praděd.'},
 
-  {c:'hory',t:'q',q:'Které pohoří leží na severu Čech u Liberce?',
+{c:'hory',t:'q',q:'Které pohoří leží na severu Čech u Liberce?',
 o:['Jizerské hory','Krušné hory','Orlické hory','Beskydy'],a:0,
 f:'Jizerské hory leží na severu Čech při hranici s Polskem. Nejvyšší horou české části je Smrk.'},
 
@@ -537,9 +582,8 @@ f:'Město Jeseník leží v oblasti Jeseníků na severu Moravy.'},
 {c:'hory',t:'q',q:'Které pohoří je známé rozsáhlými bukovými lesy a orchidejemi?',
 o:['Bílé Karpaty','Krušné hory','Brdy','Doupovské hory'],a:0,
 f:'Bílé Karpaty jsou chráněnou krajinnou oblastí známou bohatou přírodou a výskytem orchidejí.'},
-  
+
 // KRAJE A REGIONY
-  
 {c:'kraje',t:'q',q:'Kolik krajů má Česká republika?',
 o:['14 krajů','13 krajů','16 krajů','12 krajů'],a:0,
 f:'Česká republika má 14 krajů. Mezi kraje se počítá i hlavní město Praha.'},
@@ -580,7 +624,7 @@ f:'Zlín je krajským městem Zlínského kraje. Je známý hlavně díky obuvni
 o:['Hlavní město Praha','Liberecký kraj','Karlovarský kraj','Ústecký kraj'],a:0,
 f:'Nejmenším krajem podle rozlohy je hlavní město Praha. Zároveň má nejvyšší hustotu zalidnění v České republice.'},
 
-  {c:'kraje',t:'q',q:'Který kraj má nejvíce obyvatel?',
+{c:'kraje',t:'q',q:'Který kraj má nejvíce obyvatel?',
 o:['Středočeský kraj','Moravskoslezský kraj','Jihomoravský kraj','Hlavní město Praha'],a:0,
 f:'Středočeský kraj má nejvíce obyvatel ze všech krajů České republiky. Počet obyvatel rychle roste hlavně díky zázemí kolem Prahy.'},
 
@@ -660,7 +704,7 @@ f:'Ústí nad Labem leží na řece Labi nedaleko Českého středohoří.'},
 o:['Kraj Vysočina','Pardubický kraj','Jihočeský kraj','Olomoucký kraj'],a:0,
 f:'Jihlava je krajským městem Kraje Vysočina a leží na Českomoravské vrchovině.'},
 
-  {c:'kraje',t:'q',q:'Který kraj má krajské město České Budějovice?',
+{c:'kraje',t:'q',q:'Který kraj má krajské město České Budějovice?',
 o:['Jihočeský kraj','Plzeňský kraj','Karlovarský kraj','Pardubický kraj'],a:0,
 f:'České Budějovice jsou krajským městem Jihočeského kraje.'},
 
@@ -739,7 +783,7 @@ f:'Ostrava je třetím největším městem České republiky.'},
 {c:'kraje',t:'q',q:'Který kraj je známý rybníkem Rožmberk a oblastí Třeboňska?',
 o:['Jihočeský kraj','Středočeský kraj','Karlovarský kraj','Ústecký kraj'],a:0,
 f:'Třeboňsko v Jihočeském kraji je známé rybníkářstvím a chovem kaprů.'},
-  
+
 // PŘÍRODA A PARKY
 {c:'priroda',t:'q',q:'Kolik národních parků má Česká republika?',
 o:['4 národní parky','3 národní parky','5 národních parků','2 národní parky'],a:0,
@@ -940,7 +984,7 @@ f:'Řeka Kamenice vytváří v Českém Švýcarsku známé soutěsky.'},
 {c:'priroda',t:'q',q:'Který savec je největší šelmou žijící v České republice?',
 o:['Medvěd hnědý','Rys ostrovid','Vlk','Liška obecná'],a:0,
 f:'Medvěd hnědý je největší šelmou, která se v České republice občas vyskytuje.'},
-  
+
 // REKORDY
 {c:'rekordy',t:'q',q:'Které krajské město leží nejvýše v České republice?',
 o:['Jihlava','Šumperk','Trutnov','Jeseník'],a:0,
@@ -1042,7 +1086,7 @@ f:'Lipno je největší přehradou v České republice podle rozlohy vodní hlad
 o:['Pražský hrad','Karlštejn','Křivoklát','Hluboká'],a:0,
 f:'Pražský hrad je největším hradním komplexem v České republice.'},
 
-  {c:'rekordy',t:'q',q:'Které město je nejvýše položeným krajským městem v České republice?',
+{c:'rekordy',t:'q',q:'Které město je nejvýše položeným krajským městem v České republice?',
 o:['Jihlava','Liberec','Olomouc','Zlín'],a:0,
 f:'Jihlava leží v nadmořské výšce kolem 520 m n. m. a je nejvýše položeným krajským městem.'},
 
@@ -1342,7 +1386,9 @@ f:'Jihomoravský kraj leží na jihovýchodě České republiky a sousedí se Sl
 {c:'soused',t:'q',q:'Který sousední stát je od Prahy nejblíže?',
 o:['Německo','Rakousko','Polsko','Slovensko'],a:0,
 f:'Z Prahy je nejblíže k hranicím s Německem.'},
-  
+];
+
+// ── BADGES ──
 const BADGES=[
   {id:'first',  ico:'🗺️',n:'První výprava',     d:'Odpoviň na první otázku',             ok:s=>s.ta>=1},
   {id:'str3',   ico:'🔥',n:'Série 3',            d:'3 správné za sebou',                  ok:s=>s.ms>=3},
@@ -1363,6 +1409,16 @@ const BADGES=[
   {id:'xp1000', ico:'🗺️',n:'Kartograf',         d:'Získej 1000 XP',                      ok:s=>s.xp>=1000},
   {id:'allstar',ico:'🌿',n:'Mistr zeměpisu',     d:'3 hvězdy ve všech 7 kategoriích',     ok:s=>CATS.every(c=>(s.cb[c.id]||0)>=3)},
 ];
+
+// ── THEME ──
+function setTheme(t){
+  document.body.className=t==='light'?'':`theme-${t}`;
+  localStorage.setItem('fajnzemepis_theme',t);
+  ['light','dark','girl'].forEach((name,i)=>{
+    document.querySelectorAll('.theme-sw button')[i].classList.toggle('active',name===t);
+  });
+}
+(function(){setTheme(localStorage.getItem('fajnzemepis_theme')||'light');})();
 
 // ── STATE ──
 let ST=load(),SES={};
@@ -1472,7 +1528,6 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.re
 function goHome(){renderHome();}
 function playAgain(){startCat(SES.cat);}
 renderHome();
-
 </script>
 </body>
 </html>
