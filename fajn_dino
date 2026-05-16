@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FajnDino — Dinosauří svět</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FDF6EC;--bg2:#F5ECD8;--card:#FFFFFF;--card2:#FBF4E8;--amber:#B87010;--amber2:#8A5200;--amber3:#D4880E;--ember:#C04A08;--text:#2E1F0A;--muted:#8A7050;--correct:#2E7D2E;--wrong:#C03030;--xp:#6D28D9;--border:rgba(160,110,40,.18);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;background-image:radial-gradient(ellipse at 10% 0%,rgba(210,160,60,.07) 0%,transparent 50%),radial-gradient(ellipse at 90% 100%,rgba(180,100,20,.05) 0%,transparent 50%);}
+.screen{display:none;min-height:100vh;padding:0 16px 40px;max-width:600px;margin:0 auto;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes starPop{0%{transform:scale(0) rotate(-30deg);opacity:0}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes flamePulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.22)}}
+@keyframes xpFloat{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}20%{transform:translate(-50%,-50%) scale(1.1);opacity:1}80%{transform:translate(-50%,-80%);opacity:1}100%{transform:translate(-50%,-120%) scale(.8);opacity:0}}
+@keyframes correctPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 4px rgba(46,125,46,.35)}}
+@keyframes wrongShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes slide{from{transform:translateX(30px);opacity:0}to{transform:none;opacity:1}}
+.home-header{text-align:center;padding:28px 0 18px}
+.logo{font-family:'Bebas Neue',cursive;font-size:3.8rem;letter-spacing:.06em;line-height:1;background:linear-gradient(135deg,#8A5200 0%,#B87010 45%,#C04A08 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.logo-ico{font-size:3rem;-webkit-text-fill-color:initial;vertical-align:middle;margin-right:6px}
+.logo-sub{font-size:.78rem;color:var(--muted);letter-spacing:.16em;text-transform:uppercase;margin-top:5px}
+.xp-bar{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--border);border-radius:999px;padding:8px 22px;margin-top:14px;font-weight:800;font-size:1.05rem;color:var(--xp);box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.xp-lbl{font-weight:400;color:var(--muted);font-size:.8rem}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:14px 0}
+.cat-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px 14px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.cat-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(180,110,10,.05));opacity:0;transition:opacity .22s;}
+.cat-card:hover::before{opacity:1}
+.cat-card:hover{border-color:var(--amber3);transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.12)}
+.cat-card:active{transform:scale(.97)}
+.cat-emoji{font-size:2rem;margin-bottom:8px;display:block}
+.cat-name{font-family:'Bebas Neue',cursive;font-size:1.15rem;letter-spacing:.06em;color:var(--amber2);line-height:1.2}
+.cat-count{font-size:.65rem;color:var(--amber3);font-weight:800;margin-top:2px;letter-spacing:.05em}
+.cat-desc{font-size:.71rem;color:var(--muted);margin-top:3px;line-height:1.4}
+.cat-stars{margin-top:8px;display:flex;gap:3px}
+.cat-star{font-size:.82rem;opacity:.16;transition:opacity .3s}
+.cat-star.on{opacity:1}
+.btn-badges{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:15px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.btn-badges:hover{border-color:var(--amber3);color:var(--amber2)}
+.badge-pill{background:var(--amber3);color:#fff;font-size:.7rem;font-weight:800;border-radius:999px;padding:2px 8px}
+.q-topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 10px}
+.q-cat{font-family:'Bebas Neue',cursive;font-size:1rem;letter-spacing:.1em;color:var(--amber2)}
+.q-cnt{font-size:.82rem;color:var(--muted);font-weight:700}
+.q-streak{display:none;align-items:center;gap:3px;font-weight:800;font-size:.9rem;color:var(--ember)}
+.q-streak.on{display:flex}
+.streak-fire{animation:flamePulse .65s ease infinite;display:inline-block}
+.prog-bar{height:5px;background:var(--bg2);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--amber3));border-radius:999px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.q-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:22px;margin-bottom:14px;min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:slide .25s ease;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.q-badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px;font-weight:700}
+.q-text{font-size:1.08rem;font-weight:700;line-height:1.48;color:var(--text)}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
+.answers.solo{grid-template-columns:1fr}
+.ans-btn{background:var(--card2);border:1.5px solid var(--border);border-radius:13px;padding:13px 11px;color:var(--text);font-family:'Nunito',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:all .18s;text-align:center;line-height:1.35;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.ans-btn:hover:not(:disabled){border-color:var(--amber3);background:rgba(180,110,10,.07);color:var(--amber2)}
+.ans-btn.correct{background:rgba(46,125,46,.12);border-color:var(--correct);color:var(--correct);animation:correctPulse .5s ease}
+.ans-btn.wrong{background:rgba(192,48,48,.1);border-color:var(--wrong);color:var(--wrong);animation:wrongShake .4s ease}
+.ans-btn.show-correct{background:rgba(46,125,46,.1);border-color:var(--correct);color:var(--correct)}
+.ans-btn:disabled{cursor:default}
+.fact-box{background:linear-gradient(135deg,rgba(180,110,10,.07),rgba(192,74,8,.03));border:1.5px solid rgba(180,110,10,.22);border-radius:13px;padding:14px;margin-bottom:13px;display:none;animation:popIn .3s ease;}
+.fact-box.on{display:block}
+.fact-label{font-size:.67rem;text-transform:uppercase;letter-spacing:.14em;color:var(--amber);font-weight:800;margin-bottom:5px}
+.fact-text{font-size:.86rem;color:var(--text);line-height:1.58}
+.next-btn{width:100%;background:linear-gradient(135deg,var(--amber),var(--amber3));border:none;border-radius:13px;padding:16px;color:#fff;font-family:'Bebas Neue',cursive;font-size:1.25rem;letter-spacing:.1em;cursor:pointer;display:none;transition:all .2s;box-shadow:0 4px 14px rgba(180,110,10,.25);}
+.next-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.next-btn.on{display:block;animation:popIn .3s ease}
+.xp-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--xp);color:#fff;font-family:'Bebas Neue',cursive;font-size:2rem;padding:10px 28px;border-radius:999px;pointer-events:none;z-index:200;opacity:0;white-space:nowrap;box-shadow:0 4px 20px rgba(109,40,217,.35);}
+.xp-popup.go{animation:xpFloat 1.7s ease forwards}
+.res-header{text-align:center;padding:28px 0 16px}
+.res-title{font-family:'Bebas Neue',cursive;font-size:2.6rem;letter-spacing:.05em;color:var(--amber2)}
+.res-sub{color:var(--muted);font-size:.88rem;margin-top:3px}
+.res-stars{display:flex;justify-content:center;gap:14px;margin:18px 0}
+.res-star{font-size:2.8rem;opacity:.14;display:inline-block}
+.res-star.on{opacity:1;animation:starPop .5s cubic-bezier(.4,0,.2,1) forwards}
+.res-star:nth-child(2){animation-delay:.2s}
+.res-star:nth-child(3){animation-delay:.4s}
+.res-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:14px 0}
+.stat-c{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 9px;text-align:center;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.stat-v{font-family:'Bebas Neue',cursive;font-size:1.75rem;color:var(--amber)}
+.stat-l{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:2px}
+.facts-review{margin:18px 0}
+.facts-t{font-family:'Bebas Neue',cursive;font-size:1.15rem;color:var(--amber2);letter-spacing:.08em;margin-bottom:9px}
+.fact-item{background:var(--card);border-left:3px solid var(--amber3);border-radius:0 9px 9px 0;padding:9px 13px;margin-bottom:7px;font-size:.83rem;line-height:1.52;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.res-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.btn-primary{background:linear-gradient(135deg,var(--amber),var(--amber3));border:none;border-radius:13px;padding:15px;color:#fff;font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.08em;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(180,110,10,.25);}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-sec{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:15px;color:var(--text);font-family:'Bebas Neue',cursive;font-size:1.1rem;letter-spacing:.08em;cursor:pointer;transition:all .2s;box-shadow:0 1px 6px rgba(0,0,0,.05);}
+.btn-sec:hover{border-color:var(--amber3);color:var(--amber2)}
+.badges-top{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
+.back-btn{background:var(--card);border:1.5px solid var(--border);border-radius:9px;padding:7px 14px;color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;font-size:.82rem;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.back-btn:hover{border-color:var(--amber3)}
+.badges-t{font-family:'Bebas Neue',cursive;font-size:1.7rem;color:var(--amber2);letter-spacing:.05em}
+.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge-c{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 9px;text-align:center;transition:all .3s;box-shadow:0 1px 6px rgba(0,0,0,.05);}
+.badge-c.locked{opacity:.3;filter:grayscale(.8)}
+.badge-c.unlocked{border-color:rgba(180,110,10,.4)}
+.badge-ico{font-size:2.1rem;margin-bottom:7px;display:block}
+.badge-n{font-size:.68rem;font-weight:800;color:var(--amber2);text-transform:uppercase;letter-spacing:.07em;line-height:1.25}
+.badge-d{font-size:.61rem;color:var(--muted);margin-top:3px;line-height:1.35}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--amber3);border-radius:3px}
+@media(max-width:360px){.logo{font-size:3rem}.cat-grid{gap:8px}.answers{gap:7px}}
+</style>
+</head>
+<body>
+<div class="xp-popup" id="xpPopup"></div>
+<div class="screen" id="homeScreen">
+  <div class="home-header">
+    <div class="logo"><span class="logo-ico">🦕</span>FajnDino</div>
+    <div class="logo-sub">Dinosauří expedice · otázky · mýty · rekordy</div>
+    <div class="xp-bar">⚡ <span id="xpTotal">0</span> <span class="xp-lbl">XP</span></div>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+  <button class="btn-badges" onclick="showBadges()">🏆 Odznaky &nbsp;<span class="badge-pill" id="badgePill">0/25</span></button>
+</div>
+<div class="screen" id="questionScreen">
+  <div class="q-topbar">
+    <div class="q-cat" id="qCat"></div>
+    <div class="q-streak" id="qStreak"><span class="streak-fire">🔥</span><span id="streakN">0</span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="q-cnt" id="qCnt"></div>
+      <button onclick="goHome()" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:.75rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;">← Domů</button>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div class="q-card">
+    <div class="q-badge" id="qBadge"></div>
+    <div class="q-text" id="qText"></div>
+  </div>
+  <div class="answers" id="answersDiv"></div>
+  <div class="fact-box" id="factBox">
+    <div class="fact-label">🦴 Věděl/a jsi?</div>
+    <div class="fact-text" id="factTxt"></div>
+  </div>
+  <button class="next-btn" id="nextBtn" onclick="nextQ()">Další →</button>
+</div>
+<div class="screen" id="resultScreen">
+  <div class="res-header">
+    <div class="res-title" id="resTitle"></div>
+    <div class="res-sub" id="resSub"></div>
+  </div>
+  <div class="res-stars">
+    <span class="res-star">⭐</span><span class="res-star">⭐</span><span class="res-star">⭐</span>
+  </div>
+  <div class="res-stats">
+    <div class="stat-c"><div class="stat-v" id="stCorrect">0</div><div class="stat-l">Správně</div></div>
+    <div class="stat-c"><div class="stat-v" id="stXP" style="color:var(--xp)">0</div><div class="stat-l">XP</div></div>
+    <div class="stat-c"><div class="stat-v" id="stStreak" style="color:var(--ember)">0</div><div class="stat-l">Max série</div></div>
+  </div>
+  <div class="facts-review">
+    <div class="facts-t">🦴 Co jsi se dozvěděl/a</div>
+    <div id="factsList"></div>
+  </div>
+  <div class="res-btns">
+    <button class="btn-primary" onclick="playAgain()">Hrát znovu</button>
+    <button class="btn-sec" onclick="goHome()">← Domů</button>
+  </div>
+</div>
+<div class="screen" id="badgesScreen">
+  <div class="badges-top">
+    <button class="back-btn" onclick="goHome()">← Zpět</button>
+    <div class="badges-t">Moje odznaky</div>
+  </div>
+  <div class="badge-grid" id="badgeGrid"></div>
+</div>
+<script>
+const CATS=[
+  {id:'fakta',      name:'Tělo & Síla',    emoji:'💪', desc:'Rozměry, rychlost, rekordy'},
+  {id:'potrava',    name:'Co jím?',        emoji:'🥩', desc:'Lovci i býložravci'},
+  {id:'srovnani',   name:'Kdo vyhraje?',   emoji:'⚔️', desc:'Souboje a srovnání'},
+  {id:'ery',        name:'Kdy & Kde?',     emoji:'🌍', desc:'Éry, lokace, nálezy'},
+  {id:'zajimavosti',name:'Věda & Mýty',    emoji:'🔬', desc:'Překvapivá fakta'},
+  {id:'zanik',      name:'Zánik světa',    emoji:'☄️', desc:'Konec éry dinosaurů'},
+  {id:'pravda',     name:'Pravda / Lež',   emoji:'✅', desc:'Rychlé mýty a chytáky'},
+  {id:'kdojsem',    name:'Kdo jsem?',      emoji:'🕵️', desc:'Hádej podle stop'},
+  {id:'film',       name:'Film vs realita',emoji:'🎬', desc:'Co filmy přibarvily'},
+  {id:'rekordy',    name:'Dino rekordy',   emoji:'🏅', desc:'Největší, nejrychlejší, nejdivnější'},
+];
+const QS=[
+{c:'fakta',q:'Jak dlouhý byl dospělý Tyrannosaurus Rex?',o:['Až 12 metrů','Přes 20 metrů','Asi 6 metrů','Přes 25 metrů'],a:0,f:'T-Rex měřil přes 12 metrů — délka kamionu. Byl 4 metry vysoký v bocích. Stojícímu T-Rexovi bychom sáhali tak akorát na koleno.'},
+{c:'fakta',q:'Kolik vážil dospělý T-Rex?',o:['8–14 tun','2–4 tuny','20–25 tun','Přes 50 tun'],a:0,f:'T-Rex patřil k nejtěžším predátorům v historii. Africký slon, největší suchozemský tvor dnes, váží jen okolo 6 tun.'},
+{c:'fakta',q:'Jak velké byly zuby T-Rexe?',o:['Až 20 cm — jako banán','Asi 5 cm','Přes 50 cm','Asi 10 cm'],a:0,f:'Zuby T-Rexe byly až 20 cm. Sousto mělo sílu 35 000 newtonů — nejsilnější ze všech suchozemských tvorů v celé historii Země.'},
+{c:'fakta',q:'Jak rychle dokázal T-Rex běhat?',o:['15–25 km/h','50–60 km/h','Přes 80 km/h','Pouze 5 km/h'],a:0,f:'T-Rex byl kvůli hmotnosti poměrně pomalý — spíše vytrvalostní chodec. Lovil záseky a přepadením, ne sprinty.'},
+{c:'fakta',q:'Jak rychle běhal Velociraptor?',o:['Asi 40 km/h','Přes 100 km/h','Kolem 10 km/h','60–70 km/h'],a:0,f:'Velociraptor dosahoval asi 40 km/h. Srpovitý dráp na druhém prstu zadní nohy sloužil k bodání kořisti — jako nůž.'},
+{c:'fakta',q:'Kolik vážil Brachiosaurus?',o:['50–60 tun','10–15 tun','Přes 100 tun','Asi 30 tun'],a:0,f:'Brachiosaurus musel sníst až 400 kg potravy denně. To jako kdybychom my každý den snědli přes 2 000 hamburgerů!'},
+{c:'fakta',q:'Jak vysoký byl Brachiosaurus?',o:['Až 13 metrů','Asi 5 metrů','Přes 20 metrů','Přesně 8 metrů'],a:0,f:'Brachiosaurus dosahoval výšky čtyřpatrového domu — přizpůsoben k pastvě v korunách stromů, kam ostatní nedosáhli.'},
+{c:'fakta',q:'Jak dlouhý byl Diplodocus?',o:['Až 27 metrů','Asi 15 metrů','Přes 40 metrů','Kolem 10 metrů'],a:0,f:'Diplodocus byl jeden z nejdelších dinosaurů — 27 metrů. Více než polovina délky byl ocas fungující jako zvukový bič.'},
+{c:'fakta',q:'Kolik zubů měl T-Rex?',o:['50–60 zubů','Přes 200','Kolem 12','Přesně 32'],a:0,f:'T-Rex měl 50–60 mohutných zubů. Každý vypadlý zub znovu dorůstal — za celý život vyrostly stovky náhradních zubů.'},
+{c:'fakta',q:'Jak velký byl Spinosaurus?',o:['Až 15–18 metrů','Asi 8 metrů','Přes 30 metrů','Kolem 10 metrů'],a:0,f:'Spinosaurus byl pravděpodobně delší než T-Rex, ale byl přizpůsoben vodnímu prostředí — těžší kosti, úzká rybářská tlama.'},
+{c:'fakta',q:'Jak velký byl mozek Stegosaura?',o:['Velikost vlašského ořechu (70 g)','Fotbalový míč','Velikost pomeranče','Mozek neměl'],a:0,f:'Stegosaurus měl mozek jen 70 gramů pro zvíře o 5 tunách. Přesto přežil téměř 10 milionů let!'},
+{c:'fakta',q:'Jaký byl nejmasivnější dinosaurus?',o:['Argentinosaurus (80–100 tun)','T-Rex','Brachiosaurus','Supersaurus'],a:0,f:'Argentinosaurus z Patagonie. Jeho samotné obratle páteře dosahovaly výšky 1,8 metrů — jako vysoký člověk v jedné kosti.'},
+{c:'fakta',q:'Jaká byla délka srpovitého drápu Velociraptora?',o:['Asi 9 cm','Asi 40 cm','Přes 20 cm','Méně než 2 cm'],a:0,f:'Dráp Velociraptora byl 9 cm — nesloužil ke škrábání, ale k bodání kořisti při skoku. Jako ohnutý nůž.'},
+{c:'fakta',q:'Jak tlustá byla lebka Pachycephalosaura?',o:['Až 25 cm','Asi 2 cm','Přes 50 cm','Asi 8 cm'],a:0,f:'Lebka Pachycephalosaura byla až 25 cm tlustá! Sráželi se hlavami jako kamzíci — kost na kost při soubojích o dominanci.'},
+{c:'fakta',q:'Jak velké bylo největší dinosauří vejce?',o:['Asi 30 cm — jako fotbalový míč','Asi 5 cm','Přes 1 metr','Asi 60 cm'],a:0,f:'Největší dinosauří vejce bylo 30 cm dlouhé a patřilo titanosaurovi. Pštrosí vejce je dnes asi 15 cm.'},
+{c:'fakta',q:'Jak daleko dohlédl T-Rex?',o:['Přes 6 km — lepší zrak než orel','Asi 100 metrů','Jen 10 metrů','Byl prakticky slepý'],a:0,f:'Analýzy T-Rex lebky ukázaly výjimečně velké oční důlky — zrak byl pravděpodobně velmi ostrý, lepší než dnešního orla.'},
+{c:'fakta',q:'Jak rychle rostl T-Rex v pubertě?',o:['Asi 2 kg denně','Narůstal jen 100 g denně','Byl celý život stejně velký','Vyrostl za 1 rok'],a:0,f:'T-Rex v pubertě (věk 14–18 let) přibíral asi 2 kg denně — nejrychleji rostoucí dinosaurus. Pak přestal růst.'},
+{c:'fakta',q:'Jak velký byl mozek T-Rexe?',o:['Asi 400 ml — jako pomeranč','Asi 5 ml','Přes 2 litry','Jako hrách'],a:0,f:'T-Rex měl mozek asi 400 ml, z čehož velká část zpracovávala čich. Byl pravděpodobně tak inteligentní jako dnešní krokodýl.'},
+{c:'fakta',q:'Jak dlouhé byly přední tlapky T-Rexe?',o:['Asi 1 metr — ale téměř nepoužitelné','Přes 3 metry','Asi 20 cm','Neměl je'],a:0,f:'Přední končetiny T-Rexe byly asi 1 metr dlouhé pro tělo 12 metrů. Paradoxně měly obrovské svaly — jejich funkce ale není jasná.'},
+{c:'fakta',q:'Jaký byl nejdelší krk v historii dinosaurů?',o:['Mamenchisaurus — přes 9 metrů','Brachiosaurus — 13 metrů','Diplodocus — 6 metrů','Supersaurus — 20 metrů'],a:0,f:'Mamenchisaurus měl krk tvořící více než polovinu celkové délky těla. Přes 9 metrů — sedm dospělých lidí stojících na sobě.'},
+{c:'fakta',q:'Jak velká byla plachta Spinosaura?',o:['Přes 1,8 metrů vysoká','Asi 20 cm','Přes 5 metrů','Byla jen kresba na kůži'],a:0,f:'Plachta Spinosaura přesahovala výšku 1,8 metrů. Mohla regulovat tělesnou teplotu nebo sloužila k lákání partnerů.'},
+{c:'fakta',q:'Kolik let žil průměrný T-Rex?',o:['Asi 28 let','Přes 200 let','Asi 5 let','Kolem 100 let'],a:0,f:'Výzkum letokruhů v kostech ukazuje, že T-Rex se dožíval asi 28 let. Rostl rychle — ale stárl také rychle.'},
+{c:'fakta',q:'Jak výkonný čich měl T-Rex?',o:['Výjimečný — největší čichové bulvy ze všech dino','Podprůměrný','Neměl čich','Stejný jako pes'],a:0,f:'Čichové bulvy T-Rexe byly největší ze všech dinosaurů. Mohl cítit mršinu ze vzdálenosti několika kilometrů.'},
+{c:'fakta',q:'Jak velký byl kyj Ankylosaura?',o:['Přes 50 kg — uměl zlomit kost T-Rexe','Asi 500 g','Přes 500 kg','Asi 5 kg'],a:0,f:'Kyj Ankylosaura vážil přes 50 kg. Biomechanické výpočty ukázaly, že byl dost silný na přeražení holení kosti T-Rexe.'},
+{c:'fakta',q:'Jak veliký byl nejmenší známý dinosaurus?',o:['Microraptor — asi 40 cm, 1 kg','mládě T-Rexe — 1 metr','Compsognathus — 10 cm','Velikost bakterie'],a:0,f:'Microraptor byl asi 40 cm dlouhý a vážil kolem 1 kg. Měl čtyři křídla — dvě na rukách a dvě na nohách. Byl to létající dinosaurus!'},
+{c:'fakta',q:'Jak silný skus měl T-Rex?',o:['35 000 N — nejsilnější suchozemský tvor v historii','Asi 1 000 N','Přes 100 000 N','Kolem 5 000 N'],a:0,f:'35 000 newtonů byl skus T-Rexe — asi 6× silnější než krokodýla dnes a 10× silnější než lva. Dokázal drtit masivní kosti.'},
+{c:'fakta',q:'Jak rychle se pohyboval Ankylosaurus?',o:['Asi 8 km/h — byl jako pomalý tank','Přes 50 km/h','Asi 30 km/h','Vůbec se nehýbal'],a:0,f:'Ankylosaurus byl pomalý — asi 8 km/h. Nepotřeboval utíkat: brnění na celém těle a 50kg kyj byl dokonalou obranou.'},
+{c:'fakta',q:'Kolik vrstev zubů měl Hadrosaur (kachnozobý dinosaurus)?',o:['Stovky zubů v bateriích — nejsložitější chrup','Jen 10 zubů','Zuby neměl vůbec','Jedna řada jako u člověka'],a:0,f:'Hadrosauři měli baterie stovek zubů ve více vrstvách — jakmile se jeden zub obrousil, nahradil ho nový. Nejefektivnější chrup v historii dinosaurů.'},
+{c:'fakta',q:'Jak velké bylo chodidlo T-Rexe?',o:['Asi 80 cm — délka dospělé nohy','Asi 20 cm','Přes 2 metry','Jako lidská stopa'],a:0,f:'Fosilní stopy T-Rexe jsou asi 80 cm dlouhé. Krok mezi stopami byl přes 4 metry — každým krokem překonal vzdálenost jako my dvěma kroky.'},
+{c:'fakta',q:'Jak velký byl Giganotosaurus?',o:['Přes 12 metrů — srovnatelný s T-Rexem','Asi 5 metrů','Přes 25 metrů','Menší než Velociraptor'],a:0,f:'Giganotosaurus z Argentiny byl jeden z největších predátorů — délkou srovnatelný s T-Rexem, ale žil o 30 milionů let dříve.'},
+{c:'potrava',q:'Čím se živil Tyrannosaurus Rex?',o:['Masem — byl vrcholný predátor','Rostlinami','Výhradně rybami','Hmyzem a červy'],a:0,f:'T-Rex byl aktivní dravec i mrchožrout. Fosilní kosti triceratopse s otisky zubů T-Rexe dokazují přímý lov těchto rohatých obrů.'},
+{c:'potrava',q:'Čím se živil Brachiosaurus?',o:['Rostlinami — jehličnany, kapradiny','Masem','Rybami','Byl všežravec'],a:0,f:'Brachiosaurus byl čistý býložravec. Pro trávení polykal kamínky (gastrolity), které v žaludku drtily potravu jako mlýnský kámen.'},
+{c:'potrava',q:'Čím se primárně živil Spinosaurus?',o:['Rybami — největší rybář v historii','Velkými dinosaury','Rostlinami','Vejci'],a:0,f:'Spinosaurus byl pravděpodobně největší rybář v historii Země. Izotopy v jeho kostech odpovídají vodním predátorům.'},
+{c:'potrava',q:'Lovil Velociraptor ve smečce?',o:['Pravděpodobně sám','Vždy ve velké smečce','Pouze ve dvojicích','Jen s mláďaty'],a:0,f:'Filmová smečka je sporná — fosilní záznamy ukazují spíše na samotáře. Nalezen byl fosilizovaný souboj Velociraptora s Protoceratopsem 1 vs 1.'},
+{c:'potrava',q:'Co jedl Ankylosaurus?',o:['Nízko rostoucí rostliny','Maso','Ryby','Kořeny a hlízy'],a:0,f:'Ankylosaurus byl čistý vegetarián navzdory hrozivému vzhledu. Kyj na ocase sloužil k obraně — k lovu ho nepotřeboval.'},
+{c:'potrava',q:'Co je gastrolit?',o:['Kámen polykaný pro trávení','Druh malého dinosaura','Fosilizovaný trus','Zub sauropoda'],a:0,f:'Gastrolity — žaludeční kameny — polykal Brachiosaurus i Diplodocus. Nemohli žvýkat, kameny v žaludku za ně drtily potravu.'},
+{c:'potrava',q:'Lovil Pteranodon ryby?',o:['Ano — jako pelikan z hladiny','Ne, jedl jen ovoce','Lovil malé dinosaury','Byl všežravec'],a:0,f:'Pteranodon lovil ryby podobně jako pelikán. Měl dokonce vak pod zobákem — nabíral vodu a filtroval kořist!'},
+{c:'potrava',q:'Co je koprolitos?',o:['Zkamenělý trus dinosaura','Část vejce','Fosilní zub','Otisk stopy'],a:0,f:'Největší T-Rexův koprolit byl 44 cm dlouhý a obsahoval mleté kosti Triceratopse. Prozradil, co T-Rex jedl před 66 miliony let!'},
+{c:'potrava',q:'Jak trávil Diplodocus potravu?',o:['Polykal větve celé, trávení s kameny','Žvýkal hodiny','Měl čtyři žaludky','Nemusel jíst tuhé věci'],a:0,f:'Diplodocus měl jen kolíkovité přední zuby — česal jimi listí. Polykal ho celé a kaménky v žaludku za něj obstaraly mletí.'},
+{c:'potrava',q:'Byl Triceratops čistý býložravec?',o:['Ano — jen rostliny','Příležitostně lovil','Jedl i vejce','Živil se houbami'],a:0,f:'Triceratops se živil palmami, kapradinami a tvrdými keři. Zobák uměl prokousnout tvrdé větve. Rohy sloužily k obraně, ne k lovu.'},
+{c:'potrava',q:'Jak se živil Stegosaurus?',o:['Nízkými rostlinami, kapradinami, ovocem','Masem menších dinosaurů','Rybami z řek','Jen listy ze stromů'],a:0,f:'Stegosaurus měl velmi malé zuby nevhodné ke žvýkání — polykal kusy rostlin celé a trávil pomalu ve velice rozsáhlém žaludku.'},
+{c:'potrava',q:'Co jedl Ornithomimus?',o:['Byl všežravec — hmyz, plody, malí živočichové','Výhradně maso','Jen rostliny','Jen vejce jiných dinosaurů'],a:0,f:'Ornithomimus (dinosaurus podobný pštrosovi) byl pravděpodobně všežravec — podobně jako dnešní pštrosi nebo emu.'},
+{c:'potrava',q:'Jak lovil T-Rex v záloze?',o:['Číhal u vodních zdrojů a útočil z úkrytu','Pronásledoval kořist hodiny','Lovil jen v noci','Byl příliš velký na lov'],a:0,f:'Podle fosilních stop jsou důkazy, že T-Rex číhal u vodních zdrojů — záloha za vegetací, pak bleskový útok.'},
+{c:'potrava',q:'Čím se živil Parasaurolophus?',o:['Jehličnany, palmovými listy, kapradinami','Masem','Rybami','Byl všežravec'],a:0,f:'Parasaurolophus měl baterie stovek zubů v čelistech — dokázal efektivně mlít i tvrdé jehličnaté větve.'},
+{c:'potrava',q:'Jak si T-Rex pomáhal s velkými kostmi?',o:['Drtil je zuby — kosti nalezeny v trusu','Odhodil kosti stranou','Polykal je celé','Pohřbíval je'],a:0,f:'T-Rex byl jediný dinosaurus s dostatečně silnými zuby na drcení těžkých kostí. V jeho koprolitech byly nalezeny drcené kosti.'},
+{c:'potrava',q:'Byl Baryonyx jen rybář?',o:['Hlavně ryby, ale i maso dinosaurů','Výhradně ryby','Jen rostliny','Jen vejce'],a:0,f:'V žaludku Baryonyxe byla nalezena fosilizovaná rybí šupina, ale také kosti mladého Iguanodona — byl to oportunistický predátor.'},
+{c:'potrava',q:'Jak jedl Diplodocus stromy?',o:['Česal listí zuby jako hřebenem, polykal je celé','Žvýkal pomalu','Stál na zadních','Pásl se na trávě'],a:0,f:'Diplodocus měl zuby jen vpředu jako hřeben. Jezdil jimi po větvích a česal listí. Polykal ho celé bez žvýkání.'},
+{c:'potrava',q:'Co jedl Iguanodon?',o:['Rostliny — kapradiny, jehličnany, cykasy','Maso','Ryby','Vše'],a:0,f:'Iguanodon byl býložravec s výjimečnými zuby — jako moderní kráva mohl žvýkat i tvrdé věci. Jedním z prvních vědecky popsaných dinosaurů.'},
+{c:'potrava',q:'Jak Spinosaurus lovil ryby?',o:['Brodil se a lovil rybářskou tlamou jako krokodýl','Skákal na ně z břehu','Plavil se a lovil pod vodou','Čekal až ryby samy vyskočí'],a:0,f:'Spinosaurus měl úzkou tlamu s kuželovitými zuby jako gharial a na konci tlamy citlivé receptory pro detekci pohybu ve vodě.'},
+{c:'potrava',q:'Proč měl Brachiosaurus tak dlouhý krk?',o:['Aby dosáhl na vysoké větve','Aby lépe viděl','Byl to omyl evoluce','Krk mu pomáhal plavat'],a:0,f:'Brachiosaurus se specializoval na vrcholky stromů — místa, kam jiní nedosáhli. Snižoval tak konkurenci o potravu.'},
+{c:'potrava',q:'Co jedl Compsognathus?',o:['Ještěrky, hmyz, malé obratlovce','Maso velkých dinosaurů','Ryby','Rostliny'],a:0,f:'Ve fosilním žaludku Compsognathuse byla nalezena ještěrka Bavarisaurus — přesná fosilizace poslední večeře před 145 miliony let!'},
+{c:'potrava',q:'Proč byl Triceratops nebezpečný pro T-Rexe?',o:['Rohy a límec chránily krk a mohly probodnout predátora','Byl rychlejší','Měl silnější skus','Žil ve smečkách'],a:0,f:'Fosilie T-Rexů se zahojenými otisky rohů Triceratopse dokazují, že někteří T-Rexové z takových soubojů odešli s trvalými zraněními.'},
+{c:'potrava',q:'Jak velkou kořist lovil Velociraptor?',o:['Kořist srovnatelné nebo menší velikosti','Brachiosaurus a větší','Jen hmyz','Byl býložravec'],a:0,f:'Velociraptor pravděpodobně lovil kořist své velikosti nebo menší — Protoceratopse, malé savce a ještěry. Nebyl zabijákem obrů.'},
+{c:'srovnani',q:'Kdo byl delší: T-Rex nebo Spinosaurus?',o:['Spinosaurus (až 18m vs 12m T-Rexe)','T-Rex byl delší','Byli stejně dlouzí','Záleží na pohlaví'],a:0,f:'Spinosaurus byl delší, ale T-Rex byl těžší a silnější. Žili v různých dobách a na různých kontinentech — k souboji nikdy nedošlo.'},
+{c:'srovnani',q:'Existují fosilní důkazy o soubojích T-Rexe s Triceratopsem?',o:['Ano — kosti se zahojenými stopami obou zbraní','Jen ve filmech','Ne, žádné důkazy','Jen jeden nález'],a:0,f:'Nalezeny byly kosti Triceratopse s otisky zubů T-Rexe I T-Rex kosti s otisky rohů — a oboje přežilo. Souboje byly reálné!'},
+{c:'srovnani',q:'Kdo byl rychlejší: T-Rex nebo Velociraptor?',o:['Velociraptor (40 km/h vs 20 km/h)','T-Rex byl rychlejší','Byli stejně rychlí','Oba byli pomalí'],a:0,f:'Velociraptor byl výrazně rychlejší, ale T-Rex ho mnohonásobně převyšoval silou. T-Rex vážil asi 8 000 Velociraptorů!'},
+{c:'srovnani',q:'Žili T-Rex a Stegosaurus ve stejné době?',o:['Ne — dělí je 85 milionů let!','Ano, bojovali spolu','Ano, ale na různých kontinentech','Ne, Stegosaurus byl mladší'],a:0,f:'Nás od T-Rexe dělí 66 milionů let. T-Rexe od Stegosaura 85 milionů let. T-Rex byl Stegosaurovi časově VZDÁLENĚJŠÍ než my T-Rexovi!'},
+{c:'srovnani',q:'Kdo měl delší ocas: Diplodocus nebo T-Rex?',o:['Diplodocus (14m vs 6m)','T-Rex měl delší','Spinosaurus nejdelší','Byli srovnatelní'],a:0,f:'Diplodocův ocas měřil přes 14 metrů — bič pohybující se nadzvukovou rychlostí. T-Rex měl krátký, tuhý ocas jen jako protizávaží.'},
+{c:'srovnani',q:'Kdo byl těžší: Brachiosaurus nebo Argentinosaurus?',o:['Argentinosaurus (80–100 tun vs 56 tun)','Brachiosaurus','Byli stejní','T-Rex byl nejtěžší'],a:0,f:'Argentinosaurus z Patagonie byl pravděpodobně nejtěžší suchozemský živočich v historii Země. Samotný obratel páteře byl velký 1,8 metrů.'},
+{c:'srovnani',q:'Kdo měl nejsilnější skus ze všech suchozemských živočichů?',o:['T-Rex (35 000 N)','Triceratops','Ankylosaurus','Crocodylus'],a:0,f:'Skus T-Rexe byl asi 6× silnější než krokodýla dnes. Dokázal drtit kosti — mleté kosti byly nalezeny v jeho trusu.'},
+{c:'srovnani',q:'Kdo byl inteligentnější: T-Rex nebo Velociraptor?',o:['Velociraptor (vyšší poměr mozku k tělu)','T-Rex','Byli si rovni','Oba byli primitivní'],a:0,f:'Velociraptor měl vyšší poměr mozku k tělu — pravděpodobně srovnatelný s dnešním krokodýlem nebo pštrosem.'},
+{c:'srovnani',q:'Kdo byl nebezpečnější: Ankylosaurus nebo Stegosaurus?',o:['Ankylosaurus — celé brnění + ničivý kyj','Stegosaurus — dorzální bodce','Byli stejní','Oba mírumilovní'],a:0,f:'Ankylosaurus měl brnění na celém těle a 50kg kyj. Stegosaurus měl jen zadní bodce. Ankylosaurus byl defensivně nadřazený.'},
+{c:'srovnani',q:'Kdo byl starší: Iguanodon nebo T-Rex?',o:['Iguanodon byl starší o 70 milionů let','T-Rex byl starší','Žili ve stejné době','Stáří se nedá určit'],a:0,f:'Iguanodon žil před 126 miliony let, T-Rex před 66 miliony let. Byli od sebe vzdáleni víc než my od T-Rexe!'},
+{c:'srovnani',q:'Byl Giganotosaurus větší než T-Rex?',o:['Délkou ano, ale byl lehčí','T-Rex byl delší i těžší','Byli identičtí','Giganotosaurus byl poloviční'],a:0,f:'Giganotosaurus byl délkou možná o trochu větší, ale T-Rex byl robustnější a těžší. Žili od sebe 30 milionů let na různých kontinentech.'},
+{c:'srovnani',q:'Kdo byl rychlejší: Ornithomimus nebo Velociraptor?',o:['Ornithomimus — až 70 km/h','Velociraptor byl rychlejší','Byli stejně rychlí','Oba se sotva hýbali'],a:0,f:'Ornithomimus byl pravděpodobně jeden z nejrychlejších dinosaurů — až 70 km/h. Stavbou těla jako pštros: lehká kostra, dlouhé nohy.'},
+{c:'srovnani',q:'Který dinosaurus měl největší lebku?',o:['Torosaurus','T-Rex','Triceratops','Pachycephalosaurus'],a:0,f:'Torosaurus měl lebku přes 2,7 metrů — největší lebku jakéhokoliv suchozemského živočicha v celé historii Země!'},
+{c:'srovnani',q:'Žili Spinosaurus a T-Rex ve stejné době?',o:['Ne — Spinosaurus byl o 30 milionů let starší','Ano, soupeřili','Ano, různé kontinenty','Ne, T-Rex byl starší'],a:0,f:'Spinosaurus žil v rané křídě (95 mil. let), T-Rex v pozdní křídě (66 mil. let). 30 milionů let je víc než celá éra savců dosud!'},
+{c:'srovnani',q:'Kdo byl větší: Velociraptor nebo Deinonychus?',o:['Deinonychus byl 2× větší','Velociraptor byl větší','Byli identičtí','Deinonychus byl menší'],a:0,f:'Deinonychus byl asi dvojnásobně větší než Velociraptor. V Jurském parku byl „Velociraptor" ve skutečnosti Deinonychus.'},
+{c:'srovnani',q:'Přežili dinosauři déle než savci na Zemi (dosud)?',o:['Dinosauři vládli déle — 165 mil. let vs savci 66 mil. let','Savci vládnou déle','Byli stejně dlouho','Nevíme to'],a:0,f:'Dinosauři vládli 165 milionů let. Savci jsou od vymření dinosaurů jen 66 milionů let — teprve vstupujeme do éry savců z dinosauřího pohledu.'},
+{c:'srovnani',q:'Kdo měl silnější ocas jako zbraň: Diplodocus nebo Ankylosaurus?',o:['Různé zbraně — Diplodocus švihal ocasem jako bičem, Ankylosaurus drtil','Diplodocus měl silnější','Ankylosaurus měl silnější','Ocasy jako zbraň nepoužívali'],a:0,f:'Diplodocův ocas byl jako bič pohybující se nadzvukovou rychlostí. Ankylosaurus měl kyj vhodný k drcení. Každý jiný typ zbraně.'},
+{c:'srovnani',q:'Byl Mosasaurus dinosaurus?',o:['Ne — byl to mořský plaz, příbuzný varanu','Ano, byl to mořský dinosaurus','Byl to savec','Byl to žralok'],a:0,f:'Mosasaurus byl mořský plaz (ne dinosaurus) s více než 100 zuby ve dvou řadách. Byl příbuzný dnešnímu varanu — obří varaní příbuzný v moři!'},
+{c:'ery',q:'Ve které geologické éře žil T-Rex?',o:['Pozdní křída (68–66 milionů let)','Střední jura','Triasový věk','Raná křída'],a:0,f:'T-Rex žil v pozdní křídě, těsně před velkým vymíráním. Byl jedním z posledních a největších predátorů celé éry dinosaurů.'},
+{c:'ery',q:'Ve které éře žil Stegosaurus?',o:['Pozdní jura (155 milionů let)','Raná křída','Trias','Pozdní křída'],a:0,f:'Stegosaurus byl starší o 85 milionů let než T-Rex. T-Rex byl Stegosaurovi časově blíže nám než Stegosaurus T-Rexovi!'},
+{c:'ery',q:'Kde byly nalezeny první fosílie T-Rexe?',o:['USA — Montana a Wyoming','Argentina','Čína','Mongolsko'],a:0,f:'"Sue" — největší kostra T-Rexe — byla nalezena v roce 1990 v Jižní Dakotě. Dnes je vystavena v Chicagu ve Field Museum.'},
+{c:'ery',q:'Kde byl objeven Velociraptor?',o:['Mongolsko — poušť Gobi','USA','Čína','Rusko'],a:0,f:'Velociraptor byl objeven roku 1923 v poušti Gobi. Tam byl nalezen slavný „Fighting Dinosaurs" — fosilizovaný souboj Velociraptora s Protoceratopsem!'},
+{c:'ery',q:'Na kterém kontinentu žil Spinosaurus?',o:['Severní Afrika — Maroko, Egypt','Severní Amerika','Asie','Austrálie'],a:0,f:'Spinosaurus žil v severní Africe v bažinaté deltě — byl to rybář v tropickém prostředí plném obřích ryb.'},
+{c:'ery',q:'Kdy začal věk dinosaurů?',o:['Před 230–252 miliony let (trias)','Před 66 miliony let','Před 400 miliony let','Před 150 miliony let'],a:0,f:'Dinosauři se objevili na konci triasového věku po masovém vymírání na konci permu a dominovali Zemi neuvěřitelných 165 milionů let.'},
+{c:'ery',q:'Na jakém kontinentu NEBYLY nalezeny fosílie dinosaurů?',o:['Fosílie byly na VŠECH 7 kontinentech!','Antarktida','Austrálie','Evropa'],a:0,f:'Na Antarktidě byl objeven Cryolophosaurus — důkaz, že kontinent byl kdysi teplejší. Dinosauři dobyli doslova celou planetu.'},
+{c:'ery',q:'Jak dlouho trvala éra dinosaurů?',o:['Asi 165 milionů let','Asi 66 milionů let','Přes 500 milionů let','Asi 10 milionů let'],a:0,f:'Dinosauři vládli Zemi 165 milionů let. My lidé existujeme méně než 1 milion let. Celá lidská civilizace je k době dinosaurů jako vteřina k hodině.'},
+{c:'ery',q:'Kde bylo nalezeno 38 koster Iguanodona najednou?',o:['Bernissart, Belgie (1878)','Londýn, Anglie','Berlin, Německo','Paříž, Francie'],a:0,f:'V belgickém uhelném dole Bernissart bylo roku 1878 nalezeno 38 kompletních koster Iguanodona — jeden z největších paleontologických nálezů vůbec.'},
+{c:'ery',q:'Kde byl nalezen Argentinosaurus?',o:['Patagonie, Argentina','Brazílie','USA','Čína'],a:0,f:'Patagonie je zlatý důl fosilií obřích dinosaurů. Kromě Argentinosaura tam byly nalezeny desítky dalších gigantů.'},
+{c:'ery',q:'Ve které éře žil Brachiosaurus?',o:['Pozdní jura (154–153 milionů let)','Pozdní křída','Triasový věk','Raná jura'],a:0,f:'Brachiosaurus žil ve stejné době jako Stegosaurus a Diplodocus — v pozdní juře. Severní Amerika tehdy byla součástí tropického ráje.'},
+{c:'ery',q:'Kde byl nalezen slavný Berlínský Brachiosaurus?',o:['Tanzanie, Afrika (1909–1912)','Berlín, Německo','USA','Argentina'],a:0,f:'Berlínský Brachiosaurus byl nalezen v Tanzanii v Tendaguru. Celá expedice přepravila přes 230 tun hornin do Berlína — největší paleontologická expedice té doby.'},
+{c:'ery',q:'Ve které zemi bylo nalezeno nejvíce fosilií T-Rexe?',o:['USA — Montana, Wyoming, Dakota','Kanada','Čína','Mongolsko'],a:0,f:'Většina fosilií T-Rexe pochází z USA, kde v pozdní křídě existovala vhodná prostředí pro zachování fosilií. Kanada je na druhém místě.'},
+{c:'ery',q:'Kdy vyhynul Stegosaurus?',o:['Asi před 150 miliony let — konec jury','Před 66 miliony let s T-Rexem','Před 200 miliony let','Stále žije'],a:0,f:'Stegosaurus vyhynul na konci jury, dlouho před objevením T-Rexe. Žil tedy ve světě, kde dominovali sauropodi, ne tyranosauři.'},
+{c:'ery',q:'Na jakém kontinentu žil Velociraptor?',o:['Asie — Mongolsko, Čína','Severní Amerika','Evropa','Afrika'],a:0,f:'Velociraptor byl asijský dinosaurus. Žil v Mongolsku a Číně v prostředí pouštních dun — ne v džungli jako ve filmech.'},
+{c:'ery',q:'Kde byl nalezen nejstarší dinosaurus?',o:['Jižní Amerika, 231 mil. let','Afrika','Čína','Evropa'],a:0,f:'Nejstarší dinosauři pocházejí z Jižní Ameriky — Eoraptor a Herrerasaurus z Argentiny. Jižní Amerika byla pravděpodobnou kolébkou dinosaurů.'},
+{c:'ery',q:'Kde jsou dinosauří fosílie v ČR?',o:['Chvaletice — otisk stopy sauropoda','Praha — kompletní T-Rex','Brno — celé hnízdo','Krkonoše — kostra sauropoda'],a:0,f:'V Chvaleticích byl objeven otisk stopy sauropoda. České dinosauří fosílie jsou vzácné — křídový záliv pokrýval jen část Čech.'},
+{c:'ery',q:'Kdy žil Diplodocus?',o:['Pozdní jura (154–152 milionů let)','Pozdní křída','Triasový věk','Raná křída'],a:0,f:'Diplodocus žil v pozdní juře — ve stejné době jako Stegosaurus a Brachiosaurus. Severní Amerika byla tehdy protkána řekami a bažinami.'},
+{c:'ery',q:'Kde byl nalezen nejúplnější Spinosaurus?',o:['Egypt a Maroko (1912, pak 2014)','Jižní Amerika','Čína','Austrálie'],a:0,f:'První Spinosaurus byl popsán v Egyptě roku 1912. Kostra byla zničena při bombardování Mnichova 1944. Nové fosílie z Maroka (2014) přepsaly vše co jsme věděli.'},
+{c:'ery',q:'Na jakém území žil Triceratops?',o:['Západ Severní Ameriky — USA, Kanada','Celá Severní Amerika','Asie','Evropa'],a:0,f:'Triceratops žil pouze na západě Severní Ameriky. Tehdy kontinent odděloval západ od východu Vnitrozemský mořský průplav — obrovské vnitrozemské moře.'},
+{c:'zajimavosti',q:'Jsou ptáci dinosauři?',o:['Ano — ptáci JSOU žijící dinosauři','Ne, jen se z nich vyvinuli','Jen velcí ptáci','Ptáci jsou příbuzní, jiná třída'],a:0,f:'Vědecký konsensus: ptáci jsou teropodní dinosauři. Slepice je vzdálenou příbuznou T-Rexe. V současné době žije přes 10 000 druhů dinosaurů — nazýváme je ptáky!'},
+{c:'zajimavosti',q:'Měl T-Rex peří?',o:['Pravděpodobně mláďata ano','Rozhodně ne','Pouze samice','Pouze na ocase'],a:0,f:'Příbuzní T-Rexe z Číny (Yutyrannus) měli prokazatelně peří. Dospělý T-Rex ho pravděpodobně ztratil — velké tělo se přehřívalo.'},
+{c:'zajimavosti',q:'Co znamená slovo „dinosaurus"?',o:['Hrozný ještěr (řecky deinos+sauros)','Velký plaz','Starý obr','Mocný drak'],a:0,f:'"Deinos" = hrozný/úžasný, "sauros" = ještěr. Slovo vymyslel Richard Owen v roce 1842 — původně znělo spíše "úžasný ještěr".'},
+{c:'zajimavosti',q:'Byl Pterodaktyl dinosaurus?',o:['Ne — byl to létající plaz (pterosaur)','Ano, létající dinosaurus','Byl to prapták','Savčí předek'],a:0,f:'Pterodactyl byl pterosaurus — létající plaz příbuzný dinosaurům, ale nikoliv dinosaurus. Stejně tak Mosasaurus nebo Plesiosaurus.'},
+{c:'zajimavosti',q:'Jakou barvu měli dinosauři?',o:['U mnoha druhů to víme — byli barevní!','Všichni zelení','Všichni šedí','Nevíme vůbec nic'],a:0,f:'Díky fosilním melanosomům víme, že Microraptor byl kovově modro-černý a Sinosauropteryx měl oranžové pruhy. Dinosauři mohli být pestří jako ptáci!'},
+{c:'zajimavosti',q:'Jak se rozmnožovali dinosauři?',o:['Kladli vejce (jako ptáci a plazi)','Rodili živá mláďata','Oboje dle druhu','Výtrusy jako kapradiny'],a:0,f:'Všichni dinosauři kladli vejce. Největší měřilo 30 cm. Některé druhy seděly na hnízdech a staraly se o mláďata — jako ptáci dnes.'},
+{c:'zajimavosti',q:'Byli dinosauři teplokrevní?',o:['Pravděpodobně teplokrevní jako ptáci','Studenokrevní jak ještěři','Záleží na druhu','Nevíme nic'],a:0,f:'Analýzy kostí a izotopů ukazují, že většina dinosaurů byla teplokrevná. Mohli proto být aktivní i v chladném počasí a v noci.'},
+{c:'zajimavosti',q:'Co je Archaeopteryx?',o:['Přechodný článek dinosaurů a ptáků','Nejstarší dinosaurus','Létající plaz','Dinosauří předek savců'],a:0,f:'Archaeopteryx žil před 150 miliony let a měl rysy dinosaura (zuby, kostěný ocas) i ptáka (pera, letoví kosti). Jedna z nejcennějších fosilií vědy.'},
+{c:'zajimavosti',q:'Kdo byla Mary Anning?',o:['Průkopnice paleontologie v 19. stol.','Druh dinosaura','Fosilní naleziště','Vědecká metoda'],a:0,f:'Mary Anning (1799–1847) jako chudé dítě sbírala fosílie v Dorsetu. Nalezla první fosílie Ichthyosaura a Plesiosaura — přesto ji věda ignorovala.'},
+{c:'zajimavosti',q:'Jak se jmenoval první vědecky popsaný dinosaurus?',o:['Megalosaurus (1824)','T-Rex','Iguanodon','Brachiosaurus'],a:0,f:'Megalosaurus - popsal jej William Buckland v roce 1824 z obří dolní čelisti. Původně usuzoval, že šlo o obra ze Starého zákona.'},
+{c:'zajimavosti',q:'Měl T-Rex binokulární vidění?',o:['Ano — oči směřovaly dopředu jako u orla','Ne, oči po stranách','Byl úplně slepý','Viděl jen infračervené záření'],a:0,f:'T-Rex měl oči nasměrované dopředu jako dnešní predátoři (orli, sovy). Binokulární vidění umožňuje přesný odhad vzdálenosti při lovu.'},
+{c:'zajimavosti',q:'Co je „Dinosauří renesance"?',o:['Vědecká revoluce 70. let — dinosauři jsou aktivní','Obnova vyhynulých druhů pomocí DNA','Filmová série','Muzeum v New Yorku'],a:0,f:'"Dinosauří renesanci" spustili John Ostrom a Robert Bakker. Přebudovala pohled ze studenokrevných plazů na aktivní ptačím způsobem žijící tvory.'},
+{c:'zajimavosti',q:'Mohl T-Rex opravdu vidět jen pohyb jako ve filmu?',o:['Ne — mýtus z filmů, měl výborný zrak','Ano, přesně tak','Ne, byl úplně slepý','Viděl jen teplo'],a:0,f:'Ve filmu Jurský park T-Rex „nevidí nehybnou kořist" — to je mýtus. Ve skutečnosti měl T-Rex výborný zrak na statické i pohybující se objekty.'},
+{c:'zajimavosti',q:'Kolik nových druhů dinosaurů je každoročně popsáno?',o:['Asi 40–50 nových druhů ročně','Méně než 1 ročně','Přes 1 000 ročně','Všechny jsou již popsány'],a:0,f:'Zlatý věk paleontologie stále pokračuje — každoročně je vědecky popsáno 40–50 nových druhů dinosaurů. Zejména Čína je v posledních dekádách eldorádem nálezů.'},
+{c:'zajimavosti',q:'Mohl T-Rex plavat?',o:['Ano — stopy v bahně to naznačují','Ne, okamžitě by se utopil','Jen sauropodi uměli plavat','Jen v mělčině'],a:0,f:'Nalezeny byly stopy T-Rexe v bahně bez kontaktu se dnem — pravděpodobně plaval! Stejně jako dnešní lvi a tygři umí plavat.'},
+{c:'zajimavosti',q:'Proč mají ptáci duté kosti?',o:['Zdědili je po dinosaurech — ptáci jsou dinosauři','Ptáci se vyvinuli z dinosaurů a kosti se jim změnily','Náhoda','Kosti jsou stejné jen tvarově'],a:0,f:'Ptačí pneumatizované (duté vzduchové) kosti existovaly již u teropodních dinosaurů. Ptáci je zdědili — jsou to doslova létající dinosauři.'},
+{c:'zajimavosti',q:'Jak vypadal Spinosaurus po novém nálezu v roce 2014?',o:['Kompletně přepsán — byl vodní predátor, ne suchozemský','Jen přibarvení','Byl menší','Přibyly mu rohy'],a:0,f:'Objev z roku 2014 přepsal Spinosaura: kratší zadní nohy, hustší kosti (pro ponoření), senzorika na tlamě — byl to vodní predátor jako krokodýl.'},
+{c:'zajimavosti',q:'Měl Velociraptor ve skutečnosti peří?',o:['Ano — fosilní otisky to dokazují','Ne, byl šupinatý','Jen mláďata','Jen samice'],a:0,f:'Na fosilním předloktí velociraptora byly nalezeny "quill knobs" — místa úponu per. Velociraptor byl prokazatelně opeřený — jako velký nelétavý pták.'},
+{c:'zajimavosti',q:'Co byl Iguanodon a proč je slavný?',o:['Jeden z prvních vědecky popsaných dinosaurů — palec byl zpočátku roh','Nejrychlejší dinosaurus','Největší predátor křídy','Dinosaurus s chobotem'],a:0,f:'Gideon Mantell popsal Iguanodona roku 1825. Zpočátku rekonstrukce dávala palcový hrbol na nos jako roh jednorožce — až pozdější nálezy ukázaly pravdu.'},
+{c:'zajimavosti',q:'Proč jsou dinosauří fosílie tak vzácné?',o:['Fosilizace vyžaduje přesné podmínky — fosilizuje 1 z miliardy','Záměrně ničili kostry','Byly roztaveny sopkami','Fosílie jsou všude — jen je nehledáme'],a:0,f:'Fosilizace vyžaduje rychlé pohřbení, nepřítomnost kyslíku a miliony let. Každá fosilní kostra je doslova výherní tiket v loterii přírody.'},
+{c:'zajimavosti',q:'Jak velké bylo dinosauří vejce největšího dinosaura?',o:['Asi 30 cm — relativně malé pro obřího tvora','Přes 2 metry','Asi 1 metr','Stejné jako pštrosí'],a:0,f:'Paradoxně — čím větší dinosaurus, tím relativně menší vejce. Gigantičtí titanosauři (50+ tun) kladli vejce jen o velikosti 30 cm. Větší vejce by mláďata udusila.'},
+{c:'zajimavosti',q:'Jaký zvuk vydával T-Rex?',o:['Pravděpodobně hluboký infrazvuk, ne řev','Řval jako lev','Kvíkal jako pták','Byl tichý'],a:0,f:'T-Rex měl pravděpodobně uzavřenou tlamu a vydával hluboké infrazvukové vibrace — jako dnešní krokodýli. Otevřená tlama a řvaní je filmový mýtus.'},
+{c:'zajimavosti',q:'Jak komunikoval Parasaurolophus?',o:['Dutým hřebenem vydával hluboký hukot','Jen gestikulací','Byl němý','Vydával ultrazvuk'],a:0,f:'CT skenování fosilního hřebene Parasaurolophuse umožnilo počítačovou rekonstrukci zvuku — zněl jako hluboký, dutý hukot. Komunikoval hřebenem.'},
+{c:'zajimavosti',q:'Kdo vymyslel slovo „dinosaurus"?',o:['Richard Owen (1842)','Charles Darwin','Mary Anning','Gideon Mantell'],a:0,f:'Richard Owen byl geniální anatom. Na základě tří různých fosilií poznal, že jde o neznámou skupinu. V roce 1842 navrhl název "Dinosauria".'},
+{c:'zanik',q:'Co způsobilo vymření dinosaurů před 66 miliony let?',o:['Meteor + sopky + klimatické změny','Pouze meteor','Pouze sopky','Ledová doba'],a:0,f:'K-Pg vymírání byla „dokonalá bouře": meteor Chicxulub způsobil okamžitou katastrofu, ale sopky Deccan Traps v Indii již léta destabilizovaly klima.'},
+{c:'zanik',q:'Kde dopadl meteor, který ukončil věk dinosaurů?',o:['Poloostrov Yucatán, Mexiko','Sahara v Africe','Sibiř','Do oceánu u Antarktidy'],a:0,f:'Kráter Chicxulub má průměr přes 180 km. Byl objeven roku 1978 při průzkumu nalezišť ropy. Část okraje stále vyčnívá nad povrch Yucatánu.'},
+{c:'zanik',q:'Jak velký byl meteor Chicxulub?',o:['Asi 10–15 km','Asi 1 km','Přes 100 km','Asi 500 metrů'],a:0,f:'Meteor byl „jen" 10–15 km, ale energie dopadu odpovídala miliardám atomových bomb. Způsobil tsunami, zemětřesení a globální požáry.'},
+{c:'zanik',q:'Vymřeli VŠICHNI dinosauři?',o:['Ne — ptáci jsou přežívající dinosauři!','Ano, všichni','Přežili jen vodní druhy','Přežili jen v Africe'],a:0,f:'Přežilo asi 10 000 druhů dinosaurů — nazýváme je ptáky! Ptačí linie přežila a dnes má více druhů než savci.'},
+{c:'zanik',q:'Kolik druhů vymřelo při K-Pg události?',o:['Asi 75 % všech druhů','Asi 99 %','Asi 25 %','Méně než 10 %'],a:0,f:'K-Pg vymírání bylo páté největší v historii Země. Zahynuli dinosauři, pterosauři, mosasauři, amoniti a nespočet dalších skupin.'},
+{c:'zanik',q:'Co je K-Pg hranice?',o:['Vrstva hornin oddělující éru dinosaurů od éry savců','Druh dinosaura','Oblast kde dopadl meteor','Vědecká teorie'],a:0,f:'K-Pg hranice je viditelná po celém světě jako tenká vrstva jílu s abnormálně vysokým množstvím iridia — prvku vzácného na Zemi, hojného v meteoritech.'},
+{c:'zanik',q:'Co se stalo po vymření dinosaurů?',o:['Savci se rychle rozrůznili a obsadili volné niky','Nic — dlouhá pustina','Rozvinuli se plazi','Vznikl nový typ dinosaurů'],a:0,f:'Po vymření dinosaurů nastala éra savců. Za 10–15 milionů let obsadili všechna dostupná stanoviště — od malých hrabáčů po velké predátory.'},
+{c:'zanik',q:'Jak dlouho trvalo zotavení ekosystémů po K-Pg?',o:['Asi 10 milionů let','Pouze 100 let','Přes 100 milionů let','Nikdy'],a:0,f:'Prvních tisíce let dominovaly kapradiny. Plná obnova biodiverzity trvala miliony let — výsledkem byl svět savců, ve kterém žijeme dnes.'},
+{c:'zanik',q:'Jak rychle nastal zánik po dopadu meteoru?',o:['Okamžitá katastrofa, pak roky nukleární zimy','Postupně po miliony let','Za jediný den','Za týden'],a:0,f:'Úder způsobil okamžitou vlnu tepla, cunami, zemětřesení. Pak prach a saze zablokovaly slunce na roky — fotosyntéza se zastavila globálně.'},
+{c:'zanik',q:'Kde je důkaz dopadu meteoru v horninách?',o:['Vrstva iridia po celém světě, i v ČR!','Jen v Mexiku','Jen v oceánech','Důkaz neexistuje'],a:0,f:'Vrstva iridia - K-Pg hranice je nalezena na více než 100 místech světa — včetně lokalit v České republice. Irídium je kosmického původu.'},
+{c:'zanik',q:'Jak vysoké bylo cunami po dopadu meteoru?',o:['Přes 300 metrů — smylo pobřeží Mexika','Asi 5 metrů','Přes 10 km','Nebylo žádné'],a:0,f:'Cunami po dopadu Chicxulub bylo jedno z největších v historii — přes 300 metrů. Geologické stopy jsou patrné stovky kilometrů od pobřeží.'},
+{c:'zanik',q:'Přežili nějací velcí suchozemští živočichové K-Pg vymírání?',o:['Ano — krokodýli, želvy, malí savci','Ne, nikdo nepřežil','Jen savci','Jen ptáci'],a:0,f:'Krokodýli, želvy, ještěrky a malí savci přežili K-Pg. Ale žádný suchozemský živočich větší než 25 kg nepřežil — žádný neptačí dinosaurus.'},
+{c:'zanik',q:'Co jsou Deccan Traps a jak souvisejí s vymíráním?',o:['Obří sopečná aktivita v Indii — destabilizovala klima již před meteoritem','Typ fosilního naleziště','Oblast dopadu meteoru','Poušť kde vymřeli poslední dinosauři'],a:0,f:'Deccan Traps jsou obří lávová pole v Indii. Sopečné plyny po dobu milionů let zvyšovaly CO2 a narušovaly klima. Meteorit přišel do již nestabilního světa.'},
+{c:'zanik',q:'Jak se změnila atmosféra po dopadu meteoru?',o:['Prach a saze blokovaly slunce — globální ochlazení a tma','Nic se nezměnilo','Atmosféra zmizela','Bylo náhle horko'],a:0,f:'Vyvržený materiál z dopadu zablokoval sluneční záření po dobu let. Teploty klesly, fotosyntéza se zastavila — potravní řetězce se zhroutily globálně.'},
+{c:'zanik',q:'Proč přežili ptáci, ale ne ostatní dinosauři?',o:['Malá těla, let, všežravost — méně závislí na potravním řetězci','Silnější imunita','Schovávali se pod zemí','Bylo to náhodné'],a:0,f:'Přeživší ptáci byli malí (méně potravy), létaví (mobilita), všežraví (semena, mrtvoly). Velcí neptačí dinosauři byli závislí na konkrétní potravě — ta zmizela.'},
+{c:'zanik',q:'Jaké bylo 5. největší masové vymírání — to s dinosaury?',o:['K-Pg vymírání — 5. největší, 75 % druhů','Největší vymírání vůbec','2. největší vymírání','Bylo nejmenší ze všech'],a:0,f:'K-Pg bylo páté největší masové vymírání. Největší bylo permsko-triasové (252 mil. let) — zahynulo 96 % mořských a 70 % suchozemských druhů.'},
+{c:'zanik',q:'Co způsobilo, že přežili malí savci, ale ne velcí?',o:['Malé tělo — méně jídla, nory, rychlé rozmnožování','Savci byli chytřejší','Savci byli rychlejší','Náhoda'],a:0,f:'Malí savci přežili, protože: méně potřebovali jíst, uměli se zahrabat pod zem, rychle se rozmnožovali. Velcí živočichové potřebují příliš jídla.'},
+{c:'zanik',q:'Existuje dnes kráter Chicxulub viditelný na povrchu?',o:['Jen část okraje na Yucatánu, jinak pod zemí a mořem','Celý kráter je viditelný z letadla','Byl zasypán úplně','Kráter nikdy neexistoval'],a:0,f:'Část okraje kráteru Chicxulub tvoří půlkruhový pás jezer a zálivů na Yucatánu — viditelný z letadla i na mapách. Zbytek je pohřben pod sedimenty.'},
+,
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? T-Rex a Stegosaurus spolu mohli bojovat.", "o": ["Lež — žili v úplně jiné době", "Pravda — byli častí soupeři"], "a": 0, "f": "Stegosaurus žil v juře, zatímco T-Rex až v pozdní křídě. Dělí je asi 85 milionů let — víc, než dělí nás od T-Rexe."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Ptáci jsou z vědeckého hlediska žijící dinosauři.", "o": ["Pravda", "Lež"], "a": 0, "f": "Ptáci patří mezi teropodní dinosaury. Takže slepice je taková malá opeřená dinosauří tetička. Elegantní? Jak kdy."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Všichni dinosauři byli obrovští.", "o": ["Lež — někteří byli velcí jako slepice", "Pravda — dinosaurus znamená obří plaz"], "a": 0, "f": "Dinosauři měli obrovský rozsah velikostí. Vedle obrů existovali i malí opeření teropodi o velikosti dnešních ptáků."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Pterodaktyl byl dinosaurus.", "o": ["Lež — byl to pterosaurus", "Pravda — létající dinosaurus"], "a": 0, "f": "Pterosauři byli létající plazi, příbuzní dinosaurům, ale ne dinosauři. Ano, názvy jsou v tomhle směru pěkně zákeřné."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Mosasaurus byl mořský dinosaurus.", "o": ["Lež — byl to mořský plaz", "Pravda"], "a": 0, "f": "Mosasaurus nebyl dinosaurus. Patřil mezi mořské plazy a byl příbuznější varanům než T-Rexovi."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Někteří dinosauři měli peří.", "o": ["Pravda", "Lež"], "a": 0, "f": "Fosilie z Číny a dalších lokalit ukazují opeřené dinosaury. Peří nejprve nemuselo sloužit k letu, ale třeba k izolaci nebo předvádění."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Triceratops byl masožravec.", "o": ["Lež — byl býložravec", "Pravda — rohy měl k lovu"], "a": 0, "f": "Triceratops byl býložravec. Rohy a límec mu sloužily hlavně k obraně, soubojům a předvádění, ne k lovu svačiny."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Dinosauří fosilie byly nalezeny i v Antarktidě.", "o": ["Pravda", "Lež"], "a": 0, "f": "Fosilie dinosaurů známe ze všech kontinentů včetně Antarktidy. Ta kdysi nebyla ledovou pustinou jako dnes."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Dinosauři žili zároveň s prvními lidmi.", "o": ["Lež — člověk přišel mnohem později", "Pravda"], "a": 0, "f": "Neptačí dinosauři vyhynuli před 66 miliony let. Moderní člověk je proti nim úplně čerstvá novinka."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Brachiosaurus byl vrcholový predátor.", "o": ["Lež — byl obrovský býložravec", "Pravda"], "a": 0, "f": "Brachiosaurus byl býložravec. Jeho supersíla nebyla lov, ale výška a přístup k listí, kam jiní nedosáhli."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Velociraptor z Jurského parku odpovídá skutečnému Velociraptorovi.", "o": ["Lež — filmový raptor je moc velký", "Pravda"], "a": 0, "f": "Skutečný Velociraptor byl mnohem menší a opeřený. Filmový vzhled připomíná spíš většího deinonycha."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? K-Pg hranice obsahuje zvýšené množství iridia.", "o": ["Pravda", "Lež"], "a": 0, "f": "Vrstva na hranici křídy a paleogénu obsahuje hodně iridia, což podporuje teorii dopadu mimozemského tělesa."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Sauropodi jako Diplodocus často žvýkali potravu jako krávy.", "o": ["Lež — spíš potravu polykali a trávili jinak", "Pravda"], "a": 0, "f": "Mnozí sauropodi měli zuby vhodné spíš k otrhávání než k důkladnému žvýkání. Trávení obstarávalo obrovské tělo a dlouhý trávicí trakt."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Ankylosaurus měl na ocase kostěný kyj.", "o": ["Pravda", "Lež"], "a": 0, "f": "Ankylosaurus měl slavný kostěný kyj a tělesné brnění. Evoluce z něj udělala chodící tank, jen bez pásů a bez STK."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Všichni dinosauři vyhynuli při dopadu meteoritu.", "o": ["Lež — ptáci přežili", "Pravda"], "a": 0, "f": "Neptačí dinosauři vyhynuli, ale ptačí linie přežila. Proto se dnes díváme na živé dinosaury na krmítku."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Spinosaurus byl pravděpodobně silně vázaný na vodní prostředí.", "o": ["Pravda", "Lež"], "a": 0, "f": "Stavba těla Spinosaura naznačuje vodní nebo polovodní způsob života. Byl to specialista na ryby a vodní kořist."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Dinosauři žili pouze v juře.", "o": ["Lež — žili v triasu, juře i křídě", "Pravda"], "a": 0, "f": "Dinosauři se objevili v triasu, rozšířili v juře a mnozí slavní dinosauři žili až v křídě."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? T-Rex měl extrémně slabý čich.", "o": ["Lež — čich měl výborný", "Pravda"], "a": 0, "f": "T-Rex měl velké čichové oblasti mozku. Čich byl pro něj důležitý při lovu i hledání mršin."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Archaeopteryx měl znaky ptáka i dinosaura.", "o": ["Pravda", "Lež"], "a": 0, "f": "Archaeopteryx měl pera, ale také zuby, prsty s drápy a dlouhý kostěný ocas. Krásný příklad přechodné formy."},
+{"c": "pravda", "t": "tf", "q": "Pravda, nebo lež? Dinosauří vejce mohla být větší než dospělý člověk.", "o": ["Lež — i největší byla mnohem menší", "Pravda"], "a": 0, "f": "Dinosauří vejce byla překvapivě omezená velikostí. Příliš velké vejce by mělo problém s výměnou plynů přes skořápku."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Mám tři rohy, velký kostěný límec a žil jsem na konci křídy v Severní Americe.", "o": ["Triceratops", "Stegosaurus", "Iguanodon", "Brachiosaurus"], "a": 0, "f": "Triceratops byl jeden z posledních neptačích dinosaurů. Jeho rohy byly noční můrou pro každého predátora, který neuměl slušně požádat."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Mám obrovský kostěný krunýř a na ocase kyj jako pravěké demoliční kladivo.", "o": ["Ankylosaurus", "Diplodocus", "Parasaurolophus", "Compsognathus"], "a": 0, "f": "Ankylosaurus byl obrněný býložravec. Predátorům nevysvětloval pravidla diskuse, prostě měl kyj."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem dlouhokrký obr, ale přední nohy mám delší než zadní, takže se pasu vysoko ve stromech.", "o": ["Brachiosaurus", "Triceratops", "Velociraptor", "Pachycephalosaurus"], "a": 0, "f": "Brachiosaurus byl stavěný jako živý jeřáb na listí. Žádný salátový bar by před ním nebyl v bezpečí."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Mám dlouhý krk, ještě delší ocas a patřím k nejdelším dinosaurům.", "o": ["Diplodocus", "T-Rex", "Iguanodon", "Mosasaurus"], "a": 0, "f": "Diplodocus byl sauropod s extrémně dlouhým ocasem. Ten mohl fungovat jako bič nebo komunikační nástroj."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Mám plachtu na hřbetě, úzkou krokodýlí tlamu a miluji ryby.", "o": ["Spinosaurus", "Allosaurus", "Stegosaurus", "Ornithomimus"], "a": 0, "f": "Spinosaurus byl výjimečný teropod přizpůsobený vodnímu prostředí. Takový dinosauří rybář, jen bez gumáků."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem malý, rychlý, opeřený teropod z Mongolska a filmy ze mě udělaly větší hvězdu, než jsem byl.", "o": ["Velociraptor", "T-Rex", "Baryonyx", "Argentinosaurus"], "a": 0, "f": "Skutečný Velociraptor byl menší než filmová verze a měl peří. Hollywood si ho trochu napumpoval proteinem."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Mám na hlavě silnou kostěnou kopuli a moje jméno znamená tlustohlavý ještěr.", "o": ["Pachycephalosaurus", "Parasaurolophus", "Torosaurus", "Deinonychus"], "a": 0, "f": "Pachycephalosaurus měl extrémně zesílenou lebku. K čemu přesně sloužila, se stále řeší."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Mám na hřbetě kostěné desky a na ocase nebezpečné bodce.", "o": ["Stegosaurus", "Ankylosaurus", "Spinosaurus", "Iguanodon"], "a": 0, "f": "Stegosaurus měl slavné desky a ocasní bodce zvané thagomizer. Název vznikl z komiksu, věda občas umí být veselá."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem obří jihoamerický sauropod a patřím k nejtěžším živočichům, kteří kdy chodili po souši.", "o": ["Argentinosaurus", "T-Rex", "Velociraptor", "Megalosaurus"], "a": 0, "f": "Argentinosaurus patřil mezi titanosaury. Přesná hmotnost je odhad, ale rozhodně šlo o suchozemskou horu masa a kostí."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem kachnozobý dinosaurus s dlouhým dutým hřebenem, kterým jsem mohl vydávat zvuky.", "o": ["Parasaurolophus", "Triceratops", "Compsognathus", "Baryonyx"], "a": 0, "f": "Parasaurolophus měl hřeben fungující jako rezonanční nástroj. Dinosauří trombón, akorát bez notového stojanu."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem první vědecky popsaný dinosaurus a moje jméno znamená velký ještěr.", "o": ["Megalosaurus", "Iguanodon", "T-Rex", "Brachiosaurus"], "a": 0, "f": "Megalosaurus byl popsán roku 1824. Tehdy lidé ještě netušili, jak obrovský dinosauří svět se jim otevírá."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Můj palcový trn byl původně omylem považován za roh na nose.", "o": ["Iguanodon", "Triceratops", "Torosaurus", "Allosaurus"], "a": 0, "f": "U Iguanodona byl palcový bodec při raných rekonstrukcích špatně umístěn na nos. Věda se opravuje — a občas dost komicky."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem pštrosu podobný dinosaurus, rychlý běžec a pravděpodobně všežravec.", "o": ["Ornithomimus", "Brachiosaurus", "Ankylosaurus", "Mamenchisaurus"], "a": 0, "f": "Ornithomimus vypadal jako pravěký pštros s rukama. Byl rychlý a lehce stavěný."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem malý dinosaurus a ve fosilii mého žaludku byla nalezena ještěrka.", "o": ["Compsognathus", "Argentinosaurus", "Torosaurus", "Mosasaurus"], "a": 0, "f": "Compsognathus je známý i díky nálezu obsahu žaludku. Fosilie někdy prozradí poslední večeři lépe než účtenka z hospody."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem dravec s velkým drápem na noze, větší než Velociraptor, a inspiroval jsem filmové raptory.", "o": ["Deinonychus", "Diplodocus", "Stegosaurus", "Pteranodon"], "a": 0, "f": "Deinonychus sehrál velkou roli v dinosauří renesanci. Ukázal dinosaury jako aktivní a hbitá zvířata."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Nejsem dinosaurus, ale létající plaz s velkým rozpětím křídel a dlouhým zobákem.", "o": ["Pteranodon", "Velociraptor", "Archaeopteryx", "Triceratops"], "a": 0, "f": "Pteranodon byl pterosaurus. Létal, ale nebyl pták ani dinosaurus. Taxonomie — radost pro děti i učitelky."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem raný pták s pery, zuby a dlouhým kostěným ocasem.", "o": ["Archaeopteryx", "Mosasaurus", "Ankylosaurus", "Baryonyx"], "a": 0, "f": "Archaeopteryx je slavná fosilie ukazující spojitost mezi neptačími teropody a ptáky."},
+{"c": "kdojsem", "t": "who", "q": "Kdo jsem? Jsem obří mořský plaz, ne dinosaurus, a v moři jsem patřil k vrcholovým predátorům.", "o": ["Mosasaurus", "Spinosaurus", "Diplodocus", "Pachycephalosaurus"], "a": 0, "f": "Mosasaurus žil v mořích pozdní křídy. Nebyl dinosaurus, ale do pravěkého bestiáře se hodí dokonale."},
+{"c": "film", "t": "film", "q": "Film vs realita: Co je špatně na filmovém tvrzení, že T-Rex nevidí nehybnou kořist?", "o": ["T-Rex měl pravděpodobně výborný zrak", "T-Rex byl úplně slepý", "T-Rex viděl jen v noci", "T-Rex lovil jen podle tepla"], "a": 0, "f": "T-Rex měl oči směřující dopředu a dobré prostorové vidění. Stát jako socha před T-Rexem by byl plán úrovně: poslední chyba."},
+{"c": "film", "t": "film", "q": "Film vs realita: Filmoví velociraptoři jsou hlavně…", "o": ["Příliš velcí a bez peří", "Příliš malí", "Přesně věrní fosiliím", "Vodní živočichové"], "a": 0, "f": "Skutečný Velociraptor byl menší a opeřený. Filmové raptory inspiroval spíš Deinonychus a filmová představivost."},
+{"c": "film", "t": "film", "q": "Film vs realita: Mohla by se dnes získat dinosauří DNA z komára v jantaru?", "o": ["Prakticky ne — DNA se rozpadá příliš rychle", "Ano, je to běžná metoda", "Jen u T-Rexe", "Stačí najít většího komára"], "a": 0, "f": "Myšlenka je skvělá pro film, ale dinosauří DNA je po desítkách milionů let příliš rozpadlá. Komár z jantaru nám park nezařídí."},
+{"c": "film", "t": "film", "q": "Film vs realita: Byl Dilophosaurus prokazatelně jedovatý a plival jed?", "o": ["Ne — filmová nadsázka", "Ano, je to jisté", "Jen mláďata", "Jen samci"], "a": 0, "f": "Jedovatý plivající Dilophosaurus je filmový nápad. Fosilie nic takového jednoznačně neukazují."},
+{"c": "film", "t": "film", "q": "Film vs realita: Byl T-Rex jen mrchožrout, jak se někdy tvrdilo?", "o": ["Ne — nejspíš lovil i požíral mršiny", "Ano, neuměl lovit", "Ano, neměl zuby k lovu", "Byl býložravec"], "a": 0, "f": "T-Rex pravděpodobně dělal obojí: aktivně lovil i využíval mršiny. V přírodě se jídlo nenechává ležet jen kvůli image."},
+{"c": "film", "t": "film", "q": "Film vs realita: Mohli by lidé jezdit na Triceratopsovi jako na koni?", "o": ["Ne — anatomie a chování by z toho udělaly špatný nápad", "Ano, byl k tomu stavěný", "Jen děti", "Jen když měl sedlo"], "a": 0, "f": "Triceratops nebyl dopravní prostředek. Byl to mohutný divoký býložravec se zbraněmi na hlavě. Takové Uber pravěku raději ne."},
+{"c": "film", "t": "film", "q": "Film vs realita: Žili lidé a neptačí dinosauři ve stejné době jako v některých pohádkách?", "o": ["Ne — dělí je desítky milionů let", "Ano", "Jen v Africe", "Jen v době ledové"], "a": 0, "f": "Lidé a neptačí dinosauři se nikdy nepotkali. Pokud někdo kreslí člověka na T-Rexovi, je to fantasy, ne dějepis."},
+{"c": "film", "t": "film", "q": "Film vs realita: Řval T-Rex opravdu jako filmové monstrum?", "o": ["Nejspíš vydával hlubší zvuky, možná i se zavřenou tlamou", "Ano, přesně jako lev", "Byl němý", "Pískal jako čajník"], "a": 0, "f": "Zvuky dinosaurů neznáme přímo. Podle příbuzných zvířat mohl T-Rex vydávat hluboké dunění spíš než hollywoodský řev."},
+{"c": "film", "t": "film", "q": "Film vs realita: Je Mosasaurus z filmů správně zařazený jako dinosaurus?", "o": ["Ne — je to mořský plaz", "Ano — mořský dinosaurus", "Je to ryba", "Je to savec"], "a": 0, "f": "Mosasaurus je mořský plaz, ne dinosaurus. Ve filmu může dělat šplouch, ve vědě musí sedět škatulka."},
+{"c": "film", "t": "film", "q": "Film vs realita: Co bývá ve filmech často špatně u dinosaurů?", "o": ["Míchají druhy z různých období", "Všichni jsou příliš malí", "Všichni jedí trávu", "Všichni žijí v Evropě"], "a": 0, "f": "Filmy často skládají do jedné scény tvory, kteří se v reálné historii nikdy nemohli potkat."},
+{"c": "film", "t": "film", "q": "Film vs realita: Měl by skutečný Velociraptor spíš šupinatý vzhled ještěra, nebo opeřený vzhled?", "o": ["Opeřený vzhled", "Úplně hladkou kůži", "Krunýř jako želva", "Srst jako vlk"], "a": 0, "f": "Velociraptor měl důkazy po peří na kostech předloktí. Filmová holá ještěrka je dnes už spíš starší móda."},
+{"c": "film", "t": "film", "q": "Film vs realita: Proč se ve filmech často dinosauři zvětšují?", "o": ["Kvůli dramatu a strachu diváků", "Protože fosilie vždy zmenšují skutečnost", "Kvůli gravitaci", "Protože dinosauři rostli před kamerou"], "a": 0, "f": "Film chce emoce. Věda chce přesnost. Občas se spolu poperou a režisér drží popcorn."},
+{"c": "film", "t": "film", "q": "Film vs realita: Je správné říkat každému pravěkému plazovi dinosaurus?", "o": ["Ne — dinosauři jsou přesně vymezená skupina", "Ano, je to jedno", "Jen když je velký", "Jen když má zuby"], "a": 0, "f": "Dinosaurus není označení pro každé pravěké zvíře. Pterosauři, mosasauři ani plesiosauři mezi dinosaury nepatří."},
+{"c": "film", "t": "film", "q": "Film vs realita: Kdyby byl dinosaurus v parku, co by bylo vědecky největší podezření?", "o": ["Chování by bylo těžko předvídatelné, ne filmově poslušné", "Okamžitě by uměl otevírat dveře", "Všichni by žili v míru", "Stačilo by mu písknout"], "a": 0, "f": "Chování vyhynulých zvířat odhadujeme podle fosilií a příbuzných druhů. Přesný scénář by byl mnohem méně jistý než ve filmu."},
+{"c": "film", "t": "film", "q": "Film vs realita: Proč není dobré učit děti dinosaury jen z filmů?", "o": ["Filmy zábavně míchají fakta s výmysly", "Filmy nikdy nelžou", "Fosilie jsou nudnější než film", "Dinosauři nejsou věda"], "a": 0, "f": "Filmy jsou skvělé jako brána k zájmu. Pak ale přichází paleontologie a říká: pěkné, děti, a teď fakta."},
+{"c": "film", "t": "film", "q": "Film vs realita: Co je na Jurském parku nejvíc zavádějící už v názvu?", "o": ["Mnoho slavných dinosaurů z filmu je z křídy, ne z jury", "V juře nebyli žádní dinosauři", "Park by musel být v Evropě", "Jura není geologické období"], "a": 0, "f": "T-Rex, Triceratops i Velociraptor patří do křídy. Název zní dobře, ale geologická pedanterie si tiše brousí zuby."},
+{"c": "rekordy", "t": "record", "q": "Který z těchto dinosaurů patřil mezi největší známé suchozemské živočichy?", "o": ["Argentinosaurus", "Velociraptor", "Compsognathus", "Pachycephalosaurus"], "a": 0, "f": "Argentinosaurus byl titanosaur obřích rozměrů. Přesné odhady se liší, ale patřil mezi absolutní giganty."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus proslul extrémně silným skusem?", "o": ["Tyrannosaurus rex", "Brachiosaurus", "Parasaurolophus", "Ornithomimus"], "a": 0, "f": "T-Rex měl jeden z nejsilnějších známých skusů mezi suchozemskými zvířaty. Kosti pro něj nebyly překážka, spíš křupka."},
+{"c": "rekordy", "t": "record", "q": "Který z těchto tvorů byl pravděpodobně nejrychlejší běžec?", "o": ["Ornithomimus", "Ankylosaurus", "Brachiosaurus", "Triceratops"], "a": 0, "f": "Ornithomimus měl lehké tělo a dlouhé nohy podobné pštrosovi. Rychlost byla jeho obrana."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus měl slavný extrémně dlouhý krk?", "o": ["Mamenchisaurus", "T-Rex", "Velociraptor", "Ankylosaurus"], "a": 0, "f": "Mamenchisaurus je známý mimořádně dlouhým krkem. Kdyby nosil šálu, potřeboval by stavební povolení."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus měl jednu z nejmenších mozkových kapacit vzhledem k tělu?", "o": ["Stegosaurus", "T-Rex", "Troodon", "Velociraptor"], "a": 0, "f": "Stegosaurus měl velmi malý mozek vzhledem k velikosti těla. Přesto byl úspěšný — inteligence není jediný trik přírody."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus je známý největší kostěnou hlavovou výzdobou mezi rohatými dinosaury?", "o": ["Torosaurus", "Compsognathus", "Baryonyx", "Microraptor"], "a": 0, "f": "Torosaurus měl obrovskou lebku a límec. U rohatých dinosaurů se hlavou opravdu nešetřilo."},
+{"c": "rekordy", "t": "record", "q": "Který z těchto dinosaurů byl mimořádně malý a opeřený?", "o": ["Microraptor", "Argentinosaurus", "Brachiosaurus", "Torosaurus"], "a": 0, "f": "Microraptor byl malý opeřený dinosaurus se čtyřmi křídly. Důkaz, že dinosaurus nemusí být nutně autobus s nohama."},
+{"c": "rekordy", "t": "record", "q": "Který predátor byl pravděpodobně delší než T-Rex a specializovaný na vodní kořist?", "o": ["Spinosaurus", "Allosaurus", "Deinonychus", "Megalosaurus"], "a": 0, "f": "Spinosaurus mohl být delší než T-Rex, ale měl jiný životní styl. Délka není totéž co soubojová síla."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus měl nejslavnější ocasní kyj?", "o": ["Ankylosaurus", "Diplodocus", "Iguanodon", "Parasaurolophus"], "a": 0, "f": "Ankylosaurus měl ocas zakončený kostěným kyjem. Příroda si řekla: brnění nestačí, přidáme kladivo."},
+{"c": "rekordy", "t": "record", "q": "Který z těchto dinosaurů měl dlouhý dutý hřeben na hlavě?", "o": ["Parasaurolophus", "Stegosaurus", "Compsognathus", "Giganotosaurus"], "a": 0, "f": "Parasaurolophus mohl hřebenem vydávat nízké zvuky. Pravěká dechová sekce."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus měl slavné desky na hřbetě?", "o": ["Stegosaurus", "Mosasaurus", "Ornithomimus", "T-Rex"], "a": 0, "f": "Desky Stegosaura mohly sloužit k předvádění, rozpoznávání nebo termoregulaci. Přesná funkce se stále diskutuje."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus měl tři rohy a patří mezi nejznámější býložravce?", "o": ["Triceratops", "Velociraptor", "Spinosaurus", "Archaeopteryx"], "a": 0, "f": "Triceratops je dinosauří klasika. Rohy, límec, pořádná hmotnost — a žádná chuť být něčí oběd."},
+{"c": "rekordy", "t": "record", "q": "Který druh je slavný fosilizovaným soubojem s Protoceratopsem?", "o": ["Velociraptor", "Brachiosaurus", "Argentinosaurus", "Torosaurus"], "a": 0, "f": "Fosilie Fighting Dinosaurs zachycuje Velociraptora a Protoceratopse v dramatickém zápase. Pravěk uměl drama i bez Netflixu."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus byl jedním z prvních vědecky popsaných a proslul palcovým bodcem?", "o": ["Iguanodon", "T-Rex", "Pteranodon", "Mamenchisaurus"], "a": 0, "f": "Iguanodon pomohl formovat ranou paleontologii. Jeho rekonstrukce se časem výrazně změnila."},
+{"c": "rekordy", "t": "record", "q": "Který z těchto predátorů žil v Jižní Americe a velikostí soupeřil s T-Rexem?", "o": ["Giganotosaurus", "Velociraptor", "Baryonyx", "Dilophosaurus"], "a": 0, "f": "Giganotosaurus byl obří jihoamerický teropod. S T-Rexem se nikdy nepotkal, ale v tabulkách velikosti stojí vysoko."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus měl srpovitý dráp na druhém prstu zadní nohy?", "o": ["Velociraptor", "Brachiosaurus", "Triceratops", "Parasaurolophus"], "a": 0, "f": "Dromeosauridi jako Velociraptor měli slavný srpovitý dráp. Nebyla to ozdoba na ples, ale zbraň."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus měl lebku s kostěnou kopulí silnou až desítky centimetrů?", "o": ["Pachycephalosaurus", "Diplodocus", "Spinosaurus", "Ornithomimus"], "a": 0, "f": "Pachycephalosaurus je známý silnou klenutou lebkou. Jak přesně ji používal, je stále předmětem diskuse."},
+{"c": "rekordy", "t": "record", "q": "Který sauropod je známý extrémně dlouhým ocasem?", "o": ["Diplodocus", "T-Rex", "Ankylosaurus", "Iguanodon"], "a": 0, "f": "Diplodocus měl ocas jako dlouhý bič. Udržoval rovnováhu a mohl sloužit i k obraně nebo signalizaci."},
+{"c": "rekordy", "t": "record", "q": "Která skupina dinosaurů přežila vymírání na konci křídy?", "o": ["Ptáci", "Sauropodi", "Rohatí dinosauři", "Velcí teropodi"], "a": 0, "f": "Přežili ptáci — ptačí dinosauři. Ostatní neptačí dinosauři vymřeli."},
+{"c": "rekordy", "t": "record", "q": "Který dinosaurus by vyhrál cenu za nejpůsobivější obranný komplet?", "o": ["Ankylosaurus", "Compsognathus", "Ornithomimus", "Baryonyx"], "a": 0, "f": "Ankylosaurus spojil krunýř, nízké tělo a kyj. Kdyby existoval pravěký rytířský turnaj, měl by silnou přihlášku."},
+{"c": "srovnani", "t": "battle", "q": "Aréna: T-Rex proti Triceratopsovi. Která výhoda patří Triceratopsovi?", "o": ["Rohy, nízké těžiště a ochranný límec", "Silnější čich než T-Rex", "Delší krk", "Schopnost letu"], "a": 0, "f": "Triceratops nebyl snadná kořist. Rohy a pevné tělo z něj dělaly soupeře, kterého si T-Rex musel dobře rozmyslet."},
+{"c": "srovnani", "t": "battle", "q": "Aréna: Ankylosaurus proti velkému predátorovi. Co je jeho hlavní výhoda?", "o": ["Brnění a ocasní kyj", "Rychlost sprintera", "Jedovaté zuby", "Létání"], "a": 0, "f": "Ankylosaurus sázel na obranu. Predátor mohl vyhrát jen tehdy, když našel slabé místo — což nebylo snadné."},
+{"c": "srovnani", "t": "battle", "q": "Aréna: Velociraptor proti mnohem většímu sauropodovi. Jaký je nejpravděpodobnější závěr?", "o": ["Na dospělého obra by si sám netroufl", "Snadno by ho skolil", "Sauropod by uletěl", "Vyhrál by díky jedu"], "a": 0, "f": "Velociraptor nebyl zabiják obřích sauropodů. Lovil spíše menší kořist nebo mláďata."},
+{"c": "zajimavosti", "t": "myth", "q": "Mýtus nebo věda: Všichni dinosauři byli hloupí pomalí plazi.", "o": ["Mýtus — mnozí byli aktivní a někteří velmi hbití", "Věda — přesně tak to bylo"], "a": 0, "f": "Moderní paleontologie ukazuje dinosaury jako rozmanitou skupinu. Někteří byli rychlí, aktivní, opeření a sociálně zajímaví."},
+{"c": "zajimavosti", "t": "myth", "q": "Mýtus nebo věda: Barvu některých dinosaurů umíme odhadnout z fosilií.", "o": ["Věda — díky melanosomům u některých fosilií", "Mýtus — barva se nikdy nezachová"], "a": 0, "f": "U výjimečně zachovaných fosilií lze z mikroskopických struktur odhadovat barvu peří nebo vzorování."},
+{"c": "zajimavosti", "t": "myth", "q": "Mýtus nebo věda: Dinosauři jsou jedna jediná úzká skupina skoro stejných zvířat.", "o": ["Mýtus — byli nesmírně rozmanití", "Věda — lišili se jen velikostí"], "a": 0, "f": "Dinosauři zahrnují malé opeřené běžce, obří býložravce, rohaté obrněnce i předky ptáků. Rozmanitost jak školní sborovna před vysvědčením."},
+{"c": "ery", "t": "order", "q": "Seřaď období od nejstaršího po nejmladší. Která možnost je správně?", "o": ["Trias → jura → křída", "Jura → trias → křída", "Křída → jura → trias", "Trias → křída → jura"], "a": 0, "f": "Dinosauří éra probíhala přes trias, juru a křídu. Nejdřív trias, potom jura, nakonec křída."},
+{"c": "ery", "t": "order", "q": "Který z těchto dinosaurů žil nejpozději, těsně před vymíráním na konci křídy?", "o": ["T-Rex", "Stegosaurus", "Diplodocus", "Brachiosaurus"], "a": 0, "f": "T-Rex žil na samém konci křídy. Stegosaurus, Diplodocus a Brachiosaurus patří hlavně do jury."},
+{"c": "ery", "t": "order", "q": "Který dinosaurus je časově starší než T-Rex?", "o": ["Stegosaurus", "Žádný — T-Rex byl nejstarší", "Všichni žili po T-Rexovi", "Pouze ptáci"], "a": 0, "f": "Stegosaurus žil mnohem dříve než T-Rex. T-Rex je z hlediska dinosauří historie vlastně pozdní novinka."},
+{"c": "zanik", "t": "myth", "q": "Mýtus nebo věda: Po dopadu Chicxulubu byl problém jen výbuch, ne dlouhodobé následky.", "o": ["Mýtus — následovala tma, ochlazení a zhroucení potravy", "Věda — šlo jen o jeden výbuch"], "a": 0, "f": "Dopad způsobil okamžitou katastrofu, ale zásadní byly i následky: prach, saze, tma a kolaps fotosyntézy."},
+{"c": "zanik", "t": "tf", "q": "Pravda, nebo lež? Krokodýli a želvy přežili konec křídy.", "o": ["Pravda", "Lež"], "a": 0, "f": "Některé skupiny jako krokodýli, želvy, ještěři, ptáci a malí savci přežily. Velcí neptačí dinosauři ne."},
+{"c": "zanik", "t": "tf", "q": "Pravda, nebo lež? Po vymření neptačích dinosaurů se savcům otevřel prostor k rozvoji.", "o": ["Pravda", "Lež"], "a": 0, "f": "Po K-Pg vymírání se savci rychle rozrůznili a obsadili mnohé uvolněné ekologické niky."}
+];
+const BADGES=[
+  {id:'first',    ico:'🦕',n:'Vítej v juře!',   d:'Odpověz na první otázku',           ok:s=>s.ta>=1},
+  {id:'streak3',  ico:'🔥',n:'Série 3',          d:'3 správné za sebou',                ok:s=>s.ms>=3},
+  {id:'streak5',  ico:'🌋',n:'Série 5',          d:'5 správných za sebou',              ok:s=>s.ms>=5},
+  {id:'streak10', ico:'⚡',n:'Série 10!',        d:'10 správných za sebou',             ok:s=>s.ms>=10},
+  {id:'streak15', ico:'🎯',n:'Ostrý střelec',    d:'15 správných za sebou',             ok:s=>s.ms>=15},
+  {id:'cat_fak',  ico:'💪',n:'Kostní analytik',  d:'Dokonči Tělo & Síla',               ok:s=>(s.cb.fakta||0)>0},
+  {id:'cat_pot',  ico:'🥩',n:'Potravní expert',  d:'Dokonči Co jím?',                   ok:s=>(s.cb.potrava||0)>0},
+  {id:'cat_srv',  ico:'⚔️',n:'Soudce soubojů',  d:'Dokonči Kdo vyhraje?',              ok:s=>(s.cb.srovnani||0)>0},
+  {id:'cat_ery',  ico:'🌍',n:'Geolog-časomíra',  d:'Dokonči Kdy & Kde?',                ok:s=>(s.cb.ery||0)>0},
+  {id:'cat_zaj',  ico:'🔬',n:'Vědecký myslitel', d:'Dokonči Věda & Mýty',              ok:s=>(s.cb.zajimavosti||0)>0},
+  {id:'cat_zan',  ico:'☄️',n:'Svědek zániku',    d:'Dokonči Zánik světa',              ok:s=>(s.cb.zanik||0)>0},
+  {id:'cat_prv',  ico:'✅',n:'Lovec pravdy',     d:'Dokonči Pravda / Lež',              ok:s=>(s.cb.pravda||0)>0},
+  {id:'cat_kdo',  ico:'🕵️',n:'Dino detektiv',    d:'Dokonči Kdo jsem?',                 ok:s=>(s.cb.kdojsem||0)>0},
+  {id:'cat_fil',  ico:'🎬',n:'Krotitel filmů',   d:'Dokonči Film vs realita',           ok:s=>(s.cb.film||0)>0},
+  {id:'cat_rek',  ico:'🏅',n:'Rekordman',        d:'Dokonči Dino rekordy',              ok:s=>(s.cb.rekordy||0)>0},
+  {id:'perfect',  ico:'⭐',n:'Perfektní!',       d:'3 hvězdy v jakékoliv kategorii',    ok:s=>Object.values(s.cb).some(v=>v===3)},
+  {id:'allcat',   ico:'🏆',n:'Průzkumník',       d:'Dokonči všechny kategorie',         ok:s=>CATS.every(c=>(s.cb[c.id]||0)>0)},
+  {id:'dino50',   ico:'🦖',n:'Dinosauří stopař', d:'Zodpověz 50 otázek celkem',         ok:s=>s.ta>=50},
+  {id:'dino100',  ico:'🦴',n:'Sto fosilií',      d:'Zodpověz 100 otázek celkem',        ok:s=>s.ta>=100},
+  {id:'dino200',  ico:'📚',n:'Dino knihomol',    d:'Zodpověz 200 otázek celkem',        ok:s=>s.ta>=200},
+  {id:'xp500',    ico:'💎',n:'500 XP',           d:'Získej 500 XP',                     ok:s=>s.xp>=500},
+  {id:'master',   ico:'🌟',n:'Paleontolog',      d:'Získej 1000 XP',                    ok:s=>s.xp>=1000},
+  {id:'allstar',  ico:'🦕',n:'Dino Mistr',       d:'3 hvězdy ve všech kategoriích',   ok:s=>CATS.every(c=>(s.cb[c.id]||0)>=3)},
+];
+// ── STATE ──
+let ST = load();
+let SES = {};
+
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem('fajndino3')||'{}');
+    return{xp:s.xp||0,cb:s.cb||{},ta:s.ta||0,ms:s.ms||0,bd:s.bd||[]};
+  }catch(e){return{xp:0,cb:{},ta:0,ms:0,bd:[]};}
+}
+function save(){localStorage.setItem('fajndino3',JSON.stringify(ST));}
+
+// ── AUDIO ──
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC;}
+function tone(f,t,d,v=.26){
+  try{const ac=getAC(),o=ac.createOscillator(),g=ac.createGain();
+  o.connect(g);g.connect(ac.destination);o.type=t;o.frequency.value=f;
+  g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);
+  o.start();o.stop(ac.currentTime+d);}catch(e){}
+}
+function sndCorrect(){tone(523,'sine',.1);setTimeout(()=>tone(659,'sine',.12),70);setTimeout(()=>tone(784,'sine',.18),140);}
+function sndWrong(){tone(220,'sawtooth',.14);setTimeout(()=>tone(180,'sawtooth',.18),90);}
+function sndStreak(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'sine',.15,.3),i*60));}
+function sndFinish(){[523,659,784,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'triangle',.17,.28),i*80));}
+function sndUnlock(){[784,988,1175,1568].forEach((f,i)=>setTimeout(()=>tone(f,'sine',.2,.22),i*70));}
+
+// ── XP POPUP ──
+function showXP(xp,streak){
+  const el=document.getElementById('xpPopup');
+  el.textContent=`+${xp} XP${streak>=3?' 🔥×'+streak:''}`;
+  el.className='xp-popup go';
+  setTimeout(()=>el.className='xp-popup',1800);
+}
+
+// ── HOME ──
+function renderHome(){
+  document.getElementById('xpTotal').textContent=ST.xp;
+  const earned=BADGES.filter(b=>ST.bd.includes(b.id)).length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  
+  const grid=document.getElementById('catGrid');
+  grid.innerHTML=CATS.map(cat=>{
+    const cnt=QS.filter(q=>q.c===cat.id).length;
+    const best=ST.cb[cat.id]||0;
+    const stars=[1,2,3].map(s=>`<span class="cat-star ${s<=best?'on':''}">${s<=best?'⭐':'☆'}</span>`).join('');
+    return`<div class="cat-card" onclick="startCat('${cat.id}')">
+      <span class="cat-emoji">${cat.emoji}</span>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-count">${cnt} otázek</div>
+      <div class="cat-desc">${cat.desc}</div>
+      <div class="cat-stars">${stars}</div>
+    </div>`;
+  }).join('');
+  show('homeScreen');
+}
+
+// ── START CATEGORY ──
+function startCat(id){
+  getAC();
+  const pool=[...QS.filter(q=>q.c===id)].sort(()=>Math.random()-.5);
+  SES={cat:id,qs:pool,idx:0,ok:0,streak:0,ms:0,xp:0,answered:false,facts:[]};
+  show('questionScreen');
+  renderQ();
+}
+
+// ── RENDER QUESTION ──
+function renderQ(){
+  const cat=CATS.find(c=>c.id===SES.cat);
+  const q=SES.qs[SES.idx];
+  const tot=SES.qs.length;
+  SES.answered=false;
+
+  document.getElementById('qCat').textContent=cat.emoji+' '+cat.name;
+  document.getElementById('qCnt').textContent=`${SES.idx+1} / ${tot}`;
+  document.getElementById('progFill').style.width=`${(SES.idx/tot)*100}%`;
+
+  const strEl=document.getElementById('qStreak');
+  if(SES.streak>=2){
+    strEl.className='q-streak on';
+    document.getElementById('streakN').textContent=SES.streak;
+  } else {
+    strEl.className='q-streak';
+  }
+
+  const badges={
+    q:'🔬 Znalostní otázka',
+    tf:'✅ Pravda / lež',
+    who:'🕵️ Kdo jsem?',
+    film:'🎬 Film vs realita',
+    record:'🏅 Dino rekord',
+    battle:'⚔️ Aréna',
+    myth:'🔬 Mýtus nebo věda',
+    order:'🧭 Časová osa'
+  };
+  document.getElementById('qBadge').textContent=badges[q.t]||'🔬 Znalostní otázka';
+
+  document.getElementById('qText').textContent=q.q;
+
+  const adiv=document.getElementById('answersDiv');
+  adiv.className='answers'+(q.o.length<=2?' solo':'');
+
+  // Shuffle answer order but track correct
+  const indices=[0,1,2,3].slice(0,q.o.length);
+  const shuffled=[...indices].sort(()=>Math.random()-.5);
+  const newCorrect=shuffled.indexOf(q.a);
+  q._shuf=shuffled;
+  q._newA=newCorrect;
+
+  adiv.innerHTML=shuffled.map((orig,i)=>
+    `<button class="ans-btn" onclick="checkAns(${i})">${q.o[orig]}</button>`
+  ).join('');
+
+  document.getElementById('factBox').className='fact-box';
+  document.getElementById('nextBtn').className='next-btn';
+}
+
+// ── CHECK ANSWER ──
+function checkAns(idx){
+  if(SES.answered)return;
+  SES.answered=true;
+  const q=SES.qs[SES.idx];
+  const btns=document.querySelectorAll('.ans-btn');
+  const ok=idx===q._newA;
+  btns.forEach(b=>b.disabled=true);
+  btns[q._newA].classList.add('show-correct');
+
+  if(ok){
+    btns[idx].classList.add('correct');
+    SES.streak++;
+    SES.ms=Math.max(SES.ms,SES.streak);
+    SES.ok++;
+    const xp=SES.streak>=15?35:SES.streak>=10?25:SES.streak>=5?18:SES.streak>=3?14:10;
+    SES.xp+=xp;
+    sndCorrect();
+    if(SES.streak>=3)setTimeout(sndStreak,220);
+    showXP(xp,SES.streak);
+    const strEl=document.getElementById('qStreak');
+    strEl.className='q-streak on';
+    document.getElementById('streakN').textContent=SES.streak;
+  } else {
+    btns[idx].classList.add('wrong');
+    SES.streak=0;
+    document.getElementById('qStreak').className='q-streak';
+    sndWrong();
+  }
+
+  ST.ta++;
+  save();
+
+  if(q.f){
+    document.getElementById('factTxt').textContent=q.f;
+    document.getElementById('factBox').className='fact-box on';
+    if(ok&&SES.facts.length<6)SES.facts.push(q.f);
+  }
+  document.getElementById('nextBtn').className='next-btn on';
+}
+
+// ── NEXT QUESTION ──
+function nextQ(){
+  SES.idx++;
+  if(SES.idx>=SES.qs.length) showResult();
+  else renderQ();
+}
+
+// ── RESULT ──
+function showResult(){
+  sndFinish();
+  const tot=SES.qs.length;
+  const pct=SES.ok/tot;
+  const stars=pct>=.9?3:pct>=.6?2:1;
+
+  const prev=ST.cb[SES.cat]||0;
+  if(stars>prev)ST.cb[SES.cat]=stars;
+  ST.xp+=SES.xp;
+  ST.ms=Math.max(ST.ms,SES.ms);
+  save();
+
+  const newBadges=checkBadges();
+  if(newBadges.length>0)setTimeout(sndUnlock,400);
+
+  const titles={
+    3:['Perfektní!','Neuvěřitelné!','Mistr paleontolog!','Absolutní šampion!'],
+    2:['Výborně!','Skvělé!','Šikovný/á!','Dobrá práce!'],
+    1:['Dobrý začátek!','Zkus to znovu!','Dáš to lépe!','Učíš se!']
+  };
+  document.getElementById('resTitle').textContent=titles[stars][Math.floor(Math.random()*4)];
+  document.getElementById('resSub').textContent=`${SES.ok} z ${tot} správně — ${Math.round(pct*100)} %`;
+
+  const rStars=document.querySelectorAll('.res-star');
+  rStars.forEach((s,i)=>{
+    s.className='res-star';
+    if(i<stars)setTimeout(()=>s.className='res-star on',i*200+100);
+  });
+
+  document.getElementById('stCorrect').textContent=`${SES.ok}/${tot}`;
+  document.getElementById('stXP').textContent=SES.xp;
+  document.getElementById('stStreak').textContent=SES.ms;
+
+  const fl=document.getElementById('factsList');
+  fl.innerHTML=SES.facts.length>0
+    ? SES.facts.map(f=>`<div class="fact-item">${f}</div>`).join('')
+    : '<div class="fact-item" style="color:var(--muted)">Zkus příště odpovídat lépe — každá správná odpověď ti odhalí zajímavé fakty!</div>';
+
+  show('resultScreen');
+}
+
+// ── BADGES ──
+function checkBadges(){
+  const newOnes=[];
+  BADGES.forEach(b=>{
+    if(!ST.bd.includes(b.id)&&b.ok(ST)){
+      ST.bd.push(b.id);
+      newOnes.push(b);
+    }
+  });
+  save();
+  return newOnes;
+}
+
+function showBadges(){
+  const earned=ST.bd.length;
+  document.getElementById('badgePill').textContent=`${earned}/${BADGES.length}`;
+  document.getElementById('badgeGrid').innerHTML=BADGES.map(b=>{
+    const on=ST.bd.includes(b.id);
+    return`<div class="badge-c${on?' unlocked':' locked'}">
+      <span class="badge-ico">${b.ico}</span>
+      <div class="badge-n">${b.n}</div>
+      <div class="badge-d">${b.d}</div>
+    </div>`;
+  }).join('');
+  show('badgesScreen');
+}
+
+// ── NAV ──
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){renderHome();}
+function playAgain(){startCat(SES.cat);}
+
+// ── INIT ──
+renderHome();
+
+</script>
+</body>
+</html>
