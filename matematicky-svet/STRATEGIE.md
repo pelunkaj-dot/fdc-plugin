@@ -42,12 +42,13 @@ Odměna tedy není jen číslo v tabulce: na mapě trvale zůstane výheň, př�
 
 ## Další vývoj
 
-1. Doplnit do každého kraje více ručně navržených tras a kontrolovaný generátor variant.
-2. Zavést profil hráče, inventář staveb a návrat do rozehraného světa.
-3. Přidat adaptivní obtížnost podle chyb, rychlosti a využitých návratů.
-4. Vytvořit samostatné herní mechaniky pro zlomky, geometrii, procenta a rovnice.
-5. Přidat nenápadný přehled pro pedagoga: co dítě skutečně umí, kde tápe a jakou výzvu dostane příště.
-6. Ověřit hru s dětmi různých úrovní; sledovat, zda chtějí pokračovat i bez pobídky dospělého.
+Kontrolovaný generátor variant je hotový: při každém novém vstupu mění start, cíl, správnou cestu i slepé brány a hlídá právě jednu správnou trasu. Při opravě neúspěšného pokusu zadání zachová.
+
+1. Zavést profil hráče, inventář staveb a návrat do rozehraného světa.
+2. Přidat adaptivní obtížnost podle chyb, rychlosti a využitých návratů.
+3. Vytvořit samostatné herní mechaniky pro zlomky, geometrii, procenta a rovnice.
+4. Přidat nenápadný přehled pro pedagoga: co dítě skutečně umí, kde tápe a jakou výzvu dostane příště.
+5. Ověřit hru s dětmi různých úrovní; sledovat, zda chtějí pokračovat i bez pobídky dospělého.
 
 ## Technické začlenění
 
