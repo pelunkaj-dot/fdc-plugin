@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#091638">
+  <meta name="description" content="Číselná výprava – herní prototyp pro procvičování základních početních operací.">
+  <title>Číselná výprava</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23091638'/%3E%3Cpath d='M12 32h40M32 12v40' stroke='%236ef3ff' stroke-width='7' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffd166'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink:#f7fbff;
+      --muted:#b8c7e9;
+      --navy:#07112d;
+      --panel:rgba(8,18,48,.91);
+      --line:rgba(255,255,255,.16);
+      --cyan:#68efff;
+      --gold:#ffd166;
+      --red:#ff6b6b;
+      --teal:#4ee5c1;
+      --violet:#b78cff;
+      --green:#7ef29a;
+      --shadow:0 24px 70px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:ui-rounded,"Nunito","Segoe UI",system-ui,sans-serif;background:var(--navy);color:var(--ink)}
+    button{font:inherit}
+    button:focus-visible{outline:4px solid #fff;outline-offset:3px}
+    .game{min-height:100svh;position:relative;overflow:hidden;background:#101f4b url("assets/ciselny-svet.webp") center/cover no-repeat}
+    .game::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,8,27,.42),transparent 24%,rgba(2,7,26,.2) 60%,rgba(2,7,25,.76));pointer-events:none}
+    .topbar{position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px clamp(16px,3vw,42px);background:linear-gradient(180deg,rgba(4,12,36,.84),rgba(4,12,36,.15))}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:.02em;text-shadow:0 3px 18px #000}
+    .brand-mark{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,var(--cyan),#7389ff);color:#07112d;font-size:26px;box-shadow:0 8px 28px rgba(92,222,255,.38)}
+    .brand-title{font-size:clamp(18px,2.1vw,28px);line-height:1}
+    .brand-sub{display:block;color:var(--muted);font-size:12px;margin-top:5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .hud{display:flex;gap:9px;align-items:center}
+    .pill{border:1px solid var(--line);background:rgba(5,15,43,.78);backdrop-filter:blur(14px);border-radius:999px;padding:9px 13px;display:flex;align-items:center;gap:7px;font-weight:900;box-shadow:0 7px 25px rgba(0,0,0,.18)}
+    .pill small{color:var(--muted);font-weight:800}
+    .sound{width:43px;height:43px;border-radius:50%;border:1px solid var(--line);background:rgba(5,15,43,.78);color:white;cursor:pointer;font-size:19px}
+    .atlas-btn{border:1px solid rgba(255,209,102,.46);background:rgba(31,36,67,.86);color:#fff;border-radius:999px;padding:9px 13px;display:flex;align-items:center;gap:7px;font-weight:1000;cursor:pointer;box-shadow:0 7px 25px rgba(0,0,0,.18)}
+    .map{position:relative;z-index:2;height:calc(100svh - 76px);min-height:590px}
+    .mission{position:absolute;transform:translate(-50%,-50%);border:0;color:#10162d;cursor:pointer;width:clamp(76px,8vw,116px);aspect-ratio:1;border-radius:50%;font-weight:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 0 0 7px rgba(255,255,255,.28),0 12px 30px rgba(0,0,0,.42);transition:.2s transform,.2s filter,.2s box-shadow;isolation:isolate}
+    .mission::before{content:"";position:absolute;inset:8px;border:2px solid rgba(255,255,255,.58);border-radius:50%;z-index:-1}
+    .mission:hover{transform:translate(-50%,-50%) scale(1.1);filter:brightness(1.08);box-shadow:0 0 0 9px rgba(255,255,255,.35),0 16px 38px rgba(0,0,0,.48)}
+    .mission .op{font-size:clamp(29px,4vw,48px);line-height:.9}
+    .mission .label{font-size:12px}
+    .mission .core{position:absolute;right:-4px;top:-4px;width:28px;height:28px;border-radius:50%;background:#1a2447;color:#7280aa;border:3px solid white;display:grid;place-items:center;font-size:15px}
+    .mission.done .core{background:var(--green);color:#082113;box-shadow:0 0 22px var(--green)}
+    .mission.locked{filter:grayscale(.88) brightness(.56);cursor:not-allowed;box-shadow:0 0 0 7px rgba(255,255,255,.12),0 12px 30px rgba(0,0,0,.42)}
+    .mission.just-unlocked{animation:unlockPulse 1.4s ease both}
+    @keyframes unlockPulse{0%{transform:translate(-50%,-50%) scale(.72);filter:brightness(2.2)}45%{transform:translate(-50%,-50%) scale(1.28)}100%{transform:translate(-50%,-50%) scale(1)}}
+    .add{left:19%;top:25%;background:linear-gradient(145deg,#ff9b7b,var(--red))}
+    .sub{left:19%;top:70%;background:linear-gradient(145deg,#75fff0,var(--teal))}
+    .mul{left:81%;top:25%;background:linear-gradient(145deg,#ffe899,var(--gold))}
+    .div{left:81%;top:70%;background:linear-gradient(145deg,#d2b7ff,var(--violet))}
+    .tower{left:50%;top:50%;background:linear-gradient(145deg,#b7c8ff,#6178d7);color:#07112d}
+    .tower.locked{filter:grayscale(.82) brightness(.7);cursor:not-allowed}
+    .tower:not(.locked){animation:beacon 2s ease-in-out infinite}
+    @keyframes beacon{50%{box-shadow:0 0 0 9px rgba(255,255,255,.35),0 0 50px #8ff5ff,0 16px 38px rgba(0,0,0,.5)}}
+    .map-tip{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:min(92%,560px);text-align:center;background:rgba(5,14,41,.84);border:1px solid var(--line);backdrop-filter:blur(12px);border-radius:18px;padding:11px 18px;color:#d9e5ff;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.28)}
+    .map-tip strong{color:white}
+    .reward-shelf{position:absolute;z-index:3;left:50%;top:14px;transform:translateX(-50%);display:flex;gap:7px;justify-content:center;flex-wrap:wrap;width:min(90%,700px)}
+    .reward{min-width:46px;height:38px;border-radius:13px;border:1px solid var(--line);background:rgba(6,16,45,.78);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;gap:5px;padding:0 10px;color:#8493b9;font-weight:900;font-size:13px;transition:.25s}
+    .reward.won{color:white;border-color:rgba(126,242,154,.55);background:rgba(20,75,63,.82);box-shadow:0 0 22px rgba(126,242,154,.23)}
+    .beam{position:absolute;height:5px;left:50%;top:50%;transform-origin:left center;background:linear-gradient(90deg,var(--cyan),transparent);opacity:0;filter:drop-shadow(0 0 8px var(--cyan));transition:opacity .6s;pointer-events:none}
+    .beam.on{opacity:.8}.beam-add{width:31%;transform:rotate(-146deg)}.beam-sub{width:31%;transform:rotate(146deg)}.beam-mul{width:31%;transform:rotate(-34deg)}.beam-div{width:31%;transform:rotate(34deg)}
+
+    .atlas-dialog{width:min(94vw,920px);padding:24px}
+    .atlas-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}.atlas-head h2{margin:3px 0;font-size:clamp(28px,5vw,44px)}.atlas-head p{margin:5px 0 0;color:var(--muted)}
+    .grade-road{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .grade-card{min-height:164px;border:1px solid var(--line);border-radius:20px;padding:16px;background:rgba(255,255,255,.055);color:white;text-align:left;position:relative;overflow:hidden}
+    button.grade-card{cursor:pointer}.grade-card.current{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(104,239,255,.16),0 14px 30px rgba(0,0,0,.2)}.grade-card.locked{filter:saturate(.45);opacity:.52}.grade-card.future{border-style:dashed}
+    .grade-no{font-size:31px;font-weight:1000;color:var(--gold);line-height:1}.grade-card h3{font-size:17px;margin:10px 0 5px}.grade-card p{color:#b9c8e7;font-size:13px;line-height:1.4;margin:0}.grade-status{position:absolute;right:11px;top:11px;font-size:16px}.grade-tag{display:inline-block;margin-top:10px;color:var(--cyan);font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:1000}
+    .curriculum-note{margin-top:15px;color:#9badd1;font-size:13px;line-height:1.5}
+
+    .unlock-card{text-align:center;padding:clamp(28px,6vw,55px);width:min(92vw,620px)}
+    .unlock-icon{font-size:72px;filter:drop-shadow(0 0 25px rgba(255,209,102,.55));animation:float 2s ease-in-out infinite}.unlock-card h2{font-size:clamp(30px,6vw,52px);margin:8px 0}.unlock-card p{font-size:18px;color:#cad8f3;line-height:1.5;margin:0 auto 24px;max-width:500px}
+
+    .overlay{position:fixed;z-index:20;inset:0;display:grid;place-items:center;padding:18px;background:rgba(2,7,24,.62);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s}
+    .overlay.show{opacity:1;pointer-events:auto}
+    .dialog{width:min(94vw,890px);max-height:94svh;overflow:auto;background:linear-gradient(155deg,rgba(13,27,67,.98),rgba(7,15,41,.98));border:1px solid rgba(255,255,255,.2);border-radius:30px;box-shadow:var(--shadow);position:relative}
+    .intro{width:min(92vw,660px);padding:clamp(25px,5vw,48px);text-align:center;overflow:hidden}
+    .intro::before{content:"";position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(99,237,255,.28),transparent 68%);left:50%;top:-170px;transform:translateX(-50%)}
+    .intro-kicker{color:var(--cyan);font-weight:1000;text-transform:uppercase;letter-spacing:.15em;font-size:13px}
+    h1{font-size:clamp(34px,7vw,68px);line-height:.98;margin:12px 0 18px;letter-spacing:-.045em}
+    .intro p{font-size:clamp(17px,2.2vw,21px);line-height:1.55;color:#d5e1fb;max-width:550px;margin:0 auto 26px}
+    .primary{border:0;border-radius:16px;padding:15px 24px;background:linear-gradient(135deg,var(--gold),#ff9d4d);color:#261806;font-weight:1000;font-size:18px;cursor:pointer;box-shadow:0 7px 0 #a6521d,0 16px 30px rgba(255,170,60,.24);transition:.12s}
+    .primary:active{transform:translateY(5px);box-shadow:0 2px 0 #a6521d}
+    .tiny-note{display:block;margin-top:18px;color:#8fa3ce;font-size:13px;font-weight:700}
+
+    .quest-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:22px 24px 15px;border-bottom:1px solid var(--line)}
+    .quest-kicker{font-size:12px;color:var(--cyan);font-weight:1000;text-transform:uppercase;letter-spacing:.13em}
+    .quest-head h2{font-size:clamp(25px,4vw,38px);margin:4px 0 0;line-height:1}
+    .close{border:1px solid var(--line);background:rgba(255,255,255,.07);color:white;border-radius:14px;width:44px;height:44px;cursor:pointer;font-size:22px;flex:0 0 auto}
+    .quest-body{padding:clamp(18px,3vw,30px)}
+    .mission-brief{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:22px;padding:14px 18px;margin-bottom:20px}
+    .number-card{text-align:center}
+    .number-card span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}
+    .number-card strong{font-size:clamp(35px,6vw,58px);line-height:1.05}
+    .arrow{font-size:26px;color:var(--cyan)}
+    .route{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative;margin:16px 0 20px}
+    .stage{min-width:0;text-align:center}
+    .stage-label{font-size:12px;color:#8fa3ce;font-weight:900;margin-bottom:7px}
+    .gate-stack{display:grid;gap:8px}
+    .gate{min-height:64px;border:2px solid rgba(255,255,255,.18);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.05));color:white;font-size:clamp(19px,3vw,28px);font-weight:1000;cursor:pointer;box-shadow:0 7px 0 rgba(0,0,0,.22);transition:.15s}
+    .gate:hover:not(:disabled){border-color:var(--cyan);transform:translateY(-2px)}
+    .gate:active:not(:disabled){transform:translateY(4px);box-shadow:0 3px 0 rgba(0,0,0,.22)}
+    .gate:disabled{opacity:.28;cursor:not-allowed}
+    .stage.past .gate.chosen{opacity:1;border-color:var(--green);background:rgba(74,224,135,.18)}
+    .stage.past .gate:not(.chosen){opacity:.16}
+    .stage.current .gate{animation:gateGlow 1.8s ease-in-out infinite}
+    @keyframes gateGlow{50%{border-color:rgba(105,239,255,.85);box-shadow:0 7px 0 rgba(0,0,0,.22),0 0 22px rgba(105,239,255,.25)}}
+    .calculation{min-height:65px;border-radius:18px;background:rgba(2,10,31,.66);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-weight:900;font-size:clamp(18px,2.6vw,25px);color:#dfe9ff}
+    .calculation strong{color:var(--gold);font-size:1.18em}
+    .quest-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:17px}
+    .secondary{border:1px solid var(--line);border-radius:14px;padding:12px 16px;background:rgba(255,255,255,.07);color:white;font-weight:900;cursor:pointer}
+    .rewinds{color:var(--muted);font-weight:800;font-size:14px}
+    .result{display:none;text-align:center;padding:25px 18px 9px}
+    .result.show{display:block}
+    .result-orb{width:94px;height:94px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,white,var(--cyan) 18%,#456ee8 62%,#16224c);box-shadow:0 0 50px rgba(104,239,255,.6);font-size:42px;animation:float 2s ease-in-out infinite}
+    @keyframes float{50%{transform:translateY(-8px)}}
+    .result h3{font-size:34px;margin:6px 0}
+    .result p{color:#c6d5f2;font-size:17px;margin:0 auto 20px;max-width:500px}
+    .failure .result-orb{filter:grayscale(.8);box-shadow:none}
+    .toast{position:fixed;z-index:50;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:#fff;color:#10162d;border-radius:14px;padding:11px 18px;font-weight:1000;box-shadow:0 15px 35px rgba(0,0,0,.35);transition:.25s;pointer-events:none}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .confetti{position:fixed;z-index:60;pointer-events:none;width:10px;height:14px;border-radius:3px;top:-20px;animation:fall 1.4s linear forwards}
+    @keyframes fall{to{transform:translate(var(--drift),105svh) rotate(760deg);opacity:.2}}
+
+    @media(max-width:720px){
+      .game{background-color:#0b1940;background-size:100% auto;background-position:center 62px;background-repeat:no-repeat}.game::after{background:linear-gradient(180deg,rgba(2,8,27,.18),rgba(2,7,26,.1) 28%,#07112d 58%)}
+      .brand-sub,.pill small{display:none}.pill{padding:9px 11px}.topbar{padding:11px 12px}.brand-mark{width:38px;height:38px}.map{height:calc(100svh - 62px);min-height:650px;display:grid;grid-template-columns:repeat(2,76px);grid-auto-rows:76px;justify-content:center;align-content:start;gap:14px 30px;padding-top:clamp(235px,52vw,360px)}
+      .mission{position:relative;left:auto;top:auto;width:76px;transform:none!important}.mission .label{font-size:10px}.tower{grid-column:1 / -1;justify-self:center}.map-tip{font-size:14px;bottom:12px}
+      .beam{display:none}.reward-shelf{top:170px}.reward{height:32px;padding:0 7px;font-size:11px}.grade-road{grid-template-columns:repeat(2,1fr)}
+      .route{grid-template-columns:repeat(2,1fr)}.quest-head{padding:18px}.quest-body{padding:16px}.quest-foot{align-items:flex-end}.rewinds{max-width:180px}
+    }
+    @media(max-width:390px){.pill:nth-child(2){display:none}.atlas-btn span{display:none}.mission{width:68px}.dialog{border-radius:23px}.gate{min-height:58px}.mission-brief{padding:12px}.grade-road{grid-template-columns:1fr}.atlas-dialog{padding:18px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <main class="game" aria-label="Číselná výprava">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">✦</div><div><div class="brand-title">Číselná výprava</div><span class="brand-sub">Probuď čtyři ostrovy</span></div></div>
+      <div class="hud">
+        <button class="atlas-btn" id="atlasBtn" type="button">🗺️ <span id="gradeLabel">2. ročník</span></button>
+        <div class="pill" title="Probuzené ostrovy">💎 <b id="coreCount">0/4</b> <small>jádra</small></div>
+        <div class="pill" title="Nasbírané hvězdné úlomky">✦ <b id="shardCount">0</b> <small>úlomků</small></div>
+        <button class="sound" id="soundBtn" type="button" aria-label="Vypnout zvuk">🔊</button>
+      </div>
+    </header>
+
+    <section class="map" aria-label="Mapa ostrovů">
+      <div class="reward-shelf" id="rewardShelf" aria-label="Získané stavby"></div>
+      <i class="beam beam-add" data-beam="add"></i><i class="beam beam-sub" data-beam="sub"></i><i class="beam beam-mul" data-beam="mul"></i><i class="beam beam-div" data-beam="div"></i>
+      <button class="mission add" data-world="add" type="button"><span class="core">◇</span><span class="op">+</span><span class="label">Výheň</span></button>
+      <button class="mission sub" data-world="sub" type="button"><span class="core">◇</span><span class="op">−</span><span class="label">Přístav</span></button>
+      <button class="mission mul" data-world="mul" type="button"><span class="core">◇</span><span class="op">×</span><span class="label">Mlýny</span></button>
+      <button class="mission div" data-world="div" type="button"><span class="core">◇</span><span class="op">÷</span><span class="label">Hvězdárna</span></button>
+      <button class="mission tower locked" data-world="mix" type="button" aria-disabled="true"><span class="core">🔒</span><span class="op">✦</span><span class="label">Maják</span></button>
+      <div class="map-tip" id="mapTip"><strong>Vyber ostrov.</strong> Veď energii branami tak, aby přesně dosáhla cíle.</div>
+    </section>
+  </main>
+
+  <div class="overlay show" id="introOverlay" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+    <section class="dialog intro">
+      <div class="intro-kicker">První výprava</div>
+      <h1 id="introTitle">Maják čísel zhasl.</h1>
+      <p>Čtyři ostrovy přišly o energii. Proveď světelnou jiskru početními branami, probuď jejich jádra a rozsviť maják.</p>
+      <button class="primary" id="startBtn" type="button">Vstoupit do světa</button>
+      <span class="tiny-note">Neopisuješ výsledky. Volíš cestu.</span>
+    </section>
+  </div>
+
+  <div class="overlay" id="questOverlay" role="dialog" aria-modal="true" aria-labelledby="questTitle">
+    <section class="dialog">
+      <header class="quest-head">
+        <div><div class="quest-kicker" id="questKicker">Ostrov</div><h2 id="questTitle">Výprava</h2></div>
+        <button class="close" id="closeQuest" type="button" aria-label="Zavřít výpravu">×</button>
+      </header>
+      <div class="quest-body" id="playArea">
+        <div class="mission-brief">
+          <div class="number-card"><span>Startovní energie</span><strong id="startValue">0</strong></div>
+          <div class="arrow" aria-hidden="true">➜</div>
+          <div class="number-card"><span>Cíl majáku</span><strong id="targetValue">0</strong></div>
+        </div>
+        <div class="route" id="route" aria-label="Početní brány"></div>
+        <div class="calculation" id="calculation" aria-live="polite">Vyber první bránu. Cestu si můžeš nejdřív promyslet.</div>
+        <div class="quest-foot">
+          <div class="rewinds" id="rewindInfo">↶ Máš tři návraty v čase.</div>
+          <div><button class="secondary" id="undoBtn" type="button" disabled>↶ Zpět</button> <button class="secondary" id="resetBtn" type="button">Začít znovu</button></div>
+        </div>
+      </div>
+      <div class="result" id="resultArea">
+        <div class="result-orb" id="resultOrb">✦</div>
+        <h3 id="resultTitle">Jádro svítí!</h3>
+        <p id="resultText"></p>
+        <button class="primary" id="resultBtn" type="button">Zpět na mapu</button>
+      </div>
+    </section>
+  </div>
+  <div class="overlay" id="atlasOverlay" role="dialog" aria-modal="true" aria-labelledby="atlasTitle">
+    <section class="dialog atlas-dialog">
+      <header class="atlas-head"><div><div class="quest-kicker">Cesta napříč matematikou</div><h2 id="atlasTitle">Atlas matematického světa</h2><p>Každý dokončený kraj otevře další část mapy.</p></div><button class="close" id="closeAtlas" type="button" aria-label="Zavřít atlas">×</button></header>
+      <div class="grade-road" id="gradeRoad"></div>
+      <div class="curriculum-note"><strong>2.–5. ročník je herní cesta Číselnou výpravou.</strong> Kraje 6.–9. ročníku už mají navržený obsah a vlastní herní principy; budeme je stavět jako další etapu, ne jako nekonečnou řadu stejných bran.</div>
+    </section>
+  </div>
+  <div class="overlay" id="unlockOverlay" role="dialog" aria-modal="true" aria-labelledby="unlockTitle">
+    <section class="dialog unlock-card"><div class="unlock-icon" id="unlockIcon">🗺️</div><div class="quest-kicker">Nová cesta</div><h2 id="unlockTitle">Odemčeno!</h2><p id="unlockText"></p><button class="primary" id="unlockBtn" type="button">Vstoupit do nového kraje</button></section>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const ORDER=["add","sub","mul","div","mix"];
+    const CURRICULUM={
+      2:{title:"Početní ostrovy",topics:"Čísla do 100, sčítání, odčítání, první násobení a dělení",playable:true},
+      3:{title:"Násobilkové údolí",topics:"Čísla do 1 000, násobilka, dělení a vícekrokové cesty",playable:true},
+      4:{title:"Město velkých čísel",topics:"Velká čísla, písemné operace a početní strategie",playable:true},
+      5:{title:"Desetinné souostroví",topics:"Desetinná čísla, pořadí operací a závěr 1. stupně",playable:true},
+      6:{title:"Podzemí pod nulou",topics:"Záporná čísla, dělitelnost a zlomky",playable:false},
+      7:{title:"Tržiště poměrů",topics:"Poměry, procenta a racionální čísla",playable:false},
+      8:{title:"Alchymistická laboratoř",topics:"Mocniny, odmocniny, výrazy, rovnice a Pythagorova věta",playable:false},
+      9:{title:"Observatoř funkcí",topics:"Soustavy, funkce, podobnost a finanční matematika",playable:false}
+    };
+    const PUZZLES={
+      2:{
+        add:[{start:4,target:23,gates:[["+ 5","+ 8"],["+ 7","+ 3"],["+ 7","+ 9"]],solution:[0,0,0]},{start:7,target:31,gates:[["+ 6","+ 9"],["+ 8","+ 4"],["+ 7","+ 5"]],solution:[1,0,0]}],
+        sub:[{start:38,target:14,gates:[["− 8","− 5"],["− 9","− 4"],["− 7","− 11"]],solution:[0,0,0]},{start:52,target:19,gates:[["− 7","− 12"],["− 13","− 8"],["− 8","− 14"]],solution:[1,0,0]}],
+        mul:[{start:2,target:48,gates:[["× 2","× 3"],["× 4","× 2"],["× 2","× 4"]],solution:[1,1,1]},{start:3,target:72,gates:[["× 2","× 4"],["× 3","× 2"],["× 3","× 2"]],solution:[1,0,1]}],
+        div:[{start:144,target:6,gates:[["÷ 2","÷ 3"],["÷ 4","÷ 6"],["÷ 3","÷ 2"]],solution:[1,0,1]},{start:180,target:5,gates:[["÷ 3","÷ 2"],["÷ 4","÷ 6"],["÷ 3","÷ 5"]],solution:[1,1,0]}],
+        mix:[{start:6,target:17,gates:[["× 3","+ 8"],["− 5","÷ 2"],["+ 4","× 2"],["− 0","+ 3"]],solution:[0,0,0,0]}]
+      },
+      3:{
+        add:[{start:125,target:400,gates:[["+ 75","+ 50"],["+ 130","+ 125"],["+ 70","+ 90"]],solution:[0,0,0]}],
+        sub:[{start:640,target:300,gates:[["− 120","− 140"],["− 85","− 55"],["− 135","− 105"]],solution:[0,0,0]}],
+        mul:[{start:3,target:120,gates:[["× 4","× 3"],["× 5","× 2"],["× 2","× 4"]],solution:[0,0,0]}],
+        div:[{start:360,target:6,gates:[["÷ 3","÷ 5"],["÷ 4","÷ 6"],["÷ 5","÷ 2"]],solution:[0,0,0]}],
+        mix:[{start:12,target:30,gates:[["× 5","+ 18"],["− 18","÷ 3"],["÷ 2","+ 7"],["+ 9","× 2"]],solution:[0,0,0,0]}]
+      },
+      4:{
+        add:[{start:1250,target:3000,gates:[["+ 375","+ 250"],["+ 1200","+ 1000"],["+ 175","+ 500"]],solution:[0,0,0]}],
+        sub:[{start:8000,target:4500,gates:[["− 1250","− 750"],["− 1750","− 1500"],["− 500","− 1000"]],solution:[0,0,0]}],
+        mul:[{start:12,target:2400,gates:[["× 5","× 10"],["× 4","× 3"],["× 10","× 20"]],solution:[0,0,0]}],
+        div:[{start:9600,target:40,gates:[["÷ 4","÷ 8"],["÷ 6","÷ 5"],["÷ 10","÷ 4"]],solution:[0,0,0]}],
+        mix:[{start:125,target:275,gates:[["× 8","× 4"],["+ 600","+ 250"],["÷ 4","÷ 5"],["− 125","+ 25"]],solution:[0,0,0,0]}]
+      },
+      5:{
+        add:[{start:2.5,target:8,gates:[["+ 1,75","+ 2,25"],["+ 3,2","+ 2,8"],["+ 0,55","+ 0,75"]],solution:[0,0,0]}],
+        sub:[{start:12.5,target:5,gates:[["− 3,75","− 2,75"],["− 2,5","− 3,5"],["− 1,25","− 0,75"]],solution:[0,0,0]}],
+        mul:[{start:1.2,target:240,gates:[["× 5","× 4"],["× 4","× 10"],["× 10","× 5"]],solution:[0,0,0]}],
+        div:[{start:48,target:2,gates:[["÷ 4","÷ 3"],["÷ 2","÷ 4"],["÷ 3","÷ 2"]],solution:[0,0,0]}],
+        mix:[{start:3.5,target:4,gates:[["× 4","+ 4"],["+ 2,5","− 2,5"],["÷ 3","÷ 2"],["− 1,5","+ 1,5"]],solution:[0,0,0,0]}]
+      }
+    };
+    const WORLD={
+      add:{kicker:"Korálová výheň",title:"Rozpal pec součtů",reward:"Oheň výhně znovu plane.",icon:"🔥",prize:"Živá výheň"},
+      sub:{kicker:"Tyrkysový přístav",title:"Odemkni vodní cestu",reward:"Přístavní kolo se znovu roztočilo.",icon:"⚓",prize:"Vodní přístav"},
+      mul:{kicker:"Zlaté mlýny",title:"Roztoč násobiče",reward:"Zlaté mlýny posílají energii dál.",icon:"🌾",prize:"Zlatý mlýn"},
+      div:{kicker:"Fialová hvězdárna",title:"Rozděl světlo hvězd",reward:"Hvězdárna zachytila nový paprsek.",icon:"🔭",prize:"Hvězdárna"},
+      mix:{kicker:"Centrální ostrov",title:"Probuď maják čísel",reward:"Všechny ostrovy jsou znovu propojené!",icon:"🗼",prize:"Maják"}
+    };
+    const SAVE_KEY="fajn_matematicky_svet_v2",OLD_KEY="fajn_ciselna_vyprava_v1";
+    let state={grade:2,maxGrade:2,completed:{2:[]},shards:0,sound:true};
+    let active=null,puzzle=null,energy=0,step=0,history=[],rewinds=3,pendingUnlock=null,audio=null;
+    const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+    const done=()=>state.completed[String(state.grade)]||[];
+    const fmt=n=>Number(n).toLocaleString("cs-CZ",{maximumFractionDigits:6});
+    const same=(a,b)=>Math.abs(a-b)<1e-8;
+    function load(){
+      try{
+        const saved=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
+        if(saved)state={...state,...saved,completed:{...state.completed,...(saved.completed||{})}};
+        else{const old=JSON.parse(localStorage.getItem(OLD_KEY)||"null");if(old?.done?.length){state.completed={2:old.done};state.shards=old.shards||0;if(old.done.includes("mix"))state.maxGrade=3}}
+      }catch(e){}
+      state.grade=Math.min(Math.max(2,Number(state.grade)||2),Math.min(5,Number(state.maxGrade)||2));renderMap();renderAtlas()
+    }
+    function save(){localStorage.setItem(SAVE_KEY,JSON.stringify(state))}
+    function tone(freq,dur=.12,type="sine",delay=0){if(!state.sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime+delay;o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.09,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+dur)}catch(e){}}
+    function chime(){[392,523,659,784].forEach((f,i)=>tone(f,.22,"sine",i*.09))}
+    function clickSound(){tone(330,.08,"triangle");tone(520,.1,"sine",.06)}
+    function isUnlocked(id){const index=ORDER.indexOf(id);return index===0||done().includes(ORDER[index-1])}
+    function renderMap(){
+      ORDER.forEach(id=>{const b=$(`[data-world="${id}"]`),won=done().includes(id),open=isUnlocked(id);b.classList.toggle("done",won);b.classList.toggle("locked",!open);b.setAttribute("aria-disabled",String(!open));b.querySelector(".core").textContent=won?"◆":open?"◇":"🔒"});
+      ["add","sub","mul","div"].forEach(id=>$(`[data-beam="${id}"]`).classList.toggle("on",done().includes(id)));
+      $("#rewardShelf").innerHTML=ORDER.map(id=>`<div class="reward ${done().includes(id)?"won":""}" title="${WORLD[id].prize}">${done().includes(id)?WORLD[id].icon:"🔒"}<span>${done().includes(id)?WORLD[id].prize:"?"}</span></div>`).join("");
+      $("#coreCount").textContent=`${done().filter(x=>x!=="mix").length}/4`;$("#shardCount").textContent=state.shards;$("#gradeLabel").textContent=`${state.grade}. ročník`;
+      $(".brand-sub").textContent=`${state.grade}. ročník · ${CURRICULUM[state.grade].title}`;
+      $("#soundBtn").textContent=state.sound?"🔊":"🔇";$("#soundBtn").setAttribute("aria-label",state.sound?"Vypnout zvuk":"Zapnout zvuk");
+      const next=ORDER.find(id=>!done().includes(id));
+      $("#mapTip").innerHTML=next?`<strong>Další úkol: ${WORLD[next].prize}.</strong> Dokonči výpravu a odemkni další část mapy.`:`<strong>Maják ${state.grade}. ročníku svítí!</strong> Otevři atlas a pokračuj dál.`;
+    }
+    function renderAtlas(){
+      $("#gradeRoad").innerHTML=Object.entries(CURRICULUM).map(([grade,item])=>{const g=Number(grade),future=!item.playable,open=g<=state.maxGrade&&item.playable,current=g===state.grade,complete=(state.completed[grade]||[]).includes("mix");return `<${open?"button":"article"} class="grade-card ${current?"current":""} ${!open?"locked":""} ${future?"future":""}" ${open?`type="button" data-grade="${g}"`:""}><span class="grade-status">${complete?"✅":open?"▶":"🔒"}</span><div class="grade-no">${g}.</div><h3>${item.title}</h3><p>${item.topics}</p><span class="grade-tag">${future?"další etapa":complete?"dokončeno":open?"hratelné":"zamčeno"}</span></${open?"button":"article"}>`}).join("");
+      $$('[data-grade]').forEach(b=>b.addEventListener("click",()=>switchGrade(Number(b.dataset.grade))))
+    }
+    function switchGrade(grade){if(grade>state.maxGrade||grade>5)return;state.grade=grade;save();renderMap();renderAtlas();$("#atlasOverlay").classList.remove("show");showToast(`Otevřen ${grade}. ročník: ${CURRICULUM[grade].title}`)}
+    function parseGate(label,value){const [op,nRaw]=label.replace("−","-").split(/\s+/),n=Number(nRaw.replace(",","."));let result=value;if(op==="+")result=value+n;if(op==="-")result=value-n;if(op==="×")result=value*n;if(op==="÷"){result=value/n;if(state.grade<=4&&!Number.isInteger(result))return null}return Math.round(result*1e8)/1e8}
+    function openQuest(id){
+      if(!isUnlocked(id)){const previous=WORLD[ORDER[ORDER.indexOf(id)-1]];showToast(`Nejdřív dokonči: ${previous.prize}.`);return}
+      active=id;const list=PUZZLES[state.grade][id],idx=(state.shards+done().length)%list.length;puzzle=structuredClone(list[idx]);energy=puzzle.start;step=0;history=[];rewinds=3;pendingUnlock=null;
+      $("#questKicker").textContent=`${state.grade}. ročník · ${WORLD[id].kicker}`;$("#questTitle").textContent=WORLD[id].title;$("#startValue").textContent=fmt(puzzle.start);$("#targetValue").textContent=fmt(puzzle.target);
+      $("#playArea").style.display="block";$("#resultArea").className="result";$("#questOverlay").classList.add("show");renderRoute();setTimeout(()=>$("#route .gate")?.focus(),180)
+    }
+    function renderRoute(){
+      $("#route").innerHTML=puzzle.gates.map((pair,i)=>`<div class="stage ${i<step?"past":i===step?"current":""}"><div class="stage-label">BRÁNA ${i+1}</div><div class="gate-stack">${pair.map((g,j)=>`<button class="gate ${history[i]?.choice===j?"chosen":""}" data-stage="${i}" data-choice="${j}" type="button" ${i===step?"":"disabled"}>${g}</button>`).join("")}</div></div>`).join("");
+      $$(".gate").forEach(b=>b.addEventListener("click",()=>chooseGate(Number(b.dataset.stage),Number(b.dataset.choice))));
+      $("#undoBtn").disabled=!history.length||rewinds<=0;$("#rewindInfo").textContent=`↶ Návraty v čase: ${rewinds}`;
+      if(!history.length)$("#calculation").textContent="Vyber první bránu. Cestu si můžeš nejdřív promyslet.";
+    }
+    function chooseGate(stage,choice){
+      if(stage!==step)return;const before=energy,label=puzzle.gates[stage][choice],after=parseGate(label,before);
+      if(after===null){tone(150,.25,"sawtooth");showToast(`${fmt(before)} nejde touto branou rozdělit beze zbytku.`);return}
+      clickSound();history.push({before,label,after,choice});energy=after;step++;
+      $("#calculation").innerHTML=`${fmt(before)} ${label} = <strong>${fmt(after)}</strong> &nbsp;·&nbsp; Do cíle zbývá <strong>${fmt(puzzle.target-after)}</strong>`;renderRoute();
+      if(step>=puzzle.gates.length)setTimeout(finishQuest,450)
+    }
+    function undo(){if(!history.length||rewinds<=0)return;const last=history.pop();energy=last.before;step--;rewinds--;tone(260,.12,"sine");$("#calculation").innerHTML=`Čas se vrátil. Energie je znovu <strong>${fmt(energy)}</strong>.`;renderRoute()}
+    function resetQuest(){energy=puzzle.start;step=0;history=[];rewinds=3;renderRoute();$("#calculation").textContent="Cesta je znovu volná. Zkus jinou kombinaci bran."}
+    function finishQuest(){
+      const success=same(energy,puzzle.target),grade=state.grade;$("#playArea").style.display="none";const result=$("#resultArea");result.className=`result show ${success?"":"failure"}`;
+      $("#resultOrb").textContent=success?WORLD[active].icon:"↶";$("#resultTitle").textContent=success?(active==="mix"?"Maják svítí!":"Odměna získána!"):"Energie minula cíl";
+      if(success){
+        const list=state.completed[String(grade)]||(state.completed[String(grade)]=[]),first=!list.includes(active);if(first)list.push(active);const reward=Math.max(1,rewinds);state.shards+=reward;
+        if(first&&active!=="mix")pendingUnlock={type:"world",id:ORDER[ORDER.indexOf(active)+1]};
+        if(first&&active==="mix"&&grade<5){state.maxGrade=Math.max(state.maxGrade,grade+1);state.completed[String(grade+1)]=state.completed[String(grade+1)]||[];pendingUnlock={type:"grade",grade:grade+1}}
+        if(first&&active==="mix"&&grade===5)pendingUnlock={type:"primary"};
+        save();renderMap();renderAtlas();chime();burst();
+        const nextText=pendingUnlock?.type==="world"?` Odemkl se další cíl: ${WORLD[pendingUnlock.id].prize}.`:pendingUnlock?.type==="grade"?` Odemkl se ${pendingUnlock.grade}. ročník.`:"";
+        $("#resultText").textContent=`${WORLD[active].reward} Získáváš stavbu „${WORLD[active].prize}“ a ${reward} ${reward===1?"úlomek":"úlomky"}.${nextText}`;$("#resultBtn").textContent=pendingUnlock?"Ukázat odemčení":"Zpět na mapu";
+      }else{$("#resultText").textContent=`Došel jsi s energií ${fmt(energy)}, ale cíl potřebuje ${fmt(puzzle.target)}. Zkus naplánovat jinou cestu.`;$("#resultBtn").textContent="Zkusit jinou cestu"}
+      $("#resultBtn").onclick=()=>{if(success){closeQuest();if(pendingUnlock)showUnlock(pendingUnlock)}else{result.className="result";$("#playArea").style.display="block";resetQuest()}}
+    }
+    function showUnlock(unlock){
+      if(unlock.type==="world"){$("#unlockIcon").textContent=WORLD[unlock.id].icon;$("#unlockTitle").textContent=`Odemčeno: ${WORLD[unlock.id].prize}`;$("#unlockText").textContent="Na mapě se objevila nová početní cesta. Předchozí odměna zůstává viditelně ve tvé sbírce.";$("#unlockBtn").textContent="Jít k nové výpravě";$("#unlockBtn").onclick=()=>{$("#unlockOverlay").classList.remove("show");const b=$(`[data-world="${unlock.id}"]`);b.classList.add("just-unlocked");setTimeout(()=>b.classList.remove("just-unlocked"),1500)}}
+      if(unlock.type==="grade"){$("#unlockIcon").textContent="🗺️";$("#unlockTitle").textContent=`Odemčen ${unlock.grade}. ročník`;$("#unlockText").textContent=`Nový kraj „${CURRICULUM[unlock.grade].title}“ čeká. Obtížnost i čísla rostou, herní pravidlo už znáš.`;$("#unlockBtn").textContent="Vstoupit do nového kraje";$("#unlockBtn").onclick=()=>{$("#unlockOverlay").classList.remove("show");switchGrade(unlock.grade)}}
+      if(unlock.type==="primary"){$("#unlockIcon").textContent="🏆";$("#unlockTitle").textContent="První stupeň dokončen!";$("#unlockText").textContent="Prošel jsi cestu od základních operací až k desetinným číslům. V atlasu už čeká návrh kontinentů pro 6.–9. ročník.";$("#unlockBtn").textContent="Prohlédnout další kontinenty";$("#unlockBtn").onclick=()=>{$("#unlockOverlay").classList.remove("show");renderAtlas();$("#atlasOverlay").classList.add("show")}}
+      $("#unlockOverlay").classList.add("show");pendingUnlock=null;burst()
+    }
+    function closeQuest(){$("#questOverlay").classList.remove("show");active=null}
+    function showToast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove("show"),2400)}
+    function burst(){const colors=["#68efff","#ffd166","#ff6b6b","#7ef29a","#b78cff"];for(let i=0;i<34;i++)setTimeout(()=>{const c=document.createElement("i");c.className="confetti";c.style.left=Math.random()*100+"vw";c.style.background=colors[i%colors.length];c.style.setProperty("--drift",`${Math.random()*180-90}px`);document.body.append(c);setTimeout(()=>c.remove(),1500)},i*18)}
+    function registerModelTools(){
+      const context=document.modelContext;if(!context?.registerTool)return;
+      Promise.resolve(context.registerTool({name:"read_number_world",title:"Přečíst stav matematického světa",description:"Vrátí ročník, získané stavby a stav právě hrané výpravy.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute:()=>({grade:state.grade,maxGrade:state.maxGrade,awakened:[...done()],shards:state.shards,activeWorld:active,energy,step,target:puzzle?.target??null})})).catch(()=>{});
+      Promise.resolve(context.registerTool({name:"start_number_quest",title:"Zahájit početní výpravu",description:"Otevře právě odemčenou početní výpravu.",inputSchema:{type:"object",properties:{world:{type:"string",enum:ORDER}},required:["world"],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:({world})=>{openQuest(world);return{world,started:active===world,start:energy,target:puzzle?.target??null}}})).catch(()=>{});
+      Promise.resolve(context.registerTool({name:"choose_number_gate",title:"Vybrat početní bránu",description:"V právě otevřené výpravě zvolí levou nebo pravou bránu.",inputSchema:{type:"object",properties:{choice:{type:"integer",minimum:0,maximum:1}},required:["choice"],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:({choice})=>{if(!puzzle||active===null)throw new Error("Nejprve zahaj výpravu.");const before=energy;chooseGate(step,choice);return{before,after:energy,step,target:puzzle.target}}})).catch(()=>{});
+    }
+    $$(".mission").forEach(b=>b.addEventListener("click",()=>openQuest(b.dataset.world)));
+    $("#startBtn").addEventListener("click",()=>{$("#introOverlay").classList.remove("show");clickSound()});
+    $("#closeQuest").addEventListener("click",closeQuest);$("#undoBtn").addEventListener("click",undo);$("#resetBtn").addEventListener("click",resetQuest);
+    $("#atlasBtn").addEventListener("click",()=>{renderAtlas();$("#atlasOverlay").classList.add("show")});$("#closeAtlas").addEventListener("click",()=>$("#atlasOverlay").classList.remove("show"));
+    $("#soundBtn").addEventListener("click",()=>{state.sound=!state.sound;save();renderMap();if(state.sound)clickSound()});
+    document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if($("#unlockOverlay").classList.contains("show"))$("#unlockOverlay").classList.remove("show");else if($("#atlasOverlay").classList.contains("show"))$("#atlasOverlay").classList.remove("show");else if($("#questOverlay").classList.contains("show"))closeQuest();else if($("#introOverlay").classList.contains("show"))$("#introOverlay").classList.remove("show")});
+    load();registerModelTools();
+  </script>
+</body>
+</html>
