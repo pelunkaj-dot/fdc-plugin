@@ -266,7 +266,7 @@
       mix:{kicker:"Centrální ostrov",title:"Probuď maják čísel",reward:"Všechny ostrovy jsou znovu propojené!",icon:"🗼",prize:"Maják"}
     };
     const SAVE_KEY="fajn_matematicky_svet_v2",OLD_KEY="fajn_ciselna_vyprava_v1";
-    let state={grade:2,maxGrade:2,completed:{2:[]},shards:0,sound:true};
+    let state={grade:2,maxGrade:2,completed:{2:[]},shards:0,sound:true,lastPuzzles:{}};
     let active=null,puzzle=null,energy=0,step=0,history=[],rewinds=3,pendingUnlock=null,audio=null;
     const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
     const done=()=>state.completed[String(state.grade)]||[];
@@ -302,9 +302,66 @@
     }
     function switchGrade(grade){if(grade>state.maxGrade||grade>5)return;state.grade=grade;save();renderMap();renderAtlas();$("#atlasOverlay").classList.remove("show");showToast(`Otevřen ${grade}. ročník: ${CURRICULUM[grade].title}`)}
     function parseGate(label,value){const [op,nRaw]=label.replace("−","-").split(/\s+/),n=Number(nRaw.replace(",","."));let result=value;if(op==="+")result=value+n;if(op==="-")result=value-n;if(op==="×")result=value*n;if(op==="÷"){result=value/n;if(state.grade<=4&&!Number.isInteger(result))return null}return Math.round(result*1e8)/1e8}
+    const rand=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+    const shuffled=list=>[...list].sort(()=>Math.random()-.5);
+    const gateLabel=(op,n)=>`${op==="-"?"−":op} ${String(n).replace(".",",")}`;
+    function correctPath(grade,world){
+      const decimal=grade===5;
+      if(world==="add"){
+        const setup=grade===2?[2,30,2,18,100]:grade===3?[50,350,20,180,1000]:grade===4?[500,8000,100,5000,50000]:[5,100,2,50,400];
+        for(let tries=0;tries<80;tries++){let start=rand(setup[0],setup[1]),value=start;if(decimal){start/=10;value=start}const labels=[];for(let i=0;i<3;i++){let n=rand(setup[2],setup[3]);if(decimal)n/=10;labels.push(gateLabel("+",n));value=Math.round((value+n)*1e8)/1e8}if(value<=setup[4])return{start,target:value,labels}}
+      }
+      if(world==="sub"){
+        const setup=grade===2?[45,99,2,18]:grade===3?[400,999,20,200]:grade===4?[10000,90000,500,10000]:[100,300,2,50];
+        for(let tries=0;tries<80;tries++){let start=rand(setup[0],setup[1]),value=start;if(decimal){start/=10;value=start}const labels=[];let valid=true;for(let i=0;i<3;i++){let n=rand(setup[2],setup[3]);if(decimal)n/=10;if(value-n<0){valid=false;break}labels.push(gateLabel("-",n));value=Math.round((value-n)*1e8)/1e8}if(valid)return{start,target:value,labels}}
+      }
+      if(world==="mul"){
+        const setup=grade===2?[2,5,2,5,100]:grade===3?[2,9,2,10,1000]:grade===4?[5,30,2,12,100000]:[5,30,2,6,500];
+        for(let tries=0;tries<100;tries++){let start=rand(setup[0],setup[1]),value=start;if(decimal){start/=10;value=start}const labels=[];for(let i=0;i<3;i++){const n=rand(setup[2],setup[3]);labels.push(gateLabel("×",n));value=Math.round(value*n*1e8)/1e8}if(value<=setup[4])return{start,target:value,labels}}
+      }
+      if(world==="div"){
+        const setup=grade===2?[1,9,2,5,100]:grade===3?[2,12,2,10,1000]:grade===4?[5,100,2,12,100000]:[5,100,2,6,500];
+        for(let tries=0;tries<100;tries++){let target=rand(setup[0],setup[1]);if(decimal)target/=10;const nums=[rand(setup[2],setup[3]),rand(setup[2],setup[3]),rand(setup[2],setup[3])],start=Math.round(target*nums.reduce((a,b)=>a*b,1)*1e8)/1e8;if(start<=setup[4])return{start,target,labels:nums.map(n=>gateLabel("÷",n))}}
+      }
+      if(world==="mix"){
+        const max=grade===2?100:grade===3?1000:grade===4?100000:500;
+        for(let tries=0;tries<160;tries++){
+          let start=decimal?rand(20,120)/10:grade===2?rand(8,30):grade===3?rand(20,150):rand(100,1500),value=start;const labels=[];let valid=true;
+          for(const op of shuffled(["+","-","×","÷"])){
+            let n;
+            if(op==="+"){n=decimal?rand(2,50)/10:grade===2?rand(2,15):grade===3?rand(5,80):rand(20,500);if(value+n>max){valid=false;break}}
+            if(op==="-"){const ceiling=Math.floor(decimal?Math.min(50,value*10):Math.min(grade===2?15:grade===3?80:500,value));if(ceiling<2){valid=false;break}n=rand(2,ceiling);if(decimal)n/=10}
+            if(op==="×"){const possible=[2,3,4,5].filter(x=>value*x<=max);if(!possible.length){valid=false;break}n=possible[rand(0,possible.length-1)]}
+            if(op==="÷"){if(decimal)n=rand(2,5);else{const possible=[2,3,4,5,6,8,10].filter(x=>Number.isInteger(value/x));if(!possible.length){valid=false;break}n=possible[rand(0,possible.length-1)]}}
+            const label=gateLabel(op,n),next=parseGate(label,value);if(next===null||next<0||next>max){valid=false;break}labels.push(label);value=next;
+          }
+          if(valid&&labels.length===4&&!same(start,value))return{start,target:value,labels}
+        }
+      }
+      return null
+    }
+    function distractor(correct,world,grade){
+      const correctOp=correct.replace("−","-").split(/\s+/)[0],ops=world==="mix"?["+","-","×","÷"]:[correctOp];
+      for(let tries=0;tries<40;tries++){const op=ops[rand(0,ops.length-1)];let n;if(op==="+"||op==="-")n=grade===5?rand(2,60)/10:grade===2?rand(2,19):grade===3?rand(5,200):rand(20,6000);else n=rand(2,grade===2?5:grade===3?10:12);const label=gateLabel(op,n);if(label!==correct)return label}
+      return gateLabel("+",1)
+    }
+    function solutionCount(candidate){
+      let values=[candidate.start];
+      for(const pair of candidate.gates){const next=[];for(const value of values)for(const label of pair){const result=parseGate(label,value);if(result!==null&&Number.isFinite(result))next.push(result)}values=next}
+      return values.filter(value=>same(value,candidate.target)).length
+    }
+    function generatedPuzzle(grade,world){
+      state.lastPuzzles=state.lastPuzzles||{};const key=`${grade}-${world}`,last=state.lastPuzzles[key];let backup=null;
+      for(let tries=0;tries<300;tries++){
+        const correct=correctPath(grade,world);if(!correct)continue;const solution=correct.labels.map(()=>rand(0,1));const gates=correct.labels.map((label,i)=>{const other=distractor(label,world,grade);return solution[i]===0?[label,other]:[other,label]});const path=correct.labels.join("|");const candidate={start:correct.start,target:correct.target,gates,solution,path};backup=candidate;
+        const fresh=!last||(candidate.start!==last.start&&candidate.target!==last.target&&candidate.path!==last.path);if(fresh&&solutionCount(candidate)===1)return candidate
+      }
+      if(backup&&solutionCount(backup)===1)return backup;
+      const fallback=structuredClone(PUZZLES[grade][world][rand(0,PUZZLES[grade][world].length-1)]);fallback.path=fallback.gates.map((pair,i)=>pair[fallback.solution[i]]).join("|");return fallback
+    }
     function openQuest(id){
       if(!isUnlocked(id)){const previous=WORLD[ORDER[ORDER.indexOf(id)-1]];showToast(`Nejdřív dokonči: ${previous.prize}.`);return}
-      active=id;const list=PUZZLES[state.grade][id],idx=(state.shards+done().length)%list.length;puzzle=structuredClone(list[idx]);energy=puzzle.start;step=0;history=[];rewinds=3;pendingUnlock=null;
+      active=id;puzzle=generatedPuzzle(state.grade,id);state.lastPuzzles[`${state.grade}-${id}`]={start:puzzle.start,target:puzzle.target,path:puzzle.path};save();energy=puzzle.start;step=0;history=[];rewinds=3;pendingUnlock=null;
       $("#questKicker").textContent=`${state.grade}. ročník · ${WORLD[id].kicker}`;$("#questTitle").textContent=WORLD[id].title;$("#startValue").textContent=fmt(puzzle.start);$("#targetValue").textContent=fmt(puzzle.target);
       $("#playArea").style.display="block";$("#resultArea").className="result";$("#questOverlay").classList.add("show");renderRoute();setTimeout(()=>$("#route .gate")?.focus(),180)
     }
