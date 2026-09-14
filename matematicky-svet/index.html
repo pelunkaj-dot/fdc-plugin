@@ -3,419 +3,150 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#091638">
-  <meta name="description" content="Číselná výprava – herní prototyp pro procvičování základních početních operací.">
-  <title>Číselná výprava</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23091638'/%3E%3Cpath d='M12 32h40M32 12v40' stroke='%236ef3ff' stroke-width='7' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffd166'/%3E%3C/svg%3E">
+  <meta name="theme-color" content="#071638">
+  <meta name="description" content="Matematický svět – živé početní dobrodružství pro děti.">
+  <title>Matematický svět</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23071638'/%3E%3Cpath d='M12 32h40M32 12v40' stroke='%236ef3ff' stroke-width='7' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffd166'/%3E%3C/svg%3E">
   <style>
-    :root {
-      color-scheme: dark;
-      --ink:#f7fbff;
-      --muted:#b8c7e9;
-      --navy:#07112d;
-      --panel:rgba(8,18,48,.91);
-      --line:rgba(255,255,255,.16);
-      --cyan:#68efff;
-      --gold:#ffd166;
-      --red:#ff6b6b;
-      --teal:#4ee5c1;
-      --violet:#b78cff;
-      --green:#7ef29a;
-      --shadow:0 24px 70px rgba(0,0,0,.45);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;font-family:ui-rounded,"Nunito","Segoe UI",system-ui,sans-serif;background:var(--navy);color:var(--ink)}
-    button{font:inherit}
-    button:focus-visible{outline:4px solid #fff;outline-offset:3px}
-    .game{min-height:100svh;position:relative;overflow:hidden;background:#101f4b url("assets/ciselny-svet.webp") center/cover no-repeat}
-    .game::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,8,27,.42),transparent 24%,rgba(2,7,26,.2) 60%,rgba(2,7,25,.76));pointer-events:none}
-    .topbar{position:relative;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px clamp(16px,3vw,42px);background:linear-gradient(180deg,rgba(4,12,36,.84),rgba(4,12,36,.15))}
-    .brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:.02em;text-shadow:0 3px 18px #000}
-    .brand-mark{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,var(--cyan),#7389ff);color:#07112d;font-size:26px;box-shadow:0 8px 28px rgba(92,222,255,.38)}
-    .brand-title{font-size:clamp(18px,2.1vw,28px);line-height:1}
-    .brand-sub{display:block;color:var(--muted);font-size:12px;margin-top:5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-    .hud{display:flex;gap:9px;align-items:center}
-    .pill{border:1px solid var(--line);background:rgba(5,15,43,.78);backdrop-filter:blur(14px);border-radius:999px;padding:9px 13px;display:flex;align-items:center;gap:7px;font-weight:900;box-shadow:0 7px 25px rgba(0,0,0,.18)}
-    .pill small{color:var(--muted);font-weight:800}
-    .sound{width:43px;height:43px;border-radius:50%;border:1px solid var(--line);background:rgba(5,15,43,.78);color:white;cursor:pointer;font-size:19px}
-    .atlas-btn{border:1px solid rgba(255,209,102,.46);background:rgba(31,36,67,.86);color:#fff;border-radius:999px;padding:9px 13px;display:flex;align-items:center;gap:7px;font-weight:1000;cursor:pointer;box-shadow:0 7px 25px rgba(0,0,0,.18)}
-    .map{position:relative;z-index:2;height:calc(100svh - 76px);min-height:590px}
-    .mission{position:absolute;transform:translate(-50%,-50%);border:0;color:#10162d;cursor:pointer;width:clamp(76px,8vw,116px);aspect-ratio:1;border-radius:50%;font-weight:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 0 0 7px rgba(255,255,255,.28),0 12px 30px rgba(0,0,0,.42);transition:.2s transform,.2s filter,.2s box-shadow;isolation:isolate}
-    .mission::before{content:"";position:absolute;inset:8px;border:2px solid rgba(255,255,255,.58);border-radius:50%;z-index:-1}
-    .mission:hover{transform:translate(-50%,-50%) scale(1.1);filter:brightness(1.08);box-shadow:0 0 0 9px rgba(255,255,255,.35),0 16px 38px rgba(0,0,0,.48)}
-    .mission .op{font-size:clamp(29px,4vw,48px);line-height:.9}
-    .mission .label{font-size:12px}
-    .mission .core{position:absolute;right:-4px;top:-4px;width:28px;height:28px;border-radius:50%;background:#1a2447;color:#7280aa;border:3px solid white;display:grid;place-items:center;font-size:15px}
-    .mission.done .core{background:var(--green);color:#082113;box-shadow:0 0 22px var(--green)}
-    .mission.locked{filter:grayscale(.88) brightness(.56);cursor:not-allowed;box-shadow:0 0 0 7px rgba(255,255,255,.12),0 12px 30px rgba(0,0,0,.42)}
-    .mission.just-unlocked{animation:unlockPulse 1.4s ease both}
-    @keyframes unlockPulse{0%{transform:translate(-50%,-50%) scale(.72);filter:brightness(2.2)}45%{transform:translate(-50%,-50%) scale(1.28)}100%{transform:translate(-50%,-50%) scale(1)}}
-    .add{left:19%;top:25%;background:linear-gradient(145deg,#ff9b7b,var(--red))}
-    .sub{left:19%;top:70%;background:linear-gradient(145deg,#75fff0,var(--teal))}
-    .mul{left:81%;top:25%;background:linear-gradient(145deg,#ffe899,var(--gold))}
-    .div{left:81%;top:70%;background:linear-gradient(145deg,#d2b7ff,var(--violet))}
-    .tower{left:50%;top:50%;background:linear-gradient(145deg,#b7c8ff,#6178d7);color:#07112d}
-    .tower.locked{filter:grayscale(.82) brightness(.7);cursor:not-allowed}
-    .tower:not(.locked){animation:beacon 2s ease-in-out infinite}
-    @keyframes beacon{50%{box-shadow:0 0 0 9px rgba(255,255,255,.35),0 0 50px #8ff5ff,0 16px 38px rgba(0,0,0,.5)}}
-    .map-tip{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:min(92%,560px);text-align:center;background:rgba(5,14,41,.84);border:1px solid var(--line);backdrop-filter:blur(12px);border-radius:18px;padding:11px 18px;color:#d9e5ff;font-weight:800;box-shadow:0 12px 30px rgba(0,0,0,.28)}
-    .map-tip strong{color:white}
-    .map-progress{position:absolute;z-index:3;left:50%;top:8px;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:9px;width:min(94%,760px);font-size:14px;text-shadow:0 2px 8px #000}.map-progress strong{color:#fff}.map-progress span{color:#cedbfa}
-    .reward-shelf{position:absolute;z-index:3;left:50%;top:36px;transform:translateX(-50%);display:flex;gap:7px;justify-content:center;width:min(94%,760px);overflow-x:auto;padding:3px 2px 8px;scrollbar-width:thin}
-    .reward{flex:1 0 116px;min-width:0;height:50px;border-radius:13px;border:1px solid var(--line);background:rgba(6,16,45,.82);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:flex-start;gap:8px;padding:0 9px;color:#8493b9;font-weight:900;font-size:12px;transition:.25s}
-    .reward-icon{font-size:20px;flex:0 0 24px;text-align:center}.reward-copy{min-width:0;text-align:left}.reward-copy b{display:block;color:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.reward-copy small{display:block;margin-top:2px;font-size:10px;letter-spacing:.08em;color:#7f8db3}.reward.won{color:white;border-color:rgba(126,242,154,.55);background:rgba(20,75,63,.88);box-shadow:0 0 22px rgba(126,242,154,.23)}.reward.won small{color:var(--green)}.reward.current{color:white;border-color:var(--gold);background:rgba(86,62,16,.9);box-shadow:0 0 22px rgba(255,209,102,.25)}.reward.current small{color:var(--gold)}
-    .beam{position:absolute;height:5px;left:50%;top:50%;transform-origin:left center;background:linear-gradient(90deg,var(--cyan),transparent);opacity:0;filter:drop-shadow(0 0 8px var(--cyan));transition:opacity .6s;pointer-events:none}
-    .beam.on{opacity:.8}.beam-add{width:31%;transform:rotate(-146deg)}.beam-sub{width:31%;transform:rotate(146deg)}.beam-mul{width:31%;transform:rotate(-34deg)}.beam-div{width:31%;transform:rotate(34deg)}
-
-    .atlas-dialog{width:min(94vw,920px);padding:24px}
-    .atlas-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:18px}.atlas-head h2{margin:3px 0;font-size:clamp(28px,5vw,44px)}.atlas-head p{margin:5px 0 0;color:var(--muted)}
-    .grade-road{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-    .grade-card{min-height:164px;border:1px solid var(--line);border-radius:20px;padding:16px;background:rgba(255,255,255,.055);color:white;text-align:left;position:relative;overflow:hidden}
-    button.grade-card{cursor:pointer}.grade-card.current{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(104,239,255,.16),0 14px 30px rgba(0,0,0,.2)}.grade-card.locked{filter:saturate(.45);opacity:.52}.grade-card.future{border-style:dashed}
-    .grade-no{font-size:31px;font-weight:1000;color:var(--gold);line-height:1}.grade-card h3{font-size:17px;margin:10px 0 5px}.grade-card p{color:#b9c8e7;font-size:13px;line-height:1.4;margin:0}.grade-status{position:absolute;right:11px;top:11px;font-size:16px}.grade-tag{display:inline-block;margin-top:10px;color:var(--cyan);font-size:11px;text-transform:uppercase;letter-spacing:.09em;font-weight:1000}
-    .curriculum-note{margin-top:15px;color:#9badd1;font-size:13px;line-height:1.5}
-
-    .unlock-card{text-align:center;padding:clamp(28px,6vw,55px);width:min(92vw,620px)}
-    .unlock-icon{font-size:72px;filter:drop-shadow(0 0 25px rgba(255,209,102,.55));animation:float 2s ease-in-out infinite}.unlock-card h2{font-size:clamp(30px,6vw,52px);margin:8px 0}.unlock-card p{font-size:18px;color:#cad8f3;line-height:1.5;margin:0 auto 24px;max-width:500px}
-
-    .overlay{position:fixed;z-index:20;inset:0;display:grid;place-items:center;padding:18px;background:rgba(2,7,24,.62);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s}
-    .overlay.show{opacity:1;pointer-events:auto}
-    .dialog{width:min(94vw,890px);max-height:94svh;overflow:auto;background:linear-gradient(155deg,rgba(13,27,67,.98),rgba(7,15,41,.98));border:1px solid rgba(255,255,255,.2);border-radius:30px;box-shadow:var(--shadow);position:relative}
-    .intro{width:min(92vw,660px);padding:clamp(25px,5vw,48px);text-align:center;overflow:hidden}
-    .intro::before{content:"";position:absolute;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(99,237,255,.28),transparent 68%);left:50%;top:-170px;transform:translateX(-50%)}
-    .intro-kicker{color:var(--cyan);font-weight:1000;text-transform:uppercase;letter-spacing:.15em;font-size:13px}
-    h1{font-size:clamp(34px,7vw,68px);line-height:.98;margin:12px 0 18px;letter-spacing:-.045em}
-    .intro p{font-size:clamp(17px,2.2vw,21px);line-height:1.55;color:#d5e1fb;max-width:550px;margin:0 auto 26px}
-    .primary{border:0;border-radius:16px;padding:15px 24px;background:linear-gradient(135deg,var(--gold),#ff9d4d);color:#261806;font-weight:1000;font-size:18px;cursor:pointer;box-shadow:0 7px 0 #a6521d,0 16px 30px rgba(255,170,60,.24);transition:.12s}
-    .primary:active{transform:translateY(5px);box-shadow:0 2px 0 #a6521d}
-    .tiny-note{display:block;margin-top:18px;color:#8fa3ce;font-size:13px;font-weight:700}
-
-    .quest-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:22px 24px 15px;border-bottom:1px solid var(--line)}
-    .quest-kicker{font-size:12px;color:var(--cyan);font-weight:1000;text-transform:uppercase;letter-spacing:.13em}
-    .quest-head h2{font-size:clamp(25px,4vw,38px);margin:4px 0 0;line-height:1}
-    .close{border:1px solid var(--line);background:rgba(255,255,255,.07);color:white;border-radius:14px;width:44px;height:44px;cursor:pointer;font-size:22px;flex:0 0 auto}
-    .quest-body{padding:clamp(18px,3vw,30px)}
-    .mission-brief{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:22px;padding:14px 18px;margin-bottom:20px}
-    .quest-progress{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 14px;padding:11px 14px;border:1px solid rgba(104,239,255,.28);border-radius:16px;background:rgba(5,18,49,.72)}.quest-progress strong{display:block;font-size:16px}.quest-progress span{display:block;color:var(--muted);font-size:13px;margin-top:2px}.progress-dots{display:flex;gap:7px;flex:0 0 auto}.progress-dot{width:14px;height:14px;border-radius:50%;border:2px solid #7180a8;background:transparent}.progress-dot.done{border-color:var(--green);background:var(--green);box-shadow:0 0 10px rgba(126,242,154,.5)}.progress-dot.current{border-color:var(--gold);background:var(--gold);box-shadow:0 0 12px rgba(255,209,102,.6)}
-    .number-card{text-align:center}
-    .number-card span{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:900}
-    .number-card strong{font-size:clamp(35px,6vw,58px);line-height:1.05}
-    .arrow{font-size:26px;color:var(--cyan)}
-    .route{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative;margin:16px 0 20px}
-    .stage{min-width:0;text-align:center}
-    .stage-label{font-size:12px;color:#8fa3ce;font-weight:900;margin-bottom:7px}
-    .gate-stack{display:grid;gap:8px}
-    .gate{min-height:64px;border:2px solid rgba(255,255,255,.18);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.05));color:white;font-size:clamp(19px,3vw,28px);font-weight:1000;cursor:pointer;box-shadow:0 7px 0 rgba(0,0,0,.22);transition:.15s}
-    .gate:hover:not(:disabled){border-color:var(--cyan);transform:translateY(-2px)}
-    .gate:active:not(:disabled){transform:translateY(4px);box-shadow:0 3px 0 rgba(0,0,0,.22)}
-    .gate:disabled{opacity:.28;cursor:not-allowed}
-    .stage.past .gate.chosen{opacity:1;border-color:var(--green);background:rgba(74,224,135,.18)}
-    .stage.past .gate:not(.chosen){opacity:.16}
-    .stage.current .gate{animation:gateGlow 1.8s ease-in-out infinite}
-    @keyframes gateGlow{50%{border-color:rgba(105,239,255,.85);box-shadow:0 7px 0 rgba(0,0,0,.22),0 0 22px rgba(105,239,255,.25)}}
-    .calculation{min-height:65px;border-radius:18px;background:rgba(2,10,31,.66);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-weight:900;font-size:clamp(18px,2.6vw,25px);color:#dfe9ff}
-    .calculation strong{color:var(--gold);font-size:1.18em}
-    .quest-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:17px}
-    .secondary{border:1px solid var(--line);border-radius:14px;padding:12px 16px;background:rgba(255,255,255,.07);color:white;font-weight:900;cursor:pointer}
-    .rewinds{color:var(--muted);font-weight:800;font-size:14px}
-    .result{display:none;text-align:center;padding:25px 18px 9px}
-    .result.show{display:block}
-    .result-orb{width:94px;height:94px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,white,var(--cyan) 18%,#456ee8 62%,#16224c);box-shadow:0 0 50px rgba(104,239,255,.6);font-size:42px;animation:float 2s ease-in-out infinite}
-    @keyframes float{50%{transform:translateY(-8px)}}
-    .result h3{font-size:34px;margin:6px 0}
-    .result p{color:#c6d5f2;font-size:17px;margin:0 auto 20px;max-width:500px}
-    .failure .result-orb{filter:grayscale(.8);box-shadow:none}
-    .toast{position:fixed;z-index:50;left:50%;bottom:24px;transform:translate(-50%,30px);opacity:0;background:#fff;color:#10162d;border-radius:14px;padding:11px 18px;font-weight:1000;box-shadow:0 15px 35px rgba(0,0,0,.35);transition:.25s;pointer-events:none}
-    .toast.show{opacity:1;transform:translate(-50%,0)}
-    .confetti{position:fixed;z-index:60;pointer-events:none;width:10px;height:14px;border-radius:3px;top:-20px;animation:fall 1.4s linear forwards}
-    @keyframes fall{to{transform:translate(var(--drift),105svh) rotate(760deg);opacity:.2}}
-
-    @media(max-width:720px){
-      .game{background-color:#0b1940;background-size:100% auto;background-position:center 62px;background-repeat:no-repeat}.game::after{background:linear-gradient(180deg,rgba(2,8,27,.18),rgba(2,7,26,.1) 28%,#07112d 58%)}
-      .brand-sub,.pill small{display:none}.pill{padding:9px 11px}.topbar{padding:11px 12px}.brand-mark{width:38px;height:38px}.map{height:calc(100svh - 62px);min-height:650px;display:grid;grid-template-columns:repeat(2,76px);grid-auto-rows:76px;justify-content:center;align-content:start;gap:14px 30px;padding-top:clamp(235px,52vw,360px)}
-      .mission{position:relative;left:auto;top:auto;width:76px;transform:none!important}.mission .label{font-size:10px}.tower{grid-column:1 / -1;justify-self:center}.map-tip{font-size:14px;bottom:12px}
-      .beam{display:none}.map-progress{top:128px;display:block;text-align:center}.map-progress span{display:block;margin-top:2px}.reward-shelf{top:166px;justify-content:flex-start}.reward{flex-basis:116px;height:47px}.grade-road{grid-template-columns:repeat(2,1fr)}
-      .route{grid-template-columns:repeat(2,1fr)}.quest-head{padding:18px}.quest-body{padding:16px}.quest-foot{align-items:flex-end}.rewinds{max-width:180px}
-    }
-    @media(max-width:390px){.pill:nth-child(2){display:none}.atlas-btn span{display:none}.mission{width:68px}.dialog{border-radius:23px}.gate{min-height:58px}.mission-brief{padding:12px}.grade-road{grid-template-columns:1fr}.atlas-dialog{padding:18px}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+    :root{color-scheme:dark;--ink:#f7fbff;--muted:#c1cee9;--navy:#06112d;--panel:rgba(7,18,48,.94);--line:rgba(255,255,255,.18);--cyan:#68efff;--gold:#ffd166;--green:#7ef29a;--coral:#ff786f;--violet:#b78cff;--shadow:0 25px 75px rgba(0,0,0,.48)}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:ui-rounded,"Nunito","Segoe UI",system-ui,sans-serif;background:var(--navy);color:var(--ink)}button{font:inherit}button:focus-visible{outline:4px solid white;outline-offset:3px}
+    .game{min-height:100svh;position:relative;overflow:hidden;background:#112353 url("assets/ciselny-svet.webp") center/cover no-repeat}
+    .game::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,7,24,.58),transparent 24%,rgba(2,8,27,.08) 58%,rgba(2,7,25,.82));pointer-events:none}
+    .topbar{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px clamp(14px,3vw,38px);background:linear-gradient(180deg,rgba(3,11,34,.92),rgba(3,11,34,.12))}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:1000;text-shadow:0 3px 16px #000}.brand-mark{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,var(--cyan),#7288ff);color:#06112d;font-size:25px;box-shadow:0 7px 25px rgba(104,239,255,.32)}.brand-title{font-size:clamp(18px,2.1vw,27px);line-height:1}.brand-sub{display:block;color:var(--muted);font-size:12px;margin-top:4px;text-transform:uppercase;letter-spacing:.1em}
+    .hud{display:flex;align-items:center;gap:8px}.pill,.icon-btn{border:1px solid var(--line);background:rgba(5,15,43,.82);backdrop-filter:blur(12px);color:white;border-radius:999px;padding:9px 12px;font-weight:900}.icon-btn{cursor:pointer}.sound{width:43px;height:43px;padding:0;border-radius:50%}
+    .world{position:relative;z-index:2;height:calc(100svh - 68px);min-height:650px}
+    .sea{position:absolute;left:-10%;right:-10%;bottom:-3%;height:37%;overflow:hidden;opacity:.72;pointer-events:none;mix-blend-mode:screen}.wave{position:absolute;left:-15%;width:130%;height:55px;background:radial-gradient(ellipse at 50% 100%,transparent 62%,rgba(109,235,255,.5) 64%,transparent 68%) 0 0/110px 55px repeat-x;animation:waves 7s linear infinite}.wave:nth-child(1){bottom:13%;opacity:.6}.wave:nth-child(2){bottom:3%;animation-duration:10s;animation-direction:reverse;transform:scale(.82);opacity:.42}@keyframes waves{to{background-position:220px 0}}
+    .flame{position:absolute;z-index:3;left:50%;top:24%;width:18px;height:28px;transform:translate(-50%,-50%);border-radius:52% 48% 55% 45%;background:radial-gradient(circle at 50% 68%,#fff 0 13%,#ffe76c 24%,#ff8b36 58%,transparent 64%);filter:drop-shadow(0 0 13px #ffb43d);opacity:.35;animation:flicker .42s ease-in-out infinite alternate;pointer-events:none}.flame.lit{opacity:1;width:28px;height:43px;filter:drop-shadow(0 0 28px #ffdf67)}@keyframes flicker{to{transform:translate(-50%,-52%) scale(.88,1.12) rotate(2deg)}}
+    .light-beam{position:absolute;z-index:2;left:50%;top:24%;width:43vw;height:10px;transform-origin:left center;background:linear-gradient(90deg,rgba(255,244,163,.9),rgba(255,244,163,.3),transparent);filter:blur(2px) drop-shadow(0 0 10px #fff4a3);opacity:0;pointer-events:none}.light-beam.on{opacity:.9;animation:sweep 7s linear infinite}@keyframes sweep{to{transform:rotate(360deg)}}
+    .ambient-spark{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold);animation:drift 5s ease-in-out infinite;opacity:.7;pointer-events:none}@keyframes drift{50%{transform:translate(22px,-35px);opacity:.25}}
+    .builds{position:absolute;inset:0;pointer-events:none}.built-item{position:absolute;z-index:3;display:grid;place-items:center;width:58px;height:58px;border-radius:19px;background:rgba(8,22,54,.78);border:2px solid rgba(255,255,255,.42);font-size:31px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.5));animation:idle 3s ease-in-out infinite}.built-item.new{animation:buildPop 1.2s cubic-bezier(.18,.86,.22,1.35) both}@keyframes idle{50%{transform:translateY(-5px)}}@keyframes buildPop{0%{transform:translateY(-100px) scale(.2) rotate(-25deg);opacity:0}55%{transform:translateY(8px) scale(1.25)}100%{transform:none;opacity:1}}
+    .built-item:nth-child(1){left:17%;top:39%}.built-item:nth-child(2){left:25%;top:61%}.built-item:nth-child(3){left:35%;top:29%}.built-item:nth-child(4){left:46%;top:56%}.built-item:nth-child(5){left:58%;top:31%}.built-item:nth-child(6){left:67%;top:57%}.built-item:nth-child(7){left:76%;top:37%}.built-item:nth-child(8){left:83%;top:61%}.built-item:nth-child(9){left:55%;top:65%}.built-item:nth-child(10){left:48%;top:34%}
+    .chapter{position:absolute;z-index:6;left:50%;bottom:18px;transform:translateX(-50%);width:min(95%,1050px);background:rgba(5,15,43,.9);border:1px solid var(--line);border-radius:24px;padding:14px 16px 16px;backdrop-filter:blur(16px);box-shadow:0 18px 45px rgba(0,0,0,.38)}
+    .chapter-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:11px}.chapter-head h2{font-size:17px;margin:0}.chapter-head p{font-size:13px;color:var(--muted);margin:3px 0 0}.progress-copy{font-weight:1000;color:var(--gold);white-space:nowrap}
+    .path-wrap{position:relative}.path-line{position:absolute;left:4%;right:4%;top:25px;height:5px;border-radius:99px;background:rgba(255,255,255,.13)}.path-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--cyan),var(--gold));box-shadow:0 0 14px rgba(104,239,255,.55);transition:width 1.5s cubic-bezier(.2,.8,.2,1)}
+    .mission-path{position:relative;display:grid;grid-template-columns:repeat(10,1fr);gap:7px}.mission-node{border:0;background:transparent;color:#8b9ac0;cursor:not-allowed;min-width:0;padding:0;text-align:center}.mission-node .node-orb{width:50px;height:50px;margin:auto;border-radius:50%;display:grid;place-items:center;background:#17244a;border:3px solid #627099;font-size:22px;box-shadow:0 6px 13px rgba(0,0,0,.3);transition:.2s}.mission-node .node-name{display:block;font-size:10px;font-weight:900;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mission-node.done{color:var(--green);cursor:pointer}.mission-node.done .node-orb{background:#174b3c;border-color:var(--green)}.mission-node.current{color:white;cursor:pointer}.mission-node.current .node-orb{background:linear-gradient(145deg,#ffb84d,#ff6b5f);border-color:#fff;animation:nodePulse 1.4s ease-in-out infinite;box-shadow:0 0 23px rgba(255,177,75,.55)}@keyframes nodePulse{50%{transform:scale(1.12)}}
+    .overlay{position:fixed;z-index:30;inset:0;display:grid;place-items:center;padding:17px;background:rgba(2,7,24,.67);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .25s}.overlay.show{opacity:1;pointer-events:auto}.dialog{width:min(94vw,820px);max-height:94svh;overflow:auto;background:linear-gradient(155deg,rgba(14,29,70,.99),rgba(6,14,39,.99));border:1px solid rgba(255,255,255,.2);border-radius:28px;box-shadow:var(--shadow);position:relative}
+    .intro{width:min(92vw,650px);padding:clamp(25px,5vw,48px);text-align:center}.kicker{color:var(--cyan);font-size:12px;font-weight:1000;letter-spacing:.14em;text-transform:uppercase}.intro h1{font-size:clamp(38px,7vw,68px);line-height:.95;letter-spacing:-.04em;margin:12px 0 18px}.intro p{font-size:clamp(17px,2.3vw,21px);line-height:1.52;color:#d7e3fa;margin:0 auto 25px;max-width:560px}.primary{border:0;border-radius:16px;padding:14px 23px;background:linear-gradient(135deg,var(--gold),#ff994d);color:#251706;font-weight:1000;font-size:17px;cursor:pointer;box-shadow:0 7px 0 #9a4d1c,0 15px 28px rgba(255,166,67,.22)}.primary:active{transform:translateY(5px);box-shadow:0 2px 0 #9a4d1c}.tiny{display:block;color:#94a8d1;font-size:13px;margin-top:17px}
+    .mission-head{display:flex;justify-content:space-between;align-items:flex-start;gap:13px;padding:20px 22px 14px;border-bottom:1px solid var(--line)}.mission-head h2{font-size:clamp(25px,4vw,36px);margin:4px 0 0}.close{border:1px solid var(--line);background:rgba(255,255,255,.07);color:white;border-radius:14px;width:43px;height:43px;font-size:22px;cursor:pointer}.mission-body{padding:clamp(18px,4vw,30px);text-align:center}.round-info{display:flex;justify-content:center;gap:8px;margin-bottom:18px}.round-dot{width:13px;height:13px;border-radius:50%;border:2px solid #6878a3}.round-dot.done{background:var(--green);border-color:var(--green)}.round-dot.current{background:var(--gold);border-color:var(--gold);box-shadow:0 0 11px var(--gold)}
+    .task-title{font-size:18px;color:#d7e3fa;margin-bottom:16px}.equation{font-size:clamp(38px,8vw,67px);font-weight:1000;letter-spacing:.02em;margin:10px 0 24px;color:white;text-shadow:0 0 25px rgba(104,239,255,.25)}.answers{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.answer{min-width:100px;border:2px solid rgba(255,255,255,.22);border-radius:18px;padding:15px 20px;background:rgba(255,255,255,.08);color:white;font-size:25px;font-weight:1000;cursor:pointer;box-shadow:0 7px 0 rgba(0,0,0,.25)}.answer:hover{border-color:var(--cyan);transform:translateY(-2px)}.answer.wrong{animation:shake .38s;background:rgba(255,80,80,.2);border-color:var(--coral)}@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+    .cargo-deck{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:10px 0 20px}.crate{width:82px;height:70px;border:3px solid #c7853f;border-radius:10px;background:linear-gradient(145deg,#9c5c27,#603715);color:#fff4ce;font-size:25px;font-weight:1000;cursor:pointer;box-shadow:inset 0 0 0 3px rgba(255,218,145,.2),0 7px 0 #35200f}.crate.selected{transform:translateY(-11px);border-color:var(--gold);box-shadow:0 7px 0 #35200f,0 0 25px rgba(255,209,102,.55)}.cargo-sum{font-size:20px;margin-bottom:18px;color:var(--muted)}.cargo-sum strong{color:var(--gold);font-size:1.35em}
+    .gate-route{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin:18px auto;max-width:570px}.gate-step{padding:14px;border-radius:19px;background:rgba(255,255,255,.05);border:1px solid var(--line)}.gate-step span{display:block;color:var(--muted);font-size:12px;font-weight:900;margin-bottom:9px}.gate-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gate{border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:white;border-radius:14px;padding:13px 8px;font-size:22px;font-weight:1000;cursor:pointer}.gate:disabled{opacity:.25;cursor:not-allowed}.gate.chosen{border-color:var(--green);background:rgba(126,242,154,.14)}
+    .bonus-arena{position:relative;height:300px;border-radius:23px;overflow:hidden;background:linear-gradient(#101d57,#243e78 65%,#152d55);border:1px solid var(--line)}.bonus-star{position:absolute;width:54px;height:54px;border:0;background:transparent;font-size:40px;cursor:pointer;filter:drop-shadow(0 0 10px #ffe06b);animation:starBob 1s ease-in-out infinite alternate}@keyframes starBob{to{transform:translateY(-11px) rotate(10deg)}}.bonus-count{font-size:21px;margin:0 0 13px}.bonus-count strong{color:var(--gold)}
+    .feedback{min-height:28px;margin-top:18px;color:var(--muted);font-weight:900}.feedback.good{color:var(--green)}
+    .construction{text-align:center;padding:clamp(25px,5vw,45px);width:min(92vw,610px);overflow:hidden}.construction h2{font-size:clamp(30px,6vw,48px);margin:9px 0}.construction p{color:#cfdbf3;font-size:17px;line-height:1.45}.build-scene{height:190px;position:relative;display:grid;place-items:center}.scaffold{font-size:78px;animation:hammer .28s ease-in-out infinite alternate;transition:.4s}.final-build{position:absolute;font-size:90px;opacity:0;transform:scale(.2);filter:drop-shadow(0 0 30px rgba(255,209,102,.55));transition:.65s cubic-bezier(.2,.9,.25,1.3)}.construction.built .scaffold{opacity:0;transform:scale(.5)}.construction.built .final-build{opacity:1;transform:scale(1)}@keyframes hammer{to{transform:rotate(4deg) translateY(3px)}}.piece{position:absolute;font-size:30px;opacity:0}.construction.building .piece{animation:pieceFly 1.05s ease-in forwards}.piece:nth-child(3){animation-delay:.12s!important}.piece:nth-child(4){animation-delay:.25s!important}@keyframes pieceFly{0%{opacity:0;transform:translate(var(--x),-130px) rotate(-90deg)}45%{opacity:1}100%{opacity:0;transform:translate(0,30px) rotate(20deg)}}.construction .primary{opacity:0;pointer-events:none;transition:.3s}.construction.built .primary{opacity:1;pointer-events:auto}
+    .atlas{padding:24px}.atlas h2{font-size:35px;margin:5px 0 17px}.grade-list{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.grade-card{padding:15px;border-radius:17px;border:1px dashed rgba(255,255,255,.25);background:rgba(255,255,255,.045);min-height:120px}.grade-card.active{border-style:solid;border-color:var(--cyan);background:rgba(104,239,255,.08)}.grade-card b{font-size:25px;color:var(--gold)}.grade-card span{display:block;font-weight:900;margin:7px 0 4px}.grade-card small{color:var(--muted)}
+    .toast{position:fixed;z-index:70;left:50%;bottom:25px;transform:translate(-50%,30px);opacity:0;background:white;color:#10162d;border-radius:14px;padding:11px 17px;font-weight:1000;box-shadow:0 15px 35px rgba(0,0,0,.35);transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}.confetti{position:fixed;z-index:80;top:-20px;width:10px;height:14px;border-radius:3px;pointer-events:none;animation:fall 1.5s linear forwards}@keyframes fall{to{transform:translate(var(--drift),105svh) rotate(760deg);opacity:.2}}
+    @media(max-width:760px){.game{background-size:auto 67%;background-position:center 65px;background-repeat:no-repeat}.world{min-height:720px}.brand-sub,.pill span{display:none}.topbar{padding:10px}.chapter{bottom:9px;padding:12px 10px}.chapter-head{align-items:flex-start}.chapter-head p{max-width:220px}.mission-path{display:flex;overflow-x:auto;justify-content:flex-start;padding:2px 4px 9px}.mission-node{flex:0 0 65px}.path-line{display:none}.built-item{width:45px;height:45px;font-size:24px}.flame,.light-beam{top:26%}.grade-list{grid-template-columns:repeat(2,1fr)}.gate-route{grid-template-columns:1fr}.bonus-arena{height:270px}}
+    @media(max-width:420px){.brand-title{font-size:17px}.icon-btn:not(.sound){padding:9px}.chapter-head h2{font-size:15px}.chapter-head p{font-size:12px}.progress-copy{font-size:12px}.answers{gap:8px}.answer{min-width:82px;padding:13px}.mission-body{padding:16px}.cargo-deck{gap:8px}.crate{width:67px;height:61px}.atlas{padding:18px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
   </style>
 </head>
 <body>
-  <main class="game" aria-label="Číselná výprava">
+  <main class="game">
     <header class="topbar">
-      <div class="brand"><div class="brand-mark" aria-hidden="true">✦</div><div><div class="brand-title">Číselná výprava</div><span class="brand-sub">Probuď čtyři ostrovy</span></div></div>
-      <div class="hud">
-        <button class="atlas-btn" id="atlasBtn" type="button">🗺️ <span id="gradeLabel">2. ročník</span></button>
-        <div class="pill" title="Probuzené ostrovy">💎 <b id="coreCount">0/4</b> <small>jádra</small></div>
-        <div class="pill" title="Nasbírané hvězdné úlomky">✦ <b id="shardCount">0</b> <small>úlomků</small></div>
-        <button class="sound" id="soundBtn" type="button" aria-label="Vypnout zvuk">🔊</button>
-      </div>
+      <div class="brand"><div class="brand-mark">✦</div><div><div class="brand-title">Matematický svět</div><span class="brand-sub">2. ročník · Ostrov prvních počtů</span></div></div>
+      <div class="hud"><button class="icon-btn" id="atlasBtn" type="button">🗺️ <span>Atlas</span></button><div class="pill">💎 <b id="crystals">0</b> <span>krystalů</span></div><button class="icon-btn sound" id="soundBtn" type="button" aria-label="Vypnout zvuk">🔊</button></div>
     </header>
-
-    <section class="map" aria-label="Mapa ostrovů">
-      <div class="map-progress" aria-live="polite"><strong id="mapProgressCount">Splněno 0 z 5</strong><span id="mapProgressNext">Teď: Živá výheň</span></div>
-      <div class="reward-shelf" id="rewardShelf" aria-label="Získané stavby"></div>
-      <i class="beam beam-add" data-beam="add"></i><i class="beam beam-sub" data-beam="sub"></i><i class="beam beam-mul" data-beam="mul"></i><i class="beam beam-div" data-beam="div"></i>
-      <button class="mission add" data-world="add" type="button"><span class="core">◇</span><span class="op">+</span><span class="label">Výheň</span></button>
-      <button class="mission sub" data-world="sub" type="button"><span class="core">◇</span><span class="op">−</span><span class="label">Přístav</span></button>
-      <button class="mission mul" data-world="mul" type="button"><span class="core">◇</span><span class="op">×</span><span class="label">Mlýny</span></button>
-      <button class="mission div" data-world="div" type="button"><span class="core">◇</span><span class="op">÷</span><span class="label">Hvězdárna</span></button>
-      <button class="mission tower locked" data-world="mix" type="button" aria-disabled="true"><span class="core">🔒</span><span class="op">✦</span><span class="label">Maják</span></button>
-      <div class="map-tip" id="mapTip"><strong>Vyber ostrov.</strong> Veď energii branami tak, aby přesně dosáhla cíle.</div>
+    <section class="world" aria-label="Živá mapa ostrova">
+      <div class="sea"><div class="wave"></div><div class="wave"></div></div>
+      <div class="flame" id="flame" aria-hidden="true"></div><div class="light-beam" id="lightBeam" aria-hidden="true"></div>
+      <i class="ambient-spark" style="left:12%;top:31%;animation-delay:-1s"></i><i class="ambient-spark" style="left:73%;top:28%;animation-delay:-3s"></i><i class="ambient-spark" style="left:88%;top:47%;animation-delay:-2s"></i>
+      <div class="builds" id="builds" aria-label="Postavené části ostrova"></div>
+      <section class="chapter">
+        <div class="chapter-head"><div><h2>Ostrov prvních počtů</h2><p id="nextText">Začni opravou cesty k majáku.</p></div><div class="progress-copy" id="progressCopy">0 z 10</div></div>
+        <div class="path-wrap"><div class="path-line"><div class="path-fill" id="pathFill"></div></div><div class="mission-path" id="missionPath"></div></div>
+      </section>
     </section>
   </main>
 
-  <div class="overlay show" id="introOverlay" role="dialog" aria-modal="true" aria-labelledby="introTitle">
-    <section class="dialog intro">
-      <div class="intro-kicker">První výprava</div>
-      <h1 id="introTitle">Maják čísel zhasl.</h1>
-      <p>Čtyři ostrovy přišly o energii. Proveď světelnou jiskru početními branami, probuď jejich jádra a rozsviť maják.</p>
-      <button class="primary" id="startBtn" type="button">Vstoupit do světa</button>
-      <span class="tiny-note">Neopisuješ výsledky. Volíš cestu.</span>
-    </section>
-  </div>
+  <div class="overlay show" id="introOverlay" role="dialog" aria-modal="true" aria-labelledby="introTitle"><section class="dialog intro"><div class="kicker">První kapitola</div><h1 id="introTitle">Ostrov se zastavil.</h1><p>Moře žije, ale mosty jsou rozbité a maják zhasl. Plň krátké početní mise, sleduj, jak ostrov roste, a nakonec znovu zapal jeho plamen.</p><button class="primary" id="startBtn" type="button">Začít stavět</button><span class="tiny">Začínáme opravdu lehce. Obtížnost poroste pomalu.</span></section></div>
 
-  <div class="overlay" id="questOverlay" role="dialog" aria-modal="true" aria-labelledby="questTitle">
-    <section class="dialog">
-      <header class="quest-head">
-        <div><div class="quest-kicker" id="questKicker">Ostrov</div><h2 id="questTitle">Výprava</h2></div>
-        <button class="close" id="closeQuest" type="button" aria-label="Zavřít výpravu">×</button>
-      </header>
-      <div class="quest-body" id="playArea">
-        <div class="quest-progress" aria-live="polite"><div><strong id="questProgressText">Splněno 0 ze 3 bran</strong><span id="questProgressHint">Teď vyber první bránu</span></div><div class="progress-dots" id="progressDots" aria-hidden="true"></div></div>
-        <div class="mission-brief">
-          <div class="number-card"><span>Startovní energie</span><strong id="startValue">0</strong></div>
-          <div class="arrow" aria-hidden="true">➜</div>
-          <div class="number-card"><span>Cíl majáku</span><strong id="targetValue">0</strong></div>
-        </div>
-        <div class="route" id="route" aria-label="Početní brány"></div>
-        <div class="calculation" id="calculation" aria-live="polite">Vyber první bránu. Cestu si můžeš nejdřív promyslet.</div>
-        <div class="quest-foot">
-          <div class="rewinds" id="rewindInfo">↶ Máš tři návraty v čase.</div>
-          <div><button class="secondary" id="undoBtn" type="button" disabled>↶ Zpět</button> <button class="secondary" id="resetBtn" type="button">Začít znovu</button></div>
-        </div>
-      </div>
-      <div class="result" id="resultArea">
-        <div class="result-orb" id="resultOrb">✦</div>
-        <h3 id="resultTitle">Jádro svítí!</h3>
-        <p id="resultText"></p>
-        <button class="primary" id="resultBtn" type="button">Zpět na mapu</button>
-      </div>
-    </section>
-  </div>
-  <div class="overlay" id="atlasOverlay" role="dialog" aria-modal="true" aria-labelledby="atlasTitle">
-    <section class="dialog atlas-dialog">
-      <header class="atlas-head"><div><div class="quest-kicker">Cesta napříč matematikou</div><h2 id="atlasTitle">Atlas matematického světa</h2><p>Každý dokončený kraj otevře další část mapy.</p></div><button class="close" id="closeAtlas" type="button" aria-label="Zavřít atlas">×</button></header>
-      <div class="grade-road" id="gradeRoad"></div>
-      <div class="curriculum-note"><strong>2.–5. ročník je herní cesta Číselnou výpravou.</strong> Kraje 6.–9. ročníku už mají navržený obsah a vlastní herní principy; budeme je stavět jako další etapu, ne jako nekonečnou řadu stejných bran.</div>
-    </section>
-  </div>
-  <div class="overlay" id="unlockOverlay" role="dialog" aria-modal="true" aria-labelledby="unlockTitle">
-    <section class="dialog unlock-card"><div class="unlock-icon" id="unlockIcon">🗺️</div><div class="quest-kicker">Nová cesta</div><h2 id="unlockTitle">Odemčeno!</h2><p id="unlockText"></p><button class="primary" id="unlockBtn" type="button">Vstoupit do nového kraje</button></section>
-  </div>
+  <div class="overlay" id="missionOverlay" role="dialog" aria-modal="true" aria-labelledby="missionTitle"><section class="dialog"><header class="mission-head"><div><div class="kicker" id="missionKicker">Mise 1 z 10</div><h2 id="missionTitle">První prkna</h2></div><button class="close" id="closeMission" type="button" aria-label="Zavřít">×</button></header><div class="mission-body"><div class="round-info" id="roundInfo"></div><div id="taskArea"></div><div class="feedback" id="feedback" aria-live="polite"></div></div></section></div>
+
+  <div class="overlay" id="constructionOverlay" role="dialog" aria-modal="true" aria-labelledby="constructionTitle"><section class="dialog construction" id="constructionCard"><div class="kicker">Ostrov se mění</div><h2 id="constructionTitle">Stavíme...</h2><div class="build-scene"><div class="scaffold">🏗️</div><div class="final-build" id="finalBuild">🌉</div><i class="piece" style="--x:-150px">🪵</i><i class="piece" style="--x:140px">🔨</i><i class="piece" style="--x:80px">✨</i></div><p id="constructionText">Podívej, co tvé počítání dokázalo.</p><button class="primary" id="constructionBtn" type="button">Podívat se na mapu</button></section></div>
+
+  <div class="overlay" id="atlasOverlay" role="dialog" aria-modal="true" aria-labelledby="atlasTitle"><section class="dialog atlas"><button class="close" id="closeAtlas" type="button" aria-label="Zavřít" style="float:right">×</button><div class="kicker">Cesta matematikou</div><h2 id="atlasTitle">Atlas světa</h2><div class="grade-list" id="gradeList"></div><p class="tiny">Teď stavíme a testujeme poctivou kapitolu 2. ročníku. Další kraje otevřeme až tehdy, když bude děti skutečně bavit.</p></section></div>
   <div class="toast" id="toast" role="status"></div>
 
   <script>
-    const ORDER=["add","sub","mul","div","mix"];
-    const CURRICULUM={
-      2:{title:"Početní ostrovy",topics:"Čísla do 100, sčítání, odčítání, první násobení a dělení",playable:true},
-      3:{title:"Násobilkové údolí",topics:"Čísla do 1 000, násobilka, dělení a vícekrokové cesty",playable:true},
-      4:{title:"Město velkých čísel",topics:"Velká čísla, písemné operace a početní strategie",playable:true},
-      5:{title:"Desetinné souostroví",topics:"Desetinná čísla, pořadí operací a závěr 1. stupně",playable:true},
-      6:{title:"Podzemí pod nulou",topics:"Záporná čísla, dělitelnost a zlomky",playable:false},
-      7:{title:"Tržiště poměrů",topics:"Poměry, procenta a racionální čísla",playable:false},
-      8:{title:"Alchymistická laboratoř",topics:"Mocniny, odmocniny, výrazy, rovnice a Pythagorova věta",playable:false},
-      9:{title:"Observatoř funkcí",topics:"Soustavy, funkce, podobnost a finanční matematika",playable:false}
-    };
-    const PUZZLES={
-      2:{
-        add:[{start:4,target:23,gates:[["+ 5","+ 8"],["+ 7","+ 3"],["+ 7","+ 9"]],solution:[0,0,0]},{start:7,target:31,gates:[["+ 6","+ 9"],["+ 8","+ 4"],["+ 7","+ 5"]],solution:[1,0,0]}],
-        sub:[{start:38,target:14,gates:[["− 8","− 5"],["− 9","− 4"],["− 7","− 11"]],solution:[0,0,0]},{start:52,target:19,gates:[["− 7","− 12"],["− 13","− 8"],["− 8","− 14"]],solution:[1,0,0]}],
-        mul:[{start:2,target:48,gates:[["× 2","× 3"],["× 4","× 2"],["× 2","× 4"]],solution:[1,1,1]},{start:3,target:72,gates:[["× 2","× 4"],["× 3","× 2"],["× 3","× 2"]],solution:[1,0,1]}],
-        div:[{start:144,target:6,gates:[["÷ 2","÷ 3"],["÷ 4","÷ 6"],["÷ 3","÷ 2"]],solution:[1,0,1]},{start:180,target:5,gates:[["÷ 3","÷ 2"],["÷ 4","÷ 6"],["÷ 3","÷ 5"]],solution:[1,1,0]}],
-        mix:[{start:6,target:17,gates:[["× 3","+ 8"],["− 5","÷ 2"],["+ 4","× 2"],["− 0","+ 3"]],solution:[0,0,0,0]}]
-      },
-      3:{
-        add:[{start:125,target:400,gates:[["+ 75","+ 50"],["+ 130","+ 125"],["+ 70","+ 90"]],solution:[0,0,0]}],
-        sub:[{start:640,target:300,gates:[["− 120","− 140"],["− 85","− 55"],["− 135","− 105"]],solution:[0,0,0]}],
-        mul:[{start:3,target:120,gates:[["× 4","× 3"],["× 5","× 2"],["× 2","× 4"]],solution:[0,0,0]}],
-        div:[{start:360,target:6,gates:[["÷ 3","÷ 5"],["÷ 4","÷ 6"],["÷ 5","÷ 2"]],solution:[0,0,0]}],
-        mix:[{start:12,target:30,gates:[["× 5","+ 18"],["− 18","÷ 3"],["÷ 2","+ 7"],["+ 9","× 2"]],solution:[0,0,0,0]}]
-      },
-      4:{
-        add:[{start:1250,target:3000,gates:[["+ 375","+ 250"],["+ 1200","+ 1000"],["+ 175","+ 500"]],solution:[0,0,0]}],
-        sub:[{start:8000,target:4500,gates:[["− 1250","− 750"],["− 1750","− 1500"],["− 500","− 1000"]],solution:[0,0,0]}],
-        mul:[{start:12,target:2400,gates:[["× 5","× 10"],["× 4","× 3"],["× 10","× 20"]],solution:[0,0,0]}],
-        div:[{start:9600,target:40,gates:[["÷ 4","÷ 8"],["÷ 6","÷ 5"],["÷ 10","÷ 4"]],solution:[0,0,0]}],
-        mix:[{start:125,target:275,gates:[["× 8","× 4"],["+ 600","+ 250"],["÷ 4","÷ 5"],["− 125","+ 25"]],solution:[0,0,0,0]}]
-      },
-      5:{
-        add:[{start:2.5,target:8,gates:[["+ 1,75","+ 2,25"],["+ 3,2","+ 2,8"],["+ 0,55","+ 0,75"]],solution:[0,0,0]}],
-        sub:[{start:12.5,target:5,gates:[["− 3,75","− 2,75"],["− 2,5","− 3,5"],["− 1,25","− 0,75"]],solution:[0,0,0]}],
-        mul:[{start:1.2,target:240,gates:[["× 5","× 4"],["× 4","× 10"],["× 10","× 5"]],solution:[0,0,0]}],
-        div:[{start:48,target:2,gates:[["÷ 4","÷ 3"],["÷ 2","÷ 4"],["÷ 3","÷ 2"]],solution:[0,0,0]}],
-        mix:[{start:3.5,target:4,gates:[["× 4","+ 4"],["+ 2,5","− 2,5"],["÷ 3","÷ 2"],["− 1,5","+ 1,5"]],solution:[0,0,0,0]}]
-      }
-    };
-    const WORLD={
-      add:{kicker:"Korálová výheň",title:"Rozpal pec součtů",reward:"Oheň výhně znovu plane.",icon:"🔥",prize:"Živá výheň"},
-      sub:{kicker:"Tyrkysový přístav",title:"Odemkni vodní cestu",reward:"Přístavní kolo se znovu roztočilo.",icon:"⚓",prize:"Vodní přístav"},
-      mul:{kicker:"Zlaté mlýny",title:"Roztoč násobiče",reward:"Zlaté mlýny posílají energii dál.",icon:"🌾",prize:"Zlatý mlýn"},
-      div:{kicker:"Fialová hvězdárna",title:"Rozděl světlo hvězd",reward:"Hvězdárna zachytila nový paprsek.",icon:"🔭",prize:"Hvězdárna"},
-      mix:{kicker:"Centrální ostrov",title:"Probuď maják čísel",reward:"Všechny ostrovy jsou znovu propojené!",icon:"🗼",prize:"Maják"}
-    };
-    const SAVE_KEY="fajn_matematicky_svet_v2",OLD_KEY="fajn_ciselna_vyprava_v1";
-    let state={grade:2,maxGrade:2,completed:{2:[]},shards:0,sound:true,lastPuzzles:{}};
-    let active=null,puzzle=null,energy=0,step=0,history=[],rewinds=3,pendingUnlock=null,audio=null;
-    const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-    const done=()=>state.completed[String(state.grade)]||[];
-    const fmt=n=>Number(n).toLocaleString("cs-CZ",{maximumFractionDigits:6});
-    const same=(a,b)=>Math.abs(a-b)<1e-8;
-    function load(){
-      try{
-        const saved=JSON.parse(localStorage.getItem(SAVE_KEY)||"null");
-        if(saved)state={...state,...saved,completed:{...state.completed,...(saved.completed||{})}};
-        else{const old=JSON.parse(localStorage.getItem(OLD_KEY)||"null");if(old?.done?.length){state.completed={2:old.done};state.shards=old.shards||0;if(old.done.includes("mix"))state.maxGrade=3}}
-      }catch(e){}
-      state.grade=Math.min(Math.max(2,Number(state.grade)||2),Math.min(5,Number(state.maxGrade)||2));renderMap();renderAtlas()
-    }
+    const MISSIONS=[
+      {title:"První prkna",type:"missing",skill:"Sčítání do 10",icon:"🌉",reward:"První část mostu stojí!",rounds:2,limit:10},
+      {title:"Zásoby pro stavitele",type:"cargo",skill:"Skládání čísel do 10",icon:"📦",reward:"Přístav dostal stavební zásoby.",rounds:2,limit:10},
+      {title:"Lucerny v přístavu",type:"choice",skill:"Sčítání do 10",icon:"🏮",reward:"Lucerny ukazují lodím cestu.",rounds:3,limit:10},
+      {title:"Lov světlušek",type:"bonus",skill:"Bonusová hra",icon:"🦋",reward:"Světlušky se zabydlely na ostrově.",rounds:1,goal:6},
+      {title:"Most přes zátoku",type:"missingSub",skill:"Odčítání do 20",icon:"🌁",reward:"Cesta přes zátoku je spojená.",rounds:3,limit:20},
+      {title:"Náklad pro mlýn",type:"cargo",skill:"Skládání čísel do 20",icon:"⛵",reward:"Loď přivezla poslední součástky.",rounds:3,limit:20},
+      {title:"Roztoč mlýn",type:"choiceSub",skill:"Odčítání do 20",icon:"🌾",reward:"Mlýn se roztočil a ostrov ožil.",rounds:3,limit:20},
+      {title:"Hvězdná plavba",type:"bonus",skill:"Bonusová hra",icon:"⭐",reward:"Na obloze se rozsvítila nová souhvězdí.",rounds:1,goal:8},
+      {title:"Zkouška strážce",type:"gates",skill:"Dva snadné kroky",icon:"🗝️",reward:"Strážce otevřel cestu k majáku.",rounds:2,limit:20},
+      {title:"Plamen majáku",type:"boss",skill:"Závěrečná výprava",icon:"🔥",reward:"Plamen hoří a světlo znovu obíhá moře!",rounds:3,limit:20}
+    ];
+    const BUILD_POS=["🌉","🏠","🏮","🦋","🌁","⛵","🌾","⭐","🗝️","🔥"];
+    const SAVE_KEY="fajn_matematicky_svet_chapter_v1";
+    let state={completed:[],crystals:0,sound:true,lastTasks:{}};
+    let activeIndex=null,round=0,task=null,selected=[],gateStep=0,gateValue=0,bonusCaught=0,audio=null,newBuild=null;
+    const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,shuffle=a=>[...a].sort(()=>Math.random()-.5);
+    function load(){try{state={...state,...JSON.parse(localStorage.getItem(SAVE_KEY)||"{}")}}catch(e){}renderWorld()}
     function save(){localStorage.setItem(SAVE_KEY,JSON.stringify(state))}
-    function tone(freq,dur=.12,type="sine",delay=0){if(!state.sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime+delay;o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.09,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+dur)}catch(e){}}
-    function chime(){[392,523,659,784].forEach((f,i)=>tone(f,.22,"sine",i*.09))}
-    function clickSound(){tone(330,.08,"triangle");tone(520,.1,"sine",.06)}
-    function isUnlocked(id){const index=ORDER.indexOf(id);return index===0||done().includes(ORDER[index-1])}
-    function renderMap(){
-      ORDER.forEach(id=>{const b=$(`[data-world="${id}"]`),won=done().includes(id),open=isUnlocked(id);b.classList.toggle("done",won);b.classList.toggle("locked",!open);b.setAttribute("aria-disabled",String(!open));b.querySelector(".core").textContent=won?"◆":open?"◇":"🔒"});
-      ["add","sub","mul","div"].forEach(id=>$(`[data-beam="${id}"]`).classList.toggle("on",done().includes(id)));
-      const next=ORDER.find(id=>!done().includes(id));
-      $("#rewardShelf").innerHTML=ORDER.map((id,index)=>{const won=done().includes(id),current=id===next,open=isUnlocked(id);const status=won?"HOTOVO":current?"TEĎ SPLNIT":open?"PŘIPRAVENO":"ZAMČENO";return `<div class="reward ${won?"won":current?"current":""}" title="${WORLD[id].prize}: ${status}"><span class="reward-icon">${won||open?WORLD[id].icon:"🔒"}</span><span class="reward-copy"><b>${index+1}. ${WORLD[id].prize}</b><small>${status}</small></span></div>`}).join("");
-      $("#mapProgressCount").textContent=`Splněno ${done().length} z 5 úkolů`;$("#mapProgressNext").textContent=next?`Teď splnit: ${WORLD[next].prize}`:"Celý ročník je dokončen";
-      $("#coreCount").textContent=`${done().filter(x=>x!=="mix").length}/4`;$("#shardCount").textContent=state.shards;$("#gradeLabel").textContent=`${state.grade}. ročník`;
-      $(".brand-sub").textContent=`${state.grade}. ročník · ${CURRICULUM[state.grade].title}`;
-      $("#soundBtn").textContent=state.sound?"🔊":"🔇";$("#soundBtn").setAttribute("aria-label",state.sound?"Vypnout zvuk":"Zapnout zvuk");
-      $("#mapTip").innerHTML=next?`<strong>Další úkol: ${WORLD[next].prize}.</strong> Dokonči výpravu a odemkni další část mapy.`:`<strong>Maják ${state.grade}. ročníku svítí!</strong> Otevři atlas a pokračuj dál.`;
+    function tone(f,d=.1,type="sine",delay=0){if(!state.sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime+delay;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.08,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+d)}catch(e){}}
+    function goodSound(){[440,554,659].forEach((f,i)=>tone(f,.17,"sine",i*.07))}function clickSound(){tone(330,.07,"triangle")}function failSound(){tone(145,.2,"sawtooth")}
+    function renderWorld(){
+      const count=state.completed.length,next=count<10?count:null;$("#crystals").textContent=state.crystals;$("#progressCopy").textContent=`${count} z 10`;$("#pathFill").style.width=`${count/10*100}%`;$("#nextText").textContent=next===null?"Maják svítí. Hotové mise můžeš hrát znovu.":`Další: ${MISSIONS[next].title} · ${MISSIONS[next].skill}`;
+      $("#missionPath").innerHTML=MISSIONS.map((m,i)=>{const done=state.completed.includes(i),current=i===next;return `<button class="mission-node ${done?"done":current?"current":""}" data-mission="${i}" type="button" ${done||current?"":"disabled"} title="${m.title}: ${done?"hotovo":current?"teď splnit":"zamčeno"}"><span class="node-orb">${done?"✓":current?m.icon:"🔒"}</span><span class="node-name">${i+1}. ${m.title}</span></button>`}).join("");
+      $("#builds").innerHTML=state.completed.map(i=>`<span class="built-item ${i===newBuild?"new":""}" title="${MISSIONS[i].reward}">${BUILD_POS[i]}</span>`).join("");newBuild=null;
+      const finished=state.completed.includes(9);$("#flame").classList.toggle("lit",finished);$("#lightBeam").classList.toggle("on",finished);$("#soundBtn").textContent=state.sound?"🔊":"🔇";
+      $$(".mission-node:not(:disabled)").forEach(b=>b.addEventListener("click",()=>openMission(Number(b.dataset.mission))))
     }
-    function renderAtlas(){
-      $("#gradeRoad").innerHTML=Object.entries(CURRICULUM).map(([grade,item])=>{const g=Number(grade),future=!item.playable,open=g<=state.maxGrade&&item.playable,current=g===state.grade,complete=(state.completed[grade]||[]).includes("mix");return `<${open?"button":"article"} class="grade-card ${current?"current":""} ${!open?"locked":""} ${future?"future":""}" ${open?`type="button" data-grade="${g}"`:""}><span class="grade-status">${complete?"✅":open?"▶":"🔒"}</span><div class="grade-no">${g}.</div><h3>${item.title}</h3><p>${item.topics}</p><span class="grade-tag">${future?"další etapa":complete?"dokončeno":open?"hratelné":"zamčeno"}</span></${open?"button":"article"}>`}).join("");
-      $$('[data-grade]').forEach(b=>b.addEventListener("click",()=>switchGrade(Number(b.dataset.grade))))
-    }
-    function switchGrade(grade){if(grade>state.maxGrade||grade>5)return;state.grade=grade;save();renderMap();renderAtlas();$("#atlasOverlay").classList.remove("show");showToast(`Otevřen ${grade}. ročník: ${CURRICULUM[grade].title}`)}
-    function parseGate(label,value){const [op,nRaw]=label.replace("−","-").split(/\s+/),n=Number(nRaw.replace(",","."));let result=value;if(op==="+")result=value+n;if(op==="-")result=value-n;if(op==="×")result=value*n;if(op==="÷"){result=value/n;if(state.grade<=4&&!Number.isInteger(result))return null}return Math.round(result*1e8)/1e8}
-    const rand=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
-    const shuffled=list=>[...list].sort(()=>Math.random()-.5);
-    const gateLabel=(op,n)=>`${op==="-"?"−":op} ${String(n).replace(".",",")}`;
-    function correctPath(grade,world){
-      const decimal=grade===5;
-      if(world==="add"){
-        const setup=grade===2?[2,30,2,18,100]:grade===3?[50,350,20,180,1000]:grade===4?[500,8000,100,5000,50000]:[5,100,2,50,400];
-        for(let tries=0;tries<80;tries++){let start=rand(setup[0],setup[1]),value=start;if(decimal){start/=10;value=start}const labels=[];for(let i=0;i<3;i++){let n=rand(setup[2],setup[3]);if(decimal)n/=10;labels.push(gateLabel("+",n));value=Math.round((value+n)*1e8)/1e8}if(value<=setup[4])return{start,target:value,labels}}
+    function freshTask(index){
+      const m=MISSIONS[index],key=`${index}`,last=state.lastTasks[key];let t;
+      for(let tries=0;tries<80;tries++){
+        if(m.type==="missing"){const a=rand(1,m.limit-3),b=rand(1,m.limit-a);t={kind:"missing",a,b,target:a+b,answer:b,signature:`${a}+${b}`}}
+        if(m.type==="missingSub"){const a=rand(8,m.limit),b=rand(1,a-1);t={kind:"missingSub",a,b,target:a-b,answer:b,signature:`${a}-${b}`}}
+        if(m.type==="choice"){const a=rand(1,m.limit-2),b=rand(1,m.limit-a),answer=a+b;t={kind:"choice",a,b,answer,options:optionsFor(answer,0,m.limit),signature:`${a}+${b}`}}
+        if(m.type==="choiceSub"){const a=rand(8,m.limit),b=rand(1,a-1),answer=a-b;t={kind:"choiceSub",a,b,answer,options:optionsFor(answer,0,m.limit),signature:`${a}-${b}`}}
+        if(m.type==="cargo"){let pieces,target;do{pieces=m.limit===10?[rand(1,5),rand(1,5)]:[rand(2,8),rand(2,8),rand(1,6)];target=pieces.reduce((a,b)=>a+b,0)}while(target>m.limit);const extras=[rand(1,9),rand(1,9)],crates=shuffle([...pieces,...extras]);t={kind:"cargo",target,crates,signature:`${target}:${crates.join("-")}`}}
+        if(m.type==="bonus")t={kind:"bonus",goal:m.goal,signature:`bonus-${Date.now()}-${Math.random()}`};
+        if(m.type==="gates"||m.type==="boss")t=gateTask(m.limit,m.type==="boss");
+        if(!last||t.signature!==last)return t
       }
-      if(world==="sub"){
-        const setup=grade===2?[45,99,2,18]:grade===3?[400,999,20,200]:grade===4?[10000,90000,500,10000]:[100,300,2,50];
-        for(let tries=0;tries<80;tries++){let start=rand(setup[0],setup[1]),value=start;if(decimal){start/=10;value=start}const labels=[];let valid=true;for(let i=0;i<3;i++){let n=rand(setup[2],setup[3]);if(decimal)n/=10;if(value-n<0){valid=false;break}labels.push(gateLabel("-",n));value=Math.round((value-n)*1e8)/1e8}if(valid)return{start,target:value,labels}}
-      }
-      if(world==="mul"){
-        const setup=grade===2?[2,5,2,5,100]:grade===3?[2,9,2,10,1000]:grade===4?[5,30,2,12,100000]:[5,30,2,6,500];
-        for(let tries=0;tries<100;tries++){let start=rand(setup[0],setup[1]),value=start;if(decimal){start/=10;value=start}const labels=[];for(let i=0;i<3;i++){const n=rand(setup[2],setup[3]);labels.push(gateLabel("×",n));value=Math.round(value*n*1e8)/1e8}if(value<=setup[4])return{start,target:value,labels}}
-      }
-      if(world==="div"){
-        const setup=grade===2?[1,9,2,5,100]:grade===3?[2,12,2,10,1000]:grade===4?[5,100,2,12,100000]:[5,100,2,6,500];
-        for(let tries=0;tries<100;tries++){let target=rand(setup[0],setup[1]);if(decimal)target/=10;const nums=[rand(setup[2],setup[3]),rand(setup[2],setup[3]),rand(setup[2],setup[3])],start=Math.round(target*nums.reduce((a,b)=>a*b,1)*1e8)/1e8;if(start<=setup[4])return{start,target,labels:nums.map(n=>gateLabel("÷",n))}}
-      }
-      if(world==="mix"){
-        const max=grade===2?100:grade===3?1000:grade===4?100000:500;
-        for(let tries=0;tries<160;tries++){
-          let start=decimal?rand(20,120)/10:grade===2?rand(8,30):grade===3?rand(20,150):rand(100,1500),value=start;const labels=[];let valid=true;
-          for(const op of shuffled(["+","-","×","÷"])){
-            let n;
-            if(op==="+"){n=decimal?rand(2,50)/10:grade===2?rand(2,15):grade===3?rand(5,80):rand(20,500);if(value+n>max){valid=false;break}}
-            if(op==="-"){const ceiling=Math.floor(decimal?Math.min(50,value*10):Math.min(grade===2?15:grade===3?80:500,value));if(ceiling<2){valid=false;break}n=rand(2,ceiling);if(decimal)n/=10}
-            if(op==="×"){const possible=[2,3,4,5].filter(x=>value*x<=max);if(!possible.length){valid=false;break}n=possible[rand(0,possible.length-1)]}
-            if(op==="÷"){if(decimal)n=rand(2,5);else{const possible=[2,3,4,5,6,8,10].filter(x=>Number.isInteger(value/x));if(!possible.length){valid=false;break}n=possible[rand(0,possible.length-1)]}}
-            const label=gateLabel(op,n),next=parseGate(label,value);if(next===null||next<0||next>max){valid=false;break}labels.push(label);value=next;
-          }
-          if(valid&&labels.length===4&&!same(start,value))return{start,target:value,labels}
-        }
-      }
-      return null
+      return t
     }
-    function distractor(correct,world,grade){
-      const correctOp=correct.replace("−","-").split(/\s+/)[0],ops=world==="mix"?["+","-","×","÷"]:[correctOp];
-      for(let tries=0;tries<40;tries++){const op=ops[rand(0,ops.length-1)];let n;if(op==="+"||op==="-")n=grade===5?rand(2,60)/10:grade===2?rand(2,19):grade===3?rand(5,200):rand(20,6000);else n=rand(2,grade===2?5:grade===3?10:12);const label=gateLabel(op,n);if(label!==correct)return label}
-      return gateLabel("+",1)
+    function optionsFor(answer,min,max){const set=new Set([answer]);while(set.size<3){const n=Math.max(min,Math.min(max,answer+rand(-4,4)));set.add(n)}return shuffle([...set])}
+    function gateTask(limit,boss){
+      for(let tries=0;tries<100;tries++){const start=rand(1,boss?8:10),steps=boss?2:2;let value=start,correct=[],gates=[],solution=[];for(let i=0;i<steps;i++){const plus=Math.random()>.45;if(plus){const n=rand(1,Math.max(2,limit-value));correct.push(`+ ${n}`);value+=n}else{const n=rand(1,Math.max(1,value-1));correct.push(`− ${n}`);value-=n}}if(value<0||value>limit)continue;correct.forEach(label=>{const op=label[0],n=Number(label.split(" ")[1]);let other;do{const n2=rand(1,7);other=`${Math.random()>.25?op:op==="+"?"−":"+"} ${n2}`}while(other===label);const choice=rand(0,1);solution.push(choice);gates.push(choice===0?[label,other]:[other,label])});const t={kind:boss?"boss":"gates",start,target:value,gates,solution,signature:`${start}:${correct.join("|")}`};if(countGateSolutions(t)===1)return t}
     }
-    function solutionCount(candidate){
-      let values=[candidate.start];
-      for(const pair of candidate.gates){const next=[];for(const value of values)for(const label of pair){const result=parseGate(label,value);if(result!==null&&Number.isFinite(result))next.push(result)}values=next}
-      return values.filter(value=>same(value,candidate.target)).length
+    function applyGate(label,value){const [op,nRaw]=label.replace("−","-").split(" "),n=Number(nRaw);return op==="+"?value+n:value-n}
+    function countGateSolutions(t){let values=[t.start];for(const pair of t.gates)values=values.flatMap(v=>pair.map(g=>applyGate(g,v)));return values.filter(v=>v===t.target).length}
+    function openMission(index){
+      const next=state.completed.length;if(index>next&&!state.completed.includes(index))return;activeIndex=index;round=0;selected=[];gateStep=0;bonusCaught=0;task=freshTask(index);state.lastTasks[index]=task.signature;save();$("#missionKicker").textContent=`Mise ${index+1} z 10 · ${MISSIONS[index].skill}`;$("#missionTitle").textContent=MISSIONS[index].title;$("#missionOverlay").classList.add("show");renderTask()
     }
-    function generatedPuzzle(grade,world){
-      state.lastPuzzles=state.lastPuzzles||{};const key=`${grade}-${world}`,last=state.lastPuzzles[key];let backup=null;
-      for(let tries=0;tries<300;tries++){
-        const correct=correctPath(grade,world);if(!correct)continue;const solution=correct.labels.map(()=>rand(0,1));const gates=correct.labels.map((label,i)=>{const other=distractor(label,world,grade);return solution[i]===0?[label,other]:[other,label]});const path=correct.labels.join("|");const candidate={start:correct.start,target:correct.target,gates,solution,path};backup=candidate;
-        const fresh=!last||(candidate.start!==last.start&&candidate.target!==last.target&&candidate.path!==last.path);if(fresh&&solutionCount(candidate)===1)return candidate
-      }
-      if(backup&&solutionCount(backup)===1)return backup;
-      const fallback=structuredClone(PUZZLES[grade][world][rand(0,PUZZLES[grade][world].length-1)]);fallback.path=fallback.gates.map((pair,i)=>pair[fallback.solution[i]]).join("|");return fallback
+    function renderRounds(){const total=MISSIONS[activeIndex].rounds;$("#roundInfo").innerHTML=Array.from({length:total},(_,i)=>`<i class="round-dot ${i<round?"done":i===round?"current":""}"></i>`).join("")}
+    function renderTask(){
+      renderRounds();const area=$("#taskArea");$("#feedback").className="feedback";$("#feedback").textContent="";selected=[];gateStep=0;
+      if(task.kind==="missing"){area.innerHTML=`<div class="task-title">Které číslo chybí na prkně?</div><div class="equation">${task.a} + ? = ${task.target}</div><div class="answers">${optionsFor(task.answer,0,task.target).map(n=>`<button class="answer" data-answer="${n}">${n}</button>`).join("")}</div>`;bindAnswers()}
+      if(task.kind==="missingSub"){area.innerHTML=`<div class="task-title">Kolik musíme odebrat?</div><div class="equation">${task.a} − ? = ${task.target}</div><div class="answers">${optionsFor(task.answer,0,task.a).map(n=>`<button class="answer" data-answer="${n}">${n}</button>`).join("")}</div>`;bindAnswers()}
+      if(task.kind==="choice"||task.kind==="choiceSub"){const symbol=task.kind==="choice"?"+":"−";area.innerHTML=`<div class="task-title">Která lucerna ukazuje správný výsledek?</div><div class="equation">${task.a} ${symbol} ${task.b} = ?</div><div class="answers">${task.options.map(n=>`<button class="answer" data-answer="${n}">${n}</button>`).join("")}</div>`;bindAnswers()}
+      if(task.kind==="cargo"){area.innerHTML=`<div class="task-title">Vyber bedny s celkovou hodnotou <strong>${task.target}</strong>.</div><div class="cargo-deck">${task.crates.map((n,i)=>`<button class="crate" data-crate="${i}" data-value="${n}">${n}</button>`).join("")}</div><div class="cargo-sum">Naloženo: <strong id="cargoValue">0</strong> z ${task.target}</div><button class="primary" id="cargoCheck">Odeslat náklad</button>`;$$('[data-crate]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.crate);selected.includes(i)?selected=selected.filter(x=>x!==i):selected.push(i);b.classList.toggle("selected");$("#cargoValue").textContent=selected.reduce((s,x)=>s+task.crates[x],0);clickSound()});$("#cargoCheck").onclick=checkCargo}
+      if(task.kind==="bonus"){area.innerHTML=`<div class="bonus-count">Chyť světlušky: <strong id="bonusCount">0</strong> z ${task.goal}</div><div class="bonus-arena" id="bonusArena"><button class="bonus-star" id="bonusStar" aria-label="Chytit světlušku">${activeIndex===3?"✨":"⭐"}</button></div>`;placeStar();$("#bonusStar").onclick=catchStar}
+      if(task.kind==="gates"||task.kind==="boss"){gateValue=task.start;area.innerHTML=`<div class="task-title">Doveď číslo <strong>${task.start}</strong> přes dvě brány přesně k cíli.</div><div class="equation">${task.start} → <span id="gateNow">${task.start}</span> → ${task.target}</div><div class="gate-route">${task.gates.map((pair,i)=>`<div class="gate-step"><span>KROK ${i+1}</span><div class="gate-options">${pair.map((g,j)=>`<button class="gate" data-step="${i}" data-choice="${j}" ${i?"disabled":""}>${g}</button>`).join("")}</div></div>`).join("")}</div>`;bindGates()}
     }
-    function openQuest(id){
-      if(!isUnlocked(id)){const previous=WORLD[ORDER[ORDER.indexOf(id)-1]];showToast(`Nejdřív dokonči: ${previous.prize}.`);return}
-      active=id;puzzle=generatedPuzzle(state.grade,id);state.lastPuzzles[`${state.grade}-${id}`]={start:puzzle.start,target:puzzle.target,path:puzzle.path};save();energy=puzzle.start;step=0;history=[];rewinds=3;pendingUnlock=null;
-      $("#questKicker").textContent=`${state.grade}. ročník · ${WORLD[id].kicker}`;$("#questTitle").textContent=WORLD[id].title;$("#startValue").textContent=fmt(puzzle.start);$("#targetValue").textContent=fmt(puzzle.target);
-      $("#playArea").style.display="block";$("#resultArea").className="result";$("#questOverlay").classList.add("show");renderRoute();setTimeout(()=>$("#route .gate")?.focus(),180)
+    function bindAnswers(){$$("[data-answer]").forEach(b=>b.onclick=()=>{const n=Number(b.dataset.answer);if(n===task.answer)roundSuccess();else{b.classList.remove("wrong");void b.offsetWidth;b.classList.add("wrong");$("#feedback").textContent="Ještě ne. Zkus si příklad rozdělit na menší kousky.";failSound()}})}
+    function checkCargo(){const sum=selected.reduce((s,x)=>s+task.crates[x],0);if(sum===task.target)roundSuccess();else{$("#feedback").textContent=sum<task.target?`Chybí ještě ${task.target-sum}.`:`Náklad je o ${sum-task.target} větší.`;failSound()}}
+    function placeStar(){const b=$("#bonusStar"),arena=$("#bonusArena");b.style.left=rand(5,Math.max(6,arena.clientWidth-65))+"px";b.style.top=rand(8,Math.max(9,arena.clientHeight-65))+"px"}
+    function catchStar(){bonusCaught++;$("#bonusCount").textContent=bonusCaught;tone(600+bonusCaught*45,.09,"sine");if(bonusCaught>=task.goal)setTimeout(roundSuccess,180);else placeStar()}
+    function bindGates(){$$(".gate").forEach(b=>b.onclick=()=>{const step=Number(b.dataset.step);if(step!==gateStep)return;gateValue=applyGate(task.gates[step][Number(b.dataset.choice)],gateValue);b.classList.add("chosen");$$(`.gate[data-step="${step}"]`).forEach(x=>x.disabled=true);gateStep++;$("#gateNow").textContent=gateValue;clickSound();if(gateStep<task.gates.length)$$(`.gate[data-step="${gateStep}"]`).forEach(x=>x.disabled=false);else setTimeout(()=>gateValue===task.target?roundSuccess():gateRetry(),350)})}
+    function gateRetry(){$("#feedback").textContent=`Došel jsi k číslu ${gateValue}. Cíl je ${task.target}. Zkus jinou cestu.`;failSound();setTimeout(renderTask,1100)}
+    function roundSuccess(){goodSound();$("#feedback").className="feedback good";$("#feedback").textContent="Výborně! Ostrov získává energii.";round++;if(round>=MISSIONS[activeIndex].rounds){setTimeout(completeMission,650)}else{setTimeout(()=>{task=freshTask(activeIndex);state.lastTasks[activeIndex]=task.signature;save();renderTask()},650)}}
+    function completeMission(){
+      $("#missionOverlay").classList.remove("show");const first=!state.completed.includes(activeIndex);if(first)state.completed.push(activeIndex);state.crystals+=MISSIONS[activeIndex].type==="bonus"?5:3;save();const m=MISSIONS[activeIndex];$("#constructionTitle").textContent=first?`Stavíme: ${m.title}`:"Mise znovu dokončena";$("#constructionText").textContent=first?m.reward:"Získáváš další krystaly a ostrov zůstává v plné síle.";$("#finalBuild").textContent=m.icon;const card=$("#constructionCard");card.className="dialog construction building";$("#constructionOverlay").classList.add("show");burst();setTimeout(()=>{card.classList.add("built");goodSound();if(activeIndex===9){$("#constructionTitle").textContent="Maják znovu hoří!";tone(784,.5,"sine")}},1250)
     }
-    function renderRoute(){
-      $("#route").innerHTML=puzzle.gates.map((pair,i)=>`<div class="stage ${i<step?"past":i===step?"current":""}"><div class="stage-label">BRÁNA ${i+1}</div><div class="gate-stack">${pair.map((g,j)=>`<button class="gate ${history[i]?.choice===j?"chosen":""}" data-stage="${i}" data-choice="${j}" type="button" ${i===step?"":"disabled"}>${g}</button>`).join("")}</div></div>`).join("");
-      const total=puzzle.gates.length;$("#questProgressText").textContent=`Splněno ${step} z ${total} bran`;$("#questProgressHint").textContent=step<total?`Teď vyber bránu ${step+1}. Zbývá ${total-step}.`:"Všechny brány jsou splněné — kontroluji cíl.";$("#progressDots").innerHTML=puzzle.gates.map((_,i)=>`<i class="progress-dot ${i<step?"done":i===step?"current":""}"></i>`).join("");
-      $$(".gate").forEach(b=>b.addEventListener("click",()=>chooseGate(Number(b.dataset.stage),Number(b.dataset.choice))));
-      $("#undoBtn").disabled=!history.length||rewinds<=0;$("#rewindInfo").textContent=`↶ Návraty v čase: ${rewinds}`;
-      if(!history.length)$("#calculation").textContent="Vyber první bránu. Cestu si můžeš nejdřív promyslet.";
-    }
-    function chooseGate(stage,choice){
-      if(stage!==step)return;const before=energy,label=puzzle.gates[stage][choice],after=parseGate(label,before);
-      if(after===null){tone(150,.25,"sawtooth");showToast(`${fmt(before)} nejde touto branou rozdělit beze zbytku.`);return}
-      clickSound();history.push({before,label,after,choice});energy=after;step++;
-      $("#calculation").innerHTML=`${fmt(before)} ${label} = <strong>${fmt(after)}</strong> &nbsp;·&nbsp; Do cíle zbývá <strong>${fmt(puzzle.target-after)}</strong>`;renderRoute();
-      if(step>=puzzle.gates.length)setTimeout(finishQuest,450)
-    }
-    function undo(){if(!history.length||rewinds<=0)return;const last=history.pop();energy=last.before;step--;rewinds--;tone(260,.12,"sine");$("#calculation").innerHTML=`Čas se vrátil. Energie je znovu <strong>${fmt(energy)}</strong>.`;renderRoute()}
-    function resetQuest(){energy=puzzle.start;step=0;history=[];rewinds=3;renderRoute();$("#calculation").textContent="Cesta je znovu volná. Zkus jinou kombinaci bran."}
-    function finishQuest(){
-      const success=same(energy,puzzle.target),grade=state.grade;$("#playArea").style.display="none";const result=$("#resultArea");result.className=`result show ${success?"":"failure"}`;
-      $("#resultOrb").textContent=success?WORLD[active].icon:"↶";$("#resultTitle").textContent=success?(active==="mix"?"Maják svítí!":"Odměna získána!"):"Energie minula cíl";
-      if(success){
-        const list=state.completed[String(grade)]||(state.completed[String(grade)]=[]),first=!list.includes(active);if(first)list.push(active);const reward=Math.max(1,rewinds);state.shards+=reward;
-        if(first&&active!=="mix")pendingUnlock={type:"world",id:ORDER[ORDER.indexOf(active)+1]};
-        if(first&&active==="mix"&&grade<5){state.maxGrade=Math.max(state.maxGrade,grade+1);state.completed[String(grade+1)]=state.completed[String(grade+1)]||[];pendingUnlock={type:"grade",grade:grade+1}}
-        if(first&&active==="mix"&&grade===5)pendingUnlock={type:"primary"};
-        save();renderMap();renderAtlas();chime();burst();
-        const nextText=pendingUnlock?.type==="world"?` Odemkl se další cíl: ${WORLD[pendingUnlock.id].prize}.`:pendingUnlock?.type==="grade"?` Odemkl se ${pendingUnlock.grade}. ročník.`:"";
-        $("#resultText").textContent=`${WORLD[active].reward} Získáváš stavbu „${WORLD[active].prize}“ a ${reward} ${reward===1?"úlomek":"úlomky"}.${nextText}`;$("#resultBtn").textContent=pendingUnlock?"Ukázat odemčení":"Zpět na mapu";
-      }else{$("#resultText").textContent=`Došel jsi s energií ${fmt(energy)}, ale cíl potřebuje ${fmt(puzzle.target)}. Zkus naplánovat jinou cestu.`;$("#resultBtn").textContent="Zkusit jinou cestu"}
-      $("#resultBtn").onclick=()=>{if(success){closeQuest();if(pendingUnlock)showUnlock(pendingUnlock)}else{result.className="result";$("#playArea").style.display="block";resetQuest()}}
-    }
-    function showUnlock(unlock){
-      if(unlock.type==="world"){$("#unlockIcon").textContent=WORLD[unlock.id].icon;$("#unlockTitle").textContent=`Odemčeno: ${WORLD[unlock.id].prize}`;$("#unlockText").textContent="Na mapě se objevila nová početní cesta. Předchozí odměna zůstává viditelně ve tvé sbírce.";$("#unlockBtn").textContent="Jít k nové výpravě";$("#unlockBtn").onclick=()=>{$("#unlockOverlay").classList.remove("show");const b=$(`[data-world="${unlock.id}"]`);b.classList.add("just-unlocked");setTimeout(()=>b.classList.remove("just-unlocked"),1500)}}
-      if(unlock.type==="grade"){$("#unlockIcon").textContent="🗺️";$("#unlockTitle").textContent=`Odemčen ${unlock.grade}. ročník`;$("#unlockText").textContent=`Nový kraj „${CURRICULUM[unlock.grade].title}“ čeká. Obtížnost i čísla rostou, herní pravidlo už znáš.`;$("#unlockBtn").textContent="Vstoupit do nového kraje";$("#unlockBtn").onclick=()=>{$("#unlockOverlay").classList.remove("show");switchGrade(unlock.grade)}}
-      if(unlock.type==="primary"){$("#unlockIcon").textContent="🏆";$("#unlockTitle").textContent="První stupeň dokončen!";$("#unlockText").textContent="Prošel jsi cestu od základních operací až k desetinným číslům. V atlasu už čeká návrh kontinentů pro 6.–9. ročník.";$("#unlockBtn").textContent="Prohlédnout další kontinenty";$("#unlockBtn").onclick=()=>{$("#unlockOverlay").classList.remove("show");renderAtlas();$("#atlasOverlay").classList.add("show")}}
-      $("#unlockOverlay").classList.add("show");pendingUnlock=null;burst()
-    }
-    function closeQuest(){$("#questOverlay").classList.remove("show");active=null}
-    function showToast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove("show"),2400)}
-    function burst(){const colors=["#68efff","#ffd166","#ff6b6b","#7ef29a","#b78cff"];for(let i=0;i<34;i++)setTimeout(()=>{const c=document.createElement("i");c.className="confetti";c.style.left=Math.random()*100+"vw";c.style.background=colors[i%colors.length];c.style.setProperty("--drift",`${Math.random()*180-90}px`);document.body.append(c);setTimeout(()=>c.remove(),1500)},i*18)}
-    function registerModelTools(){
-      const context=document.modelContext;if(!context?.registerTool)return;
-      Promise.resolve(context.registerTool({name:"read_number_world",title:"Přečíst stav matematického světa",description:"Vrátí ročník, získané stavby a stav právě hrané výpravy.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true,untrustedContentHint:false},execute:()=>({grade:state.grade,maxGrade:state.maxGrade,awakened:[...done()],shards:state.shards,activeWorld:active,energy,step,target:puzzle?.target??null})})).catch(()=>{});
-      Promise.resolve(context.registerTool({name:"start_number_quest",title:"Zahájit početní výpravu",description:"Otevře právě odemčenou početní výpravu.",inputSchema:{type:"object",properties:{world:{type:"string",enum:ORDER}},required:["world"],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:({world})=>{openQuest(world);return{world,started:active===world,start:energy,target:puzzle?.target??null}}})).catch(()=>{});
-      Promise.resolve(context.registerTool({name:"choose_number_gate",title:"Vybrat početní bránu",description:"V právě otevřené výpravě zvolí levou nebo pravou bránu.",inputSchema:{type:"object",properties:{choice:{type:"integer",minimum:0,maximum:1}},required:["choice"],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute:({choice})=>{if(!puzzle||active===null)throw new Error("Nejprve zahaj výpravu.");const before=energy;chooseGate(step,choice);return{before,after:energy,step,target:puzzle.target}}})).catch(()=>{});
-    }
-    $$(".mission").forEach(b=>b.addEventListener("click",()=>openQuest(b.dataset.world)));
-    $("#startBtn").addEventListener("click",()=>{$("#introOverlay").classList.remove("show");clickSound()});
-    $("#closeQuest").addEventListener("click",closeQuest);$("#undoBtn").addEventListener("click",undo);$("#resetBtn").addEventListener("click",resetQuest);
-    $("#atlasBtn").addEventListener("click",()=>{renderAtlas();$("#atlasOverlay").classList.add("show")});$("#closeAtlas").addEventListener("click",()=>$("#atlasOverlay").classList.remove("show"));
-    $("#soundBtn").addEventListener("click",()=>{state.sound=!state.sound;save();renderMap();if(state.sound)clickSound()});
-    document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if($("#unlockOverlay").classList.contains("show"))$("#unlockOverlay").classList.remove("show");else if($("#atlasOverlay").classList.contains("show"))$("#atlasOverlay").classList.remove("show");else if($("#questOverlay").classList.contains("show"))closeQuest();else if($("#introOverlay").classList.contains("show"))$("#introOverlay").classList.remove("show")});
+    function closeConstruction(){const completedIndex=activeIndex;$("#constructionOverlay").classList.remove("show");newBuild=completedIndex;renderWorld();activeIndex=null}
+    function burst(){const colors=["#68efff","#ffd166","#ff786f","#7ef29a","#b78cff"];for(let i=0;i<35;i++)setTimeout(()=>{const c=document.createElement("i");c.className="confetti";c.style.left=Math.random()*100+"vw";c.style.background=colors[i%colors.length];c.style.setProperty("--drift",`${rand(-100,100)}px`);document.body.append(c);setTimeout(()=>c.remove(),1600)},i*16)}
+    function showAtlas(){$("#gradeList").innerHTML=Array.from({length:8},(_,i)=>{const g=i+2;return `<div class="grade-card ${g===2?"active":""}"><b>${g}.</b><span>${g===2?"Ostrov prvních počtů":"Další kraj"}</span><small>${g===2?"První kapitola je hratelná":g<=5?"Připravujeme":"Budoucí etapa"}</small></div>`}).join("");$("#atlasOverlay").classList.add("show")}
+    function registerModelTools(){const c=document.modelContext;if(!c?.registerTool)return;Promise.resolve(c.registerTool({name:"read_math_world",title:"Přečíst stav Matematického světa",description:"Vrátí dokončené mise a počet krystalů.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true},execute:()=>({completed:[...state.completed],crystals:state.crystals,nextMission:state.completed.length+1})})).catch(()=>{})}
+    $("#startBtn").onclick=()=>{$("#introOverlay").classList.remove("show");clickSound()};$("#closeMission").onclick=()=>{$("#missionOverlay").classList.remove("show");activeIndex=null};$("#constructionBtn").onclick=closeConstruction;$("#atlasBtn").onclick=showAtlas;$("#closeAtlas").onclick=()=>$("#atlasOverlay").classList.remove("show");$("#soundBtn").onclick=()=>{state.sound=!state.sound;save();renderWorld();if(state.sound)clickSound()};
+    document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if($("#atlasOverlay").classList.contains("show"))$("#atlasOverlay").classList.remove("show");else if($("#missionOverlay").classList.contains("show")){$("#missionOverlay").classList.remove("show");activeIndex=null}});
     load();registerModelTools();
   </script>
 </body>
