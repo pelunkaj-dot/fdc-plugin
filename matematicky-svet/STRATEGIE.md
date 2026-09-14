@@ -12,7 +12,7 @@ První hratelnou kapitolou je **Ostrov prvních počtů** pro 2. ročník. Nešk
 2. Střídá krátké úlohy: chybějící číslo, nakládání beden, volbu výsledku a dvoukrokové brány.
 3. Po několika matematických misích získá jednoduchou bonusovou hru.
 4. Po úspěchu sleduje animované stavění a nová část ostrova zůstane na mapě.
-5. Moře, vodopády i výheň se stále pohybují; po závěrečné misi vzplane oheň a světlo majáku začne obíhat ostrov.
+5. Živý pohyb mapy musí vzniknout z vrstev navržených přímo pro animaci; nesmí být přilepený přes hotovou ilustraci a ujíždět při změně velikosti obrazovky. V prototypu proto zůstávají animace stavění a herních odměn, nikoli nepřesné efekty krajiny.
 6. Po desáté misi následuje výrazné finále, titul Strážce prvních počtů a jasná cesta do opakovatelné Hvězdné stezky.
 7. Hotové mise lze opakovat s novými zadáními; Hvězdná stezka přidává nové výpravy a další krystaly.
 
