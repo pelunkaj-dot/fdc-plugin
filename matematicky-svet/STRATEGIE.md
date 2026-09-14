@@ -4,27 +4,27 @@
 
 Matematický svět není sbírka příkladů s body. Je to dobrodružná hra, ve které matematika ovládá svět: hráč volbou početní operace mění energii, cestu, stavby a dostupné kraje. Správný výsledek není konec úlohy, ale prostředek k dosažení herního cíle.
 
-První hratelný modul se jmenuje **Číselná výprava**. Začíná na úrovni 2. ročníku, provede dítě základními početními operacemi a končí dokončením 5. ročníku. Atlas už nyní ukazuje návaznost až do 9. ročníku.
+První hratelnou kapitolou je **Ostrov prvních počtů** pro 2. ročník. Neškálujeme ji do dalších ročníků, dokud dětské testování nepotvrdí, že je přiměřená, srozumitelná a že děti chtějí samy pokračovat.
 
 ## Herní smyčka
 
 1. Hráč vidí jediný dosažitelný další cíl.
-2. Vstoupí do kraje a vede energii sérií početních bran.
-3. Volí mezi dvěma operacemi; každá volba okamžitě mění další stav hry.
-4. Má omezený počet návratů v čase, takže může experimentovat bez trestu za jedinou chybu.
-5. Po úspěchu získá viditelnou stavbu, úlomky a animované rozsvícení mapy.
-6. Odemkne se další kraj. Po dokončení majáku se otevře další ročník.
+2. Střídá krátké úlohy: chybějící číslo, nakládání beden, volbu výsledku a dvoukrokové brány.
+3. Po několika matematických misích získá jednoduchou bonusovou hru.
+4. Po úspěchu sleduje animované stavění a nová část ostrova zůstane na mapě.
+5. Moře se stále pohybuje; po závěrečné misi vzplane oheň a světlo majáku začne obíhat ostrov.
+6. Hotové mise lze opakovat s novými zadáními.
 
-Odměna tedy není jen číslo v tabulce: na mapě trvale zůstane výheň, přístav, mlýn, hvězdárna a nakonec maják.
+Odměna tedy není jen číslo v tabulce. Hráč vidí, jak se objekt staví, jak přilétají jeho součásti a jak se postupně propojuje celý ostrov.
 
 ## Cesta 2.–9. ročníkem
 
 | Ročník | Herní kraj | Matematický obsah | Hlavní herní princip | Stav |
 |---|---|---|---|---|
-| 2. | Početní ostrovy | čísla do 100, sčítání, odčítání, první násobení a dělení | vedení energie početními branami | hratelné |
-| 3. | Násobilkové údolí | čísla do 1 000, násobilka, dělení, vícekrokové výpočty | delší trasy a plánování kombinací | hratelné |
-| 4. | Město velkých čísel | velká čísla, písemné operace, početní strategie | zásobování a stavba města | hratelné |
-| 5. | Desetinné souostroví | desetinná čísla, pořadí operací, upevnění 1. stupně | přesné dávkování zdrojů a závěrečná expedice | hratelné |
+| 2. | Ostrov prvních počtů | postupně sčítání do 10 a sčítání a odčítání do 20 | krátké střídající se mise, stavění a bonusové hry | hratelná první kapitola |
+| 3. | Násobilkové údolí | čísla do 1 000, násobilka, dělení | samostatný herní návrh podle výsledků testování | připravujeme |
+| 4. | Město velkých čísel | velká čísla, písemné operace, početní strategie | zásobování a stavba města | budoucí etapa |
+| 5. | Desetinné souostroví | desetinná čísla, pořadí operací, upevnění 1. stupně | přesné dávkování zdrojů a expedice | budoucí etapa |
 | 6. | Podzemí pod nulou | záporná čísla, dělitelnost, zlomky | pohyb nad a pod nulou, skládání fragmentů | návrh další etapy |
 | 7. | Tržiště poměrů | poměry, procenta, racionální čísla | obchod, směna a správa omezených zdrojů | návrh další etapy |
 | 8. | Alchymistická laboratoř | mocniny, odmocniny, výrazy, rovnice, Pythagorova věta | výroba receptů a opravování strojů | návrh další etapy |
@@ -42,7 +42,7 @@ Odměna tedy není jen číslo v tabulce: na mapě trvale zůstane výheň, př�
 
 ## Další vývoj
 
-Kontrolovaný generátor variant je hotový: při každém novém vstupu mění start, cíl, správnou cestu i slepé brány a hlídá právě jednu správnou trasu. Při opravě neúspěšného pokusu zadání zachová.
+Generátor mění zadání při novém vstupu do mise. U strategických bran hlídá právě jednu správnou trasu. Obtížnost první kapitoly je záměrně omezena na malé, snadno představitelné počty.
 
 1. Zavést profil hráče, inventář staveb a návrat do rozehraného světa.
 2. Přidat adaptivní obtížnost podle chyb, rychlosti a využitých návratů.
