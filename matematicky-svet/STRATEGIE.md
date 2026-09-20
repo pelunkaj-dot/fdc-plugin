@@ -4,7 +4,7 @@
 
 Matematický svět není sbírka příkladů s body. Je to dobrodružná hra, ve které matematika ovládá svět: hráč volbou početní operace mění energii, cestu, stavby a dostupné kraje. Správný výsledek není konec úlohy, ale prostředek k dosažení herního cíle.
 
-První hratelnou kapitolou je **Ostrov prvních počtů** pro 2. ročník. Neškálujeme ji do dalších ročníků, dokud dětské testování nepotvrdí, že je přiměřená, srozumitelná a že děti chtějí samy pokračovat.
+První hratelnou kapitolou byl **Ostrov prvních počtů** pro 2. ročník. Herní mechanika se mezitím technicky rozšířila na všech osm dalších ročníků (viz tabulka níže) dřív, než proběhlo dětské testování jednotlivých kapitol — to zůstává dluhem, ne hotovou věcí. Nový obsah pro další ročníky by měl napřed projít stejným ověřením srozumitelnosti a přiměřenosti, jaké mělo dostat samotné 2. ročníkové jádro.
 
 ## Herní smyčka
 
@@ -22,14 +22,16 @@ Odměna tedy není jen číslo v tabulce. Hráč vidí, jak se objekt staví, ja
 
 | Ročník | Herní kraj | Matematický obsah | Hlavní herní princip | Stav |
 |---|---|---|---|---|
-| 2. | Ostrov prvních počtů | postupně sčítání do 10 a sčítání a odčítání do 20 | krátké střídající se mise, stavění a bonusové hry | hratelná první kapitola |
-| 3. | Násobilkové údolí | čísla do 1 000, násobilka, dělení | samostatný herní návrh podle výsledků testování | připravujeme |
-| 4. | Město velkých čísel | velká čísla, písemné operace, početní strategie | zásobování a stavba města | budoucí etapa |
-| 5. | Desetinné souostroví | desetinná čísla, pořadí operací, upevnění 1. stupně | přesné dávkování zdrojů a expedice | budoucí etapa |
-| 6. | Podzemí pod nulou | záporná čísla, dělitelnost, zlomky | pohyb nad a pod nulou, skládání fragmentů | návrh další etapy |
-| 7. | Tržiště poměrů | poměry, procenta, racionální čísla | obchod, směna a správa omezených zdrojů | návrh další etapy |
-| 8. | Alchymistická laboratoř | mocniny, odmocniny, výrazy, rovnice, Pythagorova věta | výroba receptů a opravování strojů | návrh další etapy |
-| 9. | Observatoř funkcí | soustavy, funkce, podobnost, finanční matematika | objevování vztahů, grafů a predikcí | návrh další etapy |
+| 2. | Ostrov prvních počtů | postupně sčítání do 10 a sčítání a odčítání do 20 | krátké střídající se mise, stavění a bonusové hry | implementováno, jediné dosud dětmi ověřené |
+| 3. | Násobilkové údolí | čísla do 1 000, násobilka, dělení | 8 misí sdílející herní smyčku ostrova | implementováno, čeká na ověření s dětmi |
+| 4. | Město velkých čísel | velká čísla, písemné operace, početní strategie | 8 misí sdílející herní smyčku ostrova | implementováno, čeká na ověření s dětmi |
+| 5. | Desetinné souostroví | desetinná čísla, pořadí operací, upevnění 1. stupně | 8 misí sdílející herní smyčku ostrova | implementováno, čeká na ověření s dětmi |
+| 6. | Podzemí pod nulou | záporná čísla, dělitelnost, zlomky | 8 misí sdílející herní smyčku ostrova | implementováno, čeká na ověření s dětmi |
+| 7. | Tržiště poměrů | poměry, procenta, racionální čísla | 8 misí sdílející herní smyčku ostrova | implementováno, čeká na ověření s dětmi |
+| 8. | Alchymistická laboratoř | mocniny, odmocniny, výrazy, rovnice, Pythagorova věta | 8 misí sdílející herní smyčku ostrova | implementováno, čeká na ověření s dětmi |
+| 9. | Observatoř funkcí | soustavy, funkce, podobnost, finanční matematika | 8 misí sdílející herní smyčku ostrova | implementováno, čeká na ověření s dětmi |
+
+Ročníky 3.–9. zatím nemají samostatnou herní mechaniku slíbenou ve sloupci "Hlavní herní princip" u ročníku 2. — používají stejnou obecnou smyčku (kvíz/vstup/porovnání/řazení/brány) jen s jiným matematickým obsahem. Vlastní herní mechaniky pro zlomky, geometrii, procenta a rovnice (bod 3 v sekci Další vývoj) jsou proto stále otevřený úkol, ne jen u 2. ročníku.
 
 ## Pravidla, která projekt odlišují
 
@@ -49,8 +51,10 @@ Generátor mění zadání při novém vstupu do mise. U strategických bran hl�
 2. Přidat adaptivní obtížnost podle chyb, rychlosti a využitých návratů.
 3. Vytvořit samostatné herní mechaniky pro zlomky, geometrii, procenta a rovnice.
 4. Přidat nenápadný přehled pro pedagoga: co dítě skutečně umí, kde tápe a jakou výzvu dostane příště.
-5. Ověřit hru s dětmi různých úrovní; sledovat, zda chtějí pokračovat i bez pobídky dospělého.
+5. Ověřit hru s dětmi různých úrovní ve **všech** ročnících 2.–9., ne jen v prvním; sledovat, zda chtějí pokračovat i bez pobídky dospělého.
 
 ## Technické začlenění
 
-Číselná výprava je samostatná statická webová aplikace. Lze ji otevřít jako vlastní stránku nebo vložit do FajnCvičebny přes `iframe`. Postup se v prototypu ukládá lokálně v prohlížeči. Původní modul MatikaHra je samostatný a projekt jej nijak nemění.
+Číselná výprava je samostatná statická webová aplikace. Lze ji otevřít jako vlastní stránku nebo vložit do FajnCvičebny přes `iframe` — zatím na ni ale z portfolia nikde neodkazuje žádná jiná stránka, otevírá se pouze přímou URL. Postup se v prototypu ukládá lokálně v prohlížeči. Původní modul MatikaHra je samostatný a projekt jej nijak nemění.
+
+Barvení mapy je teď vázané na konkrétní matematický okruh (mise), ne na celkový postup zleva doprava: každá mise má na mapě svůj vlastní "výsek", který se probarvuje podle toho, jak daleko je hráč právě v ní, takže je vidět, které téma je hotové a které ještě čeká. `test.cjs` (`node test.cjs`) fuzz-testuje generátory úloh všech 8 misí ve všech 8 ročnících (opakovaně volá `make()` a kontroluje platnost vygenerované úlohy) i pomocnou funkci `opts()`; není to náhrada dětského testování z bodu 5 výše, jen ochrana proti technickým regresím.

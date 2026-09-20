@@ -50,11 +50,15 @@
         <clipPath id="forge-mask">
           <path d="M210 250 L210 220 C214 194 227 181 242 181 C260 182 273 199 275 222 L275 251 Z"/>
         </clipPath>
-        <clipPath id="color-mask"><rect id="colorReveal" x="0" y="0" width="0" height="941"/></clipPath>
+        <filter id="revealBlur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="46"/></filter>
+        <mask id="color-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1672" height="941">
+          <rect width="1672" height="941" fill="black"/>
+          <g id="revealCircles" filter="url(#revealBlur)"></g>
+        </mask>
       </defs>
       <image id="worldGray" class="world-gray" href="assets/ciselny-svet.webp" width="1672" height="941"/>
-      <image id="worldImage" class="world-color" href="assets/ciselny-svet.webp" width="1672" height="941" clip-path="url(#color-mask)"/>
-      <g clip-path="url(#color-mask)"><image id="forgeFire" href="assets/fire.gif" x="202" y="178" width="80" height="80" preserveAspectRatio="xMidYMid meet" clip-path="url(#forge-mask)"/></g>
+      <image id="worldImage" class="world-color" href="assets/ciselny-svet.webp" width="1672" height="941" mask="url(#color-mask)"/>
+      <g mask="url(#color-mask)"><image id="forgeFire" href="assets/fire.gif" x="202" y="178" width="80" height="80" preserveAspectRatio="xMidYMid meet" clip-path="url(#forge-mask)"/></g>
     </svg>
     <header class="topbar">
       <div class="brand"><div class="brand-mark" id="worldMark">✦</div><div><div class="brand-title">Matematický svět</div><span class="brand-sub" id="brandSub">2. ročník · Ostrov prvních počtů</span></div></div>
@@ -63,7 +67,7 @@
     <section class="world" aria-label="Mapa ostrova">
       <div class="world-aura" id="worldAura"></div>
       <div class="ambient" id="ambient" aria-hidden="true"></div>
-      <div class="resource-strip"><span class="resource">⚡ <b id="energy">0</b></span><span class="resource" title="Probuzené části krajiny">🌈 <b id="buildCount">0/24</b></span></div>
+      <div class="resource-strip"><span class="resource">⚡ <b id="energy">0</b></span><span class="resource" title="Probuzené matematické okruhy">🌈 <b id="buildCount">0/8</b></span></div>
       <aside class="milestone" id="milestone" aria-live="polite"><div class="kicker">Kraj se probouzí</div><h3 id="milestoneTitle">Deset příkladů!</h3><p id="milestoneText">Další část světa získala barvy.</p><div class="milestone-progress" id="milestoneProgress"></div><button class="primary" id="milestoneBtn" type="button">Pokračovat v misi →</button></aside>
       <section class="chapter">
         <div class="chapter-head"><div><h2 id="chapterTitle">Ostrov prvních počtů</h2><p id="nextText">Začni opravou cesty k majáku.</p></div><div class="chapter-actions"><button class="continue-cta" id="continueBtn" type="button">Další svět →</button><div class="progress-copy" id="progressCopy">0 z 8</div></div></div>
@@ -76,7 +80,7 @@
 
   <div class="overlay" id="missionOverlay" role="dialog" aria-modal="true" aria-labelledby="missionTitle"><section class="dialog"><header class="mission-head"><div><div class="kicker" id="missionKicker">Mise 1 z 10</div><h2 id="missionTitle">První prkna</h2></div><button class="close" id="closeMission" type="button" aria-label="Zavřít">×</button></header><div class="mission-body"><div class="round-info" id="roundInfo"></div><div id="taskArea"></div><div class="feedback" id="feedback" aria-live="polite"></div></div></section></div>
 
-  <div class="overlay" id="atlasOverlay" role="dialog" aria-modal="true" aria-labelledby="atlasTitle"><section class="dialog atlas"><button class="close" id="closeAtlas" type="button" aria-label="Zavřít" style="float:right">×</button><div class="kicker">Cesta matematikou</div><h2 id="atlasTitle">Atlas osmi světů</h2><div class="grade-list" id="gradeList"></div><p class="tiny">Každý kraj procvičuje učivo svého ročníku. Dokončením osmé mise odemkneš následující svět.</p><p class="tiny">Animace ohně © BenHickling, <a href="https://opengameart.org/content/animated-fire" target="_blank" rel="noopener" style="color:var(--cyan)">CC0</a>.</p></section></div>
+  <div class="overlay" id="atlasOverlay" role="dialog" aria-modal="true" aria-labelledby="atlasTitle"><section class="dialog atlas"><button class="close" id="closeAtlas" type="button" aria-label="Zavřít" style="float:right">×</button><div class="kicker">Cesta matematikou</div><h2 id="atlasTitle">Atlas osmi světů</h2><div class="grade-list" id="gradeList"></div><p class="tiny">Každý kraj procvičuje učivo svého ročníku. Všechny ročníky jsou otevřené — vyber si rovnou ten svůj.</p><p class="tiny">Animace ohně © BenHickling, <a href="https://opengameart.org/content/animated-fire" target="_blank" rel="noopener" style="color:var(--cyan)">CC0</a>.</p></section></div>
   <div class="overlay" id="victoryOverlay" role="dialog" aria-modal="true" aria-labelledby="victoryTitle"><section class="dialog victory"><div class="victory-badge" id="victoryBadge">🏆</div><div class="kicker" id="victoryKicker">Svět dokončen · 8 z 8</div><h2 id="victoryTitle">Kraj ožil!</h2><p id="victoryText"></p><div class="reward-row" id="victoryRewards"></div><div class="victory-actions"><button class="primary" id="victoryContinue" type="button">Otevřít další svět →</button><button class="secondary" id="victoryMap" type="button">Prohlédnout mapu</button></div></section></div>
   <div class="toast" id="toast" role="status"></div>
 
@@ -92,11 +96,17 @@
     const eq=(a,b)=>Math.abs(Number(a)-Number(b))<.001;
     const opts=(answer,spread=5,decimals=false)=>{
       const set=new Set([clean(answer)]);
-      while(set.size<3){let n=answer+rand(-spread,spread);if(decimals)n=clean(n);else n=Math.round(n);if(n>=0||answer<0)set.add(n)}
+      let tries=0,currentSpread=spread;
+      while(set.size<3&&tries<200){
+        let n=answer+rand(-currentSpread,currentSpread);n=decimals?clean(n):Math.round(n);
+        if(n>=0||answer<0)set.add(n);
+        tries++;if(tries%40===0)currentSpread+=Math.max(2,Math.round(spread/2||1));
+      }
+      if(set.size<3){let n=clean(answer)+1;while(set.size<3){set.add(n);n++}}
       return shuffle([...set]);
     };
-    const quiz=(prompt,display,answer,options)=>({kind:"quiz",prompt,display,answer,options:options||opts(answer),signature:`q:${display}:${answer}`});
-    const input=(prompt,display,answer,suffix="")=>({kind:"input",prompt,display,answer,suffix,signature:`i:${display}:${answer}`});
+    const quiz=(prompt,display,answer,options,hint)=>({kind:"quiz",prompt,display,answer,options:options||opts(answer),hint,signature:`q:${display}:${answer}`});
+    const input=(prompt,display,answer,suffix="",hint)=>({kind:"input",prompt,display,answer,suffix,hint,signature:`i:${display}:${answer}`});
     const compare=(prompt,left,right)=>({kind:"compare",prompt,left,right,answer:left===right?"=":left>right?">":"<",signature:`c:${left}:${right}`});
     const sorting=(prompt,values)=>({kind:"sort",prompt,values,answer:[...values].sort((a,b)=>a-b),signature:`s:${values.join("-")}`});
     const bonus=(goal,symbol,label)=>({kind:"bonus",goal,symbol,label,signature:`b:${Date.now()}:${Math.random()}`});
@@ -108,98 +118,98 @@
     function countRouteSolutions(t){let values=[t.start];t.gates.forEach(pair=>values=values.flatMap(v=>pair.map(op=>applyOp(op,v))));return values.filter(v=>eq(v,t.target)).length}
     const mission=(title,skill,icon,reward,make,rounds=3)=>({title,skill,icon,reward,make,rounds:rounds*10});
 
-    function addTask(max){const a=rand(2,Math.max(3,max-8)),b=rand(1,max-a),ans=a+b;return quiz("Doplň správný výsledek.",`${a} + ${b} = ?`,ans,opts(ans,max>100?40:8))}
-    function subTask(max){const a=rand(Math.max(8,Math.floor(max*.35)),max),b=rand(1,a-1);return input("Kolik zůstane?",`${a} − ${b} =`,a-b)}
-    function mulTask(lo=2,hi=10){const a=rand(lo,hi),b=rand(2,10),ans=a*b;return quiz("Vyber správný násobek.",`${a} × ${b} = ?`,ans,opts(ans,Math.max(4,a)))}
-    function divTask(max=10){const b=rand(2,max),ans=rand(2,10),a=b*ans;return input("Rozděl náklad rovným dílem.",`${a} ÷ ${b} =`,ans)}
+    function addTask(max){const a=rand(2,Math.max(3,max-8)),b=rand(1,max-a),ans=a+b;return quiz("Doplň správný výsledek.",`${a} + ${b} = ?`,ans,opts(ans,max>100?40:8),"Rozlož si čísla na desítky a jednotky – nejdřív sečti desítky, pak jednotky.")}
+    function subTask(max){const a=rand(Math.max(8,Math.floor(max*.35)),max),b=rand(1,a-1);return input("Kolik zůstane?",`${a} − ${b} =`,a-b,"",`Zkus to na číselné ose: od ${a} odečti nejdřív celé desítky, pak zbytek.`)}
+    function mulTask(lo=2,hi=10){const a=rand(lo,hi),b=rand(2,10),ans=a*b;return quiz("Vyber správný násobek.",`${a} × ${b} = ?`,ans,opts(ans,Math.max(4,a)),`Zkus si to jako ${b} skupin po ${a}, nebo použij násobilku.`)}
+    function divTask(max=10){const b=rand(2,max),ans=rand(2,10),a=b*ans;return input("Rozděl náklad rovným dílem.",`${a} ÷ ${b} =`,ans,"",`Zkus, kolikrát se ${b} vejde do ${a} — ověř si to zpětně násobením.`)}
     function mixedRoute(max,steps=2){for(let tries=0;tries<60;tries++){let start=rand(5,Math.max(8,Math.floor(max/3))),value=start,correct=[],wrong=[];for(let i=0;i<steps;i++){const plus=i%2===0||value<5,n=rand(2,Math.max(3,Math.min(15,max-value)));correct.push(`${plus?"+":"−"} ${n}`);wrong.push(`${plus?"+":"−"} ${n+rand(1,4)}`);value=plus?value+n:value-n}const t=route("Vyber správné brány a doprav energii přesně do cíle.",start,correct,wrong);if(countRouteSolutions(t)===1)return t}}
-    function decimalAdd(){const a=rand(11,89)/10,b=rand(5,60)/10,ans=clean(a+b);return quiz("Spoj desetinné proudy.",`${fmt(a)} + ${fmt(b)} = ?`,ans,opts(ans,2,true))}
-    function fractionSame(){const d=pick([4,5,6,8,10]),a=rand(1,d-2),b=rand(1,d-a),ans=a+b;return quiz("Sečti díly se stejným jmenovatelem.",`${a}/${d} + ${b}/${d} = ?`,`${ans}/${d}`,shuffle([`${ans}/${d}`,`${ans}/${d*2}`,`${a+b+1}/${d}`]))}
-    function fractionGeneral(){const d1=pick([2,3,4,5,6]),d2=pick([2,3,4,6]),l=d1*d2,a=rand(1,d1-1),b=rand(1,d2-1),num=a*d2+b*d1,gcd=(x,y)=>y?gcd(y,x%y):x,k=gcd(num,l),rn=num/k,rd=l/k,answer=rd===1?String(rn):`${rn}/${rd}`;return quiz("Převeď na společný jmenovatel, sečti a zkrať.",`${a}/${d1} + ${b}/${d2} = ?`,answer,shuffle([answer,`${a+b}/${d1+d2}`,`${num+1}/${l}`]))}
-    function equationTask(level=1){const x=rand(2,12),a=level>1?rand(2,6):1,b=rand(1,12),c=a*x+b;return input("Odemkni neznámou x.",a===1?`x + ${b} = ${c}`:`${a}x + ${b} = ${c}`,x)}
-    function percentTask(){const p=pick([10,20,25,50,75]),base=pick([40,60,80,100,120,160,200]),ans=base*p/100;return quiz("Kolik tvoří vyznačená část?",`${p} % z ${base}`,ans,opts(ans,20))}
-    function pythagoras(){const t=pick([[3,4,5],[5,12,13],[6,8,10],[8,15,17]]);return input("Dopočítej délku přepony.",`a = ${t[0]}, b = ${t[1]}, c = ?`,t[2])}
+    function decimalAdd(){const a=rand(11,89)/10,b=rand(5,60)/10,ans=clean(a+b);return quiz("Spoj desetinné proudy.",`${fmt(a)} + ${fmt(b)} = ?`,ans,opts(ans,2,true),"Sečti zvlášť celé části a zvlášť desetiny, desetinnou čárku nech pod sebou.")}
+    function fractionSame(){const d=pick([4,5,6,8,10]),a=rand(1,d-2),b=rand(1,d-a),ans=a+b;return quiz("Sečti díly se stejným jmenovatelem.",`${a}/${d} + ${b}/${d} = ?`,`${ans}/${d}`,shuffle([`${ans}/${d}`,`${ans}/${d*2}`,`${a+b+1}/${d}`]),"Jmenovatel (dolní číslo) se u stejných jmenovatelů nemění, sečti jen čitatele.")}
+    function fractionGeneral(){const d1=pick([2,3,4,5,6]),d2=pick([2,3,4,6]),l=d1*d2,a=rand(1,d1-1),b=rand(1,d2-1),num=a*d2+b*d1,gcd=(x,y)=>y?gcd(y,x%y):x,k=gcd(num,l),rn=num/k,rd=l/k,answer=rd===1?String(rn):`${rn}/${rd}`;return quiz("Převeď na společný jmenovatel, sečti a zkrať.",`${a}/${d1} + ${b}/${d2} = ?`,answer,shuffle([answer,`${a+b}/${d1+d2}`,`${num+1}/${l}`]),"Nejdřív najdi společný jmenovatel obou zlomků, teprve pak sečti čitatele.")}
+    function equationTask(level=1){const x=rand(2,12),a=level>1?rand(2,6):1,b=rand(1,12),c=a*x+b;return input("Odemkni neznámou x.",a===1?`x + ${b} = ${c}`:`${a}x + ${b} = ${c}`,x,"",a===1?`Odečti ${b} z obou stran rovnice.`:`Nejdřív odečti ${b} z obou stran, pak vyděl ${a}.`)}
+    function percentTask(){const p=pick([10,20,25,50,75]),base=pick([40,60,80,100,120,160,200]),ans=base*p/100;return quiz("Kolik tvoří vyznačená část?",`${p} % z ${base}`,ans,opts(ans,20),`Zjisti nejdřív 1 % ze ${base} (vyděl 100), pak vynásob ${p}.`)}
+    function pythagoras(){const t=pick([[3,4,5],[5,12,13],[6,8,10],[8,15,17]]);return input("Dopočítej délku přepony.",`a = ${t[0]}, b = ${t[1]}, c = ?`,t[2],"","Použij c² = a² + b² a na konci odmocni součet.")}
     function worldBoss(g){const makers=WORLDS[g].missions.slice(0,7).filter(m=>m.skill!=="Bonusová hra").map(m=>m.make);return pick(makers)()}
 
     const WORLDS={
       2:{name:"Ostrov prvních počtů",mark:"🌉",color:"#68efff",title:"Strážce prvních počtů",intro:"Oprav přístav, rozsvěcuj lucerny a počítej bezpečně do 100.",missions:[
         mission("Prkna přes potok","Sčítání do 20","🌉","První most spojil břehy.",()=>addTask(20),2),
         mission("Zásoby v přístavu","Odčítání do 20","📦","Sklad dostal zásoby.",()=>subTask(20),2),
-        mission("Desítkové lucerny","Sčítání desítek do 100","🏮","Tři lucerny ukazují cestu.",()=>{const a=rand(1,8)*10,b=rand(1,9-Math.floor(a/10))*10;return quiz("Sečti celé desítky.",`${a} + ${b} = ?`,a+b,opts(a+b,20))}),
+        mission("Desítkové lucerny","Sčítání desítek do 100","🏮","Tři lucerny ukazují cestu.",()=>{const a=rand(1,8)*10,b=rand(1,9-Math.floor(a/10))*10;return quiz("Sečti celé desítky.",`${a} + ${b} = ?`,a+b,opts(a+b,20),"Sčítáš jen desítky – je to jako sčítat menší čísla s nulou na konci.")}),
         mission("Lov světlušek","Bonusová hra","🦋","Světlušky rozzářily sad.",()=>bonus(7,"✨","Chyť světlušky"),1),
-        mission("Chybějící kámen","Doplňování do 100","🧱","Hradba je znovu celá.",()=>{const a=rand(12,70),b=rand(3,25),t=a+b;return input("Které číslo chybí?",`${a} + ? = ${t}`,b)}),
+        mission("Chybějící kámen","Doplňování do 100","🧱","Hradba je znovu celá.",()=>{const a=rand(12,70),b=rand(3,25),t=a+b;return input("Které číslo chybí?",`${a} + ? = ${t}`,b,"",`Odečti ${a} od ${t}, abys zjistil chybějící sčítanec.`)}),
         mission("Větší věž","Porovnávání do 100","🏰","Vyšší věž hlídá ostrov.",()=>compare("Které číslo je větší?",rand(10,99),rand(10,99))),
-        mission("Tržiště mincí","Jednoduché počítání s penězi","🪙","Tržiště začalo obchodovat.",()=>{const a=pick([2,5,10,20]),b=pick([2,5,10,20]),c=pick([1,2,5]);return quiz("Kolik korun je v měšci?",`${a} Kč + ${b} Kč + ${c} Kč`,a+b+c,opts(a+b+c,8))}),
+        mission("Tržiště mincí","Jednoduché počítání s penězi","🪙","Tržiště začalo obchodovat.",()=>{const a=pick([2,5,10,20]),b=pick([2,5,10,20]),c=pick([1,2,5]);return quiz("Kolik korun je v měšci?",`${a} Kč + ${b} Kč + ${c} Kč`,a+b+c,opts(a+b+c,8),"Sečti mince postupně, jednu po druhé.")}),
         mission("Plamen majáku","Smíšené počítání do 100","🔥","Maják hoří a lodě vidí domov.",()=>mixedRoute(100),3)
       ]},
       3:{name:"Údolí násobilky",mark:"⚙️",color:"#ffd166",title:"Mistr násobilky",intro:"Roztoč stroje pomocí násobení, dělení a počítání do 1000.",missions:[
-        mission("První ozubená kola","Násobilka 2, 5 a 10","⚙️","Malý stroj se roztočil.",()=>{const a=pick([2,5,10]),b=rand(2,10);return quiz("Vyber správný násobek.",`${a} × ${b} = ?`,a*b,opts(a*b,Math.max(4,a)))}),
+        mission("První ozubená kola","Násobilka 2, 5 a 10","⚙️","Malý stroj se roztočil.",()=>{const a=pick([2,5,10]),b=rand(2,10);return quiz("Vyber správný násobek.",`${a} × ${b} = ?`,a*b,opts(a*b,Math.max(4,a)),`Použij násobilku ${a}: počítej ${a}, ${a*2}, ${a*3}… až k ${b}. násobku.`)}),
         mission("Dílna trojek a čtyřek","Násobilka 3 a 4","🔧","Dílna vyrábí nové součástky.",()=>mulTask(3,4)),
         mission("Spravedlivé dělení","Dělení beze zbytku","⚖️","Zásoby jsou rozdělené spravedlivě.",()=>divTask(10)),
         mission("Chyť jiskry","Bonusová hra","✨","Generátor dostal plnou energii.",()=>bonus(8,"⚡","Chyť jiskry"),1),
         mission("Velké počitadlo","Sčítání a odčítání do 1000","🧮","Velké počitadlo ožilo.",()=>Math.random()>.5?addTask(1000):subTask(1000)),
-        mission("Ztracený násobek","Doplňování v násobilce","🔩","Chybějící kolo zapadlo na místo.",()=>{const a=rand(2,10),b=rand(2,10);return input("Doplň chybějící činitel.",`${a} × ? = ${a*b}`,b)}),
-        mission("Balíky pro karavanu","Slovní úloha s násobením","🐫","Karavana může vyrazit.",()=>{const n=rand(3,9),k=rand(2,8);return quiz(`${k} vozů veze každý ${n} balíků. Kolik balíků vezou dohromady?`,`${k} × ${n}`,k*n,opts(k*n,8))}),
+        mission("Ztracený násobek","Doplňování v násobilce","🔩","Chybějící kolo zapadlo na místo.",()=>{const a=rand(2,10),b=rand(2,10);return input("Doplň chybějící činitel.",`${a} × ? = ${a*b}`,b,"",`Vyděl ${a*b} číslem ${a}, dostaneš chybějící činitel.`)}),
+        mission("Balíky pro karavanu","Slovní úloha s násobením","🐫","Karavana může vyrazit.",()=>{const n=rand(3,9),k=rand(2,8);return quiz(`${k} vozů veze každý ${n} balíků. Kolik balíků vezou dohromady?`,`${k} × ${n}`,k*n,opts(k*n,8),`Sečti ${n} balíků tolikrát, kolik je vozů, nebo rovnou vynásob.`)}),
         mission("Srdce stroje","Násobilka a dělení","💛","Obří stroj osvětluje celé údolí.",()=>Math.random()>.5?mulTask(2,10):divTask(10),4)
       ]},
       4:{name:"Království velkých čísel",mark:"🏰",color:"#ff9f68",title:"Královský počtář",intro:"Stav pevnost z velkých čísel, písemných operací a geometrie.",missions:[
         mission("Kamenné součty","Sčítání do 10 000","🧱","Hradba vyrostla o další patro.",()=>addTask(10000)),
-        mission("Jeřáb násobků","Násobení jednociferným číslem","🏗️","Jeřáb zvedl těžký blok.",()=>{const a=rand(12,199),b=rand(2,9);return input("Spočítej náklad jeřábu.",`${a} × ${b} =`,a*b)}),
-        mission("Dělení družin","Dělení jednociferným číslem","🛡️","Stráže jsou rozdělené do družin.",()=>{const b=rand(2,9),ans=rand(12,90);return input("Rozděl strážce rovným dílem.",`${b*ans} ÷ ${b} =`,ans)}),
+        mission("Jeřáb násobků","Násobení jednociferným číslem","🏗️","Jeřáb zvedl těžký blok.",()=>{const a=rand(12,199),b=rand(2,9);return input("Spočítej náklad jeřábu.",`${a} × ${b} =`,a*b,"",`Rozlož ${a} na stovky, desítky a jednotky, vynásob zvlášť a sečti.`)}),
+        mission("Dělení družin","Dělení jednociferným číslem","🛡️","Stráže jsou rozdělené do družin.",()=>{const b=rand(2,9),ans=rand(12,90);return input("Rozděl strážce rovným dílem.",`${b*ans} ÷ ${b} =`,ans,"","Zkus dělit postupně po menších dílech, nebo hádej a ověř násobením.")}),
         mission("Sbírání run","Bonusová hra","💠","Runy chrání vstupní bránu.",()=>bonus(9,"💠","Posbírej runy"),1),
-        mission("Věž zaokrouhlení","Zaokrouhlování na stovky","🗼","Věž vysílá přesný signál.",()=>{const n=rand(101,9899),ans=Math.round(n/100)*100;return quiz("Zaokrouhli na stovky.",String(n),ans,shuffle([ans,ans+100,Math.max(0,ans-100)]))}),
-        mission("Praporce zlomků","Část celku","🚩","Praporce zdobí všechny věže.",()=>{const d=pick([4,5,8,10]),n=rand(1,d-1);return quiz("Jaká část praporu je vybarvená?",`${n} dílů z ${d}`,`${n}/${d}`,shuffle([`${n}/${d}`,`${d}/${n}`,`${n+1}/${d}`]))}),
-        mission("Obvod nádvoří","Obvod obdélníku","📐","Nádvoří dostalo nový plot.",()=>{const a=rand(3,15),b=rand(2,12);return input("Spočítej obvod obdélníku.",`a = ${a} m, b = ${b} m, o = ?`,2*(a+b),"m")}),
+        mission("Věž zaokrouhlení","Zaokrouhlování na stovky","🗼","Věž vysílá přesný signál.",()=>{const n=rand(101,9899),ans=Math.round(n/100)*100;return quiz("Zaokrouhli na stovky.",String(n),ans,shuffle([ans,ans+100,Math.max(0,ans-100)]),"Podívej se na číslici desítek – od 50 zaokrouhluješ nahoru, jinak dolů.")}),
+        mission("Praporce zlomků","Část celku","🚩","Praporce zdobí všechny věže.",()=>{const d=pick([4,5,8,10]),n=rand(1,d-1);return quiz("Jaká část praporu je vybarvená?",`${n} dílů z ${d}`,`${n}/${d}`,shuffle([`${n}/${d}`,`${d}/${n}`,`${n+1}/${d}`]),"Spočítej, kolik dílů je vybarvených a kolik jich je celkem.")}),
+        mission("Obvod nádvoří","Obvod obdélníku","📐","Nádvoří dostalo nový plot.",()=>{const a=rand(3,15),b=rand(2,12);return input("Spočítej obvod obdélníku.",`a = ${a} m, b = ${b} m, o = ?`,2*(a+b),"m","Obvod obdélníku je součet všech čtyř stran: 2 × (a + b).")}),
         mission("Korunní zkouška","Smíšené učivo 4. ročníku","👑","Koruna rozsvítila královský sál.",()=>worldBoss(4),4)
       ]},
       5:{name:"Souostroví zlomků",mark:"⛵",color:"#7ef29a",title:"Kartograf zlomků",intro:"Propoj ostrovy desetinnými čísly, zlomky, jednotkami a plochami.",missions:[
         mission("Desetinný přístav","Sčítání desetinných čísel","⚓","Přístavní hladinoměr funguje.",decimalAdd),
         mission("Most stejných dílů","Zlomky se stejným jmenovatelem","🌉","Díly mostu do sebe zapadly.",fractionSame),
-        mission("Chrám pořadí","Pořadí početních operací","🏛️","Chrámové hodiny ukazují správný čas.",()=>{const a=rand(2,9),b=rand(2,8),c=rand(2,9),ans=a+b*c;return quiz("Nejdřív násob, potom sčítej.",`${a} + ${b} × ${c}`,ans,opts(ans,10))}),
+        mission("Chrám pořadí","Pořadí početních operací","🏛️","Chrámové hodiny ukazují správný čas.",()=>{const a=rand(2,9),b=rand(2,8),c=rand(2,9),ans=a+b*c;return quiz("Nejdřív násob, potom sčítej.",`${a} + ${b} × ${c}`,ans,opts(ans,10),"Pamatuj: násobení má přednost před sčítáním.")}),
         mission("Perlová laguna","Bonusová hra","🫧","Laguna se naplnila světelnými perlami.",()=>bonus(9,"🫧","Posbírej perly"),1),
-        mission("Maják jednotek","Převody délky","📏","Maják změří každou cestu.",()=>{const m=rand(2,90),ans=m*100;return input("Převeď metry na centimetry.",`${m} m = ? cm`,ans,"cm")}),
-        mission("Pole na ostrově","Obsah obdélníku","🌾","Nové pole uživí osadu.",()=>{const a=rand(3,20),b=rand(2,15);return input("Spočítej obsah pole.",`${a} m × ${b} m`,a*b,"m²")}),
-        mission("Průměrná výprava","Aritmetický průměr","🧭","Kapitán našel vyváženou trasu.",()=>{const a=rand(2,10),b=rand(2,10),c=rand(2,10),sum=a+b+c,fix=(3-sum%3)%3,cc=c+fix;return input("Urči průměr tří hodnot.",`${a}, ${b}, ${cc}`,(a+b+cc)/3)}),
+        mission("Maják jednotek","Převody délky","📏","Maják změří každou cestu.",()=>{const m=rand(2,90),ans=m*100;return input("Převeď metry na centimetry.",`${m} m = ? cm`,ans,"cm","1 metr = 100 centimetrů, takže vynásob počtem metrů stem.")}),
+        mission("Pole na ostrově","Obsah obdélníku","🌾","Nové pole uživí osadu.",()=>{const a=rand(3,20),b=rand(2,15);return input("Spočítej obsah pole.",`${a} m × ${b} m`,a*b,"m²","Obsah obdélníku je strana krát strana: a × b.")}),
+        mission("Průměrná výprava","Aritmetický průměr","🧭","Kapitán našel vyváženou trasu.",()=>{const a=rand(2,10),b=rand(2,10),c=rand(2,10),sum=a+b+c,fix=(3-sum%3)%3,cc=c+fix;return input("Urči průměr tří hodnot.",`${a}, ${b}, ${cc}`,(a+b+cc)/3,"","Sečti všechny hodnoty a vyděl jejich počtem.")}),
         mission("Brána souostroví","Učivo závěru 1. stupně","🌊","Všechny ostrovy spojila světelná cesta.",()=>worldBoss(5),4)
       ]},
       6:{name:"Pevnost dělitelnosti",mark:"🧊",color:"#6fa8ff",title:"Velitel dělitelnosti",intro:"Ovládni desetinná čísla, dělitelnost, úhly, trojúhelníky a objem kvádru.",missions:[
         mission("Desetinná osa","Porovnávání desetinných čísel","🌡️","Měřicí věž se přesně zkalibrovala.",()=>sorting("Seřaď hodnoty od nejmenší.",shuffle([rand(10,29)/10,rand(30,49)/10,rand(50,69)/10,rand(70,99)/10]))),
-        mission("Desetinný reaktor","Násobení a dělení 10 a 100","⚗️","Reaktor má správný tlak.",()=>{const a=rand(12,999)/10,f=pick([10,100]),mul=Math.random()>.5,ans=mul?a*f:a/f;return input("Nastav desetinnou čárku.",`${fmt(a)} ${mul?"×":"÷"} ${f}`,clean(ans))}),
-        mission("Síto prvočísel","Prvočísla a složená čísla","🛡️","Síto oddělilo všechny správné kameny.",()=>{const primes=[2,3,5,7,11,13,17,19,23,29],composites=[4,6,8,9,10,12,14,15,16,18,20,21,22,24,25,26,27,28],p=pick(primes),a=pick(composites),b=pick(composites.filter(n=>n!==a));return quiz("Které číslo je prvočíslo?","Vyber správný kámen",p,shuffle([p,a,b]))}),
+        mission("Desetinný reaktor","Násobení a dělení 10 a 100","⚗️","Reaktor má správný tlak.",()=>{const a=rand(12,999)/10,f=pick([10,100]),mul=Math.random()>.5,ans=mul?a*f:a/f;return input("Nastav desetinnou čárku.",`${fmt(a)} ${mul?"×":"÷"} ${f}`,clean(ans),"","Násobení desítkou nebo stovkou posouvá desetinnou čárku doprava, dělení doleva.")}),
+        mission("Síto prvočísel","Prvočísla a složená čísla","🛡️","Síto oddělilo všechny správné kameny.",()=>{const primes=[2,3,5,7,11,13,17,19,23,29],composites=[4,6,8,9,10,12,14,15,16,18,20,21,22,24,25,26,27,28],p=pick(primes),a=pick(composites),b=pick(composites.filter(n=>n!==a));return quiz("Které číslo je prvočíslo?","Vyber správný kámen",p,shuffle([p,a,b]),"Prvočíslo má jen dva dělitele: jedničku a samo sebe.")}),
         mission("Ledové krystaly","Bonusová hra","❄️","Krystaly rozsvítily ledovou síň.",()=>bonus(10,"❄️","Chyť krystaly"),1),
-        mission("Brána dělitelnosti","Dělitelnost","🚪","Brána rozpozná správná čísla.",()=>{const d=pick([2,3,5,10]),correct=d*rand(3,20);return quiz(`Které číslo je dělitelné ${d}?`,"Vyber průchod",correct,shuffle([correct,correct+1,correct+d+1]))}),
-        mission("Úhlová brána","Velikosti úhlů","📐","Brána se otevřela do pravého úhlu.",()=>{const a=rand(20,70),ans=90-a;return input("Dopočítej druhou část pravého úhlu.",`${a}° + ? = 90°`,ans,"°")}),
-        mission("Trojúhelníková věž","Obsah trojúhelníku","🔺","Trojúhelníková věž stojí pevně.",()=>{const a=rand(3,14)*2,v=rand(2,12),ans=a*v/2;return input("Spočítej obsah trojúhelníku.",`a = ${a} m, vₐ = ${v} m`,ans,"m²")}),
-        mission("Srdce pevnosti","Objem kvádru","💙","Pevnost vysílá modrý paprsek.",()=>{const a=rand(2,9),b=rand(2,8),c=rand(2,7);return input("Spočítej objem kvádru.",`${a} × ${b} × ${c}`,a*b*c,"cm³")},4)
+        mission("Brána dělitelnosti","Dělitelnost","🚪","Brána rozpozná správná čísla.",()=>{const d=pick([2,3,5,10]),correct=d*rand(3,20);return quiz(`Které číslo je dělitelné ${d}?`,"Vyber průchod",correct,shuffle([correct,correct+1,correct+d+1]),`Zkus, jestli číslo vyjde beze zbytku vydělit ${d}.`)}),
+        mission("Úhlová brána","Velikosti úhlů","📐","Brána se otevřela do pravého úhlu.",()=>{const a=rand(20,70),ans=90-a;return input("Dopočítej druhou část pravého úhlu.",`${a}° + ? = 90°`,ans,"°","Pravý úhel má 90°, odečti zadanou část od 90.")}),
+        mission("Trojúhelníková věž","Obsah trojúhelníku","🔺","Trojúhelníková věž stojí pevně.",()=>{const a=rand(3,14)*2,v=rand(2,12),ans=a*v/2;return input("Spočítej obsah trojúhelníku.",`a = ${a} m, vₐ = ${v} m`,ans,"m²","Obsah trojúhelníku je základna krát výška, děleno dvěma.")}),
+        mission("Srdce pevnosti","Objem kvádru","💙","Pevnost vysílá modrý paprsek.",()=>{const a=rand(2,9),b=rand(2,8),c=rand(2,7);return input("Spočítej objem kvádru.",`${a} × ${b} × ${c}`,a*b*c,"cm³","Objem kvádru je délka × šířka × výška.")},4)
       ]},
       7:{name:"Říše poměrů",mark:"⚖️",color:"#b78cff",title:"Alchymista poměrů",intro:"Míchej celá čísla, zlomky, procenta, poměry, úměry a objemy hranolů.",missions:[
         mission("Alchymie zlomků","Počítání se zlomky","⚗️","První lektvar září.",fractionGeneral),
-        mission("Teplotní sluj","Počítání s celými čísly","🌡️","Sluj drží správnou teplotu.",()=>{const a=rand(-15,12),b=rand(-10,15),ans=a+b;return quiz("Sečti celá čísla.",`${a} + (${b})`,ans,opts(ans,7))}),
+        mission("Teplotní sluj","Počítání s celými čísly","🌡️","Sluj drží správnou teplotu.",()=>{const a=rand(-15,12),b=rand(-10,15),ans=a+b;return quiz("Sečti celá čísla.",`${a} + (${b})`,ans,opts(ans,7),"Sčítání záporných a kladných čísel si představ jako pohyb po číselné ose.")}),
         mission("Procentová zahrada","Procenta","🌺","Zahrada vykvetla ve správném poměru.",percentTask),
         mission("Energetické výboje","Bonusová hra","⚡","Laboratoř má zásobu energie.",()=>bonus(10,"⚡","Chyť výboje"),1),
-        mission("Poměrové zásoby","Poměr","⚖️","Sklady mají správný poměr zásob.",()=>{const k=rand(2,6),a=rand(2,8),b=rand(2,8);return input(`Poměr je ${a} : ${b}. První zásoba má ${a*k}. Kolik má druhá?`,`${a*k} : ?`,b*k)}),
-        mission("Most přímé úměrnosti","Přímá úměrnost","🌉","Most unesl celou karavanu.",()=>{const price=rand(3,12),n=rand(2,8),want=rand(3,10);return input(`${n} krystalů stojí ${n*price} mincí. Kolik stojí ${want}?`,`${want} krystalů`,want*price,"mincí")}),
-        mission("Krystalový hranol","Objem kvádru","💎","Hranol napájí říši světlem.",()=>{const a=rand(2,9),b=rand(2,8),c=rand(2,7);return input("Spočítej objem kvádru.",`${a} × ${b} × ${c}`,a*b*c,"cm³")}),
+        mission("Poměrové zásoby","Poměr","⚖️","Sklady mají správný poměr zásob.",()=>{const k=rand(2,6),a=rand(2,8),b=rand(2,8);return input(`Poměr je ${a} : ${b}. První zásoba má ${a*k}. Kolik má druhá?`,`${a*k} : ?`,b*k,"","Zjisti, kolikrát se první díl poměru vešel do zadaného množství, a stejně tolikrát vynásob druhý díl.")}),
+        mission("Most přímé úměrnosti","Přímá úměrnost","🌉","Most unesl celou karavanu.",()=>{const price=rand(3,12),n=rand(2,8),want=rand(3,10);return input(`${n} krystalů stojí ${n*price} mincí. Kolik stojí ${want}?`,`${want} krystalů`,want*price,"mincí","Zjisti cenu za 1 kus (vyděl), pak vynásob požadovaným počtem.")}),
+        mission("Krystalový hranol","Objem kvádru s desetinným rozměrem","💎","Hranol napájí říši světlem.",()=>{const a=rand(3,12),b=rand(2,9),c=clean(rand(15,45)/10);return input("Spočítej objem kvádru.",`${a} × ${b} × ${fmt(c)}`,clean(a*b*c),"cm³","Objem kvádru je délka × šířka × výška – u desetinného rozměru počítej stejně, jen si pohlídej čárku.")}),
         mission("Velká transmutace","Smíšené učivo 7. ročníku","🔮","Transmutační kruh oživil celou říši.",()=>worldBoss(7),4)
       ]},
       8:{name:"Observatoř rovnic",mark:"🔭",color:"#d58cff",title:"Hvězdný geometr",intro:"Počítej mocniny, odmocniny, rovnice, Pythagorovu větu, kruhy a pravděpodobnost.",missions:[
-        mission("Mocninový dalekohled","Druhé mocniny","🔭","Dalekohled dohlédne ke hvězdám.",()=>{const a=rand(2,15);return quiz("Umocni číslo na druhou.",`${a}²`,a*a,opts(a*a,20))}),
-        mission("Brána odmocnin","Druhé odmocniny","🚪","Brána rozpoznala dokonalý čtverec.",()=>{const a=rand(2,15);return input("Najdi druhou odmocninu.",`√${a*a}`,a)}),
+        mission("Mocninový dalekohled","Druhé mocniny","🔭","Dalekohled dohlédne ke hvězdám.",()=>{const a=rand(2,15);return quiz("Umocni číslo na druhou.",`${a}²`,a*a,opts(a*a,20),"Druhá mocnina znamená vynásobit číslo samo sebou.")}),
+        mission("Brána odmocnin","Druhé odmocniny","🚪","Brána rozpoznala dokonalý čtverec.",()=>{const a=rand(2,15);return input("Najdi druhou odmocninu.",`√${a*a}`,a,"","Hledej číslo, které vynásobené samo sebou dá zadanou hodnotu.")}),
         mission("Pythagorův most","Pythagorova věta","📐","Most mezi věžemi je přesně dlouhý.",pythagoras),
         mission("Lov meteoritů","Bonusová hra","☄️","Meteority napájí observatoř.",()=>bonus(11,"☄️","Chyť meteority"),1),
         mission("Souhvězdí rovnic","Lineární rovnice","✖️","Souhvězdí ukázalo správnou dráhu.",()=>equationTask(2)),
-        mission("Kruhová stanice","Obvod kruhu","⭕","Kruhová stanice vysílá signál.",()=>{const r=pick([2,3,5,10]),ans=clean(2*3.14*r);return input("Použij π ≈ 3,14 a spočítej obvod.",`r = ${r} cm`,ans,"cm")}),
-        mission("Kostka náhody","Pravděpodobnost","🎲","Stroj náhody je zkalibrovaný.",()=>{const good=pick([1,2,4,5]);return quiz("Jaká je pravděpodobnost, že na kostce padne číslo menší nebo rovno zadanému?",`číslo ≤ ${good}`,`${good}/6`,shuffle([`${good}/6`,`${6-good}/6`,`1/${good}`]))}),
+        mission("Kruhová stanice","Obvod kruhu","⭕","Kruhová stanice vysílá signál.",()=>{const r=pick([2,3,5,10]),ans=clean(2*3.14*r);return input("Použij π ≈ 3,14 a spočítej obvod.",`r = ${r} cm`,ans,"cm","Obvod kruhu je 2 × π × r, použij π ≈ 3,14.")}),
+        mission("Kostka náhody","Pravděpodobnost","🎲","Stroj náhody je zkalibrovaný.",()=>{const good=pick([1,2,4,5]);return quiz("Jaká je pravděpodobnost, že na kostce padne číslo menší nebo rovno zadanému?",`číslo ≤ ${good}`,`${good}/6`,shuffle([`${good}/6`,`${6-good}/6`,`1/${good}`]),"Spočítej, kolik stran kostky splňuje podmínku, a děl to šesti.")}),
         mission("Černá hvězda","Smíšené učivo 8. ročníku","🌌","Observatoř rozsvítila černou hvězdu.",()=>worldBoss(8),4)
       ]},
       9:{name:"Citadela funkcí",mark:"📈",color:"#ff6f91",title:"Architekt matematického světa",intro:"Dokonči svět funkcemi, soustavami, podobností, tělesy a finanční matematikou.",missions:[
-        mission("Dvojice neznámých","Soustava dvou rovnic","🧩","Dvě části mechanismu se spojily.",()=>{const x=rand(2,12),y=rand(1,10);return input(`x + y = ${x+y} a x − y = ${x-y}. Urči x.`,"x = ?",x)}),
-        mission("Stroj funkcí","Lineární funkce","📈","Grafová věž vykreslila trasu.",()=>{const a=rand(-4,5)||2,b=rand(-8,8),x=rand(-5,6),ans=a*x+b;return input("Dosaď x do předpisu funkce.",`y = ${a}x ${b>=0?"+":""}${b}, x = ${x}`,ans)}),
-        mission("Kovárna vzorců","Druhá mocnina dvojčlenu","⚒️","Kovárna vyrobila algebraický klíč.",()=>{const a=rand(2,12),b=rand(1,9),ans=(a+b)**2;return quiz("Vyhodnoť výraz.",`(${a} + ${b})²`,ans,opts(ans,30))}),
+        mission("Dvojice neznámých","Soustava dvou rovnic","🧩","Dvě části mechanismu se spojily.",()=>{const x=rand(2,12),y=rand(1,10);return input(`x + y = ${x+y} a x − y = ${x-y}. Urči x.`,"x = ?",x,"","Sečti obě rovnice dohromady – y se odečte a zůstane jen 2x.")}),
+        mission("Stroj funkcí","Lineární funkce","📈","Grafová věž vykreslila trasu.",()=>{const a=rand(-4,5)||2,b=rand(-8,8),x=rand(-5,6),ans=a*x+b;return input("Dosaď x do předpisu funkce.",`y = ${a}x ${b>=0?"+":""}${b}, x = ${x}`,ans,"","Dosaď zadané x do předpisu funkce a spočítej podle pořadí operací.")}),
+        mission("Kovárna vzorců","Druhá mocnina dvojčlenu","⚒️","Kovárna vyrobila algebraický klíč.",()=>{const a=rand(2,12),b=rand(1,9),ans=(a+b)**2;return quiz("Vyhodnoť výraz.",`(${a} + ${b})²`,ans,opts(ans,30),"Nejdřív sečti čísla v závorce, teprve pak výsledek umocni na druhou.")}),
         mission("Portál symbolů","Bonusová hra","🌀","Portál získal stabilní energii.",()=>bonus(12,"🌀","Stabilizuj portál"),1),
-        mission("Síň podobnosti","Podobnost a měřítko","🔺","Model citadely má správné měřítko.",()=>{const k=rand(2,6),small=rand(3,12);return input(`Větší útvar je ${k}× zvětšený. Malá strana měří ${small} cm.`,"Velká strana",k*small,"cm")}),
-        mission("Válcová věž","Objem válce","🏢","Věž má vypočtenou kapacitu.",()=>{const r=pick([2,3,5]),h=rand(3,10),ans=clean(3.14*r*r*h);return input("Použij π ≈ 3,14 a spočítej objem válce.",`r = ${r} cm, v = ${h} cm`,ans,"cm³")}),
-        mission("Pokladnice úroků","Procentní změna","💰","Pokladnice správně počítá růst.",()=>{const base=pick([500,800,1000,1200,2000]),p=pick([5,10,15,20]),ans=base*(1+p/100);return input(`Vklad ${base} Kč vzrostl o ${p} %. Kolik je nyní v pokladnici?`,"Nový stav",ans,"Kč")}),
+        mission("Síň podobnosti","Podobnost a měřítko","🔺","Model citadely má správné měřítko.",()=>{const k=rand(2,6),small=rand(3,12);return input(`Větší útvar je ${k}× zvětšený. Malá strana měří ${small} cm.`,"Velká strana",k*small,"cm",`Vynásob malou stranu měřítkem zvětšení (${k}×).`)}),
+        mission("Válcová věž","Objem válce","🏢","Věž má vypočtenou kapacitu.",()=>{const r=pick([2,3,5]),h=rand(3,10),ans=clean(3.14*r*r*h);return input("Použij π ≈ 3,14 a spočítej objem válce.",`r = ${r} cm, v = ${h} cm`,ans,"cm³","Objem válce je π × r² × výška, použij π ≈ 3,14.")}),
+        mission("Pokladnice úroků","Procentní změna","💰","Pokladnice správně počítá růst.",()=>{const base=pick([500,800,1000,1200,2000]),p=pick([5,10,15,20]),ans=base*(1+p/100);return input(`Vklad ${base} Kč vzrostl o ${p} %. Kolik je nyní v pokladnici?`,"Nový stav",ans,"Kč",`Zjisti, kolik je ${p} % ze ${base}, a přičti to k původní částce.`)}),
         mission("Jádro světa","Závěrečná matematická výprava","🌟","Jádro propojilo všech osm matematických světů.",()=>worldBoss(9),5)
       ]}
     };
@@ -212,8 +222,7 @@
     let state={currentGrade:2,worlds:{},crystals:0,energy:0,sound:true,lastTasks:{},victories:[]};
     let activeIndex=null,round=0,task=null,bonusCaught=0,sortPicked=[],gateStep=0,gateValue=0,audio=null,finalePending=false,activeReplay=false,newReveal=false,milestoneMode="checkpoint";
     function progress(g){const p=state.worlds[g]||(state.worlds[g]={completed:[],answered:{}});p.completed=Array.isArray(p.completed)?p.completed:[];p.answered=p.answered||{};return p}
-    function isComplete(g){return progress(g).completed.length>=WORLDS[g].missions.length}
-    function isUnlocked(g){return g===2||isComplete(g-1)}
+    function isUnlocked(g){return true}
     function answeredInMission(g,i){const p=progress(g),m=WORLDS[g].missions[i];return p.completed.includes(i)?m.rounds:Math.min(m.rounds,Number(p.answered[i])||0)}
     function worldTotals(g){const w=WORLDS[g],done=w.missions.reduce((sum,m,i)=>sum+answeredInMission(g,i),0),total=w.missions.reduce((sum,m)=>sum+m.rounds,0);return {done,total,chunks:Math.floor(done/10),totalChunks:Math.ceil(total/10)}}
     function normalize(){
@@ -232,14 +241,24 @@
       const layer=$("#ambient"),type=AMBIENTS[g],amount=ratio?Math.ceil(5+ratio*13):0;layer.className=`ambient ${type}`;layer.style.clipPath=`inset(0 ${100-ratio*100}% 0 0)`;
       layer.innerHTML=Array.from({length:amount},(_,i)=>`<i class="mote" style="left:${5+(i*37)%92}%;top:${8+(i*29)%75}%;--dur:${4+(i%5)}s;--delay:-${(i*.7).toFixed(1)}s;--drift:${i%2?45:-35}px"></i>`).join("");
     }
+    const REVEAL_POINTS=[[260,760,250],[480,560,230],[700,740,240],[900,480,260],[1080,650,230],[1270,430,250],[1420,600,220],[1560,340,260]];
+    function renderReveal(g){
+      const w=WORLDS[g],p=progress(g);
+      $("#revealCircles").innerHTML=w.missions.map((m,i)=>{
+        const pt=REVEAL_POINTS[i%REVEAL_POINTS.length],done=p.completed.includes(i),frac=done?1:Math.min(1,answeredInMission(g,i)/m.rounds);
+        if(frac<=0)return "";
+        const r=pt[2]*Math.sqrt(frac);
+        return `<circle cx="${pt[0]}" cy="${pt[1]}" r="${r.toFixed(1)}" fill="white"/>`;
+      }).join("");
+    }
     function renderWorld(){
       const g=state.currentGrade,w=WORLDS[g],p=progress(g),count=p.completed.length,total=w.missions.length,next=nextIndex(g),wt=worldTotals(g),ratio=wt.total?wt.done/wt.total:0;
       document.documentElement.style.setProperty("--world-color",w.color);
       document.documentElement.style.setProperty("--mission-count",total);
-      $("#worldGray").setAttribute("href",WORLD_ART[g]);$("#worldImage").setAttribute("href",WORLD_ART[g]);$("#colorReveal").setAttribute("width",String(1672*ratio));$("#forgeFire").style.display=g===2?"block":"none";renderAmbient(g,ratio);
+      $("#worldGray").setAttribute("href",WORLD_ART[g]);$("#worldImage").setAttribute("href",WORLD_ART[g]);renderReveal(g);$("#forgeFire").style.display=g===2?"block":"none";renderAmbient(g,ratio);
       if(newReveal){const image=$("#worldImage");image.classList.remove("wake");void image.getBoundingClientRect();image.classList.add("wake");setTimeout(()=>image.classList.remove("wake"),1800);newReveal=false}
       $("#brandSub").textContent=`${g}. ročník · ${w.name}`;$("#worldMark").textContent=w.mark;$("#chapterTitle").textContent=w.name;
-      $("#crystals").textContent=state.crystals;$("#energy").textContent=state.energy;$("#buildCount").textContent=`${wt.chunks}/${wt.totalChunks}`;
+      $("#crystals").textContent=state.crystals;$("#energy").textContent=state.energy;$("#buildCount").textContent=`${count}/${total}`;
       $("#progressCopy").textContent=`${wt.done} z ${wt.total} úloh`;$("#pathFill").style.width=`${ratio*100}%`;
       $("#nextText").textContent=next===undefined?`Kraj dokončen: ${w.title}. Zvol další výpravu.`:`Další: ${w.missions[next].title} · ${answeredInMission(g,next)} z ${w.missions[next].rounds}`;
       $("#continueBtn").classList.toggle("show",next===undefined);$("#continueBtn").textContent=g<9?"Otevřít další svět →":"Náhodná výprava ↻";
@@ -264,13 +283,13 @@
     function renderTask(){
       renderRounds();const area=$("#taskArea");$("#feedback").className="feedback";$("#feedback").textContent="";sortPicked=[];gateStep=0;
       if(task.kind==="quiz"){area.innerHTML=`<div class="task-title">${task.prompt}</div><div class="equation">${task.display}</div><div class="answers">${task.options.map(n=>`<button class="answer" data-answer="${String(n).replace('"','&quot;')}">${fmt(n)}</button>`).join("")}</div>`;bindAnswers()}
-      if(task.kind==="input"){area.innerHTML=`<div class="task-title">${task.prompt}</div><div class="equation">${task.display} ${task.suffix?`<small>${task.suffix}</small>`:""}</div><form id="answerForm"><input class="math-input" id="mathInput" inputmode="decimal" autocomplete="off" aria-label="Výsledek"><button class="primary" type="submit">Potvrdit</button></form>`;$("#answerForm").onsubmit=e=>{e.preventDefault();const value=Number($("#mathInput").value.trim().replace(",","."));if(Number.isFinite(value)&&eq(value,task.answer))roundSuccess();else wrong("Výsledek ještě nesedí. Zkontroluj postup a zkus to znovu.")};setTimeout(()=>$("#mathInput").focus(),80)}
+      if(task.kind==="input"){area.innerHTML=`<div class="task-title">${task.prompt}</div><div class="equation">${task.display} ${task.suffix?`<small>${task.suffix}</small>`:""}</div><form id="answerForm"><input class="math-input" id="mathInput" inputmode="decimal" autocomplete="off" aria-label="Výsledek"><button class="primary" type="submit">Potvrdit</button></form>`;$("#answerForm").onsubmit=e=>{e.preventDefault();const value=Number($("#mathInput").value.trim().replace(",","."));if(Number.isFinite(value)&&eq(value,task.answer))roundSuccess();else wrong(task.hint||"Výsledek ještě nesedí. Zkontroluj postup a zkus to znovu.")};setTimeout(()=>$("#mathInput").focus(),80)}
       if(task.kind==="compare"){area.innerHTML=`<div class="task-title">${task.prompt}</div><div class="equation">${fmt(task.left)} &nbsp; ? &nbsp; ${fmt(task.right)}</div><div class="compare-options">${["<","=",">"].map(s=>`<button class="compare-btn" data-compare="${s}">${s}</button>`).join("")}</div>`;$$("[data-compare]").forEach(b=>b.onclick=()=>b.dataset.compare===task.answer?roundSuccess():wrong("Podívej se znovu, které číslo leží více vpravo na číselné ose."))}
       if(task.kind==="sort"){area.innerHTML=`<div class="task-title">${task.prompt}</div><div class="sort-result" id="sortResult">Seřaď od nejmenšího: </div><div class="sort-options">${task.values.map((n,i)=>`<button class="sort-btn" data-sort="${i}">${fmt(n)}</button>`).join("")}</div>`;$$("[data-sort]").forEach(b=>b.onclick=()=>{const v=task.values[Number(b.dataset.sort)],expected=task.answer[sortPicked.length];if(eq(v,expected)){sortPicked.push(v);b.disabled=true;b.classList.add("chosen");$("#sortResult").textContent="Seřazeno: "+sortPicked.map(fmt).join(" < ");clickSound();if(sortPicked.length===task.answer.length)setTimeout(roundSuccess,250)}else wrong("Tohle ještě není nejmenší zbývající číslo.")})}
       if(task.kind==="bonus"){area.innerHTML=`<div class="bonus-count">${task.label}: <strong id="bonusCount">0</strong> z ${task.goal}</div><div class="bonus-arena" id="bonusArena"><button class="bonus-star" id="bonusStar" aria-label="${task.label}">${task.symbol}</button></div>`;placeBonus();$("#bonusStar").onclick=catchBonus}
       if(task.kind==="route"){gateValue=task.start;area.innerHTML=`<div class="task-title">${task.prompt}</div><div class="equation">${fmt(task.start)} → <span id="gateNow">${fmt(task.start)}</span> → ${fmt(task.target)}</div><div class="gate-route">${task.gates.map((pair,i)=>`<div class="gate-step"><span>KROK ${i+1}</span><div class="gate-options">${pair.map((op,j)=>`<button class="gate" data-step="${i}" data-choice="${j}" ${i?"disabled":""}>${op}</button>`).join("")}</div></div>`).join("")}</div>`;bindGates()}
     }
-    function bindAnswers(){$$("[data-answer]").forEach(b=>b.onclick=()=>{const raw=b.dataset.answer,value=isNaN(Number(raw))?raw:Number(raw);(typeof task.answer==="number"?eq(value,task.answer):value===String(task.answer))?roundSuccess():wrong("Ještě ne. Zkus si úlohu rozdělit na menší kroky.",b)})}
+    function bindAnswers(){$$("[data-answer]").forEach(b=>b.onclick=()=>{const raw=b.dataset.answer,value=isNaN(Number(raw))?raw:Number(raw);(typeof task.answer==="number"?eq(value,task.answer):value===String(task.answer))?roundSuccess():wrong(task.hint||"Ještě ne. Zkus si úlohu rozdělit na menší kroky.",b)})}
     function wrong(message,button){if(button){button.classList.remove("wrong");void button.offsetWidth;button.classList.add("wrong")}$("#feedback").textContent=message;failSound()}
     function placeBonus(){const b=$("#bonusStar"),a=$("#bonusArena");b.style.left=rand(5,Math.max(6,a.clientWidth-65))+"px";b.style.top=rand(8,Math.max(9,a.clientHeight-65))+"px"}
     function catchBonus(){bonusCaught++;$("#bonusCount").textContent=bonusCaught;tone(560+bonusCaught*35,.08,"sine");if(bonusCaught>=task.goal){bonusCaught=0;setTimeout(roundSuccess,170)}else placeBonus()}
@@ -302,13 +321,13 @@
     function showVictory(){
       const g=state.currentGrade,w=WORLDS[g];if(!state.victories.includes(g))state.victories.push(g);save();
       $("#victoryBadge").textContent=g===9?"🌟":w.mark;$("#victoryKicker").textContent=`${g}. ročník dokončen · 8 z 8`;$("#victoryTitle").textContent=g===9?"Matematický svět je propojen!":`${w.name} žije!`;
-      $("#victoryText").innerHTML=g===9?`Zvládl jsi cestu od prvních počtů až k funkcím. Získáváš titul <strong>${w.title}</strong>. Všechny světy zůstávají otevřené pro další výpravy.`:`Celá krajina získala barvy, světlo i pohyb. Získáváš titul <strong>${w.title}</strong> a odemykáš ${g+1}. ročník: <strong>${WORLDS[g+1].name}</strong>.`;
+      $("#victoryText").innerHTML=g===9?`Zvládl jsi cestu od prvních počtů až k funkcím. Získáváš titul <strong>${w.title}</strong>. Všechny světy zůstávají otevřené pro další výpravy.`:`Celá krajina získala barvy, světlo i pohyb. Získáváš titul <strong>${w.title}</strong> a můžeš pokračovat do ${g+1}. ročníku: <strong>${WORLDS[g+1].name}</strong>.`;
       $("#victoryRewards").innerHTML=`<span class="reward-chip">🏆 ${w.title}</span><span class="reward-chip">💎 svět dokončen</span>`;$("#victoryContinue").textContent=g<9?"Vstoupit do dalšího světa →":"Otevřít atlas světů";$("#victoryOverlay").classList.add("show");burst();setTimeout(burst,450);[523,659,784,1047].forEach((f,i)=>tone(f,.34,"sine",i*.12))
     }
     function continueWorld(){if(state.currentGrade<9){selectGrade(state.currentGrade+1);$("#victoryOverlay").classList.remove("show")}else{const i=rand(0,7);$("#victoryOverlay").classList.remove("show");openMission(i)}}
     function selectGrade(g){if(!isUnlocked(g))return;state.currentGrade=g;save();$("#atlasOverlay").classList.remove("show");renderWorld();clickSound()}
     function showAtlas(){
-      $("#gradeList").innerHTML=Object.keys(WORLDS).map(Number).map(g=>{const w=WORLDS[g],open=isUnlocked(g),count=progress(g).completed.length,wt=worldTotals(g);return `<button class="grade-card ${open?"open":""} ${g===state.currentGrade?"active":""}" data-grade="${g}" ${open?"":"disabled"}><em>${open?(count===8?"✅":"🔓"):"🔒"}</em><b>${g}.</b><span>${w.name}</span><small>${open?`${wt.done} z ${wt.total} úloh · ${w.intro}`:"Dokonči předchozí svět."}</small><div class="grade-meter"><i style="width:${wt.total?wt.done/wt.total*100:0}%"></i></div></button>`}).join("");$$("[data-grade]:not(:disabled)").forEach(b=>b.onclick=()=>selectGrade(Number(b.dataset.grade)));$("#atlasOverlay").classList.add("show")
+      $("#gradeList").innerHTML=Object.keys(WORLDS).map(Number).map(g=>{const w=WORLDS[g],count=progress(g).completed.length,wt=worldTotals(g);return `<button class="grade-card open ${g===state.currentGrade?"active":""}" data-grade="${g}"><em>${count===8?"✅":count>0?"🔓":"✨"}</em><b>${g}.</b><span>${w.name}</span><small>${wt.done} z ${wt.total} úloh · ${w.intro}</small><div class="grade-meter"><i style="width:${wt.total?wt.done/wt.total*100:0}%"></i></div></button>`}).join("");$$("[data-grade]").forEach(b=>b.onclick=()=>selectGrade(Number(b.dataset.grade)));$("#atlasOverlay").classList.add("show")
     }
     function burst(){const colors=["#68efff","#ffd166","#ff786f","#7ef29a","#b78cff"];for(let i=0;i<34;i++)setTimeout(()=>{const c=document.createElement("i");c.className="confetti";c.style.left=Math.random()*100+"vw";c.style.background=colors[i%colors.length];c.style.setProperty("--drift",`${rand(-100,100)}px`);document.body.append(c);setTimeout(()=>c.remove(),1600)},i*14)}
     function registerModelTools(){const c=document.modelContext;if(!c?.registerTool)return;Promise.resolve(c.registerTool({name:"read_math_world",title:"Přečíst stav Matematického světa",description:"Vrátí otevřený ročník, dokončené mise a odměny.",inputSchema:{type:"object",properties:{},additionalProperties:false},annotations:{readOnlyHint:true},execute:()=>({currentGrade:state.currentGrade,worlds:state.worlds,crystals:state.crystals,energy:state.energy})})).catch(()=>{})}
