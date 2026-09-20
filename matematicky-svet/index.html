@@ -125,7 +125,14 @@
     function mixedRoute(max,steps=2){for(let tries=0;tries<60;tries++){let start=rand(5,Math.max(8,Math.floor(max/3))),value=start,correct=[],wrong=[];for(let i=0;i<steps;i++){const plus=i%2===0||value<5,n=rand(2,Math.max(3,Math.min(15,max-value)));correct.push(`${plus?"+":"−"} ${n}`);wrong.push(`${plus?"+":"−"} ${n+rand(1,4)}`);value=plus?value+n:value-n}const t=route("Vyber správné brány a doprav energii přesně do cíle.",start,correct,wrong);if(countRouteSolutions(t)===1)return t}}
     function decimalAdd(){const a=rand(11,89)/10,b=rand(5,60)/10,ans=clean(a+b);return quiz("Spoj desetinné proudy.",`${fmt(a)} + ${fmt(b)} = ?`,ans,opts(ans,2,true),"Sečti zvlášť celé části a zvlášť desetiny, desetinnou čárku nech pod sebou.")}
     function fractionSame(){const d=pick([4,5,6,8,10]),a=rand(1,d-2),b=rand(1,d-a),ans=a+b;return quiz("Sečti díly se stejným jmenovatelem.",`${a}/${d} + ${b}/${d} = ?`,`${ans}/${d}`,shuffle([`${ans}/${d}`,`${ans}/${d*2}`,`${a+b+1}/${d}`]),"Jmenovatel (dolní číslo) se u stejných jmenovatelů nemění, sečti jen čitatele.")}
-    function fractionGeneral(){const d1=pick([2,3,4,5,6]),d2=pick([2,3,4,6]),l=d1*d2,a=rand(1,d1-1),b=rand(1,d2-1),num=a*d2+b*d1,gcd=(x,y)=>y?gcd(y,x%y):x,k=gcd(num,l),rn=num/k,rd=l/k,answer=rd===1?String(rn):`${rn}/${rd}`;return quiz("Převeď na společný jmenovatel, sečti a zkrať.",`${a}/${d1} + ${b}/${d2} = ?`,answer,shuffle([answer,`${a+b}/${d1+d2}`,`${num+1}/${l}`]),"Nejdřív najdi společný jmenovatel obou zlomků, teprve pak sečti čitatele.")}
+    function fractionGeneral(){
+      const gcd=(x,y)=>y?gcd(y,x%y):x;
+      const d1=pick([2,3,4,5,6]),d2=pick([2,3,4,6]),l=d1*d2;
+      let a=rand(1,d1-1);while(gcd(a,d1)!==1)a=rand(1,d1-1);
+      let b=rand(1,d2-1);while(gcd(b,d2)!==1)b=rand(1,d2-1);
+      const num=a*d2+b*d1,k=gcd(num,l),rn=num/k,rd=l/k,answer=rd===1?String(rn):`${rn}/${rd}`;
+      return quiz("Převeď na společný jmenovatel, sečti a zkrať.",`${a}/${d1} + ${b}/${d2} = ?`,answer,shuffle([answer,`${a+b}/${d1+d2}`,`${num+1}/${l}`]),"Nejdřív najdi společný jmenovatel obou zlomků, teprve pak sečti čitatele.")
+    }
     function equationTask(level=1){const x=rand(2,12),a=level>1?rand(2,6):1,b=rand(1,12),c=a*x+b;return input("Odemkni neznámou x.",a===1?`x + ${b} = ${c}`:`${a}x + ${b} = ${c}`,x,"",a===1?`Odečti ${b} z obou stran rovnice.`:`Nejdřív odečti ${b} z obou stran, pak vyděl ${a}.`)}
     function percentTask(){const p=pick([10,20,25,50,75]),base=pick([40,60,80,100,120,160,200]),ans=base*p/100;return quiz("Kolik tvoří vyznačená část?",`${p} % z ${base}`,ans,opts(ans,20),`Zjisti nejdřív 1 % ze ${base} (vyděl 100), pak vynásob ${p}.`)}
     function pythagoras(){const t=pick([[3,4,5],[5,12,13],[6,8,10],[8,15,17]]);return input("Dopočítej délku přepony.",`a = ${t[0]}, b = ${t[1]}, c = ?`,t[2],"","Použij c² = a² + b² a na konci odmocni součet.")}

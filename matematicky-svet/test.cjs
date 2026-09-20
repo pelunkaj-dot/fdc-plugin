@@ -82,4 +82,19 @@ for (let i = 0; i < 40; i++) {
 assert.ok(g7HasDecimal, 'grade 7 cuboid mission should use a decimal dimension to differentiate it from grade 6');
 console.log('PASS: grade 6 and grade 7 cuboid-volume missions are no longer a literal duplicate.');
 
+// --- "Alchymie zlomků" (grade 7 general-fraction addition) must always show already-reduced
+// input fractions, e.g. never "2/6" (which looks like a mistake even though the sum is correct) ---
+const gcd = (x, y) => (y ? gcd(y, x % y) : x);
+const alchymie = WORLDS[7].missions[0];
+assert.strictEqual(alchymie.title, 'Alchymie zlomků');
+for (let i = 0; i < 500; i++) {
+  const t = alchymie.make();
+  const m = t.display.match(/^(\d+)\/(\d+) \+ (\d+)\/(\d+) = \?$/);
+  assert.ok(m, `unexpected fraction display format: ${t.display}`);
+  const [, a, d1, b, d2] = m.map(Number);
+  assert.strictEqual(gcd(a, d1), 1, `grade 7 "Alchymie zlomků" showed an unreduced input fraction ${a}/${d1} (in "${t.display}")`);
+  assert.strictEqual(gcd(b, d2), 1, `grade 7 "Alchymie zlomků" showed an unreduced input fraction ${b}/${d2} (in "${t.display}")`);
+}
+console.log('PASS: "Alchymie zlomků" always shows already-reduced input fractions.');
+
 console.log('\nAll matematicky-svet logic tests passed.');
