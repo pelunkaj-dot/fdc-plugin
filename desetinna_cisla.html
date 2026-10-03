@@ -1115,7 +1115,12 @@
           generateExercise();
         });
         ui.newExerciseBtn.addEventListener('click', () => {
-          speakMascot('Dobře. Připravuji nový příklad stejného typu, aby ses mohl rozjet bez čekání.');
+          if (!currentExercise || !currentExercise.canAdvance) {
+            updateFeedback('info', 'Nejdřív dokonči současný příklad. Můžeš odpověď opravit, použít nápovědu nebo si po třetím chybném pokusu nechat ukázat řešení.', true);
+            speakMascot('Tento příklad ještě není uzavřený. Nejdřív ho dokončíme a pak ti připravím podobný.');
+            return;
+          }
+          speakMascot('Dobře. Připravuji nový příklad stejného typu.');
           generateExercise();
         });
         ui.answerInput.addEventListener('keydown', (event) => {
@@ -1156,6 +1161,7 @@
         ui.retryBtn.disabled = retryDisabled;
         ui.revealBtn.disabled = revealDisabled;
         ui.nextBtn.disabled = nextDisabled;
+        ui.newExerciseBtn.disabled = !currentExercise || !currentExercise.canAdvance;
       }
 
       function refreshSummary() {
@@ -1409,20 +1415,20 @@
           speakMascot('První pokus nevyšel. Zkontroluj hlavně desetinnou čárku, řády a samotný výpočet.');
         } else if (currentExercise.attemptNumber === 2) {
           currentExercise.canRetry = true;
-          currentExercise.canReveal = true;
+          currentExercise.canReveal = false;
           if (!currentExercise.hintShown) {
             currentExercise.hintShown = true;
             ui.hintBox.hidden = false;
             ui.hintBox.innerHTML = `<strong>Nápověda:</strong> ${currentExercise.hint}`;
           }
           updateFeedback('error', `${verdict.message} Nápověda je teď zobrazená. Podívej se na ni a zkus odpověď opravit.`, true);
-          ui.footerStatus.textContent = 'Druhý pokus nevyšel. Nápověda je zobrazená.';
+          ui.footerStatus.textContent = 'Druhý pokus nevyšel. Nápověda je zobrazená a máš ještě jeden opravný pokus.';
           speakMascot('Druhý pokus nevyšel. Podívej se na nápovědu a zkus to ještě jednou.');
         } else {
           currentExercise.canRetry = true;
           currentExercise.canReveal = true;
-          updateFeedback('error', `${verdict.message} Teď si můžeš vybrat: ještě jedna oprava, nebo prozradit správný výsledek.`, true);
-          ui.footerStatus.textContent = 'Další pokus nevyšel. Výsledek musí být nakonec ukázán.';
+          updateFeedback('error', `${verdict.message} Tři pokusy už máš za sebou. Můžeš to zkusit znovu, nebo si nechat zobrazit správný výsledek a postup.`, true);
+          ui.footerStatus.textContent = 'Třetí pokus nevyšel. Můžeš pokračovat v opravě nebo si zobrazit řešení.';
           speakMascot('Můžeš to zkusit ještě jednou, nebo si nechat zobrazit správný výsledek a postup.');
         }
         refreshButtonsState();
