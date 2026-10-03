@@ -355,6 +355,84 @@ body::before {
   .num { font-size: 64px; }
   .answer-display { font-size: 64px; min-width: 100px; height: 80px; }
 }
+
+.parent-row{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:-4px;
+}
+.parent-btn{
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-weight:900;
+  font-size:14px;
+  cursor:pointer;
+  padding:6px 10px;
+  border-radius:999px;
+}
+.parent-btn:hover{background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.07)}
+.parent-modal{
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.48);
+  z-index:250;
+  opacity:0;pointer-events:none;
+  transition:opacity .2s;
+  padding:16px;
+}
+.parent-modal.show{opacity:1;pointer-events:all}
+.parent-box{
+  width:min(94vw,520px);
+  max-height:88vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:28px;
+  padding:24px;
+  box-shadow:0 28px 90px rgba(0,0,0,.28);
+}
+.parent-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin-bottom:14px;
+}
+.parent-head h2{
+  font-family:'Fredoka One',cursive;
+  font-size:27px;color:var(--dark);
+}
+.parent-close{
+  border:none;background:#f1f1f1;border-radius:50%;
+  width:38px;height:38px;font-size:20px;font-weight:900;cursor:pointer;
+}
+.parent-form{display:flex;flex-direction:column;gap:12px}
+.parent-form p{color:var(--muted);font-weight:700;line-height:1.45}
+.parent-form label{font-weight:900;color:var(--dark)}
+.parent-form input{
+  width:100%;margin-top:5px;padding:12px 14px;
+  border:2px solid #ddd;border-radius:14px;font:inherit;
+}
+.parent-form button,.parent-action{
+  border:none;background:var(--add);color:white;
+  border-radius:999px;padding:12px 18px;
+  font-weight:900;font-size:15px;cursor:pointer;
+}
+.parent-error{color:#d63031!important;min-height:22px}
+.parent-note{font-size:13px!important;color:var(--muted)!important}
+.parent-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0 18px;
+}
+.parent-stat{
+  background:#faf7f1;border-radius:18px;padding:14px;text-align:center;
+}
+.parent-stat span{display:block;color:var(--muted);font-size:13px;font-weight:800}
+.parent-stat b{display:block;font-size:26px;color:var(--dark);margin-top:3px}
+.parent-table{width:100%;border-collapse:collapse;margin-top:8px}
+.parent-table th,.parent-table td{padding:10px 8px;border-bottom:1px solid #eee;text-align:center}
+.parent-table th:first-child,.parent-table td:first-child{text-align:left}
+.parent-foot{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.parent-link{
+  border:none;background:transparent;color:var(--muted);font-weight:900;cursor:pointer;text-decoration:underline;
+}
+@media(max-width:420px){.parent-grid{grid-template-columns:1fr 1fr}.parent-box{padding:18px}}
 </style>
 </head>
 <body>
@@ -368,6 +446,9 @@ body::before {
     <div class="badge" id="badgeScore">⭐ <span id="scoreVal">0</span></div>
     <div class="badge" id="badgeStreak"><span class="streak-fire" id="streakFire">🔥</span> <span id="streakVal">0</span></div>
     <div class="badge" id="badgeLevel">🏅 Level <span id="levelVal">1</span></div>
+  </div>
+  <div class="parent-row">
+    <button type="button" class="parent-btn" onclick="openParent()">Pro rodiče</button>
   </div>
 
   <div class="ops">
@@ -419,6 +500,16 @@ body::before {
       <button class="np-btn" onclick="npPress('0')">0</button>
       <button class="np-btn ok-btn" onclick="npOk()">✓ Hotovo</button>
     </div>
+  </div>
+</div>
+
+<div class="parent-modal" id="parentModal" aria-hidden="true">
+  <div class="parent-box" role="dialog" aria-modal="true" aria-labelledby="parentTitle">
+    <div class="parent-head">
+      <h2 id="parentTitle">Pro rodiče</h2>
+      <button class="parent-close" type="button" onclick="closeParent()" aria-label="Zavřít">×</button>
+    </div>
+    <div id="parentContent"></div>
   </div>
 </div>
 
@@ -701,8 +792,17 @@ let inputStr = '';
 let wrongAttempts = 0;
 let score    = 0;
 let streak   = 0;
+let bestStreak = 0;
 let level    = 1;
 let roundQ   = 0;
+let opStats = {
+  '+': { ok:0, wrong:0 },
+  '-': { ok:0, wrong:0 },
+  '×': { ok:0, wrong:0 },
+  '÷': { ok:0, wrong:0 }
+};
+let parentAuth = { salt:'', hash:'' };
+let parentUnlocked = false;
 const ROUND   = 10;
 const SAVE_KEY = 'matikahraj_v2';
 
@@ -711,12 +811,22 @@ const loadProg = () => {
     const d = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}');
     score  = d.score  || 0;
     streak = d.streak || 0;
+    bestStreak = d.bestStreak || streak || 0;
     level  = d.level  || 1;
+    if (d.opStats) {
+      ['+','-','×','÷'].forEach(o => {
+        opStats[o] = {
+          ok: d.opStats[o]?.ok || 0,
+          wrong: d.opStats[o]?.wrong || 0
+        };
+      });
+    }
+    if (d.parentAuth) parentAuth = { ...parentAuth, ...d.parentAuth };
   } catch(_) {}
   renderStats();
 };
 const saveProg = () => {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify({ score, streak, level })); } catch(_) {}
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify({ score, streak, bestStreak, level, opStats, parentAuth })); } catch(_) {}
 };
 
 // ─── WEB AUDIO ───────────────────────────────────────────────────────────────
@@ -862,6 +972,8 @@ const checkAnswer = () => {
 
     score++;
     streak++;
+    bestStreak = Math.max(bestStreak, streak);
+    opStats[op].ok++;
     roundQ++;
     if (streak % 5 === 0) {
       document.getElementById('streakFire').classList.add('big');
@@ -896,6 +1008,7 @@ const checkAnswer = () => {
   } else {
     canAnswer = false;
     wrongAttempts++;
+    opStats[op].wrong++;
     ad.textContent = given;
     ad.className = 'answer-display wrong';
     soundErr();
@@ -937,6 +1050,154 @@ const checkAnswer = () => {
     }
   }
 };
+
+// ─── PRO RODIČE ─────────────────────────────────────────────────────────────
+const enc = new TextEncoder();
+
+const hashText = async text => {
+  const data = await crypto.subtle.digest('SHA-256', enc.encode(text));
+  return [...new Uint8Array(data)].map(b => b.toString(16).padStart(2,'0')).join('');
+};
+
+const randomSalt = () => {
+  const a = new Uint8Array(16);
+  crypto.getRandomValues(a);
+  return [...a].map(b => b.toString(16).padStart(2,'0')).join('');
+};
+
+const parentHasPassword = () => !!(parentAuth.salt && parentAuth.hash);
+
+const setParentPassword = async password => {
+  const salt = randomSalt();
+  parentAuth = { salt, hash: await hashText(salt + password) };
+  saveProg();
+};
+
+const verifyParentPassword = async password =>
+  parentHasPassword() && (await hashText(parentAuth.salt + password)) === parentAuth.hash;
+
+const openParent = () => {
+  const modal = document.getElementById('parentModal');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  renderParentGate();
+};
+
+const closeParent = () => {
+  const modal = document.getElementById('parentModal');
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+};
+
+const renderParentGate = () => {
+  if (parentUnlocked) { renderParentOverview(); return; }
+  const box = document.getElementById('parentContent');
+
+  if (!parentHasPassword()) {
+    box.innerHTML = `
+      <form class="parent-form" id="parentSetup">
+        <p>Přehled je chráněný heslem, aby do něj dítě nechodilo. Stačí jednoduché heslo alespoň o 4 znacích.</p>
+        <label>Heslo<input type="password" name="a" minlength="4" required autocomplete="new-password"></label>
+        <label>Heslo znovu<input type="password" name="b" minlength="4" required autocomplete="new-password"></label>
+        <p class="parent-error" aria-live="polite"></p>
+        <button type="submit">Nastavit heslo</button>
+        <p class="parent-note">Heslo i statistika zůstávají jen v tomto zařízení.</p>
+      </form>`;
+    const form = document.getElementById('parentSetup');
+    form.onsubmit = async e => {
+      e.preventDefault();
+      if (form.a.value !== form.b.value) {
+        form.querySelector('.parent-error').textContent = 'Hesla se neshodují.';
+        return;
+      }
+      await setParentPassword(form.a.value);
+      parentUnlocked = true;
+      renderParentOverview();
+    };
+    form.a.focus();
+    return;
+  }
+
+  box.innerHTML = `
+    <form class="parent-form" id="parentLogin">
+      <p>Zadejte rodičovské heslo.</p>
+      <label>Heslo<input type="password" name="h" required autocomplete="current-password"></label>
+      <p class="parent-error" aria-live="polite"></p>
+      <button type="submit">Otevřít přehled</button>
+      <button type="button" class="parent-link" id="forgotParent">Zapomněl(a) jsem heslo</button>
+      <p class="parent-note">Po obnovení hesla statistika zůstane zachovaná.</p>
+    </form>`;
+  const form = document.getElementById('parentLogin');
+  form.onsubmit = async e => {
+    e.preventDefault();
+    if (await verifyParentPassword(form.h.value)) {
+      parentUnlocked = true;
+      renderParentOverview();
+    } else {
+      form.querySelector('.parent-error').textContent = 'Heslo nesouhlasí.';
+      form.h.select();
+    }
+  };
+  document.getElementById('forgotParent').onclick = () => {
+    parentAuth = { salt:'', hash:'' };
+    parentUnlocked = false;
+    saveProg();
+    renderParentGate();
+  };
+  form.h.focus();
+};
+
+const pct = (ok, wrong) => {
+  const total = ok + wrong;
+  return total ? Math.round(ok / total * 100) + ' %' : '—';
+};
+
+const renderParentOverview = () => {
+  const box = document.getElementById('parentContent');
+  const rows = [
+    ['+','Sčítání'],
+    ['-','Odčítání'],
+    ['×','Násobení'],
+    ['÷','Dělení']
+  ].map(([o,name]) => {
+    const s = opStats[o];
+    return `<tr>
+      <td><b>${o}</b> ${name}</td>
+      <td>${s.ok}</td>
+      <td>${s.wrong}</td>
+      <td>${pct(s.ok,s.wrong)}</td>
+    </tr>`;
+  }).join('');
+
+  box.innerHTML = `
+    <p style="color:var(--muted);font-weight:700;line-height:1.45">Přehled ukazuje, jak dítě procvičuje základní početní operace na tomto zařízení.</p>
+    <div class="parent-grid">
+      <div class="parent-stat"><span>Správně celkem</span><b>${score}</b></div>
+      <div class="parent-stat"><span>Level</span><b>${level}</b></div>
+      <div class="parent-stat"><span>Nejlepší série</span><b>${bestStreak}</b></div>
+      <div class="parent-stat"><span>Aktuální série</span><b>${streak}</b></div>
+    </div>
+    <table class="parent-table">
+      <thead><tr><th>Operace</th><th>Správně</th><th>Chybné pokusy</th><th>Úspěšnost</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="parent-note" style="margin-top:12px">Úspěšnost počítá všechny pokusy, tedy i opravy po chybné odpovědi.</p>
+    <div class="parent-foot">
+      <button type="button" class="parent-link" id="changeParentPassword">Změnit heslo</button>
+      <button type="button" class="parent-action" onclick="closeParent()">Hotovo</button>
+    </div>`;
+
+  document.getElementById('changeParentPassword').onclick = () => {
+    parentAuth = { salt:'', hash:'' };
+    parentUnlocked = false;
+    saveProg();
+    renderParentGate();
+  };
+};
+
+document.getElementById('parentModal').addEventListener('click', e => {
+  if (e.target.id === 'parentModal') closeParent();
+});
 
 // ─── CONFETTI ────────────────────────────────────────────────────────────────
 const COLORS = ['#FF6B6B','#FFE66D','#4ECDC4','#A29BFE','#55EFC4','#fd79a8','#74b9ff'];
