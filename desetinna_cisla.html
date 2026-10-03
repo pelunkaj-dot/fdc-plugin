@@ -772,6 +772,334 @@
       flex-wrap: wrap;
     }
 
+
+    /* Dekáčkova laboratoř desetinných čísel */
+    .decimal-lab {
+      position: relative;
+      margin-top: 14px;
+      overflow: hidden;
+      padding: 16px 18px 14px;
+      min-height: 230px;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(95,139,255,.13), transparent 24%),
+        radial-gradient(circle at 84% 22%, rgba(13,157,91,.09), transparent 22%),
+        linear-gradient(180deg, rgba(18,29,53,.03), rgba(49,94,251,.035));
+    }
+
+    .decimal-lab::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(90deg, transparent 0 9.8%, rgba(91,104,133,.08) 10%, transparent 10.2% 19.8%, rgba(91,104,133,.08) 20%, transparent 20.2% 29.8%, rgba(91,104,133,.08) 30%, transparent 30.2%),
+        linear-gradient(rgba(91,104,133,.06) 1px, transparent 1px);
+      background-size: auto, 100% 32px;
+      opacity: .7;
+      pointer-events: none;
+    }
+
+    .decimal-lab::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52px;
+      z-index: -1;
+      background: linear-gradient(180deg, transparent, rgba(24,32,51,.08));
+      border-top: 1px solid rgba(91,104,133,.15);
+    }
+
+    .lab-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .lab-title {
+      margin: 0;
+      font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+    }
+
+    .lab-subtitle {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .84rem;
+    }
+
+    .lab-phase-badge {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    .lab-floor {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.25fr repeat(4, minmax(0, 1fr));
+      gap: 9px;
+      align-items: end;
+      min-height: 128px;
+    }
+
+    .lab-guide {
+      position: relative;
+      align-self: stretch;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.36);
+      overflow: hidden;
+    }
+
+    body.theme-dark .lab-guide {
+      background: rgba(255,255,255,.04);
+    }
+
+    .dekacek-tech {
+      position: relative;
+      flex: 0 0 72px;
+      height: 92px;
+      display: grid;
+      place-items: center;
+      transform-origin: 50% 90%;
+    }
+
+    .dekacek-head {
+      position: absolute;
+      top: 5px;
+      width: 48px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px 16px 13px 13px;
+      border: 2px solid rgba(49,94,251,.38);
+      background: linear-gradient(145deg, #f8fbff, #dce7ff);
+      color: #24385f;
+      font-size: 1.25rem;
+      box-shadow: 0 6px 12px rgba(22,37,77,.12);
+    }
+
+    .dekacek-head::before,
+    .dekacek-head::after {
+      content: "";
+      position: absolute;
+      top: 17px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #315efb;
+    }
+
+    .dekacek-head::before { left: 12px; }
+    .dekacek-head::after { right: 12px; }
+
+    .dekacek-body {
+      position: absolute;
+      top: 45px;
+      width: 42px;
+      height: 35px;
+      border-radius: 11px 11px 14px 14px;
+      background: linear-gradient(145deg, #526eab, #2d477f);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.18);
+    }
+
+    .dekacek-body::after {
+      content: attr(data-tool);
+      position: absolute;
+      inset: 5px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(255,255,255,.9);
+      font-size: 1.05rem;
+    }
+
+    .dekacek-arm {
+      position: absolute;
+      top: 51px;
+      width: 22px;
+      height: 6px;
+      border-radius: 999px;
+      background: #526eab;
+      transform-origin: 4px 3px;
+    }
+
+    .dekacek-arm.left { left: 2px; transform: rotate(24deg); }
+    .dekacek-arm.right { right: 1px; transform: rotate(-28deg); }
+
+    .lab-guide-copy {
+      min-width: 0;
+      font-size: .81rem;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
+    .lab-guide-copy strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .lab-station {
+      position: relative;
+      min-height: 104px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 5px;
+      padding: 10px 8px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(127,141,166,.10), rgba(127,141,166,.17));
+      color: var(--muted);
+      filter: grayscale(.92);
+      opacity: .48;
+      transform: translateY(5px);
+      transition: .35s ease;
+    }
+
+    .lab-station::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 11px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(91,104,133,.18);
+      box-shadow: 0 0 0 1px rgba(91,104,133,.08);
+    }
+
+    .lab-station.is-on {
+      opacity: 1;
+      filter: none;
+      transform: none;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(95,139,255,.24), transparent 34%),
+        linear-gradient(180deg, var(--panel), var(--panel-2));
+      color: var(--text);
+      box-shadow: 0 8px 20px rgba(22,37,77,.08);
+    }
+
+    .lab-station.is-on::before {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 12px rgba(49,94,251,.42);
+    }
+
+    .lab-station.is-topic {
+      outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+      outline-offset: 2px;
+    }
+
+    .lab-station-icon {
+      font-size: 1.55rem;
+      line-height: 1;
+      margin-top: 17px;
+    }
+
+    .lab-station-label {
+      font-weight: 800;
+      font-size: .78rem;
+      line-height: 1.15;
+    }
+
+    .lab-station-note {
+      font-size: .68rem;
+      line-height: 1.15;
+      color: var(--muted);
+    }
+
+    .lab-progress {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      align-items: center;
+      margin-top: 11px;
+      font-size: .74rem;
+      color: var(--muted);
+    }
+
+    .lab-progress-track {
+      height: 7px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(91,104,133,.14);
+    }
+
+    .lab-progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      transition: width .45s ease;
+    }
+
+    .decimal-lab.lab-pulse .lab-station.is-topic::before {
+      animation: labLightPulse .65s ease;
+    }
+
+    .decimal-lab.lab-streak .dekacek-tech {
+      animation: dekacekCelebrate .8s ease;
+    }
+
+    .decimal-lab.lab-streak .lab-station.is-on {
+      animation: stationSpark .8s ease;
+    }
+
+    .decimal-lab.lab-upgrade {
+      animation: labUpgrade .95s ease;
+    }
+
+    .decimal-lab.lab-upgrade .dekacek-tech {
+      animation: dekacekUpgrade 1s ease;
+    }
+
+    @keyframes labLightPulse {
+      0%,100% { filter: brightness(1); transform: scaleX(1); }
+      45% { filter: brightness(1.8); transform: scaleX(1.08); }
+    }
+
+    @keyframes dekacekCelebrate {
+      0%,100% { transform: translateY(0) rotate(0); }
+      30% { transform: translateY(-8px) rotate(-5deg); }
+      60% { transform: translateY(-3px) rotate(6deg); }
+    }
+
+    @keyframes stationSpark {
+      0%,100% { box-shadow: 0 8px 20px rgba(22,37,77,.08); }
+      45% { box-shadow: 0 0 0 4px rgba(49,94,251,.12), 0 0 26px rgba(49,94,251,.30); }
+    }
+
+    @keyframes labUpgrade {
+      0%,100% { box-shadow: var(--shadow); }
+      45% { box-shadow: 0 0 0 4px rgba(13,157,91,.12), 0 16px 46px rgba(49,94,251,.25); }
+    }
+
+    @keyframes dekacekUpgrade {
+      0%,100% { transform: translateY(0) scale(1); }
+      35% { transform: translateY(-12px) scale(1.08); }
+      60% { transform: translateY(-5px) scale(.98); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .decimal-lab *,
+      .decimal-lab { animation: none !important; transition: none !important; }
+    }
+
     @media (max-width: 1240px) {
       .topbar {
         grid-template-columns: 1fr;
@@ -805,6 +1133,27 @@
 
       .stat-grid {
         grid-template-columns: 1fr 1fr;
+      }
+
+      .decimal-lab {
+        padding: 14px 12px 12px;
+      }
+
+      .lab-head {
+        align-items: center;
+      }
+
+      .lab-floor {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .lab-guide {
+        grid-column: 1 / -1;
+        min-height: 92px;
+      }
+
+      .lab-station {
+        min-height: 92px;
       }
     }
   </style>
@@ -857,6 +1206,59 @@
               <div class="subtitle" id="heroSubtitle"></div>
             </div>
             <div class="hero-meta" id="heroMeta"></div>
+          </div>
+        </section>
+
+
+        <section class="card decimal-lab" id="decimalLab" aria-labelledby="labTitle">
+          <div class="lab-head">
+            <div>
+              <h2 class="lab-title" id="labTitle">Dekáčkova laboratoř desetinných čísel</h2>
+              <div class="lab-subtitle" id="labSubtitle">Laboratoř čeká na první přesný výpočet.</div>
+            </div>
+            <div class="lab-phase-badge" id="labPhaseBadge">Fáze 1/6</div>
+          </div>
+
+          <div class="lab-floor">
+            <div class="lab-guide">
+              <div class="dekacek-tech" id="dekacekTech" aria-label="Dekáček, technik laboratoře">
+                <div class="dekacek-head">⌁</div>
+                <div class="dekacek-body" id="dekacekBody" data-tool="🔧"></div>
+                <div class="dekacek-arm left"></div>
+                <div class="dekacek-arm right"></div>
+              </div>
+              <div class="lab-guide-copy">
+                <strong id="labGuideTitle">Dekáček startuje systémy</strong>
+                <span id="labGuideText">Každý správný výsledek dodá laboratoři trochu energie.</span>
+              </div>
+            </div>
+
+            <div class="lab-station" id="labTenths" data-stage="1">
+              <div class="lab-station-icon">0,1</div>
+              <div class="lab-station-label">Stanice desetin</div>
+              <div class="lab-station-note">první přesné dílky</div>
+            </div>
+            <div class="lab-station" id="labHundredths" data-stage="2">
+              <div class="lab-station-icon">0,01</div>
+              <div class="lab-station-label">Stanice setin</div>
+              <div class="lab-station-note">jemnější měření</div>
+            </div>
+            <div class="lab-station" id="labThousandths" data-stage="3">
+              <div class="lab-station-icon">0,001</div>
+              <div class="lab-station-label">Stanice tisícin</div>
+              <div class="lab-station-note">laboratorní přesnost</div>
+            </div>
+            <div class="lab-station" id="labConverter" data-stage="4">
+              <div class="lab-station-icon">⇄</div>
+              <div class="lab-station-label">Převodová stanice</div>
+              <div class="lab-station-note">zlomky ↔ desetinná čísla</div>
+            </div>
+          </div>
+
+          <div class="lab-progress">
+            <span id="labProgressLabel">Rozjezd laboratoře</span>
+            <div class="lab-progress-track" aria-hidden="true"><div class="lab-progress-fill" id="labProgressFill"></div></div>
+            <strong id="labProgressValue">0 %</strong>
           </div>
         </section>
 
@@ -1082,6 +1484,21 @@
         statAccuracy: document.getElementById('statAccuracy'),
         statStars: document.getElementById('statStars'),
         modeBanner: document.getElementById('modeBanner'),
+        decimalLab: document.getElementById('decimalLab'),
+        labSubtitle: document.getElementById('labSubtitle'),
+        labPhaseBadge: document.getElementById('labPhaseBadge'),
+        labGuideTitle: document.getElementById('labGuideTitle'),
+        labGuideText: document.getElementById('labGuideText'),
+        labProgressLabel: document.getElementById('labProgressLabel'),
+        labProgressFill: document.getElementById('labProgressFill'),
+        labProgressValue: document.getElementById('labProgressValue'),
+        dekacekBody: document.getElementById('dekacekBody'),
+        labStations: [
+          document.getElementById('labTenths'),
+          document.getElementById('labHundredths'),
+          document.getElementById('labThousandths'),
+          document.getElementById('labConverter'),
+        ],
         themeControls: document.getElementById('themeControls'),
         difficultyControls: document.getElementById('difficultyControls'),
         modeControls: document.getElementById('modeControls'),
@@ -1442,6 +1859,102 @@
         renderHistory();
         renderTeacherNote();
         renderHeroMeta();
+        renderLaboratory();
+      }
+
+      function laboratoryPhase(correctCount) {
+        const thresholds = [0, 3, 8, 15, 25, 40];
+        let phase = 0;
+        thresholds.forEach((threshold, index) => {
+          if (correctCount >= threshold) phase = index;
+        });
+        return phase;
+      }
+
+      function laboratoryPhaseData(phase) {
+        return [
+          {
+            title: 'Laboratoř je zatím téměř prázdná',
+            guide: 'Dekáček startuje systémy',
+            text: 'Každý správný výsledek dodá laboratoři trochu energie.',
+            progress: 'Rozjezd laboratoře',
+          },
+          {
+            title: 'Stanice desetin je online',
+            guide: 'První panel svítí',
+            text: 'Desetiny už laboratoř umí měřit. Teď kalibrujeme jemnější stupnici.',
+            progress: 'Kalibrace setin',
+          },
+          {
+            title: 'Setiny měří přesně',
+            guide: 'Dekáček ladí senzory',
+            text: 'Druhá stanice běží. Připravujeme měření na tisíciny.',
+            progress: 'Kalibrace tisícin',
+          },
+          {
+            title: 'Tisícinová stanice spuštěna',
+            guide: 'Přesnost roste',
+            text: 'Teď už laboratoř zvládá opravdu jemná desetinná měření.',
+            progress: 'Stavba převodové stanice',
+          },
+          {
+            title: 'Převodová stanice funguje',
+            guide: 'Dekáček propojuje systémy',
+            text: 'Zlomky a desetinná čísla už mohou cestovat tam i zpět.',
+            progress: 'Oživení celé laboratoře',
+          },
+          {
+            title: 'Laboratoř žije naplno',
+            guide: 'Všechny systémy jsou online',
+            text: 'Dekáček má radost: laboratoř je plně aktivní. Teď ji udržuj přesnými výpočty.',
+            progress: 'Plný výkon',
+          },
+        ][phase];
+      }
+
+      function laboratoryTopicData(section) {
+        return {
+          addition: { tool: '➕', station: 0, title: 'Sčítací obvod', text: 'Dekáček posílá energii do sčítacího obvodu.' },
+          subtraction: { tool: '➖', station: 1, title: 'Odečítací senzor', text: 'Dekáček hlídá, aby se správně odečítaly celé řády.' },
+          multiplication: { tool: '✖️', station: 2, title: 'Násobicí zesilovač', text: 'Dekáček nastavuje počet desetinných míst ve výsledku.' },
+          division: { tool: '➗', station: 2, title: 'Dělicí analyzátor', text: 'Dekáček kontroluje dělení i smysluplnost výsledku.' },
+          conversion: { tool: '⇄', station: 3, title: 'Převodová stanice', text: 'Dekáček propojuje zlomky s desetinnými čísly.' },
+        }[section];
+      }
+
+      function renderLaboratory() {
+        if (!ui.decimalLab) return;
+        const phase = laboratoryPhase(state.totalCorrect);
+        const data = laboratoryPhaseData(phase);
+        const topic = laboratoryTopicData(state.section);
+        const thresholds = [0, 3, 8, 15, 25, 40];
+        const nextThreshold = thresholds[Math.min(phase + 1, thresholds.length - 1)];
+        const currentThreshold = thresholds[phase];
+        const span = Math.max(1, nextThreshold - currentThreshold);
+        const within = phase === 5 ? 1 : Math.min(1, Math.max(0, (state.totalCorrect - currentThreshold) / span));
+        const percent = phase === 5 ? 100 : Math.round(within * 100);
+
+        ui.labSubtitle.textContent = data.title;
+        ui.labPhaseBadge.textContent = `Fáze ${phase + 1}/6`;
+        ui.labGuideTitle.textContent = topic.title;
+        ui.labGuideText.textContent = phase === 0 ? data.text : `${topic.text} ${data.text}`;
+        ui.labProgressLabel.textContent = data.progress;
+        ui.labProgressFill.style.width = `${percent}%`;
+        ui.labProgressValue.textContent = phase === 5 ? '100 %' : `${percent} %`;
+        ui.dekacekBody.dataset.tool = topic.tool;
+
+        ui.labStations.forEach((station, index) => {
+          station.classList.toggle('is-on', phase >= index + 1);
+          station.classList.toggle('is-topic', index === topic.station);
+        });
+
+        ui.decimalLab.classList.remove('lab-pulse', 'lab-streak', 'lab-upgrade');
+        if (currentExercise && currentExercise.labReaction) {
+          const reaction = currentExercise.labReaction;
+          void ui.decimalLab.offsetWidth;
+          ui.decimalLab.classList.add(reaction);
+          currentExercise.labReaction = '';
+        }
       }
 
       function refreshButtonsState() {
@@ -1649,6 +2162,7 @@
 
       function handleCorrectAnswer(raw, verdict) {
         stopTimer();
+        const previousLabPhase = laboratoryPhase(state.totalCorrect);
         state.totalCorrect += 1;
         state.sectionStats[state.section].correct += 1;
         state.difficultyStats[state.difficulty].correct += 1;
@@ -1661,6 +2175,10 @@
         state.modeStats[state.mode].points += gained;
         const starsEarned = starsForPoints(gained);
         state.stars += starsEarned;
+        const newLabPhase = laboratoryPhase(state.totalCorrect);
+        currentExercise.labReaction = newLabPhase > previousLabPhase
+          ? 'lab-upgrade'
+          : (state.streak >= 3 && state.streak % 3 === 0 ? 'lab-streak' : 'lab-pulse');
         if (currentExercise.hintShown || currentExercise.stepsShown) {
           state.helpedWins += 1;
         }
