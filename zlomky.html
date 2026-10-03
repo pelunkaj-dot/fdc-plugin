@@ -950,6 +950,35 @@
     .game-area     { padding: 18px; }
     .level-card, .demo-finish-card { padding: 28px 20px; }
   }
+
+.parent-row{display:flex;justify-content:flex-end}
+.parent-btn{border:none;background:rgba(245,230,208,.12);color:var(--choco-cream);font-weight:800;font-size:.9rem;cursor:pointer;padding:7px 12px;border-radius:999px}
+.parent-btn:hover{background:rgba(245,230,208,.22)}
+.parent-modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);z-index:1200;opacity:0;pointer-events:none;transition:opacity .2s;padding:16px}
+.parent-modal.show{opacity:1;pointer-events:all}
+.parent-box{width:min(94vw,700px);max-height:88vh;overflow:auto;background:var(--choco-white);border-radius:24px;padding:24px;box-shadow:var(--shadow-deep);color:var(--text-dark)}
+.parent-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.parent-head h2{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--choco-dark)}
+.parent-close{border:none;background:#eee;border-radius:50%;width:38px;height:38px;font-size:20px;font-weight:900;cursor:pointer}
+.parent-form{display:flex;flex-direction:column;gap:12px}
+.parent-form p{color:var(--text-mid);font-weight:600;line-height:1.5}
+.parent-form label{font-weight:800}
+.parent-form input{width:100%;margin-top:5px;padding:12px 14px;border:2px solid #d7c5b2;border-radius:12px;font:inherit}
+.parent-form button,.parent-action{border:none;background:linear-gradient(135deg,var(--choco-dark),var(--choco-mid));color:var(--gold);border-radius:999px;padding:12px 18px;font-weight:800;font-size:.95rem;cursor:pointer}
+.parent-error{color:var(--red)!important;min-height:22px}
+.parent-note{font-size:.82rem!important;color:#777!important}
+.parent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0 18px}
+.parent-stat{background:#fff;border:1px solid #ead8c4;border-radius:16px;padding:14px;text-align:center}
+.parent-stat span{display:block;color:#777;font-size:.78rem;font-weight:800}
+.parent-stat b{display:block;font-size:1.7rem;color:var(--choco-dark);margin-top:3px}
+.parent-section{margin-top:16px}
+.parent-section h3{font-family:'Baloo 2',cursive;color:var(--choco-dark);margin-bottom:8px}
+.parent-table{width:100%;border-collapse:collapse}
+.parent-table th,.parent-table td{padding:9px 7px;border-bottom:1px solid #ead8c4;text-align:center;font-size:.9rem}
+.parent-table th:first-child,.parent-table td:first-child{text-align:left}
+.parent-foot{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.parent-link{border:none;background:transparent;color:var(--text-mid);font-weight:800;cursor:pointer;text-decoration:underline}
+@media(max-width:520px){.parent-grid{grid-template-columns:1fr 1fr}.parent-box{padding:18px}.parent-table{font-size:.82rem}}
 </style>
 </head>
 <body>
@@ -958,6 +987,7 @@
 
   <div class="header">
     <div class="header-title">Fajn<span>Zlomky</span> 🍫</div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
     <div class="score-panel">
       <div class="streak-badge" id="streakBadge" style="display:none">🔥 <span id="streakCount">0</span></div>
       <div class="score-badge"><span class="icon">⭐</span><span class="value" id="scoreDisplay">0</span></div>
@@ -1083,6 +1113,16 @@
 
 </div>
 
+<div class="parent-modal" id="parentModal" aria-hidden="true">
+  <div class="parent-box" role="dialog" aria-modal="true" aria-labelledby="parentTitle">
+    <div class="parent-head">
+      <h2 id="parentTitle">Pro rodiče</h2>
+      <button class="parent-close" type="button" onclick="closeParent()" aria-label="Zavřít">×</button>
+    </div>
+    <div id="parentContent"></div>
+  </div>
+</div>
+
 <!-- OVERLAYS -->
 <div class="level-overlay" id="levelOverlay">
   <div class="level-card">
@@ -1144,6 +1184,9 @@ let adaptivePending    = null; // 'up' | 'down' | null
 let demoSolved   = 0;
 let demoFinished = false;
 
+let parentAuth = { salt:'', hash:'' };
+let parentUnlocked = false;
+
 let audioCtx = null;
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1156,7 +1199,7 @@ function getAudioCtx() {
 function saveProgress() {
   if (DEMO_MODE) return;
   try {
-    const data = { score, level, stats, difficulty, activeOps };
+    const data = { score, level, stats, difficulty, activeOps, parentAuth };
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   } catch(e) {}
 }
@@ -1170,6 +1213,7 @@ function loadProgress() {
     if (d.score)     score     = d.score;
     if (d.level)     level     = d.level;
     if (d.stats)     stats     = { ...stats, ...d.stats };
+    if (d.parentAuth) parentAuth = { ...parentAuth, ...d.parentAuth };
     if (d.difficulty) {
       difficulty = d.difficulty;
       document.querySelectorAll('.btn-toggle').forEach(b => {
@@ -2201,6 +2245,168 @@ function getAccuracy() {
 }
 
 // ============================================================
+// PRO RODIČE
+// ============================================================
+const parentEncoder = new TextEncoder();
+
+async function parentHashText(text) {
+  const data = await crypto.subtle.digest('SHA-256', parentEncoder.encode(text));
+  return [...new Uint8Array(data)].map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function parentRandomSalt() {
+  const a = new Uint8Array(16);
+  crypto.getRandomValues(a);
+  return [...a].map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function parentHasPassword() { return !!(parentAuth.salt && parentAuth.hash); }
+
+async function parentSetPassword(password) {
+  const salt = parentRandomSalt();
+  parentAuth = { salt, hash: await parentHashText(salt + password) };
+  saveProgress();
+}
+
+async function parentVerifyPassword(password) {
+  return parentHasPassword() && (await parentHashText(parentAuth.salt + password)) === parentAuth.hash;
+}
+
+function openParent() {
+  if (DEMO_MODE) return;
+  const modal = document.getElementById('parentModal');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  renderParentGate();
+}
+
+function closeParent() {
+  const modal = document.getElementById('parentModal');
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+}
+
+function renderParentGate() {
+  if (parentUnlocked) { renderParentOverview(); return; }
+  const box = document.getElementById('parentContent');
+
+  if (!parentHasPassword()) {
+    box.innerHTML = `
+      <form class="parent-form" id="parentSetup">
+        <p>Přehled je chráněný heslem, aby do něj dítě nechodilo. Stačí jednoduché heslo alespoň o 4 znacích.</p>
+        <label>Heslo<input type="password" name="a" minlength="4" required autocomplete="new-password"></label>
+        <label>Heslo znovu<input type="password" name="b" minlength="4" required autocomplete="new-password"></label>
+        <p class="parent-error" aria-live="polite"></p>
+        <button type="submit">Nastavit heslo</button>
+        <p class="parent-note">Heslo i statistika zůstávají jen v tomto zařízení.</p>
+      </form>`;
+    const form = document.getElementById('parentSetup');
+    form.onsubmit = async e => {
+      e.preventDefault();
+      if (form.a.value !== form.b.value) {
+        form.querySelector('.parent-error').textContent = 'Hesla se neshodují.';
+        return;
+      }
+      await parentSetPassword(form.a.value);
+      parentUnlocked = true;
+      renderParentOverview();
+    };
+    form.a.focus();
+    return;
+  }
+
+  box.innerHTML = `
+    <form class="parent-form" id="parentLogin">
+      <p>Zadejte rodičovské heslo.</p>
+      <label>Heslo<input type="password" name="h" required autocomplete="current-password"></label>
+      <p class="parent-error" aria-live="polite"></p>
+      <button type="submit">Otevřít přehled</button>
+      <button type="button" class="parent-link" id="forgotParent">Zapomněl(a) jsem heslo</button>
+      <p class="parent-note">Po obnovení hesla statistika zůstane zachovaná.</p>
+    </form>`;
+  const form = document.getElementById('parentLogin');
+  form.onsubmit = async e => {
+    e.preventDefault();
+    if (await parentVerifyPassword(form.h.value)) {
+      parentUnlocked = true;
+      renderParentOverview();
+    } else {
+      form.querySelector('.parent-error').textContent = 'Heslo nesouhlasí.';
+      form.h.select();
+    }
+  };
+  document.getElementById('forgotParent').onclick = () => {
+    parentAuth = { salt:'', hash:'' };
+    parentUnlocked = false;
+    saveProgress();
+    renderParentGate();
+  };
+  form.h.focus();
+}
+
+function parentPct(ok,total) {
+  return total ? Math.round(ok / total * 100) + ' %' : '—';
+}
+
+function renderParentOverview() {
+  const box = document.getElementById('parentContent');
+  const opNames = { '+':'Sčítání','-':'Odčítání','*':'Násobení','/':'Dělení' };
+  const diffNames = { easy:'Lehká', medium:'Střední', hard:'Těžká' };
+
+  const opRows = Object.entries(stats.byOp).map(([o,s]) =>
+    `<tr><td><b>${o === '*' ? '×' : o === '/' ? '÷' : o}</b> ${opNames[o]}</td><td>${s.total}</td><td>${s.correct}</td><td>${parentPct(s.correct,s.total)}</td></tr>`
+  ).join('');
+
+  const diffRows = Object.entries(stats.byDiff).map(([d,s]) =>
+    `<tr><td>${diffNames[d]}</td><td>${s.total}</td><td>${s.correct}</td><td>${parentPct(s.correct,s.total)}</td></tr>`
+  ).join('');
+
+  box.innerHTML = `
+    <p style="color:var(--text-mid);font-weight:600;line-height:1.5">Přehled ukazuje, jak dítě procvičuje zlomky na tomto zařízení.</p>
+    <div class="parent-grid">
+      <div class="parent-stat"><span>Vyřešených příkladů</span><b>${stats.total}</b></div>
+      <div class="parent-stat"><span>Úspěšnost</span><b>${parentPct(stats.correct,stats.total)}</b></div>
+      <div class="parent-stat"><span>Správně napoprvé</span><b>${stats.firstTry}</b></div>
+      <div class="parent-stat"><span>Použitá nápověda</span><b>${stats.hintUsed}</b></div>
+      <div class="parent-stat"><span>Skóre</span><b>${score}</b></div>
+      <div class="parent-stat"><span>Úroveň</span><b>${level}</b></div>
+    </div>
+
+    <div class="parent-section">
+      <h3>Podle operací</h3>
+      <table class="parent-table">
+        <thead><tr><th>Operace</th><th>Příkladů</th><th>Správně</th><th>Úspěšnost</th></tr></thead>
+        <tbody>${opRows}</tbody>
+      </table>
+    </div>
+
+    <div class="parent-section">
+      <h3>Podle obtížnosti</h3>
+      <table class="parent-table">
+        <thead><tr><th>Obtížnost</th><th>Příkladů</th><th>Správně</th><th>Úspěšnost</th></tr></thead>
+        <tbody>${diffRows}</tbody>
+      </table>
+    </div>
+
+    <p class="parent-note" style="margin-top:14px">Statistika se ukládá pouze v tomto zařízení.</p>
+    <div class="parent-foot">
+      <button type="button" class="parent-link" id="changeParentPassword">Změnit heslo</button>
+      <button type="button" class="parent-action" onclick="closeParent()">Hotovo</button>
+    </div>`;
+
+  document.getElementById('changeParentPassword').onclick = () => {
+    parentAuth = { salt:'', hash:'' };
+    parentUnlocked = false;
+    saveProgress();
+    renderParentGate();
+  };
+}
+
+document.getElementById('parentModal').addEventListener('click', e => {
+  if (e.target.id === 'parentModal') closeParent();
+});
+
+// ============================================================
 // DEMO HELPERS
 // ============================================================
 function updateDemoCounter() {
@@ -2301,6 +2507,8 @@ function init() {
   drawMascot('neutral');
 
   if (DEMO_MODE) {
+    const pb = document.querySelector('.parent-row');
+    if (pb) pb.style.display = 'none';
     document.getElementById('demoBanner').classList.remove('hidden');
     lockDemoControls();
     updateDemoCounter();
