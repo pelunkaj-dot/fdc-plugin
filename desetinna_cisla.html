@@ -645,7 +645,7 @@
             <div class="logo-badge">𝟘.𝟙</div>
             <div>
               <h1>Desetinná čísla</h1>
-              <p class="subtitle">Poctivý modul pro procvičování, vysvětlování, herní postup a ukládání pokroku.</p>
+              <p class="subtitle">Procvičování desetinných čísel s nápovědou, vysvětlením postupu a ukládáním pokroku.</p>
             </div>
           </div>
           <div class="mascot-inline"><span class="dekacek">✨</span> Dekáček</div>
@@ -834,7 +834,7 @@
           key: 'addition',
           label: 'Sčítání',
           icon: '➕',
-          blurb: 'Skládání čísel s desetinnou čárkou bez zmatku a bez ztracených řádů.',
+          blurb: 'Sčítání desetinných čísel se správným zarovnáním jednotlivých řádů.',
           title: 'Sčítání desetinných čísel',
         },
         subtraction: {
@@ -848,21 +848,21 @@
           key: 'multiplication',
           label: 'Násobení',
           icon: '✖️',
-          blurb: 'Násobení celých i desetinných čísel a práce s posunem desetinné čárky.',
+          blurb: 'Násobení celých i desetinných čísel s důrazem na správné určení desetinných míst ve výsledku.',
           title: 'Násobení desetinných čísel',
         },
         division: {
           key: 'division',
           label: 'Dělení',
           icon: '➗',
-          blurb: 'Dělení jednoduché i delší, s rozumem, zaokrouhlením a kontrolou smyslu výsledku.',
+          blurb: 'Dělení desetinných čísel, zaokrouhlování a kontrola, zda výsledek dává smysl.',
           title: 'Dělení desetinných čísel',
         },
         conversion: {
           key: 'conversion',
           label: 'Převody',
           icon: '🔁',
-          blurb: 'Převody mezi zlomky a desetinnými čísly, konečný i periodický rozvoj.',
+          blurb: 'Převody mezi zlomky a desetinnými čísly, včetně konečného a periodického desetinného rozvoje.',
           title: 'Převody mezi zlomkem a desetinným číslem',
         },
       };
@@ -1328,9 +1328,9 @@
         if (!currentExercise || currentExercise.canAdvance) return;
         const raw = ui.answerInput.value.trim();
         if (!raw) {
-          updateFeedback('error', 'Bez odpovědi to dnes nepůjde. Zkus něco napsat.', true);
+          updateFeedback('error', 'Nejdřív zadej odpověď.', true);
           playSound('error');
-          speakMascot('Chápu, že některé příklady umí mlčet nahlas. Ale odpověď tam stejně musí přijít.');
+          speakMascot('Nejdřív zkus odpověď zadat. Když si nebudeš jistý, můžeš použít nápovědu.');
           return;
         }
 
@@ -1406,7 +1406,7 @@
           currentExercise.canReveal = false;
           updateFeedback('error', `${verdict.message} Zkus opravu. U první chyby dávám prostor na klidné přehodnocení.`, true);
           ui.footerStatus.textContent = 'První pokus nevyšel. Zkus to opravit.';
-          speakMascot('Tohle ještě není průšvih. První chyba je často jen uklouznutí ruky nebo čárky.');
+          speakMascot('První pokus nevyšel. Zkontroluj hlavně desetinnou čárku, řády a samotný výpočet.');
         } else if (currentExercise.attemptNumber === 2) {
           currentExercise.canRetry = true;
           currentExercise.canReveal = true;
@@ -1415,15 +1415,15 @@
             ui.hintBox.hidden = false;
             ui.hintBox.innerHTML = `<strong>Nápověda:</strong> ${currentExercise.hint}`;
           }
-          updateFeedback('error', `${verdict.message} Teď už jsem odhrnul záclonu: nápověda je venku.`, true);
+          updateFeedback('error', `${verdict.message} Nápověda je teď zobrazená. Podívej se na ni a zkus odpověď opravit.`, true);
           ui.footerStatus.textContent = 'Druhý pokus nevyšel. Nápověda je zobrazená.';
-          speakMascot('Druhá chyba už prosí o pomoc. Tady máš nápovědu, ať nejdeš poslepu.');
+          speakMascot('Druhý pokus nevyšel. Podívej se na nápovědu a zkus to ještě jednou.');
         } else {
           currentExercise.canRetry = true;
           currentExercise.canReveal = true;
           updateFeedback('error', `${verdict.message} Teď si můžeš vybrat: ještě jedna oprava, nebo prozradit správný výsledek.`, true);
           ui.footerStatus.textContent = 'Další pokus nevyšel. Výsledek musí být nakonec ukázán.';
-          speakMascot('Teď už hrajeme fér. Buď to zkusíš znovu, nebo ti výsledek ukážu. Bez správného výsledku nikam nejdeme.');
+          speakMascot('Můžeš to zkusit ještě jednou, nebo si nechat zobrazit správný výsledek a postup.');
         }
         refreshButtonsState();
       }
@@ -1433,7 +1433,7 @@
         currentExercise.hintShown = true;
         ui.hintBox.hidden = false;
         ui.hintBox.innerHTML = `<strong>Nápověda:</strong> ${currentExercise.hint}`;
-        updateFeedback('info', 'Nápověda je zobrazená. Není to podvod, je to řízená pomoc.', true);
+        updateFeedback('info', 'Nápověda je zobrazená. Použij ji jako vodítko a potom zkus výpočet dokončit sám.', true);
         playSound('info');
         speakMascot('Nápověda je venku. Teď už se zkus opřít o smysl příkladu, ne jen o odhad.');
         refreshButtonsState();
@@ -1446,7 +1446,7 @@
         ui.stepsBox.innerHTML = `<strong>Postup:</strong><br>${currentExercise.steps}`;
         updateFeedback('info', 'Postup je zobrazený. Teď si všímej, proč jednotlivé kroky dávají smysl.', true);
         playSound('info');
-        speakMascot('Postup je tvůj tichý průvodce. Nepiš ho jen očima. Zkus rozumět každému kroku.');
+        speakMascot('Procházej postup krok za krokem a u každého kroku si zkus říct, proč je správný.');
       }
 
       function enableRetryMode() {
@@ -1478,8 +1478,8 @@
           ui.stepsBox.hidden = false;
           ui.stepsBox.innerHTML = `<strong>Postup:</strong><br>${currentExercise.steps}`;
         }
-        updateFeedback('info', 'Výsledek je zobrazený. Přečti si ho a pokračuj až potom.', true);
-        speakMascot('Správný výsledek je venku. Teď se zastav a všimni si, proč vyšel právě takto.');
+        updateFeedback('info', 'Správný výsledek je zobrazený. Než přejdeš dál, porovnej ho se svým postupem.', true);
+        speakMascot('Porovnej správný výsledek se svým výpočtem a zkus najít místo, kde se postup rozešel.');
         playSound('info');
         ui.footerStatus.textContent = 'Výsledek byl prozrazen. Další příklad je odemčený.';
         refreshButtonsState();
@@ -1534,7 +1534,7 @@
             roundSecondsLeft = 0;
             stopTimer();
             if (currentExercise && !currentExercise.canAdvance) {
-              updateFeedback('info', 'Čas kola vypršel. To nevadí: matematika není kasino. Můžeš pokračovat dál, jen bez časového bonusu.', true);
+              updateFeedback('info', 'Čas kola vypršel. Můžeš dál v klidu pokračovat, jen už nezískáš časový bonus.', true);
               currentExercise.timeBonusLost = true;
               speakMascot('Čas utekl. Nevadí. Teď už pracuj hlavně přesně.');
               playSound('info');
@@ -1662,9 +1662,9 @@
           section: 'addition',
           tag: 'Dvě desetinná čísla',
           prompt: `${fmt(a)} + ${fmt(b)} = ?`,
-          note: 'Zarovnej si v hlavě nebo na papíře desetinná místa.',
+          note: 'Při písemném výpočtu zarovnej čísla podle desetinné čárky.',
           result,
-          hint: `Sečti zvlášť celé části a zvlášť desetinné části. Dávej pozor, aby desetiny šly k desetinám a setiny k setinám.`,
+          hint: `Při písemném sčítání zapiš čísla pod sebe podle desetinné čárky. Sčítej vždy číslice stejného řádu: jednotky s jednotkami, desetiny s desetinami, setiny se setinami.`,
           steps: `1. Zapiš si čísla pod sebe podle desetinné čárky.<br>2. Doplň si případné nuly, aby obě čísla měla stejný počet desetinných míst.<br>3. Sečti od nejnižšího řádu.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
         });
       }
@@ -1679,9 +1679,9 @@
           section: 'addition',
           tag: 'Více sčítanců',
           prompt: `${nums.map(fmt).join(' + ')} = ?`,
-          note: 'Někdy je lepší sečíst si nejprve čísla, která dohromady tvoří „hezčí“ celek.',
+          note: 'Někdy je výhodné nejprve sečíst čísla, která dohromady tvoří celé číslo nebo jiný snadno počitatelný součet.',
           result,
-          hint: 'Zkus si čísla vhodně seskupit. Například dvě čísla mohou dát celé číslo nebo hezký desetinný výsledek.',
+          hint: 'Zkus čísla vhodně seskupit. Některé dvojice mohou dát celé číslo nebo jiný snadno počitatelný součet.',
           steps: `1. Máš ${count} sčítanců.<br>2. Všímej si, která čísla se dobře skládají dohromady.<br>3. Postupně je sečti a hlídej stejná desetinná místa.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
         });
       }
@@ -1771,7 +1771,7 @@
           section: 'subtraction',
           tag: 'Zbývající množství',
           context: 'Na účtu, v zásobníku nebo v nádrži něco ubývá. Potřebujeme zjistit, kolik zbyde.',
-          prompt: `Z původního množství ${fmt(total)} zbylo po odečtení ${fmt(used)} kolik?`,
+          prompt: `Z původního množství ${fmt(total)} bylo spotřebováno ${fmt(used)}. Kolik zbývá?`,
           note: 'Odpověď zapiš jen číslem.',
           result: remaining,
           hint: `Od původního množství ${fmt(total)} odečti spotřebované množství ${fmt(used)}.`,
@@ -1818,11 +1818,11 @@
           section: 'multiplication',
           tag: 'Násobení dvou čísel',
           prompt: `${fmt(a)} × ${fmt(b)} = ?`,
-          note: difficulty === 'hard' ? 'V těžké úrovni sleduj i celkový počet desetinných míst.' : 'Nejdřív můžeš násobit bez čárky a tu doplnit až nakonec.',
+          note: difficulty === 'hard' ? 'V těžké úrovni sleduj i celkový počet desetinných míst.' : 'Nejprve můžeš násobit jako celá čísla a potom podle počtu desetinných míst správně umístit desetinnou čárku ve výsledku.',
           result,
           roundingNote: 'Případný delší výsledek zaokrouhli na 5 desetinných míst.',
-          hint: 'Nejprve násob, jako by šlo o celá čísla. Pak dopočítej, kam patří desetinná čárka podle počtu desetinných míst obou činitelů.',
-          steps: `1. Vynásob čísla bez ohledu na čárku.<br>2. Spočítej celkový počet desetinných míst v obou činitelích.<br>3. Podle tohoto počtu umísti čárku do výsledku.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
+          hint: 'Nejprve násob, jako by šlo o celá čísla. Potom spočítej celkový počet desetinných míst v obou činitelích a podle něj umísti desetinnou čárku ve výsledku.',
+          steps: `1. Dočasně počítej s čísly bez desetinné čárky.<br>2. Spočítej celkový počet desetinných míst v obou činitelích.<br>3. Ve výsledku odděl zprava stejný počet desetinných míst.<br>4. Výsledek je <strong>${fmt(result)}</strong>.`,
         });
       }
 
@@ -1883,9 +1883,9 @@
           section: 'multiplication',
           tag: 'Čísla s nulami a setinami',
           prompt: `${fmt(a)} × ${fmt(b)} = ?`,
-          note: 'Chyták bývá v nulách. Neignoruj je.',
+          note: 'Všímej si i nul v desetinné části, protože určují hodnotu jednotlivých řádů.',
           result,
-          hint: 'Počítej pozorně. Nuly v desetinné části nejsou ozdoba, ale informace o řádu.',
+          hint: 'Počítej pozorně. Nuly v desetinné části pomáhají určit řád číslice a mohou být při výpočtu důležité.',
           steps: `1. Vynásob čísla bez ohledu na čárku.<br>2. Započítej všechna desetinná místa včetně nul.<br>3. Výsledek je <strong>${fmt(result)}</strong>.`,
         });
       }
@@ -1926,10 +1926,10 @@
           section: 'division',
           tag: 'Dělení 10, 100, 1000',
           prompt: `${fmt(a)} ÷ ${fmt(divisor)} = ?`,
-          note: 'Při dělení 10, 100 a 1000 se hodnota zmenšuje.',
+          note: 'Při dělení kladného čísla čísly 10, 100 nebo 1000 se jeho hodnota zmenší desetkrát, stokrát nebo tisíckrát.',
           result,
           hint: 'Zkus si představit, že číslo rozděluješ na 10, 100 nebo 1000 stejných částí.',
-          steps: `1. Dělení ${fmt(divisor)} znamená zmenšení čísla.<br>2. Sleduj, jak se mění řády jednotlivých číslic.<br>3. Výsledek je <strong>${fmt(result)}</strong>.`,
+          steps: `1. Dělení kladného čísla číslem ${fmt(divisor)} znamená jeho zmenšení ${fmt(divisor)}krát.<br>2. Sleduj, jak se mění řády jednotlivých číslic.<br>3. Výsledek je <strong>${fmt(result)}</strong>.`,
         });
       }
 
@@ -2054,12 +2054,12 @@
           section: 'conversion',
           tag: 'Krácení zlomku',
           prompt: `Převeď ${fmt(value)} na základní tvar zlomku.`,
-          note: 'Požadujeme základní tvar. Nesnaž se to ošidit obludou typu 125/1000, když jde zlomek zkrátit.',
+          note: 'Výsledek zapiš v základním tvaru; například 125/1000 je potřeba ještě zkrátit.',
           acceptedFraction: `${fraction.n}/${fraction.d}`,
           canonicalValue: value,
           solutionHtml: `${fmt(value)} = <strong>${fraction.n}/${fraction.d}</strong>`,
-          hint: 'Napiš číslo jako zlomek podle počtu desetinných míst a potom krátíš největším společným dělitelem.',
-          steps: `1. ${fmt(value)} zapiš jako zlomek se jmenovatelem 10, 100 nebo 1000.<br>2. Pak najdi největší společný dělitel čitatele a jmenovatele.<br>3. Po zkrácení dostaneš <strong>${fraction.n}/${fraction.d}</strong>.`,
+          hint: 'Napiš číslo jako zlomek podle počtu desetinných míst a potom zlomek zkrať největším společným dělitelem (NSD).',
+          steps: `1. ${fmt(value)} zapiš jako zlomek se jmenovatelem 10, 100 nebo 1000.<br>2. Pak najdi největšího společného dělitele (NSD) čitatele a jmenovatele.<br>3. Po zkrácení dostaneš <strong>${fraction.n}/${fraction.d}</strong>.`,
         });
       }
 
@@ -2139,7 +2139,7 @@
           section: 'conversion',
           tag: 'Těžší zlomek na desetinné číslo',
           prompt: `Převeď zlomek ${numerator}/${denominator} na desetinné číslo. Výsledek zaokrouhli na 5 desetinných míst.`,
-          note: 'Nejde o závod. Tady je důležitá přesnost a smysluplné zaokrouhlení.',
+          note: 'Důležitá je přesnost a správné zaokrouhlení na požadovaný počet desetinných míst.',
           result: value,
           roundingNote: 'Zaokrouhli na 5 desetinných míst.',
           hint: 'Proveď dělení a pokračuj tak dlouho, aby šlo správně zaokrouhlit.',
@@ -2155,12 +2155,12 @@
           section: 'conversion',
           tag: 'Těžší převod na zlomek',
           prompt: `Převeď ${fmt(value)} na základní tvar zlomku.`,
-          note: 'Pečlivě krátíme. V těžké obtížnosti se na ledabylé tvary nehraje.',
+          note: 'Výsledek zapiš pečlivě v základním tvaru.',
           acceptedFraction: `${fraction.n}/${fraction.d}`,
           canonicalValue: value,
           solutionHtml: `${fmt(value)} = <strong>${fraction.n}/${fraction.d}</strong>`,
-          hint: 'Napiš číslo jako zlomek s vhodným jmenovatelem a až potom krátíš na základní tvar.',
-          steps: `1. ${fmt(value)} zapiš jako zlomek podle počtu desetinných míst.<br>2. Najdi největší společný dělitel čitatele a jmenovatele.<br>3. Po zkrácení dostaneš <strong>${fraction.n}/${fraction.d}</strong>.`,
+          hint: 'Napiš číslo jako zlomek s vhodným jmenovatelem a potom ho zkrať na základní tvar.',
+          steps: `1. ${fmt(value)} zapiš jako zlomek podle počtu desetinných míst.<br>2. Najdi největšího společného dělitele (NSD) čitatele a jmenovatele.<br>3. Po zkrácení dostaneš <strong>${fraction.n}/${fraction.d}</strong>.`,
         });
       }
 
@@ -2179,11 +2179,11 @@
             steps: `1. Sleduj jmenovatele 15 = 3 × 5.<br>2. Proto jde o periodický rozvoj.<br>3. Zaokrouhlená hodnota na 5 desetinných míst je <strong>${fmt(roundTo(2/15, 5))}</strong>.`,
           },
           {
-            prompt: 'Převeď 0,33333 na zlomek, který smysluplně vyjadřuje periodický charakter čísla.',
+            prompt: 'Převeď periodické desetinné číslo 0,(3) na zlomek v základním tvaru.',
             fractionOnly: '1/3',
             value: roundTo(1/3, 5),
-            hint: 'Číslo 0,33333 je zaokrouhlené přiblížení známého periodického čísla.',
-            steps: '1. Číslo 0,33333 je zjevné přiblížení periodického čísla 0,(3).<br>2. To odpovídá zlomku <strong>1/3</strong>.<br>3. Tady jde o smysluplný matematický zápis, ne o slepé čtení pěti cifer.',
+            hint: 'Číslo 0,(3) znamená 0,3333… bez konce. Tento periodický rozvoj odpovídá známému zlomku.',
+            steps: '1. Zápis 0,(3) znamená 0,3333… bez konce.<br>2. Tento periodický desetinný rozvoj přesně odpovídá zlomku <strong>1/3</strong>.<br>3. Výsledek je tedy <strong>1/3</strong>.',
           },
         ];
         const chosen = randomFrom(cases);
@@ -2192,7 +2192,7 @@
             section: 'conversion',
             tag: 'Smysl převodu a aproximace (přibližný odhad)',
             prompt: chosen.prompt,
-            note: 'Tady se hodnotí smysluplný matematický zápis, ne bezduché opisování číslic.',
+            note: 'Důležitý je matematicky přesný zápis a pochopení vztahu mezi zlomkem a desetinným číslem.',
             acceptedFraction: chosen.fractionOnly,
             canonicalValue: chosen.value,
             solutionHtml: `Smysluplný zlomek je <strong>${chosen.fractionOnly}</strong>.`,
@@ -2204,7 +2204,7 @@
           section: 'conversion',
           tag: 'Rozhodni o typu rozvoje',
           prompt: chosen.prompt,
-          note: 'Nejprve uvažuj, až potom počítej.',
+          note: 'Nejprve promysli vztahy mezi čísly a teprve potom počítej.',
           result: chosen.result,
           roundingNote: 'V těžké obtížnosti zapisujeme delší rozvoje zaokrouhlené na 5 desetinných míst.',
           hint: chosen.hint,
