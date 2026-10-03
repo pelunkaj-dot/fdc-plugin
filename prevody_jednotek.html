@@ -672,11 +672,11 @@ function del_smisenaKmM() {
 function del_slovniUlohy() {
   const pool=[
     ()=>{ const v=ri(2,9),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Věž je <b>${v} m</b> vysoká. Kolik centimetrů?`,
+      return {qText:`Věž je <b>${v} m</b> vysoká. Kolik je to centimetrů?`,
         qMath:`${v} m = ? cm`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} cm`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Silnice je <b>${v} km</b> dlouhá. Kolik metrů?`,
+      return {qText:`Silnice je <b>${v} km</b> dlouhá. Kolik je to metrů?`,
         qMath:`${v} km = ? m`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} m`,val:toCz(x)}))}; },
     ()=>{ const v=ri(2,9)*10,ans=v/10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
@@ -684,7 +684,7 @@ function del_slovniUlohy() {
         qMath:`${v} mm = ? cm`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} cm`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5)*100,ans=v/100,ws=genWrongs(ans,1),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Lavička je <b>${v} cm</b> dlouhá. Kolik metrů?`,
+      return {qText:`Lavička je <b>${v} cm</b> dlouhá. Kolik je to metrů?`,
         qMath:`${v} cm = ? m`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} m`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4)*500,ans=v/1000,ws=genWrongs(ans,0.5),opts=shuffle([ans,...ws].slice(0,4));
@@ -715,7 +715,7 @@ const pl_dm2Cm2 = makeConv(  'dm²','cm²',100,   'Převeď dm² na cm² (a zpě
 const pl_cm2Mm2 = makeConv(  'cm²','mm²',100,   'Převeď cm² na mm² (a zpět):');
 const pl_haM2   = makeConvDec('ha','m²', 10000, 'Hektary a čtvereční metry:');
 const pl_haA    = makeConv(  'ha', 'a',  100,   'Hektary a ary (1 a = 100 m²):');
-const pl_km2Ha  = makeConv(  'km²','ha', 100,   'Kilometry čtvereční a hektary:');
+const pl_km2Ha  = makeConv(  'km²','ha', 100,   'Čtvereční kilometry a hektary:');
 const pl_m2Cm2  = makeConvDec('m²','cm²',10000, 'Přeskoč přes dm² — m² a cm²:');
 
 function pl_porovnani() {
@@ -777,14 +777,14 @@ function pl_slovniUlohy() {
 }
 
 // ══════════════════════════════════════════════════
-// OBJEM & KAPALINY
+// OBJEM A KAPALINY
 // ══════════════════════════════════════════════════
 const ob_lMl   = makeConv('l',   'ml',  1000,'Litry a mililitry:');
 const ob_lDl   = makeConv('l',   'dl',  10,  'Litry a decilitry:');
 const ob_dlMl  = makeConv('dl',  'ml',  100, 'Decilitry a mililitry:');
 const ob_hlL   = makeConv('hl',  'l',   100, 'Hektolitry a litry:');
-const ob_m3L   = makeConv('m³',  'l',   1000,'Kubické metry a litry (1 m³ = 1000 l):');
-const ob_dm3Ml = makeConv('dm³', 'ml',  1000,'dm³ a mililitry (1 dm³ = 1 l = 1000 ml):');
+const ob_m3L   = makeConv('m³',  'l',   1000,'Krychlové metry a litry (1 m³ = 1 000 l):');
+const ob_dm3Ml = makeConv('dm³', 'ml',  1000,'dm³ a mililitry (1 dm³ = 1 l = 1 000 ml):');
 const ob_clMl  = makeConv('cl',  'ml',  10,  'Centilitry a mililitry (1 cl = 10 ml):');
 const ob_lCl   = makeConv('l',   'cl',  100, 'Litry a centilitry (1 l = 100 cl):');
 const ob_dlCl  = makeConv('dl',  'cl',  10,  'Decilitry a centilitry (1 dl = 10 cl):');
@@ -1043,11 +1043,11 @@ function cas_porovnani() {
 function cas_slovniUlohy() {
   const pool=[
     ()=>{ const v=ri(1,5),ans=v*60,ws=genWrongs(ans,60),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Film trvá <b>${v} hodinu/hodiny</b>. Kolik minut?`,
+      return {qText:`Film trvá <b>${v} ${v===1?'hodinu':v<=4?'hodiny':'hodin'}</b>. Kolik je to minut?`,
         qMath:`${v} h = ? min`, type:'choice', answer:String(ans),
         options:opts.map(x=>({html:`${x} min`,val:String(x)}))}; },
     ()=>{ const v=ri(1,8)*5,ans=v*60,ws=genWrongs(ans,60),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Cvičení trvá <b>${v} minut</b>. Kolik sekund?`,
+      return {qText:`Cvičení trvá <b>${v} minut</b>. Kolik je to sekund?`,
         qMath:`${v} min = ? s`, type:'choice', answer:String(ans),
         options:opts.map(x=>({html:`${x} s`,val:String(x)}))}; },
     ()=>{ const d=ri(1,4),ans=d*24,ws=genWrongs(ans,24),opts=shuffle([ans,...ws].slice(0,4));
@@ -1064,18 +1064,18 @@ function cas_slovniUlohy() {
         options:opts.map(x=>({html:`${x} dní`,val:String(x)}))}; },
     ()=>{ const r=ri(1,4),ans=r*12,ws=genWrongs(ans,12),opts=shuffle([ans,...ws].slice(0,4));
       const rs=r===1?'rok':'roky';
-      return {qText:`Záruční doba je <b>${r} ${rs}</b>. Kolik měsíců?`,
+      return {qText:`Záruční doba je <b>${r} ${rs}</b>. Kolik je to měsíců?`,
         qMath:`${r} ${rs} = ? měs.`, type:'choice', answer:String(ans),
         options:opts.map(x=>({html:`${x} měs.`,val:String(x)}))}; },
     ()=>{ const t=ri(1,4),ans=t*7,ws=genWrongs(ans,7),opts=shuffle([ans,...ws].slice(0,4));
       const ts=t===1?'týden':'týdny';
-      return {qText:`Prázdniny trvají <b>${t} ${ts}</b>. Kolik dní?`,
+      return {qText:`Prázdniny trvají <b>${t} ${ts}</b>. Kolik je to dní?`,
         qMath:`${t} ${ts} = ? dní`, type:'choice', answer:String(ans),
         options:opts.map(x=>({html:`${x} dní`,val:String(x)}))}; },
     ()=>{ const h=ri(1,4),m=rFrom([0,15,30,45]),ans=h*60+m;
       const ws=[h*60,h*100+m,ans+15,ans-15].filter(v=>v>0&&v!==ans);
       const opts=shuffle([ans,...shuffle(ws).slice(0,3)]);
-      return {qText:`Pohádka začíná za <b>${h} h ${m} min</b>. Kolik celkem minut?`,
+      return {qText:`Pohádka začíná za <b>${h} h ${m} min</b>. Za kolik minut začne?`,
         qMath:`${h} h ${m} min = ? min`, type:'choice', answer:String(ans),
         options:opts.map(x=>({html:`${x} min`,val:String(x)}))}; },
   ];
@@ -1088,8 +1088,8 @@ function cas_slovniUlohy() {
 const hm_kgG   = makeConvDec('kg','g',  1000,'Kilogramy a gramy:');
 const hm_gMg   = makeConv(  'g', 'mg', 1000,'Gramy a miligramy:');
 const hm_tKg   = makeConvDec('t', 'kg',1000,'Tuny a kilogramy:');
-const hm_gDag  = makeConv(  'dag','g',  10,  'Dekagramy a gramy (1 dag = 10 g):');
-const hm_dagKg = makeConv(  'kg', 'dag',100, 'Kilogramy a dekagramy (1 kg = 100 dag):');
+const hm_gDag  = makeConv(  'dkg (dag)','g',  10,  'Dekagramy a gramy (1 dkg (dag) = 10 g):');
+const hm_dagKg = makeConv(  'kg', 'dkg (dag)',100, 'Kilogramy a dekagramy (1 kg = 100 dkg (dag)):');
 const hm_gKg   = makeConvDec('kg','g',  1000,'Přímý převod kilogramů a gramů:');
 
 function hm_porovnani() {
@@ -1098,23 +1098,23 @@ function hm_porovnani() {
     {a:'1 kg',    b:'1000 g',   cmp:'='},
     {a:'1 t',     b:'1000 kg',  cmp:'='},
     {a:'1 dag',   b:'10 g',     cmp:'='},
-    {a:'1 kg',    b:'100 dag',  cmp:'='},
-    {a:'250 g',   b:'25 dag',   cmp:'='},
+    {a:'1 kg',    b:'100 dkg (dag)',  cmp:'='},
+    {a:'250 g',   b:'25 dkg (dag)',   cmp:'='},
     {a:'0,5 t',   b:'500 kg',   cmp:'='},
     // MENŠÍ NEŽ
     {a:'999 g',   b:'1 kg',     cmp:'<'},
-    {a:'9 dag',   b:'100 g',    cmp:'<'},
-    {a:'150 dag', b:'2 kg',     cmp:'<'},
+    {a:'9 dkg (dag)',   b:'100 g',    cmp:'<'},
+    {a:'150 dkg (dag)', b:'2 kg',     cmp:'<'},
     {a:'0,9 t',   b:'950 kg',   cmp:'<'},
-    {a:'99 dag',  b:'1 kg',     cmp:'<'},
+    {a:'99 dkg (dag)',  b:'1 kg',     cmp:'<'},
     {a:'500 mg',  b:'1 g',      cmp:'<'},
     // VĚTŠÍ NEŽ
     {a:'1001 g',  b:'1 kg',     cmp:'>'},
-    {a:'10 dag',  b:'90 g',     cmp:'>'},
+    {a:'10 dkg (dag)',  b:'90 g',     cmp:'>'},
     {a:'2 t',     b:'1900 kg',  cmp:'>'},
-    {a:'1 kg',    b:'99 dag',   cmp:'>'},
+    {a:'1 kg',    b:'99 dkg (dag)',   cmp:'>'},
     {a:'1 g',     b:'999 mg',   cmp:'>'},
-    {a:'3 kg',    b:'290 dag',  cmp:'>'},
+    {a:'3 kg',    b:'290 dkg (dag)',  cmp:'>'},
   ];
   const p=rFrom(pairs);
   return {qText:'Platí?', qMath:`${p.a} ○ ${p.b}`, type:'cmp', answer:p.cmp};
@@ -1123,16 +1123,16 @@ function hm_porovnani() {
 function hm_slovniUlohy() {
   const pool=[
     ()=>{ const v=ri(1,9),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Koupili jste <b>${v} kg</b> jablek. Kolik gramů?`,
+      return {qText:`Koupili jste <b>${v} kg</b> jablek. Kolik je to gramů?`,
         qMath:`${v} kg = ? g`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Nákladní auto váží <b>${v} t</b>. Kolik kilogramů?`,
+      return {qText:`Nákladní auto váží <b>${v} t</b>. Kolik je to kilogramů?`,
         qMath:`${v} t = ? kg`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} kg`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,9)*10,ans=v*10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Recept potřebuje <b>${v} dag</b> cukru. Kolik gramů?`,
-        qMath:`${v} dag = ? g`, type:'choice', answer:toCz(ans),
+      return {qText:`Recept potřebuje <b>${v} dkg (dag)</b> cukru. Kolik je to gramů?`,
+        qMath:`${v} dkg (dag) = ? g`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,9)*100,ans=v/1000,ws=genWrongs(ans,0.1),opts=shuffle([ans,...ws].slice(0,4));
       return {qText:`Balíček sýra váží <b>${v} g</b>. Kolik kg?`,
@@ -1140,12 +1140,12 @@ function hm_slovniUlohy() {
         options:opts.map(x=>({html:`${toCz(x)} kg`,val:toCz(x)}))}; },
     ()=>{ const v=rFrom([25,50,75,100,125,250,500]),ans=v*10;
       const ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Máslo váží <b>${v} dag</b>. Kolik gramů?`,
-        qMath:`${v} dag = ? g`, type:'choice', answer:toCz(ans),
+      return {qText:`Máslo váží <b>${v} dkg (dag)</b>. Kolik je to gramů?`,
+        qMath:`${v} dkg (dag) = ? g`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,9)*100,ans=v/100,ws=genWrongs(ans,0.5),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Nákup váží <b>${v} dag</b>. Kolik kilogramů?`,
-        qMath:`${v} dag = ? kg`, type:'choice', answer:toCz(ans),
+      return {qText:`Nákup váží <b>${v} dkg (dag)</b>. Kolik je to kilogramů?`,
+        qMath:`${v} dkg (dag) = ? kg`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} kg`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5)*250,ans=v/1000,ws=genWrongs(ans,0.25),opts=shuffle([ans,...ws].slice(0,4));
       return {qText:`Krabička léků obsahuje <b>${v} mg</b> účinné látky na tabletu. Kolik g?`,
@@ -1153,8 +1153,8 @@ function hm_slovniUlohy() {
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
       return {qText:`Pytlík mouky má <b>${v} kg</b>. Kolik dag?`,
-        qMath:`${v} kg = ? dag`, type:'choice', answer:toCz(ans),
-        options:opts.map(x=>({html:`${toCz(x)} dag`,val:toCz(x)}))}; },
+        qMath:`${v} kg = ? dkg (dag)`, type:'choice', answer:toCz(ans),
+        options:opts.map(x=>({html:`${toCz(x)} dkg (dag)`,val:toCz(x)}))}; },
   ];
   return rFrom(pool)();
 }
@@ -1181,8 +1181,8 @@ const CATS = {
         gen:[del_kmM],
         help:{ title:'Metry a kilometry', table:['1 km = 1 000 m'], steps:[
           '1 km = 1 000 m — násobitel je 1 000.',
-          'km na metry: × 1 000 (posuň čárku o 3 doprava).',
-          'Metry na km: ÷ 1 000 (posuň čárku o 3 doleva).',
+          'Kilometry na metry: násob 1 000. Desetinná čárka se posune o tři místa doprava.',
+          'Metry na kilometry: děl 1 000. Desetinná čárka se posune o tři místa doleva.',
           'Příklad: 2,5 km = 2 500 m · 350 m = 0,35 km'
         ]}},
       { name:'Přeskoky a porovnávání', desc:'mm↔m · cm↔km · porovnej délky',
@@ -1190,18 +1190,18 @@ const CATS = {
         help:{ title:'Vícekrokové převody', table:[
           '1 m = 100 cm', '1 m = 1 000 mm', '1 km = 100 000 cm'
         ], steps:[
-          'Přeskoč mezistupeň — přemysli, kolika kroky projdeš.',
+          'Přeskoč mezistupeň – rozmysli si, kolik kroků musíš udělat.',
           'mm → m: dělíš 1 000. m → mm: násobíš 1 000.',
           'Tip: nakresli si číselnou osu km · m · dm · cm · mm.'
         ]}},
-      { name:'Smíšený formát', desc:'3 m 40 cm ↔ cm · 2 km 300 m ↔ m',
+      { name:'Smíšený zápis', desc:'3 m 40 cm ↔ cm · 2 km 300 m ↔ m',
         gen:[del_smisenaMetryCm, del_smisenaKmM],
         help:{ title:'Smíšený zápis délky', table:[
           '1 m = 100 cm','1 km = 1 000 m'
         ], steps:[
-          'Cm na m+cm: celé číslo = celé metry, zbytek = centimetry.',
+          'Centimetry na metry a centimetry: vyděl 100. Celá část udává metry, zbytek centimetry.',
           'Příklad: 340 cm = 3 m 40 cm (340 ÷ 100 = 3 zbytek 40).',
-          'm+cm na cm: metry × 100, přičti cm.',
+          'Metry a centimetry na centimetry: metry vynásob 100 a přičti centimetry.',
           'Příklad: 2 m 75 cm = 200 + 75 = 275 cm.',
         ]}},
       { name:'Převody v kontextu', desc:'Délka v každodenních situacích',
@@ -1209,9 +1209,9 @@ const CATS = {
         help:{ title:'Převody v kontextu — délka', table:[
           '1 km = 1 000 m','1 m = 100 cm','1 cm = 10 mm','1 m = 1 000 mm'
         ], steps:[
-          'Přečti zadání, identifikuj výchozí a cílovou jednotku.',
-          'Na menší jednotku: násob konverzním číslem.',
-          'Na větší jednotku: děl konverzním číslem.',
+          'Přečti zadání a urči, z jaké jednotky převádíš a na jakou.',
+          'Převádíš-li na menší jednotku, násob převodním poměrem.',
+          'Převádíš-li na větší jednotku, děl převodním poměrem.',
         ]}},
       { name:'Vše dohromady', desc:'Náhodná kombinace všech typů',
         gen:[del_mCmm, del_dmCm, del_mDm, del_kmM, del_mCm, del_mMm,
@@ -1221,7 +1221,7 @@ const CATS = {
   plocha: {
     name:'Plocha', icon:'m²', cls:'cp', cVar:'--c-p', bgUnit:'m²·ha·km²',
     topics:[
-      { name:'Čtverečné jednotky', desc:'mm²↔cm² · cm²↔dm² · dm²↔m² (krok ×100)',
+      { name:'Čtvereční jednotky', desc:'mm²↔cm² · cm²↔dm² · dm²↔m² (krok ×100)',
         gen:[pl_cm2Mm2, pl_dm2Cm2, pl_m2Dm2],
         help:{ title:'Plocha — čtverečné jednotky', table:[
           '1 cm² = 100 mm²','1 dm² = 100 cm²','1 m² = 100 dm²',
@@ -1237,7 +1237,7 @@ const CATS = {
           '1 a = 100 m²','1 ha = 100 a = 10 000 m²','1 km² = 100 ha'
         ], steps:[
           '1 ar (a) = 10 m × 10 m = 100 m²',
-          '1 hektar (ha) = 100 × 100 m = 10 000 m²',
+          '1 hektar (ha) = plocha čtverce 100 m × 100 m = 10 000 m²',
           '1 km² = 1 000 m × 1 000 m = 1 000 000 m² = 100 ha',
         ]}},
       { name:'Porovnávání ploch', desc:'Které je větší? Platí rovnost?',
@@ -1247,8 +1247,8 @@ const CATS = {
         help:{ title:'Převody v kontextu — plocha', table:[
           '1 m² = 100 dm²','1 ha = 10 000 m²','1 km² = 100 ha'
         ], steps:[
-          'Přečti zadání, identifikuj výchozí a cílovou jednotku.',
-          'Nezapomeň: plocha roste s druhou mocninou délky!',
+          'Přečti zadání a urči, z jaké jednotky převádíš a na jakou.',
+          'Nezapomeň: při převodu plošných jednotek se převodní poměr umocňuje na druhou.',
         ]}},
       { name:'Vše dohromady', desc:'Náhodná kombinace všech typů',
         gen:[pl_cm2Mm2, pl_dm2Cm2, pl_m2Dm2, pl_haM2, pl_haA,
@@ -1256,7 +1256,7 @@ const CATS = {
     ]
   },
   objem: {
-    name:'Objem & kapaliny', icon:'l·dm³', cls:'co', cVar:'--c-o', bgUnit:'l·ml·m³',
+    name:'Objem a kapaliny', icon:'l·dm³', cls:'co', cVar:'--c-o', bgUnit:'l·ml·m³',
     topics:[
       { name:'Litry a mililitry', desc:'ml↔dl · dl↔l · ml↔l (krok ×10 nebo ×100)',
         gen:[ob_dlMl, ob_lDl, ob_lMl],
@@ -1264,7 +1264,7 @@ const CATS = {
           '1 dl = 100 ml','1 l = 10 dl','1 l = 1 000 ml','1 hl = 100 l'
         ], steps:[
           '1 litr = 1 000 mililitrů (stejně jako 1 kg = 1 000 g).',
-          'Dl (decilitr) = desetina litru = 100 ml.',
+          '1 dl (decilitr) = desetina litru = 100 ml.',
           'Příklad: 1,5 l = 15 dl = 1 500 ml'
         ]}},
       { name:'Centilitry (nápoje)', desc:'cl↔ml · cl↔dl · cl↔l',
@@ -1283,7 +1283,7 @@ const CATS = {
           '1 hl = 100 l'
         ], steps:[
           '1 litr je přesně 1 krychlový decimetr (dm³).',
-          '1 cm³ = 1 mililitr — proto se léky měří v ml.',
+          '1 cm³ odpovídá 1 ml.',
           '1 m³ = 1 000 dm³ = 1 000 litrů.',
         ]}},
       { name:'Porovnávání', desc:'Platí rovnost?',
@@ -1298,7 +1298,7 @@ const CATS = {
   cas: {
     name:'Čas', icon:'h·min·s', cls:'cc', cVar:'--c-c', bgUnit:'h·min·s·dny',
     topics:[
-      { name:'Sekundy a minuty', desc:'s↔min · smíšený formát min:s',
+      { name:'Sekundy a minuty', desc:'s↔min · smíšený zápis min:s',
         gen:[cas_sMin, cas_smisenaMinS],
         help:{ title:'Sekundy a minuty', table:[
           '1 min = 60 s','1 h = 60 min = 3 600 s'
@@ -1323,17 +1323,17 @@ const CATS = {
         help:{ title:'Hodiny, dny, týdny', table:[
           '1 den = 24 h','1 týden = 7 dní','1 týden = 168 h'
         ], steps:[
-          '1 den = 24 hodiny.',
+          '1 den = 24 hodin.',
           '1 týden = 7 dní = 7 × 24 = 168 hodin.',
           'Příklad: 3 dny = 72 h · 2 týdny = 14 dní'
         ]}},
       { name:'Měsíce a roky', desc:'měsíce↔roky · roky↔dny',
         gen:[cas_rokMesice, cas_rokDni],
         help:{ title:'Měsíce, roky, dny', table:[
-          '1 rok = 12 měsíců','1 rok = 365 dní','1 rok = 52 týdnů'
+          '1 rok = 12 měsíců','V těchto úlohách počítáme: 1 rok = 365 dní'
         ], steps:[
           '1 rok = 12 měsíců.',
-          '1 rok ≈ 365 dní (přestupný rok = 366 dní).',
+          'Běžný rok má 365 dní, přestupný rok 366 dní. V těchto úlohách počítáme s 365 dny.',
           'Příklad: 3 roky = 36 měsíců = 1 095 dní',
         ]}},
       { name:'Porovnávání časů', desc:'Které je delší? Platí rovnost?',
@@ -1357,15 +1357,15 @@ const CATS = {
           '1 kg = 1 000 g — stejný princip jako m a km.',
           'Příklad: 2,5 kg = 2 500 g · 350 g = 0,35 kg'
         ]}},
-      { name:'Dekagramy v kuchyni', desc:'dag↔g · dag↔kg (1 dag = 10 g)',
+      { name:'Dekagramy v kuchyni', desc:'dag↔g · dag↔kg (1 dkg (dag) = 10 g)',
         gen:[hm_gDag, hm_dagKg],
         help:{ title:'Dekagram — kuchyňská jednotka', table:[
-          '1 dag = 10 g','1 kg = 100 dag','1 kg = 1 000 g'
+          '1 dkg (dag) = 10 g','1 kg = 100 dkg (dag)','1 kg = 1 000 g'
         ], steps:[
-          '1 dekagram (dag) = 10 gramů.',
+          '1 dekagram = 10 gramů. Ve škole se často zapisuje dkg, značka SI je dag.',
           '1 kilogram = 100 dekagramů = 1 000 gramů.',
-          'V receptech: 25 dag másla = 250 g = 0,25 kg.',
-          'Trik: dag → g: násob 10. g → dag: děl 10.',
+          'V receptech: 25 dkg (dag) másla = 250 g = 0,25 kg.',
+          'dkg (dag) → g: násob 10. g → dkg (dag): děl 10.',
         ]}},
       { name:'Kilogramy a tuny', desc:'kg↔t',
         gen:[hm_tKg],
@@ -1382,10 +1382,10 @@ const CATS = {
       { name:'Převody v kontextu', desc:'Hmotnost v každodenních situacích',
         gen:[hm_slovniUlohy],
         help:{ title:'Převody v kontextu — hmotnost', table:[
-          '1 dag = 10 g','1 kg = 100 dag = 1 000 g','1 t = 1 000 kg'
+          '1 dkg (dag) = 10 g','1 kg = 100 dkg (dag) = 1 000 g','1 t = 1 000 kg'
         ], steps:[
-          'V receptech se často používají dag (dekagramy).',
-          '250 g = 25 dag = 0,25 kg — vše je totéž!',
+          'V receptech se často používá označení dkg; značka SI je dag.',
+          '250 g = 25 dkg (dag) = 0,25 kg — vše je totéž!',
         ]}},
       { name:'Vše dohromady', desc:'Náhodná kombinace všech typů',
         gen:[hm_gMg, hm_kgG, hm_gDag, hm_dagKg, hm_tKg,
@@ -1768,8 +1768,8 @@ function _showFbCorrect(xp, isRetry) {
 function _showFbWrong1() {
   const bar = document.getElementById('feedback-bar');
   bar.className = 'feedback-bar show fb-wrong';
-  document.getElementById('fb-label').textContent = 'Chyba!';
-  document.getElementById('fb-sub').textContent   = 'Zamysli se a zkus to ještě jednou.';
+  document.getElementById('fb-label').textContent = 'Ještě ne.';
+  document.getElementById('fb-sub').textContent   = 'Zkontroluj převod a zkus to ještě jednou.';
   document.getElementById('fb-xp').textContent    = '';
   document.getElementById('fb-actions').innerHTML =
     '<button class="btn-retry" onclick="retryCurrentQuestion()">Zkusit znovu →</button>';
@@ -1779,7 +1779,7 @@ function _showFbWrong1() {
 function _showFbWrong2(hint) {
   const bar = document.getElementById('feedback-bar');
   bar.className = 'feedback-bar show fb-wrong';
-  document.getElementById('fb-label').textContent   = 'Stále chyba.';
+  document.getElementById('fb-label').textContent   = 'Ještě to není správně.';
   document.getElementById('fb-sub').innerHTML       =
     hint ? `💡 Nápověda: ${hint}` : 'Zkus to ještě jednou.';
   document.getElementById('fb-xp').textContent      = '';
@@ -1791,8 +1791,8 @@ function _showFbWrong2(hint) {
 function _showFbAsk() {
   const bar = document.getElementById('feedback-bar');
   bar.className = 'feedback-bar show fb-wrong';
-  document.getElementById('fb-label').textContent = 'Stále špatně.';
-  document.getElementById('fb-sub').textContent   = 'Chceš to zkusit ještě jednou?';
+  document.getElementById('fb-label').textContent = 'Ještě to nesedí.';
+  document.getElementById('fb-sub').textContent   = 'Chceš to zkusit ještě jednou, nebo si zobrazit řešení?';
   document.getElementById('fb-xp').textContent    = '';
   document.getElementById('fb-actions').innerHTML = `
     <div class="fb-ask-btns">
@@ -2041,7 +2041,7 @@ function initChaos() {
   const container = document.getElementById('chaos-bg');
   const units = ['km','m','cm','mm','dm','m²','dm²','km²','ha','a',
     'l','ml','dl','hl','cl','m³','dm³','cm³','h','min','s','dny','týden',
-    'kg','g','t','dag','mg','°C','km/h','m/s','rok','měs.'];
+    'kg','g','t','dkg (dag)','mg','°C','km/h','m/s','rok','měs.'];
   units.forEach((u,i) => {
     const el  = document.createElement('span');
     el.className  = 'chaos-unit';
