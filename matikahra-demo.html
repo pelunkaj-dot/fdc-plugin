@@ -421,7 +421,7 @@ body::before {
     <div class="badge" id="badgeLevel">🏅 Level <span id="levelVal">1</span></div>
   </div>
 
-  <div class="demo-note">Ukázková verze · můžeš si zahrát 10 příkladů</div>
+  <div class="demo-note">Ukázková verze · 15 správných příkladů v každé operaci</div>
 
   <div class="ops">
     <button class="op-btn active" data-op="+" onclick="setOp('+')">+</button>
@@ -480,7 +480,7 @@ body::before {
   <div class="demo-end-box">
     <div style="font-size:60px;line-height:1">🎉</div>
     <h2>Demo je splněno!</h2>
-    <p>Vyzkoušel(a) sis MatikaHru. V plné FajnCvičebně můžeš pokračovat bez omezení.</p>
+    <p>Vyzkoušel(a) sis všechny čtyři operace. V plné FajnCvičebně můžeš pokračovat bez omezení.</p>
     <a class="demo-cta" href="https://fajndoucko.cz/fajncvicebna/">Chci plnou verzi</a>
   </div>
 </div>
@@ -767,8 +767,8 @@ let streak   = 0;
 let level    = 1;
 let roundQ   = 0;
 const ROUND   = 10;
-const DEMO_LIMIT = 10;
-let demoSolved = 0;
+const DEMO_LIMIT_PER_OP = 15;
+let demoProgress = { '+':0, '-':0, '×':0, '÷':0 };
 const SAVE_KEY = 'matikahraj_demo_v1';
 
 const loadProg = () => {
@@ -777,11 +777,20 @@ const loadProg = () => {
     score  = d.score  || 0;
     streak = d.streak || 0;
     level  = d.level  || 1;
+    if (d.demoProgress) {
+      demoProgress = {
+        '+': d.demoProgress['+'] || 0,
+        '-': d.demoProgress['-'] || 0,
+        '×': d.demoProgress['×'] || 0,
+        '÷': d.demoProgress['÷'] || 0
+      };
+    }
   } catch(_) {}
   renderStats();
+  updateDemoOpStates();
 };
 const saveProg = () => {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify({ score, streak, level })); } catch(_) {}
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify({ score, streak, level, demoProgress })); } catch(_) {}
 };
 
 // ─── WEB AUDIO ───────────────────────────────────────────────────────────────
@@ -850,6 +859,34 @@ const soundErr = () => {
 // Level up fanfare
 const soundLvl = () => {
   [262,330,392,523,659,784].forEach((f,i) => tone(f, 'sine', .18, .2, i*.08));
+};
+
+// ─── DEMO LIMITS ───────────────────────────────────────────────────────────
+const opLabel = { '+':'sčítání', '-':'odčítání', '×':'násobení', '÷':'dělení' };
+
+const updateDemoOpStates = () => {
+  document.querySelectorAll('.op-btn').forEach(btn => {
+    const o = btn.dataset.op;
+    const used = demoProgress[o] || 0;
+    const exhausted = used >= DEMO_LIMIT_PER_OP;
+    btn.disabled = exhausted;
+    btn.style.opacity = exhausted ? '.45' : '1';
+    btn.style.cursor = exhausted ? 'not-allowed' : 'pointer';
+    btn.title = exhausted ? `Demo pro ${opLabel[o]} je vyčerpané` : `${used}/${DEMO_LIMIT_PER_OP} správně`;
+  });
+};
+
+const allDemoOpsExhausted = () =>
+  Object.values(demoProgress).every(v => v >= DEMO_LIMIT_PER_OP);
+
+const showDemoFinished = () => {
+  document.getElementById('demoEnd').classList.add('show');
+};
+
+const switchToAvailableOp = () => {
+  const next = ['+','-','×','÷'].find(o => demoProgress[o] < DEMO_LIMIT_PER_OP);
+  if (next) setOp(next);
+  else showDemoFinished();
 };
 
 // ─── GENERATE ───────────────────────────────────────────────────────────────
@@ -928,7 +965,7 @@ const checkAnswer = () => {
     score++;
     streak++;
     roundQ++;
-    demoSolved++;
+    demoProgress[op] = Math.min(DEMO_LIMIT_PER_OP, (demoProgress[op] || 0) + 1);
     if (streak % 5 === 0) {
       document.getElementById('streakFire').classList.add('big');
       setTimeout(() => document.getElementById('streakFire').classList.remove('big'), 500);
@@ -951,10 +988,19 @@ const checkAnswer = () => {
 
     launchConfetti();
 
-    if (demoSolved >= DEMO_LIMIT) {
+    updateDemoOpStates();
+
+    if (demoProgress[op] >= DEMO_LIMIT_PER_OP) {
       setTimeout(() => {
-        document.getElementById('demoEnd').classList.add('show');
-      }, 850);
+        if (allDemoOpsExhausted()) {
+          showDemoFinished();
+        } else {
+          const fb = document.getElementById('feedback');
+          fb.textContent = `Demo pro ${opLabel[op]} máš vyzkoušené. Zkus další operaci 🙂`;
+          fb.className = 'feedback ok';
+          switchToAvailableOp();
+        }
+      }, 900);
     } else if (roundQ >= ROUND) {
       roundQ = 0;
       renderStats();
@@ -1043,6 +1089,10 @@ const hideCelebration = () => {
 
 // ─── SETTERS ─────────────────────────────────────────────────────────────────
 const setOp = o => {
+  if ((demoProgress[o] || 0) >= DEMO_LIMIT_PER_OP) {
+    updateDemoOpStates();
+    return;
+  }
   op = o;
   document.querySelectorAll('.op-btn').forEach(b => b.classList.toggle('active', b.dataset.op===o));
   generate();
@@ -1082,7 +1132,17 @@ document.addEventListener('visibilitychange', () => {
 
 loadProg();
 renderMascot();
-generate();
+if (allDemoOpsExhausted()) {
+  updateDemoOpStates();
+  showDemoFinished();
+} else {
+  if ((demoProgress[op] || 0) >= DEMO_LIMIT_PER_OP) {
+    op = ['+','-','×','÷'].find(o => demoProgress[o] < DEMO_LIMIT_PER_OP) || '+';
+  }
+  document.querySelectorAll('.op-btn').forEach(b => b.classList.toggle('active', b.dataset.op===op));
+  updateDemoOpStates();
+  generate();
+}
 </script>
 </body>
 </html>
