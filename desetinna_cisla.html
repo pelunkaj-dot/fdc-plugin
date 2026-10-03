@@ -773,331 +773,171 @@
     }
 
 
-    /* Dekáčkova laboratoř desetinných čísel */
+    /* Dekáčkova laboratoř – herní svět, který skutečně roste */
+    body {
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .8s ease, background .8s ease;
+    }
+
+    body.lab-world-phase-1::before { opacity: .12; background: radial-gradient(circle at 78% 18%, rgba(70,150,255,.38), transparent 32%); }
+    body.lab-world-phase-2::before { opacity: .18; background: radial-gradient(circle at 78% 18%, rgba(55,190,255,.46), transparent 34%), radial-gradient(circle at 16% 76%, rgba(60,220,170,.22), transparent 28%); }
+    body.lab-world-phase-3::before { opacity: .24; background: radial-gradient(circle at 78% 18%, rgba(55,200,255,.52), transparent 35%), radial-gradient(circle at 15% 78%, rgba(70,230,170,.30), transparent 30%); }
+    body.lab-world-phase-4::before { opacity: .29; background: radial-gradient(circle at 78% 18%, rgba(65,210,255,.56), transparent 36%), radial-gradient(circle at 15% 78%, rgba(90,235,180,.34), transparent 31%), radial-gradient(circle at 50% 45%, rgba(130,90,255,.18), transparent 28%); }
+    body.lab-world-phase-5::before { opacity: .34; background: radial-gradient(circle at 78% 18%, rgba(65,215,255,.62), transparent 37%), radial-gradient(circle at 15% 78%, rgba(90,240,180,.38), transparent 32%), radial-gradient(circle at 50% 45%, rgba(145,95,255,.24), transparent 30%); }
+
     .decimal-lab {
+      --lab-cyan: #55dcff;
+      --lab-green: #62efa7;
+      --lab-violet: #a985ff;
       position: relative;
       margin-top: 14px;
       overflow: hidden;
-      padding: 16px 18px 14px;
-      min-height: 230px;
+      min-height: 410px;
+      padding: 18px;
       isolation: isolate;
+      color: #eefaff;
       background:
-        radial-gradient(circle at 18% 18%, rgba(95,139,255,.13), transparent 24%),
-        radial-gradient(circle at 84% 22%, rgba(13,157,91,.09), transparent 22%),
-        linear-gradient(180deg, rgba(18,29,53,.03), rgba(49,94,251,.035));
+        radial-gradient(circle at 72% 28%, rgba(40,130,190,.12), transparent 28%),
+        linear-gradient(180deg, #0d1722 0%, #152737 62%, #0c151e 100%);
+      border-color: rgba(115,190,230,.22);
+      box-shadow: 0 20px 52px rgba(5,19,31,.28);
+    }
+
+    body.theme-girly .decimal-lab {
+      --lab-cyan: #ff79cb;
+      --lab-green: #ffb4df;
+      --lab-violet: #b894ff;
+      background: linear-gradient(180deg, #231827 0%, #38233d 62%, #1c1522 100%);
     }
 
     .decimal-lab::before {
       content: "";
       position: absolute;
       inset: 0;
-      z-index: -2;
+      z-index: -3;
       background:
-        linear-gradient(90deg, transparent 0 9.8%, rgba(91,104,133,.08) 10%, transparent 10.2% 19.8%, rgba(91,104,133,.08) 20%, transparent 20.2% 29.8%, rgba(91,104,133,.08) 30%, transparent 30.2%),
-        linear-gradient(rgba(91,104,133,.06) 1px, transparent 1px);
-      background-size: auto, 100% 32px;
-      opacity: .7;
-      pointer-events: none;
+        linear-gradient(90deg, transparent 0 24%, rgba(130,190,220,.07) 24.2% 24.5%, transparent 24.7% 74%, rgba(130,190,220,.06) 74.2% 74.5%, transparent 74.7%),
+        linear-gradient(rgba(130,190,220,.055) 1px, transparent 1px);
+      background-size: auto, 100% 36px;
     }
 
     .decimal-lab::after {
       content: "";
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 52px;
-      z-index: -1;
-      background: linear-gradient(180deg, transparent, rgba(24,32,51,.08));
-      border-top: 1px solid rgba(91,104,133,.15);
-    }
-
-    .lab-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .lab-title {
-      margin: 0;
-      font-size: clamp(1.05rem, 1.7vw, 1.35rem);
-    }
-
-    .lab-subtitle {
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: .84rem;
-    }
-
-    .lab-phase-badge {
-      flex: 0 0 auto;
-      padding: 7px 10px;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      background: var(--panel);
-      color: var(--muted);
-      font-size: .78rem;
-      font-weight: 800;
-    }
-
-    .lab-floor {
-      position: relative;
-      display: grid;
-      grid-template-columns: 1.25fr repeat(4, minmax(0, 1fr));
-      gap: 9px;
-      align-items: end;
-      min-height: 128px;
-    }
-
-    .lab-guide {
-      position: relative;
-      align-self: stretch;
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.36);
-      overflow: hidden;
-    }
-
-    body.theme-dark .lab-guide {
-      background: rgba(255,255,255,.04);
-    }
-
-    .dekacek-tech {
-      position: relative;
-      flex: 0 0 72px;
-      height: 92px;
-      display: grid;
-      place-items: center;
-      transform-origin: 50% 90%;
-    }
-
-    .dekacek-head {
-      position: absolute;
-      top: 5px;
-      width: 48px;
-      height: 40px;
-      display: grid;
-      place-items: center;
-      border-radius: 16px 16px 13px 13px;
-      border: 2px solid rgba(49,94,251,.38);
-      background: linear-gradient(145deg, #f8fbff, #dce7ff);
-      color: #24385f;
-      font-size: 1.25rem;
-      box-shadow: 0 6px 12px rgba(22,37,77,.12);
-    }
-
-    .dekacek-head::before,
-    .dekacek-head::after {
-      content: "";
-      position: absolute;
-      top: 17px;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: #315efb;
-    }
-
-    .dekacek-head::before { left: 12px; }
-    .dekacek-head::after { right: 12px; }
-
-    .dekacek-body {
-      position: absolute;
-      top: 45px;
-      width: 42px;
-      height: 35px;
-      border-radius: 11px 11px 14px 14px;
-      background: linear-gradient(145deg, #526eab, #2d477f);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.18);
-    }
-
-    .dekacek-body::after {
-      content: attr(data-tool);
-      position: absolute;
-      inset: 5px;
-      display: grid;
-      place-items: center;
-      border-radius: 8px;
-      background: rgba(255,255,255,.9);
-      font-size: 1.05rem;
-    }
-
-    .dekacek-arm {
-      position: absolute;
-      top: 51px;
-      width: 22px;
-      height: 6px;
-      border-radius: 999px;
-      background: #526eab;
-      transform-origin: 4px 3px;
-    }
-
-    .dekacek-arm.left { left: 2px; transform: rotate(24deg); }
-    .dekacek-arm.right { right: 1px; transform: rotate(-28deg); }
-
-    .lab-guide-copy {
-      min-width: 0;
-      font-size: .81rem;
-      line-height: 1.35;
-      color: var(--muted);
-    }
-
-    .lab-guide-copy strong {
-      display: block;
-      color: var(--text);
-      margin-bottom: 3px;
-    }
-
-    .lab-station {
-      position: relative;
-      min-height: 104px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      gap: 5px;
-      padding: 10px 8px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(127,141,166,.10), rgba(127,141,166,.17));
-      color: var(--muted);
-      filter: grayscale(.92);
-      opacity: .48;
-      transform: translateY(5px);
-      transition: .35s ease;
-    }
-
-    .lab-station::before {
-      content: "";
-      position: absolute;
-      left: 10px;
-      right: 10px;
-      top: 11px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(91,104,133,.18);
-      box-shadow: 0 0 0 1px rgba(91,104,133,.08);
-    }
-
-    .lab-station.is-on {
-      opacity: 1;
-      filter: none;
-      transform: none;
+      left: -5%;
+      right: -5%;
+      bottom: -18px;
+      height: 100px;
+      z-index: -2;
       background:
-        radial-gradient(circle at 50% 20%, rgba(95,139,255,.24), transparent 34%),
-        linear-gradient(180deg, var(--panel), var(--panel-2));
-      color: var(--text);
-      box-shadow: 0 8px 20px rgba(22,37,77,.08);
+        linear-gradient(180deg, transparent, rgba(0,0,0,.5)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 58px, rgba(255,255,255,.008) 58px 116px);
+      border-top: 2px solid rgba(120,190,225,.12);
+      transform: perspective(300px) rotateX(16deg);
+      transform-origin: bottom;
     }
 
-    .lab-station.is-on::before {
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      box-shadow: 0 0 12px rgba(49,94,251,.42);
-    }
+    .lab-head { position: relative; z-index: 8; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px; }
+    .lab-title { margin:0; font-size:clamp(1.1rem,1.9vw,1.5rem); color:#f7fcff; }
+    .lab-subtitle { margin-top:4px; color:#9fb9c9; font-size:.87rem; }
+    .lab-phase-badge { padding:8px 12px; border:1px solid rgba(140,205,240,.3); border-radius:999px; background:rgba(4,15,24,.72); color:#dff6ff; font-size:.8rem; font-weight:800; }
 
-    .lab-station.is-topic {
-      outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
-      outline-offset: 2px;
-    }
+    .lab-scene { position:relative; height:290px; overflow:hidden; border-radius:20px; border:1px solid rgba(125,190,220,.15); background:linear-gradient(180deg,rgba(4,13,21,.56),rgba(8,22,33,.12)); }
 
-    .lab-station-icon {
-      font-size: 1.55rem;
-      line-height: 1;
-      margin-top: 17px;
-    }
+    .lab-cable { position:absolute; height:4px; border-radius:999px; background:#344856; opacity:.25; transition:.6s ease; }
+    .lab-cable.c1 { left:31%; top:65%; width:29%; transform:rotate(-8deg); }
+    .lab-cable.c2 { left:52%; top:49%; width:26%; transform:rotate(11deg); }
+    .decimal-lab[data-phase="4"] .lab-cable,
+    .decimal-lab[data-phase="5"] .lab-cable { background:var(--lab-cyan); opacity:.8; box-shadow:0 0 12px var(--lab-cyan); }
 
-    .lab-station-label {
-      font-weight: 800;
-      font-size: .78rem;
-      line-height: 1.15;
-    }
+    .lab-window { position:absolute; top:24px; right:30px; width:170px; height:80px; border:8px solid #293d4d; border-radius:18px; background:linear-gradient(180deg,#17354b,#0b1d2a); opacity:.28; transition:.6s ease; }
+    .lab-window::after { content:"·  ✦  ·   ·"; position:absolute; inset:0; display:grid; place-items:center; color:#80dfff; letter-spacing:9px; font-size:1.25rem; opacity:.35; }
+    .decimal-lab[data-phase="5"] .lab-window { opacity:1; box-shadow:0 0 28px rgba(76,199,255,.22); }
+    .decimal-lab[data-phase="5"] .lab-window::after { opacity:1; animation:starsDrift 5s linear infinite; }
 
-    .lab-station-note {
-      font-size: .68rem;
-      line-height: 1.15;
-      color: var(--muted);
-    }
+    .dekacek-zone { position:absolute; left:20px; bottom:20px; width:220px; height:220px; z-index:7; }
+    .dekacek-tech { position:absolute; left:28px; bottom:13px; width:132px; height:184px; transform-origin:50% 92%; transition:.45s ease; }
+    .dekacek-head { position:absolute; left:22px; top:4px; width:88px; height:72px; border-radius:29px 29px 24px 24px; border:4px solid #5789b2; background:linear-gradient(145deg,#f8fcff,#bed7ec); box-shadow:0 10px 24px rgba(0,0,0,.3), inset 0 -10px 18px rgba(57,111,153,.12); }
+    .dekacek-head::before,.dekacek-head::after { content:""; position:absolute; top:30px; width:11px; height:14px; border-radius:50%; background:#173f67; box-shadow:0 0 9px rgba(77,202,255,.8); }
+    .dekacek-head::before { left:21px; } .dekacek-head::after { right:21px; }
+    .dekacek-smile { position:absolute; left:32px; top:50px; width:24px; height:10px; border-bottom:3px solid #315e7f; border-radius:0 0 20px 20px; }
+    .dekacek-antenna { position:absolute; left:62px; top:-12px; width:5px; height:20px; background:#6f94af; border-radius:5px; }
+    .dekacek-antenna::after { content:""; position:absolute; left:-5px; top:-7px; width:15px; height:15px; border-radius:50%; background:#60798b; transition:.4s ease; }
+    .decimal-lab:not([data-phase="0"]) .dekacek-antenna::after { background:var(--lab-cyan); box-shadow:0 0 15px var(--lab-cyan); }
+    .dekacek-body { position:absolute; left:31px; top:78px; width:72px; height:78px; border-radius:20px 20px 27px 27px; background:linear-gradient(145deg,#426b91,#203f61); box-shadow:inset 0 0 0 3px rgba(255,255,255,.09); }
+    .dekacek-body::after { content:attr(data-tool); position:absolute; left:15px; right:15px; top:15px; height:42px; display:grid; place-items:center; border-radius:12px; background:#dff5ff; color:#17394e; font-size:1.55rem; box-shadow:0 0 15px rgba(82,213,255,.22); }
+    .dekacek-arm { position:absolute; top:93px; width:46px; height:12px; border-radius:999px; background:#365f84; transform-origin:8px 6px; }
+    .dekacek-arm.left { left:0; transform:rotate(25deg); } .dekacek-arm.right { right:0; transform:rotate(-35deg); }
+    .dekacek-leg { position:absolute; top:151px; width:18px; height:28px; border-radius:8px; background:#1f3b58; }
+    .dekacek-leg.l1 { left:40px; } .dekacek-leg.l2 { right:40px; }
+    .dekacek-shadow { position:absolute; left:28px; bottom:1px; width:122px; height:20px; border-radius:50%; background:rgba(0,0,0,.35); filter:blur(3px); }
 
-    .lab-progress {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 8px;
-      align-items: center;
-      margin-top: 11px;
-      font-size: .74rem;
-      color: var(--muted);
-    }
+    .lab-speech { position:absolute; left:142px; top:18px; width:190px; padding:11px 13px; border-radius:16px 16px 16px 4px; background:rgba(229,248,255,.94); color:#17374d; font-size:.76rem; line-height:1.3; box-shadow:0 8px 20px rgba(0,0,0,.18); z-index:8; }
+    .lab-speech strong { display:block; margin-bottom:2px; }
 
-    .lab-progress-track {
-      height: 7px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: rgba(91,104,133,.14);
-    }
+    .world-object { position:absolute; opacity:.07; filter:grayscale(1); transform:translateY(16px) scale(.94); transition:opacity .7s ease, transform .7s ease, filter .7s ease, box-shadow .7s ease; }
+    .decimal-lab[data-phase="1"] .stage-1,.decimal-lab[data-phase="2"] .stage-1,.decimal-lab[data-phase="3"] .stage-1,.decimal-lab[data-phase="4"] .stage-1,.decimal-lab[data-phase="5"] .stage-1,
+    .decimal-lab[data-phase="2"] .stage-2,.decimal-lab[data-phase="3"] .stage-2,.decimal-lab[data-phase="4"] .stage-2,.decimal-lab[data-phase="5"] .stage-2,
+    .decimal-lab[data-phase="3"] .stage-3,.decimal-lab[data-phase="4"] .stage-3,.decimal-lab[data-phase="5"] .stage-3,
+    .decimal-lab[data-phase="4"] .stage-4,.decimal-lab[data-phase="5"] .stage-4,
+    .decimal-lab[data-phase="5"] .stage-5 { opacity:1; filter:none; transform:none; }
 
-    .lab-progress-fill {
-      height: 100%;
-      width: 0;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), var(--success));
-      transition: width .45s ease;
-    }
+    .lab-bench { left:255px; bottom:28px; width:210px; height:96px; border-radius:10px 10px 4px 4px; background:linear-gradient(180deg,#526675,#273a48); border-top:9px solid #738899; box-shadow:0 18px 25px rgba(0,0,0,.2); }
+    .lab-bench::before,.lab-bench::after { content:""; position:absolute; bottom:-38px; width:16px; height:40px; background:#293c4a; } .lab-bench::before{left:24px}.lab-bench::after{right:24px}
+    .lab-bench-screen { position:absolute; left:34px; top:-64px; width:86px; height:60px; border:7px solid #273b4a; border-radius:10px; background:#071d28; color:#72e6ff; display:grid; place-items:center; font-weight:900; font-size:1.18rem; box-shadow:inset 0 0 20px rgba(70,220,255,.1); }
+    .decimal-lab[data-phase="1"] .lab-bench-screen { box-shadow:0 0 18px rgba(85,220,255,.3), inset 0 0 20px rgba(70,220,255,.2); }
 
-    .decimal-lab.lab-pulse .lab-station.is-topic::before {
-      animation: labLightPulse .65s ease;
-    }
+    .lab-tank { left:485px; bottom:28px; width:105px; height:145px; border:8px solid #324a5a; border-radius:18px 18px 12px 12px; background:linear-gradient(180deg,rgba(70,190,220,.08),rgba(60,170,200,.18)); overflow:hidden; }
+    .lab-tank::before { content:""; position:absolute; left:10px; right:10px; bottom:10px; height:0; border-radius:9px; background:linear-gradient(180deg,rgba(77,223,255,.35),rgba(58,140,220,.56)); transition:height .7s ease; }
+    .decimal-lab[data-phase="2"] .lab-tank::before,.decimal-lab[data-phase="3"] .lab-tank::before,.decimal-lab[data-phase="4"] .lab-tank::before,.decimal-lab[data-phase="5"] .lab-tank::before { height:70%; }
+    .lab-tank::after { content:"0,01"; position:absolute; inset:0; display:grid; place-items:center; color:#cbf7ff; font-weight:900; font-size:1.1rem; z-index:2; }
 
-    .decimal-lab.lab-streak .dekacek-tech {
-      animation: dekacekCelebrate .8s ease;
-    }
+    .lab-core { left:610px; bottom:54px; width:110px; height:110px; border-radius:50%; border:14px solid #354b5c; background:radial-gradient(circle,#273d4c 0 32%,#0b1820 34%); }
+    .lab-core::before { content:"0,001"; position:absolute; inset:15px; border-radius:50%; display:grid; place-items:center; color:#dffaff; font-size:.86rem; font-weight:900; background:#102530; transition:.5s ease; }
+    .decimal-lab[data-phase="3"] .lab-core::before,.decimal-lab[data-phase="4"] .lab-core::before,.decimal-lab[data-phase="5"] .lab-core::before { background:radial-gradient(circle,#dcffff,#39c9ff 35%,#19456f 72%); color:#092638; box-shadow:0 0 28px var(--lab-cyan); animation:corePulse 2.2s ease-in-out infinite; }
 
-    .decimal-lab.lab-streak .lab-station.is-on {
-      animation: stationSpark .8s ease;
-    }
+    .lab-portal { right:32px; bottom:28px; width:145px; height:158px; border:14px solid #394d5d; border-radius:70px 70px 18px 18px; background:#0b1720; }
+    .lab-portal::before { content:"⅗  ⇄  0,6"; position:absolute; inset:14px 8px 10px; border-radius:52px 52px 12px 12px; display:grid; place-items:center; text-align:center; color:#8195a2; font-weight:900; font-size:1.04rem; transition:.6s ease; }
+    .decimal-lab[data-phase="4"] .lab-portal::before,.decimal-lab[data-phase="5"] .lab-portal::before { color:white; background:radial-gradient(ellipse at center,rgba(169,133,255,.92),rgba(50,85,190,.62) 40%,rgba(11,23,32,.25) 72%); box-shadow:inset 0 0 28px rgba(255,255,255,.28),0 0 30px rgba(169,133,255,.35); animation:portalGlow 2.4s ease-in-out infinite; }
 
-    .decimal-lab.lab-upgrade {
-      animation: labUpgrade .95s ease;
-    }
+    .lab-ceiling-light { top:15px; left:38%; width:220px; height:12px; border-radius:999px; background:#40515d; }
+    .decimal-lab[data-phase="5"] .lab-ceiling-light { background:#e8fdff; box-shadow:0 0 18px var(--lab-cyan),0 18px 45px rgba(100,225,255,.2); }
 
-    .decimal-lab.lab-upgrade .dekacek-tech {
-      animation: dekacekUpgrade 1s ease;
-    }
+    .lab-station.is-topic { outline:3px solid var(--lab-cyan); outline-offset:4px; }
+    .lab-station { border-radius:16px; }
 
-    @keyframes labLightPulse {
-      0%,100% { filter: brightness(1); transform: scaleX(1); }
-      45% { filter: brightness(1.8); transform: scaleX(1.08); }
-    }
+    .lab-progress { display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; margin-top:12px; color:#a9c2d1; font-size:.78rem; }
+    .lab-progress-track { height:9px; border-radius:999px; overflow:hidden; background:rgba(255,255,255,.09); }
+    .lab-progress-fill { height:100%; width:0; border-radius:inherit; background:linear-gradient(90deg,var(--lab-cyan),var(--lab-green),var(--lab-violet)); box-shadow:0 0 12px rgba(85,220,255,.35); transition:width .5s ease; }
 
-    @keyframes dekacekCelebrate {
-      0%,100% { transform: translateY(0) rotate(0); }
-      30% { transform: translateY(-8px) rotate(-5deg); }
-      60% { transform: translateY(-3px) rotate(6deg); }
-    }
+    .decimal-lab.lab-pulse .dekacek-antenna::after { animation:antennaFlash .65s ease; }
+    .decimal-lab.lab-pulse .world-object.is-topic { animation:objectFlash .72s ease; }
+    .decimal-lab.lab-streak .dekacek-tech { animation:dekacekCelebrate 1s ease; }
+    .decimal-lab.lab-streak .world-object:not(.stage-5) { animation:worldCheer .9s ease; }
+    .decimal-lab.lab-upgrade { animation:labUpgrade 1.25s ease; }
+    .decimal-lab.lab-upgrade .dekacek-tech { animation:dekacekUpgrade 1.15s ease; }
 
-    @keyframes stationSpark {
-      0%,100% { box-shadow: 0 8px 20px rgba(22,37,77,.08); }
-      45% { box-shadow: 0 0 0 4px rgba(49,94,251,.12), 0 0 26px rgba(49,94,251,.30); }
-    }
-
-    @keyframes labUpgrade {
-      0%,100% { box-shadow: var(--shadow); }
-      45% { box-shadow: 0 0 0 4px rgba(13,157,91,.12), 0 16px 46px rgba(49,94,251,.25); }
-    }
-
-    @keyframes dekacekUpgrade {
-      0%,100% { transform: translateY(0) scale(1); }
-      35% { transform: translateY(-12px) scale(1.08); }
-      60% { transform: translateY(-5px) scale(.98); }
-    }
+    @keyframes corePulse { 50%{transform:scale(1.05);filter:brightness(1.25)} }
+    @keyframes portalGlow { 50%{filter:brightness(1.25);transform:scale(.97)} }
+    @keyframes starsDrift { 50%{transform:translateX(7px)} }
+    @keyframes antennaFlash { 45%{transform:scale(1.9);box-shadow:0 0 30px white} }
+    @keyframes objectFlash { 45%{filter:brightness(1.65);box-shadow:0 0 30px rgba(85,220,255,.45)} }
+    @keyframes worldCheer { 40%{transform:translateY(-7px) scale(1.03)} }
+    @keyframes dekacekCelebrate { 0%,100%{transform:translateY(0) rotate(0)} 30%{transform:translateY(-15px) rotate(-7deg)} 60%{transform:translateY(-5px) rotate(8deg)} }
+    @keyframes dekacekUpgrade { 0%,100%{transform:scale(1)} 30%{transform:translateY(-20px) scale(1.15) rotate(-5deg)} 58%{transform:translateY(-8px) scale(1.05) rotate(6deg)} }
+    @keyframes labUpgrade { 0%,100%{box-shadow:0 20px 52px rgba(5,19,31,.28)} 45%{box-shadow:0 0 0 5px rgba(85,220,255,.18),0 0 70px rgba(85,220,255,.5)} }
 
     @media (prefers-reduced-motion: reduce) {
-      .decimal-lab *,
-      .decimal-lab { animation: none !important; transition: none !important; }
+      .decimal-lab *, .decimal-lab, body::before { animation:none!important; transition:none!important; }
     }
 
     @media (max-width: 1240px) {
@@ -1210,49 +1050,41 @@
         </section>
 
 
-        <section class="card decimal-lab" id="decimalLab" aria-labelledby="labTitle">
+        <section class="card decimal-lab" id="decimalLab" data-phase="0" aria-labelledby="labTitle">
           <div class="lab-head">
             <div>
               <h2 class="lab-title" id="labTitle">Dekáčkova laboratoř desetinných čísel</h2>
-              <div class="lab-subtitle" id="labSubtitle">Laboratoř čeká na první přesný výpočet.</div>
+              <div class="lab-subtitle" id="labSubtitle">Zatím je tu skoro tma. První přesné výpočty laboratoř probudí.</div>
             </div>
             <div class="lab-phase-badge" id="labPhaseBadge">Fáze 1/6</div>
           </div>
 
-          <div class="lab-floor">
-            <div class="lab-guide">
+          <div class="lab-scene">
+            <div class="lab-window world-object stage-5"></div>
+            <div class="lab-ceiling-light world-object stage-5"></div>
+            <div class="lab-cable c1 world-object stage-3"></div>
+            <div class="lab-cable c2 world-object stage-4"></div>
+
+            <div class="dekacek-zone">
+              <div class="dekacek-shadow"></div>
               <div class="dekacek-tech" id="dekacekTech" aria-label="Dekáček, technik laboratoře">
-                <div class="dekacek-head">⌁</div>
+                <div class="dekacek-antenna"></div>
+                <div class="dekacek-head"><div class="dekacek-smile"></div></div>
                 <div class="dekacek-body" id="dekacekBody" data-tool="🔧"></div>
                 <div class="dekacek-arm left"></div>
                 <div class="dekacek-arm right"></div>
+                <div class="dekacek-leg l1"></div>
+                <div class="dekacek-leg l2"></div>
               </div>
-              <div class="lab-guide-copy">
-                <strong id="labGuideTitle">Dekáček startuje systémy</strong>
-                <span id="labGuideText">Každý správný výsledek dodá laboratoři trochu energie.</span>
-              </div>
+              <div class="lab-speech"><strong id="labGuideTitle">Dekáček startuje systémy</strong><span id="labGuideText">Každý správný výsledek něco skutečně postaví nebo rozsvítí.</span></div>
             </div>
 
-            <div class="lab-station" id="labTenths" data-stage="1">
-              <div class="lab-station-icon">0,1</div>
-              <div class="lab-station-label">Stanice desetin</div>
-              <div class="lab-station-note">první přesné dílky</div>
+            <div class="lab-bench lab-station world-object stage-1" id="labTenths">
+              <div class="lab-bench-screen">0,1</div>
             </div>
-            <div class="lab-station" id="labHundredths" data-stage="2">
-              <div class="lab-station-icon">0,01</div>
-              <div class="lab-station-label">Stanice setin</div>
-              <div class="lab-station-note">jemnější měření</div>
-            </div>
-            <div class="lab-station" id="labThousandths" data-stage="3">
-              <div class="lab-station-icon">0,001</div>
-              <div class="lab-station-label">Stanice tisícin</div>
-              <div class="lab-station-note">laboratorní přesnost</div>
-            </div>
-            <div class="lab-station" id="labConverter" data-stage="4">
-              <div class="lab-station-icon">⇄</div>
-              <div class="lab-station-label">Převodová stanice</div>
-              <div class="lab-station-note">zlomky ↔ desetinná čísla</div>
-            </div>
+            <div class="lab-tank lab-station world-object stage-2" id="labHundredths"></div>
+            <div class="lab-core lab-station world-object stage-3" id="labThousandths"></div>
+            <div class="lab-portal lab-station world-object stage-4" id="labConverter"></div>
           </div>
 
           <div class="lab-progress">
@@ -1934,6 +1766,9 @@
         const within = phase === 5 ? 1 : Math.min(1, Math.max(0, (state.totalCorrect - currentThreshold) / span));
         const percent = phase === 5 ? 100 : Math.round(within * 100);
 
+        ui.decimalLab.dataset.phase = String(phase);
+        document.body.classList.remove('lab-world-phase-0','lab-world-phase-1','lab-world-phase-2','lab-world-phase-3','lab-world-phase-4','lab-world-phase-5');
+        document.body.classList.add(`lab-world-phase-${phase}`);
         ui.labSubtitle.textContent = data.title;
         ui.labPhaseBadge.textContent = `Fáze ${phase + 1}/6`;
         ui.labGuideTitle.textContent = topic.title;
