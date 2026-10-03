@@ -225,6 +225,24 @@
 
   .mascot-svg-container.bounce svg { animation: mascotBounce 0.5s ease; }
   .mascot-svg-container.wiggle svg { animation: mascotWiggle 0.4s ease; }
+  .mascot-svg-container.idle-3 svg { animation: mascotIdle 3.6s ease-in-out infinite; }
+  .mascot-svg-container.idle-4 svg { animation: mascotIdle 2.8s ease-in-out infinite; }
+  .mascot-svg-container.idle-5 svg { animation: mascotIdle 2.2s ease-in-out infinite; }
+  .mascot-svg-container.dance svg { animation: mascotDance 1.15s ease-in-out; transform-origin:50% 85%; }
+
+  @keyframes mascotIdle {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-3px) rotate(1.5deg); }
+  }
+
+  @keyframes mascotDance {
+    0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+    15% { transform: translateY(-7px) rotate(-10deg) scale(1.03); }
+    30% { transform: translateY(0) rotate(9deg) scale(1.06); }
+    45% { transform: translateY(-9px) rotate(-7deg) scale(1.05); }
+    60% { transform: translateY(0) rotate(8deg) scale(1.06); }
+    78% { transform: translateY(-5px) rotate(-4deg) scale(1.03); }
+  }
 
   @keyframes mascotBounce {
     0%   { transform: translateY(0) scale(1); }
@@ -1333,48 +1351,160 @@ const animalHeads = [
     <ellipse cx="50" cy="32" rx="5" ry="2" fill="#f5a030"/>`,
 ];
 
-const animalNames = ['Kočka','Pes','Zajíček','Medvěd','Liška','Sova','Žabák','Tučňák'];
+const animalNames = ['Čokík'];
 let currentAnimalIndex = 0;
 
-function drawMascot(mood = 'neutral') {
-  const svg       = document.getElementById('mascotSvg');
-  const container = document.getElementById('mascotContainer');
-  const bodyColor  = mood === 'happy' ? '#8B4513' : mood === 'sad' ? '#a0522d' : '#6b3a1f';
-  const chocoColor = mood === 'happy' ? '#c8845a' : '#a0522d';
-  const mouthPath  = mood === 'happy'
-    ? 'M43,80 Q50,88 57,80'
-    : mood === 'sad'
-    ? 'M43,86 Q50,80 57,86'
-    : 'M44,82 Q50,85 56,82';
-
-  const headFunc  = animalHeads[currentAnimalIndex];
-  const headColor = currentAnimalIndex === 7 ? '#2a2a2a' : bodyColor;
-
-  svg.innerHTML = `
-    <rect x="30" y="50" width="40" height="45" rx="10" fill="${bodyColor}"/>
-    <line x1="50" y1="50" x2="50" y2="95" stroke="${chocoColor}" stroke-width="2" opacity="0.5"/>
-    <line x1="30" y1="65" x2="70" y2="65" stroke="${chocoColor}" stroke-width="2" opacity="0.5"/>
-    <line x1="30" y1="80" x2="70" y2="80" stroke="${chocoColor}" stroke-width="2" opacity="0.5"/>
-    <ellipse cx="22" cy="65" rx="9" ry="6" fill="${bodyColor}" transform="rotate(-20,22,65)"/>
-    <ellipse cx="78" cy="65" rx="9" ry="6" fill="${bodyColor}" transform="rotate(20,78,65)"/>
-    <ellipse cx="40" cy="98" rx="8" ry="5" fill="${bodyColor}"/>
-    <ellipse cx="60" cy="98" rx="8" ry="5" fill="${bodyColor}"/>
-    <ellipse cx="50" cy="48" rx="16" ry="6" fill="${bodyColor}"/>
-    ${headFunc(headColor)}
-    <path d="${mouthPath}" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <ellipse cx="40" cy="57" rx="5" ry="3" fill="white" opacity="0.15" transform="rotate(-20,40,57)"/>
-  `;
-
-  container.classList.remove('bounce', 'wiggle');
-  if (mood === 'happy') {
-    setTimeout(() => { container.classList.add('bounce'); setTimeout(() => container.classList.remove('bounce'), 500); }, 10);
-  } else if (mood === 'sad') {
-    setTimeout(() => { container.classList.add('wiggle'); setTimeout(() => container.classList.remove('wiggle'), 400); }, 10);
-  }
+// Čokík se vyvíjí s úrovní. Vzhled je stabilní a funguje jako vizuální odměna.
+function getMascotStage() {
+  if (level >= 9) return 5;
+  if (level >= 7) return 4;
+  if (level >= 5) return 3;
+  if (level >= 3) return 2;
+  return 1;
 }
 
+function mascotDecorations(stage, mood) {
+  const smile = mood === 'sad'
+    ? '<path d="M43,33 Q50,28 57,33" stroke="#3a1d10" stroke-width="2.3" fill="none" stroke-linecap="round"/>'
+    : mood === 'happy'
+    ? '<path d="M42,30 Q50,38 58,30" stroke="#3a1d10" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
+    : '<path d="M44,31 Q50,34 56,31" stroke="#3a1d10" stroke-width="2.1" fill="none" stroke-linecap="round"/>';
+
+  let face = `
+    <circle cx="43" cy="21" r="3.8" fill="#2b160d"/>
+    <circle cx="57" cy="21" r="3.8" fill="#2b160d"/>
+    ${stage >= 2 ? '<circle cx="44.2" cy="19.8" r="1.25" fill="#fff8f0"/><circle cx="58.2" cy="19.8" r="1.25" fill="#fff8f0"/>' : ''}
+    ${smile}
+  `;
+
+  let extras = '';
+  if (stage >= 2) {
+    extras += `
+      <ellipse cx="39" cy="27" rx="4" ry="2" fill="#eaa08e" opacity=".58"/>
+      <ellipse cx="61" cy="27" rx="4" ry="2" fill="#eaa08e" opacity=".58"/>
+      <ellipse cx="39" cy="56" rx="5" ry="2.6" fill="#fff8f0" opacity=".2" transform="rotate(-18 39 56)"/>
+    `;
+  }
+  if (stage >= 3) {
+    extras += `
+      <path d="M42 57 L50 64 L58 57 L58 69 L50 65 L42 69 Z" fill="#f0c040" stroke="#c89a00" stroke-width="1"/>
+      <circle cx="50" cy="75" r="2.7" fill="#f0c040"/>
+      <ellipse cx="39" cy="98" rx="9" ry="5.5" fill="#4f86c6"/>
+      <ellipse cx="61" cy="98" rx="9" ry="5.5" fill="#4f86c6"/>
+    `;
+  }
+  if (stage >= 4) {
+    extras += `
+      <circle cx="50" cy="84" r="3" fill="#e85d75"/>
+      <path d="M30 62 Q22 58 18 50" stroke="#4f86c6" stroke-width="4" stroke-linecap="round"/>
+      <path d="M70 62 Q78 58 82 50" stroke="#4f86c6" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="18" cy="49" r="3.5" fill="#f0c040"/>
+      <circle cx="82" cy="49" r="3.5" fill="#f0c040"/>
+    `;
+  }
+  if (stage >= 5) {
+    extras += `
+      <path d="M34 6 L40 14 L50 4 L60 14 L66 6 L63 18 L37 18 Z" fill="#f0c040" stroke="#c89a00" stroke-width="1.5"/>
+      <circle cx="40" cy="11" r="2" fill="#e85d75"/>
+      <circle cx="50" cy="8" r="2" fill="#4f86c6"/>
+      <circle cx="60" cy="11" r="2" fill="#4caf50"/>
+      <path d="M32 72 Q50 80 68 72 L66 91 Q50 97 34 91 Z" fill="#7b1fa2" opacity=".85"/>
+      <path d="M34 72 Q50 77 66 72" stroke="#f0c040" stroke-width="2" fill="none"/>
+    `;
+  }
+  return face + extras;
+}
+
+function drawMascot(mood = 'neutral') {
+  const svg = document.getElementById('mascotSvg');
+  const container = document.getElementById('mascotContainer');
+  const stage = getMascotStage();
+
+  const bodyPalette = [
+    '#65402f',
+    '#704026',
+    '#7b4324',
+    '#82451f',
+    '#8b4513'
+  ];
+  const bodyColor = bodyPalette[stage - 1];
+  const grooveColor = stage === 1 ? '#523226' : '#a96742';
+  const armColor = bodyColor;
+
+  const bodyExtra = stage >= 4
+    ? '<path d="M31 54 Q50 46 69 54 L66 72 Q50 77 34 72 Z" fill="#c8845a" opacity=".62"/>'
+    : '';
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="chocoBody" x1="0" x2="1">
+        <stop offset="0" stop-color="${bodyColor}"/>
+        <stop offset=".55" stop-color="${stage >= 3 ? '#9a5631' : bodyColor}"/>
+        <stop offset="1" stop-color="${bodyColor}"/>
+      </linearGradient>
+    </defs>
+
+    <!-- tělo -->
+    <rect x="30" y="48" width="40" height="47" rx="10" fill="url(#chocoBody)" stroke="#4a2818" stroke-width="1.4"/>
+    <line x1="50" y1="50" x2="50" y2="94" stroke="${grooveColor}" stroke-width="2" opacity=".65"/>
+    <line x1="31" y1="65" x2="69" y2="65" stroke="${grooveColor}" stroke-width="2" opacity=".65"/>
+    <line x1="31" y1="80" x2="69" y2="80" stroke="${grooveColor}" stroke-width="2" opacity=".65"/>
+    ${bodyExtra}
+
+    <!-- ruce a nohy -->
+    <ellipse cx="22" cy="64" rx="9" ry="6" fill="${armColor}" transform="rotate(-20,22,64)"/>
+    <ellipse cx="78" cy="64" rx="9" ry="6" fill="${armColor}" transform="rotate(20,78,64)"/>
+    <ellipse cx="40" cy="98" rx="8" ry="5" fill="${bodyColor}"/>
+    <ellipse cx="60" cy="98" rx="8" ry="5" fill="${bodyColor}"/>
+
+    <!-- hlava -->
+    <circle cx="50" cy="25" r="22" fill="url(#chocoBody)" stroke="#4a2818" stroke-width="1.5"/>
+    ${stage >= 2 ? '<ellipse cx="42" cy="10" rx="7" ry="3" fill="#fff8f0" opacity=".18" transform="rotate(-22 42 10)"/>' : ''}
+    ${mascotDecorations(stage, mood)}
+  `;
+
+  container.classList.remove('bounce','wiggle','dance','idle-3','idle-4','idle-5');
+  if (mood === 'happy') {
+    setTimeout(() => {
+      container.classList.add('bounce');
+      setTimeout(() => {
+        container.classList.remove('bounce');
+        if (stage >= 3) container.classList.add('idle-' + stage);
+      }, 520);
+    }, 10);
+  } else if (mood === 'sad') {
+    setTimeout(() => {
+      container.classList.add('wiggle');
+      setTimeout(() => {
+        container.classList.remove('wiggle');
+        if (stage >= 3) container.classList.add('idle-' + stage);
+      }, 430);
+    }, 10);
+  } else if (stage >= 3) {
+    container.classList.add('idle-' + stage);
+  }
+
+  container.title = `Čokík – vývojová fáze ${stage} z 5`;
+}
+
+function animateMascotDance() {
+  const container = document.getElementById('mascotContainer');
+  const stage = getMascotStage();
+  drawMascot('happy');
+  setTimeout(() => {
+    container.classList.remove('bounce','wiggle','idle-3','idle-4','idle-5');
+    void container.offsetWidth;
+    container.classList.add('dance');
+    setTimeout(() => {
+      container.classList.remove('dance');
+      if (stage >= 3) container.classList.add('idle-' + stage);
+    }, 1200);
+  }, 540);
+}
+
+// Jedna stálá postava: její proměna má být viditelnou odměnou za pokrok.
 function nextAnimal() {
-  currentAnimalIndex = Math.floor(Math.random() * animalHeads.length);
+  currentAnimalIndex = 0;
 }
 
 // ============================================================
@@ -2100,6 +2230,8 @@ function updateStarsAndLevel() {
 }
 
 function showLevelUp() {
+  drawMascot('happy');
+  animateMascotDance();
   document.getElementById('levelEmoji').textContent = levelEmojis[level] || '🎉';
   document.getElementById('levelTitle').textContent = `Úroveň ${level}: ${levelNames[level] || 'Šampión'}!`;
   document.getElementById('levelSub').textContent   = randomMsg(messages.levelUp);
@@ -2506,8 +2638,6 @@ function setupTouchFeedback() {
 function init() {
   setupAccessibility();
   setupTouchFeedback();
-  drawMascot('neutral');
-
   if (DEMO_MODE) {
     const pb = document.querySelector('.parent-row');
     if (pb) pb.style.display = 'none';
@@ -2518,6 +2648,7 @@ function init() {
     loadProgress();
   }
 
+  drawMascot('neutral');
   generateProblem();
   document.getElementById('levelDisplay').textContent = level;
 }
