@@ -836,7 +836,7 @@ function ob_slovniUlohy() {
         qMath:`${cl} cl = ? ml`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} ml`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4),ans=v*10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Džbán pojme <b>${v} l</b>. Kolik dcl?`,
+      return {qText:`Džbán pojme <b>${v} l</b>. Kolik je to decilitrů?`,
         qMath:`${v} l = ? dl`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} dl`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
@@ -1059,7 +1059,7 @@ function cas_slovniUlohy() {
       const ws=[r*12,r*52,ans+1,ans-1].filter(v=>v>0&&v!==ans);
       const opts=shuffle([ans,...shuffle(ws).slice(0,3)]);
       const rs=r===1?'rok':'roky';
-      return {qText:`Garantie je <b>${r} ${rs}</b>. Kolik přibližně dní? (1 rok = 365 dní)`,
+      return {qText:`Záruka trvá <b>${r} ${rs}</b>. Kolik je to dní? (V této úloze počítej 1 rok = 365 dní.)`,
         qMath:`${r} ${rs} = ? dní`, type:'choice', answer:String(ans),
         options:opts.map(x=>({html:`${x} dní`,val:String(x)}))}; },
     ()=>{ const r=ri(1,4),ans=r*12,ws=genWrongs(ans,12),opts=shuffle([ans,...ws].slice(0,4));
@@ -1097,7 +1097,7 @@ function hm_porovnani() {
     // ROVNÁ SE
     {a:'1 kg',    b:'1000 g',   cmp:'='},
     {a:'1 t',     b:'1000 kg',  cmp:'='},
-    {a:'1 dag',   b:'10 g',     cmp:'='},
+    {a:'1 dkg (dag)',   b:'10 g',     cmp:'='},
     {a:'1 kg',    b:'100 dkg (dag)',  cmp:'='},
     {a:'250 g',   b:'25 dkg (dag)',   cmp:'='},
     {a:'0,5 t',   b:'500 kg',   cmp:'='},
@@ -1152,7 +1152,7 @@ function hm_slovniUlohy() {
         qMath:`${v} mg = ? g`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Pytlík mouky má <b>${v} kg</b>. Kolik dag?`,
+      return {qText:`Pytlík mouky váží <b>${v} kg</b>. Kolik je to dkg (dag)?`,
         qMath:`${v} kg = ? dkg (dag)`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} dkg (dag)`,val:toCz(x)}))}; },
   ];
@@ -1223,7 +1223,7 @@ const CATS = {
     topics:[
       { name:'Čtvereční jednotky', desc:'mm²↔cm² · cm²↔dm² · dm²↔m² (krok ×100)',
         gen:[pl_cm2Mm2, pl_dm2Cm2, pl_m2Dm2],
-        help:{ title:'Plocha — čtverečné jednotky', table:[
+        help:{ title:'Plocha — čtvereční jednotky', table:[
           '1 cm² = 100 mm²','1 dm² = 100 cm²','1 m² = 100 dm²',
           '1 m² = 10 000 cm²','1 m² = 1 000 000 mm²'
         ], steps:[
@@ -1357,7 +1357,7 @@ const CATS = {
           '1 kg = 1 000 g — stejný princip jako m a km.',
           'Příklad: 2,5 kg = 2 500 g · 350 g = 0,35 kg'
         ]}},
-      { name:'Dekagramy v kuchyni', desc:'dag↔g · dag↔kg (1 dkg (dag) = 10 g)',
+      { name:'Dekagramy v kuchyni', desc:'dkg (dag)↔g · dkg (dag)↔kg',
         gen:[hm_gDag, hm_dagKg],
         help:{ title:'Dekagram — kuchyňská jednotka', table:[
           '1 dkg (dag) = 10 g','1 kg = 100 dkg (dag)','1 kg = 1 000 g'
@@ -1797,7 +1797,7 @@ function _showFbAsk() {
   document.getElementById('fb-actions').innerHTML = `
     <div class="fb-ask-btns">
       <button class="btn-ask-yes" onclick="retryCurrentQuestion()">Ano, zkusím znovu</button>
-      <button class="btn-ask-no"  onclick="revealAnswer()">Ne, ukáž řešení</button>
+      <button class="btn-ask-no"  onclick="revealAnswer()">Ne, ukaž řešení</button>
     </div>`;
   if(_enterNext) document.removeEventListener('keydown',_enterNext);
   _enterNext = null;
