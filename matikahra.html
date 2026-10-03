@@ -698,6 +698,7 @@ let op       = '+';
 let diff     = 'easy';
 let current  = { a: 0, b: 0, ans: 0 };
 let inputStr = '';
+let wrongAttempts = 0;
 let score    = 0;
 let streak   = 0;
 let level    = 1;
@@ -804,6 +805,7 @@ const generate = () => {
   else               { b=rnd(...r.div); ans=rnd(...r.div); a=b*ans; }
   current = { a, b, ans };
   inputStr = '';
+  wrongAttempts = 0;
   renderTask();
   document.getElementById('feedback').textContent = '';
   document.getElementById('feedback').className = 'feedback';
@@ -893,6 +895,7 @@ const checkAnswer = () => {
 
   } else {
     canAnswer = false;
+    wrongAttempts++;
     ad.textContent = given;
     ad.className = 'answer-display wrong';
     soundErr();
@@ -907,17 +910,31 @@ const checkAnswer = () => {
     flipper.classList.add('shake');
     setTimeout(() => flipper.classList.remove('shake'), 450);
 
-    fb.textContent = `Ehm... správně je ${current.ans} 😅`;
-    fb.className = 'feedback err';
     inputStr = '';
 
-    setTimeout(() => {
-      canAnswer = true;
-      ad.textContent = '?';
-      ad.className = 'answer-display';
-      fb.textContent = '';
-      fb.className = 'feedback';
-    }, 1900);
+    if (wrongAttempts < 3) {
+      // První dvě chyby: neprozrazuj výsledek, dej dítěti šanci opravit se.
+      fb.textContent = wrongAttempts === 1
+        ? 'Ještě ne. Zkus to znovu 🙂'
+        : 'Ještě jeden pokus. Ty to dáš! 💪';
+      fb.className = 'feedback err';
+
+      setTimeout(() => {
+        canAnswer = true;
+        ad.textContent = '?';
+        ad.className = 'answer-display';
+        fb.textContent = '';
+        fb.className = 'feedback';
+      }, 1200);
+    } else {
+      // Až třetí chybný pokus ukáže správný výsledek a posune hru dál.
+      fb.textContent = `Správně je ${current.ans}. Pojďme na další 🙂`;
+      fb.className = 'feedback err';
+
+      setTimeout(() => {
+        generate();
+      }, 1900);
+    }
   }
 };
 
