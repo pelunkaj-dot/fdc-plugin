@@ -680,7 +680,7 @@ function del_slovniUlohy() {
         qMath:`${v} km = ? m`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} m`,val:toCz(x)}))}; },
     ()=>{ const v=ri(2,9)*10,ans=v/10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Červ je <b>${v} mm</b> dlouhý. Kolik cm?`,
+      return {qText:`Červ je <b>${v} mm</b> dlouhý. Kolik je to centimetrů?`,
         qMath:`${v} mm = ? cm`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} cm`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5)*100,ans=v/100,ws=genWrongs(ans,1),opts=shuffle([ans,...ws].slice(0,4));
@@ -688,19 +688,19 @@ function del_slovniUlohy() {
         qMath:`${v} cm = ? m`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} m`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4)*500,ans=v/1000,ws=genWrongs(ans,0.5),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Závodní dráha je <b>${v} m</b>. Kolik km?`,
+      return {qText:`Závodní dráha měří <b>${v} m</b>. Kolik je to kilometrů?`,
         qMath:`${v} m = ? km`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} km`,val:toCz(x)}))}; },
     ()=>{ const v=ri(2,8)*5,ans=v*10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Místnost je <b>${v} dm</b> dlouhá. Kolik cm?`,
+      return {qText:`Místnost je <b>${v} dm</b> dlouhá. Kolik je to centimetrů?`,
         qMath:`${v} dm = ? cm`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} cm`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,9)*10,ans=v/10,ws=genWrongs(ans,1),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Hřebík je <b>${v} mm</b> dlouhý. Kolik cm?`,
+      return {qText:`Hřebík je <b>${v} mm</b> dlouhý. Kolik je to centimetrů?`,
         qMath:`${v} mm = ? cm`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} cm`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,3)*1000+ri(1,9)*100,ans=v/1000,ws=genWrongs(ans,0.1),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Dálnice je <b>${v} m</b> dlouhá. Kolik km?`,
+      return {qText:`Dálnice je <b>${v} m</b> dlouhá. Kolik je to kilometrů?`,
         qMath:`${v} m = ? km`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} km`,val:toCz(x)}))}; },
   ];
@@ -749,27 +749,27 @@ function pl_porovnani() {
 function pl_slovniUlohy() {
   const pool=[
     ()=>{ const v=ri(1,6),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Pokoj má podlahu <b>${v} m²</b>. Kolik dm²?`,
+      return {qText:`Podlaha pokoje má plochu <b>${v} m²</b>. Kolik je to dm²?`,
         qMath:`${v} m² = ? dm²`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} dm²`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5),ans=v*10000,ws=genWrongs(ans,10000),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Hřiště má <b>${v} ha</b>. Kolik m²?`,
+      return {qText:`Hřiště má rozlohu <b>${v} ha</b>. Kolik je to m²?`,
         qMath:`${v} ha = ? m²`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} m²`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,3),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Fotbalové hřiště má přibližně <b>${v} ha</b>. Kolik arů?`,
+      return {qText:`Fotbalové hřiště má rozlohu přibližně <b>${v} ha</b>. Kolik je to arů?`,
         qMath:`${v} ha = ? a`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} a`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Kraj má <b>${v} km²</b> lesů. Kolik hektarů?`,
+      return {qText:`Lesní plocha má rozlohu <b>${v} km²</b>. Kolik je to hektarů?`,
         qMath:`${v} km² = ? ha`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} ha`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5)*100,ans=v/100,ws=genWrongs(ans,1),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Dlaždice má plochu <b>${v} cm²</b>. Kolik dm²?`,
+      return {qText:`Dlaždice má plochu <b>${v} cm²</b>. Kolik je to dm²?`,
         qMath:`${v} cm² = ? dm²`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} dm²`,val:toCz(x)}))}; },
     ()=>{ const v=ri(2,6),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Zahrada má <b>${v} a</b>. Kolik m²?`,
+      return {qText:`Zahrada má rozlohu <b>${v} a</b>. Kolik je to m²?`,
         qMath:`${v} a = ? m²`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} m²`,val:toCz(x)}))}; },
   ];
@@ -820,19 +820,19 @@ function ob_porovnani() {
 function ob_slovniUlohy() {
   const pool=[
     ()=>{ const v=ri(1,5),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Nádrž pojme <b>${v} m³</b> vody. Kolik litrů?`,
+      return {qText:`Nádrž pojme <b>${v} m³</b> vody. Kolik je to litrů?`,
         qMath:`${v} m³ = ? l`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} l`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,9)*100,ans=v/1000,ws=genWrongs(ans,0.1),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`V kastrolu je <b>${v} ml</b> vody. Kolik litrů?`,
+      return {qText:`V kastrolu je <b>${v} ml</b> vody. Kolik je to litrů?`,
         qMath:`${v} ml = ? l`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} l`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Barel obsahuje <b>${v} hl</b>. Kolik litrů?`,
+      return {qText:`Barel obsahuje <b>${v} hl</b> kapaliny. Kolik je to litrů?`,
         qMath:`${v} hl = ? l`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} l`,val:toCz(x)}))}; },
     ()=>{ const cl=rFrom([25,33,50,75]),ans=cl*10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Plechovka nápoje má <b>${cl} cl</b>. Kolik ml?`,
+      return {qText:`Plechovka obsahuje <b>${cl} cl</b> nápoje. Kolik je to mililitrů?`,
         qMath:`${cl} cl = ? ml`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} ml`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4),ans=v*10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
@@ -840,11 +840,11 @@ function ob_slovniUlohy() {
         qMath:`${v} l = ? dl`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} dl`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Koupelnová vana pojme <b>${v} hl</b> vody. Kolik dl?`,
+      return {qText:`Koupelnová vana pojme <b>${v} hl</b> vody. Kolik je to decilitrů?`,
         qMath:`${v} hl = ? dl`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} dl`,val:toCz(x)}))}; },
     ()=>{ const v=ri(2,9)*50,ans=v/100,ws=genWrongs(ans,0.5),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Lahev obsahuje <b>${v} cl</b>. Kolik litrů?`,
+      return {qText:`Láhev obsahuje <b>${v} cl</b>. Kolik je to litrů?`,
         qMath:`${v} cl = ? l`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} l`,val:toCz(x)}))}; },
   ];
@@ -997,14 +997,14 @@ function cas_rokDni() {
     const r=ri(1,3),ans=r*365;
     const ws=[r*12,r*52,ans+1,ans-1].filter(v=>v>0&&v!==ans);
     const opts=shuffle([ans,...shuffle(ws).slice(0,3)]);
-    return {qText:'Roky na dny (1 rok = 365 dní):',
+    return {qText:'Roky na dny (v těchto úlohách počítej 1 rok = 365 dní):',
       qMath:`${r} ${rokFmt(r)} = ? dní`, type:'choice',
       answer:String(ans),options:opts.map(v=>({html:`${v} dní`,val:String(v)}))};
   } else {
     const r=ri(1,3),d=r*365,ans=r;
     const ws=[d,r*12,r+365,Math.max(1,r-1)].filter(v=>v!==ans&&v>0);
     const opts=shuffle([ans,...shuffle(ws).slice(0,3)]);
-    return {qText:'Dny na roky:',qMath:`${d} dní = ? ${rokFmt(ans)}`,type:'choice',
+    return {qText:'Dny na roky (v těchto úlohách počítej 1 rok = 365 dní):',qMath:`${d} dní = ? ${rokFmt(ans)}`,type:'choice',
       answer:String(ans),options:opts.map(v=>({html:`${v} ${rokFmt(v)}`,val:String(v)}))};
   }
 }
@@ -1052,7 +1052,7 @@ function cas_slovniUlohy() {
         options:opts.map(x=>({html:`${x} s`,val:String(x)}))}; },
     ()=>{ const d=ri(1,4),ans=d*24,ws=genWrongs(ans,24),opts=shuffle([ans,...ws].slice(0,4));
       const ds=d===1?'den':'dny';
-      return {qText:`Tábor trvá <b>${d} ${ds}</b>. Kolik hodin?`,
+      return {qText:`Tábor trvá <b>${d} ${ds}</b>. Kolik je to hodin?`,
         qMath:`${d} ${ds} = ? h`, type:'choice', answer:String(ans),
         options:opts.map(x=>({html:`${x} h`,val:String(x)}))}; },
     ()=>{ const r=ri(1,3),ans=r*365;
@@ -1135,7 +1135,7 @@ function hm_slovniUlohy() {
         qMath:`${v} dkg (dag) = ? g`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,9)*100,ans=v/1000,ws=genWrongs(ans,0.1),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Balíček sýra váží <b>${v} g</b>. Kolik kg?`,
+      return {qText:`Balíček sýra váží <b>${v} g</b>. Kolik je to kilogramů?`,
         qMath:`${v} g = ? kg`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} kg`,val:toCz(x)}))}; },
     ()=>{ const v=rFrom([25,50,75,100,125,250,500]),ans=v*10;
@@ -1148,7 +1148,7 @@ function hm_slovniUlohy() {
         qMath:`${v} dkg (dag) = ? kg`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} kg`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5)*250,ans=v/1000,ws=genWrongs(ans,0.25),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Krabička léků obsahuje <b>${v} mg</b> účinné látky na tabletu. Kolik g?`,
+      return {qText:`Jedna tableta obsahuje <b>${v} mg</b> účinné látky. Kolik je to gramů?`,
         qMath:`${v} mg = ? g`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
