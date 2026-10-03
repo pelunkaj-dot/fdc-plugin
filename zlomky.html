@@ -1130,7 +1130,7 @@ let starsEarned  = 0;
 let currentProblem    = null;
 let attempts          = 0;
 let simplifyAttempts  = 0;   // NEW: attempts at unsimplified answers
-let simplifyHintShown = false; // NEW: whether GCD steps were shown
+let simplifyHintShown = false; // NEW: whether NSD steps were shown
 let hintShown         = false;
 let revealDialogShown = false;
 let answered          = false;
@@ -1670,9 +1670,9 @@ function checkAnswer() {
       } else {
         // Second time: show reveal dialog
         document.getElementById('simplifyHint').classList.add('show');
-        document.getElementById('revealQuestion').textContent = 'Pořád si nevíš rady s krácením? Chceš vidět výsledek?';
+        document.getElementById('revealQuestion').textContent = 'Pořád si nevíš rady s krácením? Chceš si nechat prozradit výsledek, nebo to ještě zkusíš?';
         showRevealDialog();
-        setSpeech("Zobrazím ti správnou odpověď. Příště to zvládneš! 💪", 'sad');
+        setSpeech("Můžeš to ještě jednou zkusit, nebo si nechat výsledek prozradit. 💪", 'sad');
       }
       return;
     }
@@ -1801,30 +1801,27 @@ function onWrongAnswer() {
   updateStreakDisplay();
   playSound('wrong');
 
+  const feedbackArea = document.getElementById('feedbackArea');
+  feedbackArea.className = 'feedback-area wrong-fb show';
+
   if (attempts === 1) {
     setSpeech(randomMsg(messages.wrong1), 'sad');
     document.getElementById('hintBtn').style.display = 'inline-flex';
-
-    const feedbackArea = document.getElementById('feedbackArea');
-    feedbackArea.className = 'feedback-area wrong-fb show';
     document.getElementById('feedbackTitle').textContent = '❌ Není to správně';
-    document.getElementById('feedbackText').textContent  = 'Zkus to ještě jednou! Zamysli se nad postupem.';
+    document.getElementById('feedbackText').textContent  = 'Zkus to ještě jednou. Správný výsledek zatím neprozradím.';
 
-  } else if (attempts >= 2) {
+  } else if (attempts === 2) {
     setSpeech(randomMsg(messages.wrong2), 'sad');
+    if (!hintShown) showHint();
+    document.getElementById('feedbackTitle').textContent = '💡 Ještě jeden pokus';
+    document.getElementById('feedbackText').textContent  = 'Podívej se na postup v nápovědě a zkus výsledek opravit ještě jednou.';
 
-    if (!hintShown) {
-      showHint();
-    } else {
-      showRevealDialog();
-    }
-
-    const feedbackArea = document.getElementById('feedbackArea');
-    feedbackArea.className = 'feedback-area wrong-fb show';
-    document.getElementById('feedbackTitle').textContent = '❌ Stále nesprávně';
-    document.getElementById('feedbackText').textContent  = hintShown
-      ? 'Podívej se na nápovědu výše.'
-      : 'Zobrazuji ti postup řešení.';
+  } else {
+    setSpeech("Teď už můžeš zvolit: zkusit to ještě jednou, nebo si nechat výsledek prozradit.", 'sad');
+    document.getElementById('revealQuestion').textContent = 'Chceš si nechat prozradit výsledek, nebo to ještě jednou zkusíš?';
+    showRevealDialog();
+    document.getElementById('feedbackTitle').textContent = '❌ Zatím to nevychází';
+    document.getElementById('feedbackText').textContent  = 'Můžeš pokračovat sám, nebo si nechat zobrazit správný výsledek.';
   }
 }
 
@@ -1875,12 +1872,12 @@ function generateHintSteps(f1, f2, op) {
       const resultNum = op === '+' ? f1.num*m1 + f2.num*m2 : f1.num*m1 - f2.num*m2;
       const sim = simplifyFraction(resultNum, l);
       const steps = [
-        `Najdeme nejmenší společný jmenovatel NSJ čísel <strong>${f1.den}</strong> a <strong>${f2.den}</strong>. NSJ = <strong>${l}</strong>`,
+        `Najdeme nejmenší společný násobek jmenovatelů (NSN) <strong>${f1.den}</strong> a <strong>${f2.den}</strong>. NSN = <strong>${l}</strong>`,
         `Převedeme oba zlomky: ${f1.num}/${f1.den} = <strong>${f1.num*m1}/${l}</strong> &nbsp;&nbsp; ${f2.num}/${f2.den} = <strong>${f2.num*m2}/${l}</strong>`,
         `${opStr.charAt(0).toUpperCase() + opStr.slice(1)} čitatele: ${f1.num*m1} ${opChar} ${f2.num*m2} = <strong>${resultNum}</strong>, jmenovatel zůstává <strong>${l}</strong>`,
       ];
       if (sim.num !== resultNum || sim.den !== l) {
-        steps.push(`Zlomek ${resultNum}/${l} zjednodušíme: GCD = ${gcd(Math.abs(resultNum), l)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
+        steps.push(`Zlomek ${resultNum}/${l} zjednodušíme: NSD = ${gcd(Math.abs(resultNum), l)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
       }
       return steps;
     }
@@ -1892,7 +1889,7 @@ function generateHintSteps(f1, f2, op) {
         `Jmenovatele navzájem: ${f1.den} × ${f2.den} = <strong>${rawDen}</strong>`,
         `Dostaneme ${rawNum}/${rawDen}`,
       ];
-      if (sim.num !== rawNum || sim.den !== rawDen) steps.push(`Zjednodušíme: GCD = ${gcd(Math.abs(rawNum), rawDen)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
+      if (sim.num !== rawNum || sim.den !== rawDen) steps.push(`Zjednodušíme: NSD = ${gcd(Math.abs(rawNum), rawDen)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
       return steps;
     }
     case '/': {
@@ -1904,7 +1901,7 @@ function generateHintSteps(f1, f2, op) {
         `Teď násobíme: (${f1.num}/${f1.den}) × (${f2.den}/${f2.num})`,
         `Čitatele: ${f1.num} × ${f2.den} = <strong>${rawNum}</strong>, jmenovatele: ${f1.den} × ${f2.num} = <strong>${rawDen}</strong>`,
       ];
-      if (sim.num !== rawNum || sim.den !== rawDen) steps.push(`Zjednodušíme: GCD = ${gcd(Math.abs(rawNum), rawDen)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
+      if (sim.num !== rawNum || sim.den !== rawDen) steps.push(`Zjednodušíme: NSD = ${gcd(Math.abs(rawNum), rawDen)}, výsledek = <strong>${sim.num}/${sim.den}</strong>`);
       return steps;
     }
   }
