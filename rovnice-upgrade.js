@@ -352,7 +352,10 @@
     const txt = plainDisplay(eq.display);
     if (!/x/i.test(txt)) return false;
     if (/\+\s*0\b|−\s*0\b|-\s*0\b/.test(txt)) return false;
-    if (eq.solution === 0 && level <= 3) return false;
+    if (/\b0\s*[xX]\b|[xX]\s*[·*]\s*0\b/.test(txt)) return false;
+    // Nulový výsledek je matematicky v pořádku, ale v generovaném procvičování
+    // příliš často zkrátí zamýšlený postup. Nulu si necháme pro cílené téma později.
+    if (eq.solution === 0) return false;
 
     const abs = Math.abs(eq.solution);
     if (level === 1 && abs > 12) return false;
@@ -378,10 +381,18 @@
         eqs.push(candidate);
       } catch(e) {}
     }
-    while (eqs.length < EQS_PER_SESSION) {
-      const candidate = rFrom(topic.gen)();
-      if (candidate && Number.isFinite(candidate.solution)) eqs.push(candidate);
+    // Když je generátor příliš úzký, raději dovolíme opakování kvalitního
+    // typu než abychom validaci obešli a pustili didaktický zmetek.
+    let refillGuard = 0;
+    while (eqs.length < EQS_PER_SESSION && refillGuard++ < 800) {
+      try {
+        const candidate = rFrom(topic.gen)();
+        if (!isSuitable(candidate, topic.level, topic)) continue;
+        eqs.push(candidate);
+      } catch(e) {}
     }
+    if (!eqs.length) throw new Error("Pro toto téma se nepodařilo vytvořit vhodnou rovnici.");
+    while (eqs.length < EQS_PER_SESSION) eqs.push({...rFrom(eqs)});
     return eqs;
   }
 
@@ -555,7 +566,12 @@
         }
       } catch(e) {}
     }
-    if (replacement) SES.eqs[SES.cur] = replacement;
+    if (!replacement) {
+      const pool = buildEqListForTopic(topic).filter(c =>
+        plainDisplay(c.display) !== plainDisplay(SES.eqs[SES.cur].display));
+      replacement = pool[0] || buildEqListForTopic(topic)[0];
+    }
+    SES.eqs[SES.cur] = replacement;
     renderEquation();
   };
 
@@ -724,6 +740,8 @@
   }
 
   renderHome = function() {
+    const homeSub = document.querySelector(".home-sub");
+    if (homeSub) homeSub.textContent = "Vyber téma. Piš další krok, nebo rovnou výsledek — systém ověří správnost.";
     document.getElementById("hdr-xp").textContent = ST.xp;
     document.getElementById("hdr-streak").textContent = ST.streak;
     const controls = injectHomeControls();
