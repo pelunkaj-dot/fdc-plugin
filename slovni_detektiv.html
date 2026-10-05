@@ -712,7 +712,20 @@ const DISTRICTS = [
       {lv:2, name:'Najdi a urči', sub:'najít a určit druh (bez vztažných)', classify:true, count:2, full:true},
       {lv:3, name:'Velké pátrání', sub:'všech 7 druhů včetně vztažných', classify:true, vz:true, count:2, full:true}]}
   ]},
-  {id:'cisl', ico:'🏦', name:'Banka číslovek', desc:'Druhy číslovek a skloňování.', soon:true}
+  {id:'cisl', ico:'🏦', name:'Banka číslovek', desc:'Druhy číslovek, skloňování dva / oba / tři / čtyři a psaní slovy.', missions:[
+    {id:'trezor', type:'pick', gen:'cdruh', ico:'🔐', name:'Trezor druhů', desc:'Ulož číslovku do správné schránky: základní, řadová, druhová, nebo násobná?', levels:[
+      {lv:1, name:'Kolik, nebo kolikátý?', sub:'základní a řadové', mode:1, count:12},
+      {lv:2, name:'Čtyři schránky', sub:'základní, řadové, druhové, násobné', mode:2, count:12, full:true},
+      {lv:3, name:'Určité i neurčité', sub:'pět, ale i několik, několikrát…', mode:3, count:12, full:true}]},
+    {id:'pokladna', type:'pick', gen:'cskl', ico:'💰', name:'Pokladna', desc:'Skloňuj dva, oba, tři a čtyři – se dvěma, oběma, bez tří, se čtyřmi.', levels:[
+      {lv:1, name:'Dva, dvě, dvěma', sub:'1., 4. a 7. pád', lv0:1, count:10},
+      {lv:2, name:'Dva a oba', sub:'všechny pády, pozor na dvěmi / oběmi', lv0:2, count:10, full:true},
+      {lv:3, name:'Tři a čtyři', sub:'bez tří, o třech, se čtyřmi – a chytáky', lv0:3, count:10, full:true}]},
+    {id:'seky', type:'pick', gen:'cslovy', ico:'🧾', name:'Šeky slovy', desc:'Bankovní šek se vyplňuje i slovy. Vyber správně napsanou částku.', levels:[
+      {lv:1, name:'Do dvaceti a desítky', sub:'pozor na čtrnáct, šedesát…', mode:1, count:10},
+      {lv:2, name:'Do sta', sub:'čtyřicet sedm – zvlášť, nebo dohromady?', mode:2, count:10, full:true},
+      {lv:3, name:'Řadové a přes sto', sub:'dvacátý první, sto čtyřicet sedm', mode:3, count:10, full:true}]}
+  ]}
 ];
 const DIFF = ['Lehká','Střední','Těžká'];
 const RANKS = [[0,'Nováček'],[150,'Stopař'],[400,'Vyšetřovatel'],[800,'Inspektor'],[1400,'Vrchní inspektor'],[2200,'Šéf detektivů']];
@@ -728,6 +741,8 @@ const BADGES = [
   {id:'pridavna', ico:'🎨', name:'Znalec přídavných jmen', d:'3 hvězdy ve všech náročnostech Kartotéky, Shody i Hlídky'},
   {id:'vypravci', ico:'🚂', name:'Hlavní výpravčí', d:'3 hvězdy ve všech misích Nádraží sloves'},
   {id:'zahradnik', ico:'🌳', name:'Strážce parku', d:'3 hvězdy ve všech misích Parku zájmen'},
+  {id:'bankeR', ico:'🏦', name:'Ředitel banky', d:'3 hvězdy ve všech misích Banky číslovek'},
+  {id:'mesto', ico:'🏙️', name:'Detektiv celého města', d:'Vyřeš aspoň jeden případ v každé misi všech čtvrtí'},
   {id:'album', ico:'📒', name:'Sběratel gangů', d:'Usvědči slovo z každého ze 14 gangů'},
   {id:'veteran', ico:'🎖️', name:'Veterán', d:'Získej 1000 bodů'}
 ];
@@ -1849,7 +1864,7 @@ function genAgree(L){
   }
   return out;
 }
-const PICKGEN = {druh:genDruh, agree:genAgree, vform:L=>genVform(L), pshoda:L=>genPshoda(L), zdruh:L=>genZdruh(L), zpast:L=>genZpast(L)};
+const PICKGEN = {druh:genDruh, agree:genAgree, vform:L=>genVform(L), pshoda:L=>genPshoda(L), zdruh:L=>genZdruh(L), zpast:L=>genZpast(L), cdruh:L=>genCdruh(L), cskl:L=>genCskl(L), cslovy:L=>genCslovy(L)};
 function buildPick(L){ return PICKGEN[game.m.gen](L); }
 function pickRound(){
   const g=game, it=g.items[g.i];
@@ -2232,6 +2247,100 @@ function zNext(wait){
   $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'}); save();
 }
 
+
+/* ══════════════ BANKA ČÍSLOVEK ══════════════ */
+const CK = {zaklad:'základní', rad:'řadová', druh:'druhová', nas:'násobná'};
+const CK_Q = {zaklad:'kolik?', rad:'kolikátý?', druh:'kolikerý?', nas:'kolikrát?'};
+const CK_WHY = {zaklad:'vyjadřuje počet – ptáme se <b>kolik?</b>', rad:'vyjadřuje pořadí – ptáme se <b>kolikátý?</b>', druh:'vyjadřuje počet druhů nebo sad – ptáme se <b>kolikerý?</b> (dvojí boty, patery klíče)', nas:'vyjadřuje, kolikrát se něco opakuje – ptáme se <b>kolikrát? kolikanásobný?</b>'};
+// [slovo, druh, určitá?]
+const CNUM = [
+  ...'jeden dva tři čtyři pět deset dvacet sto tisíc oba'.split(' ').map(w=>[w,'zaklad',1]), ...'mnoho několik málo kolik'.split(' ').map(w=>[w,'zaklad',0]),
+  ...'první druhý třetí pátý desátý dvacátý stý'.split(' ').map(w=>[w,'rad',1]), ...'několikátý kolikátý'.split(' ').map(w=>[w,'rad',0]),
+  ...'dvojí trojí čtverý patery desatery dvoje troje'.split(' ').map(w=>[w,'druh',1]), ...'několikerý kolikerý'.split(' ').map(w=>[w,'druh',0]),
+  ...'jednou dvakrát třikrát pětkrát stokrát dvojnásobný trojnásobný'.split(' ').map(w=>[w,'nas',1]), ...'několikrát mnohokrát kolikrát mnohonásobný'.split(' ').map(w=>[w,'nas',0])
+];
+function genCdruh(L){
+  const kinds = L.mode===1 ? ['zaklad','rad'] : ['zaklad','rad','druh','nas'];
+  const pool = CNUM.filter(x=>kinds.includes(x[1]) && (L.mode===3 || x[2]));
+  return weightedPick(pool, x=>1+2*errRate('cdruh',x[1])+2*(S.weak['c|'+x[0]]||0), L.count).map(([w,k,urc])=>{
+    const key = L.mode===3 ? k+(urc?'1':'0') : k;
+    const opts = L.mode===3 ? kinds.flatMap(x=>[{v:x+'1', html:`<b>${CK[x]}</b><small>určitá</small>`, cls:'drawer'},{v:x+'0', html:`<b>${CK[x]}</b><small>neurčitá</small>`, cls:'drawer'}])
+                            : kinds.map(x=>({v:x, html:`<b>${CK[x]}</b><small>${CK_Q[x]}</small>`, cls:'drawer'}));
+    return { sign:w, w, q:'Do které schránky patří?', sub:`Číslovka <b>${esc(w)}</b>`, opts, ok:[key],
+      hint:`Zeptej se: kolik? (základní), kolikátý? (řadová), kolikerý? (druhová), kolikrát? (násobná).${L.mode===3?' Určitá říká přesný počet, neurčitá ne (několik, mnoho).':''}`,
+      why:`<p><b>${esc(w)}</b> ${CK_WHY[k]} → číslovka <b>${CK[k]}</b>${L.mode===3?`, <b>${urc?'určitá':'neurčitá'}</b> (${urc?'říká přesný počet':'neříká přesný počet'})`:''}.</p>`,
+      stats:[['cdruh',k]], conf:x=>`cd|${k}|${x.replace(/[01]$/,'')}`, weak:'c|'+w, base:L.mode===1?10:L.mode===2?13:16 };
+  });
+}
+// Pokladna: [věta, správně, sada, úroveň, pád]
+const CSKL = [
+  ['Mám ___ bratry.','dva','dva',1,4],['Koupila jsem ___ knihy.','dvě','dva',1,4],['Na stole leží ___ jablka.','dvě','dva',1,1],['Šel jsem tam s ___ kamarády.','dvěma','dva',1,7],
+  ['Seděl mezi ___ holkami.','dvěma','dva',1,7],['Vidím ___ psy.','dva','dva',1,4],['Přišli ___ hasiči.','dva','dva',1,1],['Mám ___ kočky.','dvě','dva',1,4],
+  ['Hrál jsem si s ___ míči.','dvěma','dva',1,7],['Psal jsem ___ tužkami.','dvěma','dva',1,7],
+  ['Bez ___ kamarádů nikam nejdu.','dvou','dva',2,2],['Dal jsem bonbon ___ dětem.','dvěma','dva',2,3],['Mluvili jsme o ___ výletech.','dvou','dva',2,6],['___ kluci přišli pozdě.','Oba','oba',2,1],
+  ['Pomohl jsem ___ holkám.','oběma','oba',2,3],['Sešli jsme se u ___ stromů.','obou','oba',2,2],['Mluvil s ___ učiteli.','oběma','oba',2,7],['___ holky se smály.','Obě','oba',2,1],
+  ['Poděkoval ___ sousedům.','oběma','oba',2,3],['Psal o ___ kamarádech.','obou','oba',2,6],
+  ['Přišel se ___ kamarády.','třemi','tri',3,7],['Bez ___ korun si to nekoupíš.','tří','tri',3,2],['Mluvili o ___ zlodějích.','třech','tri',3,6],['Dal bonbony ___ dětem.','třem','tri',3,3],
+  ['Jel se ___ koňmi.','čtyřmi','ctyri',3,7],['U ___ stolů seděli hosté.','čtyř','ctyri',3,2],['Napsal ___ kamarádům.','čtyřem','ctyri',3,3],['Vyprávěl o ___ rytířích.','čtyřech','ctyri',3,6],
+  ['Hrála si se ___ sestrami.','dvěma','dva',3,7],['Pozdravil ___ sousedy.','oba','oba',3,4]
+];
+const CSET = {dva:['dva','dvě','dvou','dvěma','dvěmi'], oba:['oba','obě','obou','oběma','oběmi'], tri:['tři','tří','třem','třech','třemi','třema'], ctyri:['čtyři','čtyř','čtyřem','čtyřech','čtyřmi','čtyřma']};
+const CS_RULE = {dva:'dva / dvě – bez <b>dvou</b>, ke <b>dvěma</b>, o <b>dvou</b>, se <b>dvěma</b> (nikdy „dvěmi“)', oba:'oba / obě – bez <b>obou</b>, k <b>oběma</b>, o <b>obou</b>, s <b>oběma</b> (nikdy „oběmi“)', tri:'tři – bez <b>tří</b>, ke <b>třem</b>, o <b>třech</b>, se <b>třemi</b> („třema“ je hovorové)', ctyri:'čtyři – bez <b>čtyř</b>, ke <b>čtyřem</b>, o <b>čtyřech</b>, se <b>čtyřmi</b> („čtyřma“ je hovorové)'};
+const CS_TRAP = {dva:['dvěmi'], oba:['oběmi'], tri:['třema','třech'], ctyri:['čtyřma','čtyřech']};
+function genCskl(L){
+  const pool=CSKL.filter(x=> L.lv0===1 ? x[3]===1 : L.lv0===2 ? (x[3]===2 || (x[3]===1 && Math.random()<.3)) : x[3]>=2);
+  return weightedPick(pool, x=>1+3*(S.weak['cs|'+x[0]]||0)+2*errRate('cskl',x[2]), L.count).map(([t,ok,set,,pad])=>{
+    const capd=t.startsWith('___'), lo=ok.toLowerCase();
+    const traps=CS_TRAP[set].filter(x=>x!==lo);
+    const others=shuffle(CSET[set].filter(x=>x!==lo && !traps.includes(x)));
+    const opts=[...new Set([lo, ...(L.lv0===1 ? [] : traps.slice(0,1)), ...others])].slice(0, L.lv0===1?3:4).map(x=>capd?cap(x):x);
+    return { sign:CSET[set][0], w:t, q:'Kolik vyplatíš? Doplň číslovku', sub:`<span class="frame">${esc(t).replace('___','<span class="blank">______</span>')}</span>`,
+      opts:shuffle(opts).map(x=>({v:x, html:esc(x)})), ok:[ok],
+      hint:`Zeptej se pádovou otázkou na slovo za mezerou (${({1:'kdo? co?',2:'koho? čeho?',3:'komu? čemu?',4:'koho? co?',6:'o kom? o čem?',7:'s kým? s čím?'})[pad]}). Pozor: <b>dvěma, oběma</b> – nikdy dvěmi, oběmi.`,
+      why:`<p>${pad}. pád → <b>${esc(ok)}</b>. ${CS_RULE[set]}.</p><div class="steps"><span class="step" style="color:var(--ok)">${esc(t.replace('___',ok))}</span></div>`,
+      stats:[['cskl',set]], conf:x=>{ x=x.toLowerCase(); return /ěmi$/.test(x)?'cs|dvemi':/ma$/.test(x)?'cs|ma':(x==='třech'||x==='čtyřech')&&pad===2?'cs|trech':'cs|pad'; }, weak:'cs|'+t, base:L.lv0===1?10:L.lv0===2?13:16 };
+  });
+}
+const NU=['','jedna','dva','tři','čtyři','pět','šest','sedm','osm','devět'];
+const NTEEN=['deset','jedenáct','dvanáct','třináct','čtrnáct','patnáct','šestnáct','sedmnáct','osmnáct','devatenáct'];
+const NT=['','','dvacet','třicet','čtyřicet','padesát','šedesát','sedmdesát','osmdesát','devadesát'];
+const NO=['','první','druhý','třetí','čtvrtý','pátý','šestý','sedmý','osmý','devátý'];
+const NOTEEN=['desátý','jedenáctý','dvanáctý','třináctý','čtrnáctý','patnáctý','šestnáctý','sedmnáctý','osmnáctý','devatenáctý'];
+const NOT_=['','','dvacátý','třicátý','čtyřicátý','padesátý','šedesátý','sedmdesátý','osmdesátý','devadesátý'];
+function card(n){ if(n>=100) return 'sto'+(n>100?' '+card(n-100):''); if(n<10) return NU[n]; if(n<20) return NTEEN[n-10]; const t=n/10|0,u=n%10; return NT[t]+(u?' '+NU[u]:''); }
+function cardAlt(n){ if(n<21||n>99||n%10===0) return null; const t=n/10|0,u=n%10; return (u===1?'jedna':NU[u]+'a')+NT[t]; }
+function ord(n){ if(n===100) return 'stý'; if(n<10) return NO[n]; if(n<20) return NOTEEN[n-10]; const t=n/10|0,u=n%10; return NOT_[t]+(u?' '+NO[u]:''); }
+function ordAlt(n){ if(n<21||n>99||n%10===0) return null; const t=n/10|0,u=n%10; return (u===1?'jedna':NU[u]+'a')+NOT_[t]; }
+
+const SPELL_T = {'čtrnáct':'čtyrnáct','šestnáct':'šesnáct','patnáct':'pětnáct','šedesát':'šestdesát','sedmnáct':'sedumnáct','osmnáct':'osumnáct','třetí':'třetý'};
+function genCslovy(L){
+  const out=[];
+  for(let i=0;i<L.count;i++){
+    let n, ordinal=false;
+    if(L.mode===1) n = Math.random()<.6 ? 1+Math.floor(Math.random()*20) : 10*(2+Math.floor(Math.random()*8));
+    else if(L.mode===2){ do{ n=21+Math.floor(Math.random()*79); }while(n%10===0); }
+    else { ordinal=Math.random()<.55; n = ordinal ? 1+Math.floor(Math.random()*99) : 101+Math.floor(Math.random()*98); }
+    const ok = ordinal ? [ord(n), ordAlt(n)].filter(Boolean) : [card(n), cardAlt(n)].filter(Boolean);
+    const c=ok[0], traps=new Set();
+    Object.entries(SPELL_T).forEach(([a,b])=>{ if(c.includes(a)) traps.add(c.replace(a,b)); });
+    if(c.includes(' ')) traps.add(c.replace(/ /g,''));                                         // psaní dohromady
+    if(!ordinal && n>20 && n<100 && n%10) traps.add(NU[n%10]+' a '+NT[n/10|0]);                                                  // „tři a padesát“               // rozdělené „sedma čtyřicet“
+    if(ordinal && n>20 && n%10) traps.add(NOT_[n/10|0]+' '+NU[n%10]);                       // „dvacátý jedna“
+    if(ordinal) traps.add(card(n)); else if(n<=100) traps.add(ord(n));
+    const near = ordinal ? ord(Math.min(100,n+1)) : card(n+(n%10===9?-1:1));
+    const pool=[...traps].filter(x=>!ok.includes(x));
+    const opts=[...new Set([c, ...shuffle(pool), near])].filter((x,j,a)=>x!==undefined).slice(0,4);
+    const frame = ordinal ? `${n}. závodník → <span class="blank">______</span> závodník` : `${n} Kč → <span class="blank">______</span>`;
+    out.push({ sign: ordinal?`${n}.`:`${n} Kč`, w:String(n), q: ordinal?'Napiš pořadí slovy':'Vyplň šek slovy', sub:`<span class="frame">${frame}</span>`,
+      opts:shuffle(opts).map(x=>({v:x, html:esc(x)})), ok,
+      hint: ordinal ? 'Řadová číslovka odpovídá na otázku kolikátý? Složenou píšeme zvlášť (dvacátý první), nebo dohromady (jednadvacátý).' : 'Složené číslovky píšeme zvlášť: čtyřicet sedm, sto dvacet tři. Dohromady jen tvar typu sedmačtyřicet. Pozor na pravopis: čtrnáct, šestnáct, šedesát.',
+      why:`<p>${ordinal?`${n}.`:n} → <b>${esc(ok.join(' / '))}</b>.${ok.length>1?' Oba tvary jsou správně.':''}</p>${c.includes(' ')?'<p>Složenou číslovku píšeme <b>zvlášť</b> (každé slovo samostatně).</p>':''}`,
+      stats:[['cslovy', ordinal?'rad':L.mode===1?'do20':L.mode===2?'do100':'pres100']],
+      conf:x=> x===c.replace(/ /g,'') ? 'cw|space' : Object.values(SPELL_T).some(t=>x.includes(t)) ? 'cw|spell' : 'cw|jine', weak:'cw|'+(ordinal?'r':'z')+n, base:L.mode===1?10:L.mode===2?13:16 });
+  }
+  return out;
+}
+
 /* ── Konec případu ── */
 function finish(){
   const g=game; if(g.done) return; g.done=true;
@@ -2255,6 +2364,8 @@ function finish(){
   if(all3('druhy')&&all3('shoda')&&all3('hlidka')) give('pridavna');
   if(all3('jizdni')&&all3('vyhybka')&&all3('hlaseni')) give('vypravci');
   if(all3('zdruhy')&&all3('pasti')&&all3('patrani')) give('zahradnik');
+  if(all3('trezor')&&all3('pokladna')&&all3('seky')) give('bankeR');
+  if(['tridirna','vyslech','usvedceni','kovarna','pripad','druhy','shoda','hlidka','jizdni','vyhybka','hlaseni','zdruhy','pasti','patrani','trezor','pokladna','seky'].every(id=>DISTRICTS.flatMap(d=>d.missions||[]).find(m=>m.id===id).levels.some(L=>S.stars[id+L.lv]))) give('mesto');
   if(Object.keys(VZORY).every(v=>(S.album[v]||[]).length)) give('album');
   if(S.xp>=1000) give('veteran');
   save(); updateTop();
@@ -2424,6 +2535,14 @@ function confInfo(k){
   if(t==='zd') return {txt:`Plete si zájmena ${ZK[a]} a ${ZK[b]}`, tip:`${cap(ZK[a])}: ${ZK_WHY[a].replace(/<[^>]+>/g,'')}. ${cap(ZK[b])}: ${ZK_WHY[b].replace(/<[^>]+>/g,'')}.`};
   if(t==='zp') return {txt:({mm:'Mě, nebo mně?',jj:'Ji, nebo jí?',my:'Mi, nebo my?'})[a], tip:({mm:'Dosaďte tebe / tobě: tebe → mě, tobě → mně (pro mě, ke mně).',jj:'Dosaďte tu holku / té holce: tu holku → ji, té holce → jí.',my:'Kdo? → my (my jsme vyhráli). Komu? → mi (podej mi to).'})[a]};
   if(t==='zf') return {txt:'V textu označuje slova, která nejsou zájmena', tip:'Zájmeno zastupuje podstatné nebo přídavné jméno (já, on, můj, ten, kdo, nikdo, někdo…). Ať si dítě u slova řekne, koho nebo co zastupuje.'};
+  if(t==='cd') return {txt:`Plete si číslovky ${CK[a]} a ${CK[b]}`, tip:'Pomůže otázka: kolik? (pět), kolikátý? (pátý), kolikerý? (patery), kolikrát? (pětkrát).'};
+  if(t==='cs'&&a==='dvemi') return {txt:'Píše „dvěmi“ / „oběmi“', tip:'Správně je jen dvěma a oběma (se dvěma kamarády, oběma rukama). Tvar „dvěmi“ neexistuje.'};
+  if(t==='cs'&&a==='ma') return {txt:'Píše „třema“ / „čtyřma“', tip:'Spisovně se třemi, se čtyřmi. „Třema, čtyřma“ je hovorové.'};
+  if(t==='cs'&&a==='trech') return {txt:'Plete si „tří“ a „třech“', tip:'2. pád: bez tří, bez čtyř. 6. pád: o třech, o čtyřech.'};
+  if(t==='cs') return {txt:'Skloňování číslovek dva, oba, tři, čtyři', tip:'Zeptejte se pádovou otázkou na podstatné jméno za číslovkou a řekněte celou větu nahlas.'};
+  if(t==='cw'&&a==='space') return {txt:'Píše složené číslovky dohromady', tip:'Složené číslovky píšeme zvlášť: čtyřicet sedm, sto dvacet tři. Dohromady jen typ sedmačtyřicet.'};
+  if(t==='cw'&&a==='spell') return {txt:'Pravopis číslovek', tip:'Pozor na čtrnáct (ne čtyrnáct), šestnáct (ne šesnáct), patnáct, šedesát (ne šestdesát).'};
+  if(t==='cw') return {txt:'Psaní číslovek slovy', tip:'Čtěte číslo nahlas po částech: 147 → sto · čtyřicet · sedm.'};
   if(t==='pripad') return {txt:'V textu označuje správná slova jako chybná', tip:'Ať si dítě větu přečte nahlas a u podezřelého slova se zeptá pádovou otázkou. Když tvar s otázkou sedí, slovo je v pořádku.'};
   if(t==='iy') return {txt:'Píše i/y v koncovkách', tip:'Koncovky se řídí vzorem: tvrdé vzory (pán, hrad, žena, město) mají v množném čísle často -y (s pány, hrady), měkké (muž, stroj, růže, moře) -i/-e. Ať si dítě nahlas řekne tvar vzoru.'};
   if(t==='kov') return {txt:`Tvoření tvaru: ${a}. pád, ${CIS[b]}`, tip:'Postup: urči vzor, řekni si tvar vzoru v daném pádě (např. s pány) a stejnou koncovku přidej ke kmeni slova (s kamarády).'};
@@ -2446,6 +2565,9 @@ function recommend(){
   Object.keys(ZK).forEach(k=>add('zdruh',k,`zájmena ${ZK[k]}`,'Šuplíky zájmen',['os','pr','uk'].includes(k)?'Lehká':k==='vz'?'Těžká':'Střední'));
   [['mm','mě / mně'],['jj','ji / jí'],['my','mi / my']].forEach(([k,l])=>add('zpast',k,l,'Zájmenné pasti',k==='mm'?'Lehká':'Střední'));
   add('zfind','find','hledání zájmen v textu','Pátrání v textu','Lehká');
+  Object.keys(CK).forEach(k=>add('cdruh',k,`číslovky ${CK[k]}`,'Trezor druhů',['zaklad','rad'].includes(k)?'Lehká':'Střední'));
+  [['dva','dva / dvě'],['oba','oba / obě'],['tri','tři'],['ctyri','čtyři']].forEach(([k,l])=>add('cskl',k,'skloňování '+l,'Pokladna',['dva'].includes(k)?'Lehká':k==='oba'?'Střední':'Těžká'));
+  [['do20','do 20'],['do100','do 100'],['pres100','přes 100'],['rad','řadové']].forEach(([k,l])=>add('cslovy',k,'číslovky slovy '+l,'Šeky slovy',k==='do20'?'Lehká':k==='do100'?'Střední':'Těžká'));
   add('pripad','find','hledání chyb v textu','Velký případ','Lehká'); add('pripad','fix','oprava tvarů v textu','Velký případ','Lehká');
   [1,2,3,4,5,6,7].forEach(p=>add('kov',p,`tvary ve ${p}. pádě`,'Kovárna',p===1?'Střední':'Lehká'));
   const weak=C.filter(x=>x.r<.85).sort((a,b)=>a.r-b.r);
@@ -2472,6 +2594,9 @@ function parentDash(){
   const conf=Object.entries(S.conf||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
   const weakW=Object.entries(S.weak||{}).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([k])=>{
     if(k[0]==='v'&&/^v\d+$/.test(k)){ const s=SENTENCES[+k.slice(1)]; return s?`<span class="pchip" title="Výslech">${esc(s.t.replace(/[{}]/g,'').replace(/\[(.+?)\]/,'«$1»'))}</span>`:''; }
+    if(k.startsWith('c|')) return `<span class="pchip" title="Trezor druhů">${esc(k.slice(2))}</span>`;
+    if(k.startsWith('cs|')) return `<span class="pchip" title="Pokladna">${esc(k.slice(3))}</span>`;
+    if(k.startsWith('cw|')) return `<span class="pchip" title="Šeky slovy">${k[3]==='r'?esc(k.slice(4))+'.':esc(k.slice(4))+' Kč'}</span>`;
     if(k.startsWith('zp|')) return `<span class="pchip" title="Zájmenné pasti">${esc(k.slice(3))}</span>`;
     if(k.startsWith('z|')) return `<span class="pchip" title="Šuplíky zájmen">${esc(k.slice(2))}</span>`;
     if(k.startsWith('w|')){ const [,inf,kk]=k.split('|'); return `<span class="pchip" title="Výhybka">${esc(inf)}: ${esc(catsTxt(kk.replace(/[123][sp]$/,''),kk.slice(-2)))}</span>`; }
@@ -2515,6 +2640,9 @@ function parentDash(){
     <div class="pgroup"><h4>Shoda přísudku s podmětem <small>Nádražní hlášení</small></h4>${[['sg','jednotné číslo (ten běhal, ta běhala, to běhalo)'],['Mapl','mužský životný (psi běhali)'],['Mipl','mužský neživotný (hrady stály)'],['Fpl','ženský (ženy běhaly)'],['Npl','střední (kuřata běhala)'],['slozeny','složený podmět']].map(([k,l])=>skillRow(l,(S.stats.pshoda||{})[k])).join('')}</div>
     <div class="pgroup"><h4>Zájmena – druhy <small>Šuplíky zájmen, Pátrání v textu</small></h4>${Object.keys(ZK).map(k=>skillRow(ZK[k],(S.stats.zdruh||{})[k])).join('')}${skillRow('najít zájmeno v textu',(S.stats.zfind||{}).find)}</div>
     <div class="pgroup"><h4>Zájmena – pravopis <small>Zájmenné pasti</small></h4>${[['mm','mě / mně'],['jj','ji / jí'],['my','mi / my']].map(([k,l])=>skillRow(l,(S.stats.zpast||{})[k])).join('')}</div>
+    <div class="pgroup"><h4>Číslovky <small>Trezor, Pokladna, Šeky</small></h4>${Object.keys(CK).map(k=>skillRow('druh: '+CK[k],(S.stats.cdruh||{})[k])).join('')}
+      ${[['dva','skloňování dva / dvě'],['oba','skloňování oba / obě'],['tri','skloňování tři'],['ctyri','skloňování čtyři']].map(([k,l])=>skillRow(l,(S.stats.cskl||{})[k])).join('')}
+      ${[['do20','psaní slovy do 20'],['do100','psaní slovy do 100'],['pres100','psaní slovy přes 100'],['rad','řadové číslovky slovy']].map(([k,l])=>skillRow(l,(S.stats.cslovy||{})[k])).join('')}</div>
     <p class="pnote">Stav: <b>✓ zvládá</b> = aspoň 85 % napoprvé · <b>~ procvičuje</b> = 60–85 % · <b>! potřebuje pomoc</b> = pod 60 % · hodnotíme až od 3 pokusů.</p>
     <h3>Na co se zaměřit</h3>
     ${conf.length ? `<div class="pconf">${conf.map(([k,n])=>{ const c=confInfo(k); return `<div class="pci"><b>${c.txt}</b> <span class="pcount">${n}×</span><p>💡 ${c.tip}</p></div>`; }).join('')}</div>` : '<p class="pnote">Zatím žádné opakované záměny. 👍</p>'}
