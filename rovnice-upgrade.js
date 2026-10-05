@@ -305,6 +305,24 @@
     }
   };
 
+  const oldFinishSession = finishSession;
+  finishSession = function() {
+    const total=SES.eqs.length;
+    const solved=SES.solved;
+    const ratio=solved/total;
+    const stars=ratio>=1?3:ratio>=0.75?2:ratio>=0.5?1:0;
+    setStars(SEL.topicIdx,stars);
+    sndComplete();
+    document.getElementById("res-eq").textContent = solved+"/"+total+" vyřešeno";
+    document.getElementById("res-stars").textContent = "★".repeat(stars)+"☆".repeat(3-stars);
+    document.getElementById("res-title").textContent =
+      ["Zkus to znovu!","Už se do toho dostáváš!","Dobře!","Perfektní!"][stars];
+    document.getElementById("res-score").textContent =
+      solved+" vyřešeno · "+(SES.revealed||0)+" řešení zobrazeno · "+(SES.skipped||0)+" přeskočeno";
+    document.getElementById("res-xp").textContent = "+"+SES.xpGained;
+    showScreen("screen-result");
+  };
+
   let activeLevel = Number(ST.level) || 1;
   let searchQuery = "";
 
