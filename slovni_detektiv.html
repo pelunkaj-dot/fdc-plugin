@@ -113,6 +113,18 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .lvbtn .stars{color:var(--lamp);letter-spacing:2px}
 .lvbtn[disabled]{background:#9b8d78;cursor:not-allowed}
 .mission.soon{opacity:.6}
+.diff-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.diff-lbl{font-weight:900;color:var(--ink2);font-size:.9rem}
+.diff{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:13px;background:var(--paper2)}
+.seg{display:flex;flex-direction:column;align-items:center;min-width:86px;padding:6px 12px;border-radius:10px;font-weight:900;color:var(--ink2);transition:background .15s}
+.seg:hover:not([disabled]):not(.on){background:rgba(0,0,0,.06)}
+.seg.on{background:var(--ink);color:var(--paper)}
+.seg .stars{font-size:.75rem;letter-spacing:1px;color:var(--lamp2)}
+.seg[disabled]{opacity:.5;cursor:not-allowed}
+.mission .lvdesc{margin:10px 0 12px;color:var(--ink)}
+.demo-note{display:block;margin-top:10px;color:var(--ink2);font-weight:700}
+.qcard.big{padding:14px 8px}
+.qcard.big .n{font-size:2.2rem}
 .soonchip{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--paper2);color:var(--ink2);font-weight:800;font-size:.8rem}
 
 /* ── HUD ── */
@@ -456,10 +468,12 @@ const DISTRICTS = [
   {id:'pods', ico:'🏛️', name:'Ulice podstatných jmen', desc:'Rod, číslo, pád a vzory.', missions:[
     {id:'tridirna', type:'sort', ico:'🚪', name:'Třídírna', desc:'Podezřelí přicházejí jeden za druhým. Pošli každého do správných dveří!', levels:[
       {lv:1, name:'Ten, ta, to', sub:'rod', axes:['rod'], time:9000, count:12, lives:5},
-      {lv:2, name:'Jeden, nebo víc?', sub:'rod + číslo', axes:['rod','cislo'], time:12000, count:12, lives:4, full:true}]},
+      {lv:2, name:'Jeden, nebo víc?', sub:'rod + číslo', axes:['rod','cislo'], time:12000, count:12, lives:4, full:true},
+      {lv:3, name:'Živý, nebo neživý?', sub:'rod + životnost + číslo', axes:['rod','ziv','cislo'], time:13000, count:12, lives:4, full:true}]},
     {id:'vyslech', type:'ask', ico:'💡', name:'Výslech', desc:'Polož slovu pádovou otázku a zjisti, v jakém je pádě.', levels:[
       {lv:1, name:'Předložka napoví', sub:'pády se stopami', maxL:1, clue:true, count:8},
-      {lv:2, name:'Bez nápovědy', sub:'všechny pády', maxL:2, clue:false, count:8, full:true}]},
+      {lv:2, name:'Bez nápovědy', sub:'všechny pády, otázky na kartách', maxL:2, clue:false, count:8, full:true},
+      {lv:3, name:'Jen čísla pádů', sub:'bez otázek, lupy i stop – otázky znáš zpaměti', maxL:2, clue:false, numbersOnly:true, count:10, full:true}]},
     {id:'usvedceni', soon:true, ico:'🕵️', name:'Usvědčení', desc:'Rod → koncovka → vzor. Odhal, do kterého gangu slovo patří.'},
     {id:'kovarna', soon:true, ico:'🔨', name:'Kovárna koncovek', desc:'Ukovej správný tvar slova.'},
     {id:'pripad', soon:true, ico:'📜', name:'Velký případ', desc:'Najdi podvržené koncovky v textu.'}
@@ -469,13 +483,14 @@ const DISTRICTS = [
   {id:'zajm', ico:'🌳', name:'Park zájmen', desc:'Druhy zájmen a jejich tvary.', soon:true},
   {id:'cisl', ico:'🏦', name:'Banka číslovek', desc:'Druhy číslovek a skloňování.', soon:true}
 ];
+const DIFF = ['Lehká','Střední','Těžká'];
 const RANKS = [[0,'Nováček'],[150,'Stopař'],[400,'Vyšetřovatel'],[800,'Inspektor'],[1400,'Vrchní inspektor'],[2200,'Šéf detektivů']];
 const BADGES = [
   {id:'first', ico:'🔎', name:'První případ', d:'Dokonči první případ'},
   {id:'perfect', ico:'💎', name:'Čistá práce', d:'Případ bez chyby'},
   {id:'streak10', ico:'🔥', name:'Neomylný', d:'10 správně v řadě'},
-  {id:'rody', ico:'🚪', name:'Znalec rodů', d:'3 hvězdy v obou úrovních Třídírny'},
-  {id:'pady', ico:'💡', name:'Znalec pádů', d:'3 hvězdy v obou úrovních Výslechu'},
+  {id:'rody', ico:'🚪', name:'Znalec rodů', d:'3 hvězdy ve všech náročnostech Třídírny'},
+  {id:'pady', ico:'💡', name:'Znalec pádů', d:'3 hvězdy ve všech náročnostech Výslechu'},
   {id:'veteran', ico:'🎖️', name:'Veterán', d:'Získej 1000 bodů'}
 ];
 
@@ -493,11 +508,11 @@ function initTheme(){ let t='dark'; try{ t=localStorage.getItem(THEME_KEY)||'dar
 
 /* ══════════════ STAV ══════════════ */
 const KEY = 'fdc-detektiv-v1';
-const S = Object.assign({xp:0, stars:{}, stats:{rod:{},cislo:{},pad:{}}, weak:{}, badges:[], sound:true, intro:false}, load());
+const S = Object.assign({xp:0, stars:{}, stats:{rod:{},cislo:{},pad:{},ziv:{}}, weak:{}, sel:{}, badges:[], sound:true, intro:false}, load());
 function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
-function stat(cat,k,ok){ const a=S.stats[cat][k]||(S.stats[cat][k]=[0,0]); a[1]++; if(ok)a[0]++; }
-function errRate(cat,k){ const a=S.stats[cat][k]; return a&&a[1] ? 1-a[0]/a[1] : .35; }
+function stat(cat,k,ok){ S.stats[cat]=S.stats[cat]||{}; const a=S.stats[cat][k]||(S.stats[cat][k]=[0,0]); a[1]++; if(ok)a[0]++; }
+function errRate(cat,k){ const a=(S.stats[cat]||{})[k]; return a&&a[1] ? 1-a[0]/a[1] : .35; }
 function rankOf(xp){ let r=RANKS[0],i=0; RANKS.forEach((x,j)=>{ if(xp>=x[0]){r=x;i=j;} }); return {name:r[1], i, next:RANKS[i+1]}; }
 
 /* ══════════════ POMOCNÉ ══════════════ */
@@ -664,6 +679,17 @@ function intro(){
   document.body.appendChild(m);
 }
 
+function levelPicker(d,m){
+  let sel=m.levels.find(L=>L.lv===S.sel[m.id] && !locked(d,m,L)) || m.levels.find(L=>!locked(d,m,L));
+  return `<div class="diff-row"><span class="diff-lbl">Náročnost:</span><div class="diff" role="radiogroup">${m.levels.map(L=>{
+      const lk=locked(d,m,L);
+      return `<button class="seg ${L===sel?'on':''}" role="radio" aria-checked="${L===sel}" ${lk?`disabled title="${lk}"`:''} data-act="lv" data-d="${d.id}" data-m="${m.id}" data-lv="${L.lv}">
+        <b>${lk?'🔒 ':''}${DIFF[L.lv-1]}</b><span class="stars">${starsTxt(S.stars[m.id+L.lv]||0)}</span></button>`;
+    }).join('')}</div></div>
+    <p class="lvdesc"><b>${sel.name}</b> – ${sel.sub}</p>
+    <button class="btn" data-act="play" data-d="${d.id}" data-m="${m.id}" data-lv="${sel.lv}">▶ Hrát</button>
+    ${DEMO&&m.levels.some(L=>locked(d,m,L))?'<small class="demo-note">Střední a těžká náročnost jsou v plné verzi.</small>':''}`;
+}
 function district(id){
   const d=DISTRICTS.find(x=>x.id===id);
   show(`
@@ -673,11 +699,7 @@ function district(id){
       ${d.missions.map(m=>`<div class="paper mission ${m.soon?'soon':''}">
         <div class="mico">${m.ico}</div>
         <div><h3>${m.name}</h3><p>${m.desc}</p>
-        ${m.soon?'<span class="soonchip">připravujeme</span>':`<div class="levels">${m.levels.map(L=>{
-          const lk=locked(d,m,L), st=S.stars[m.id+L.lv]||0;
-          return `<button class="lvbtn" ${lk?'disabled':''} data-act="play" data-d="${d.id}" data-m="${m.id}" data-lv="${L.lv}">
-            <span>Úroveň ${L.lv}: ${L.name}</span><small>${lk?'🔒 '+lk:L.sub}${!lk&&L.lv>1&&!S.stars[m.id+(L.lv-1)]?' · doporučujeme začít úrovní '+(L.lv-1):''}</small><span class="stars">${starsTxt(st)}</span></button>`;
-        }).join('')}</div>`}
+        ${m.soon?'<span class="soonchip">připravujeme</span>':levelPicker(d,m)}
         </div></div>`).join('')}
     </div>`);
 }
@@ -727,8 +749,14 @@ function buildSort(L){
   });
 }
 function sortRound(){
-  const g=game, it=g.items[g.i], two=g.L.axes.includes('cislo');
-  const doors = two
+  const g=game, it=g.items[g.i], two=g.L.axes.includes('cislo'), ziv=g.L.axes.includes('ziv');
+  const COLS=[{rod:'M',z:'1',h:'mužský<br>životný',sg:'TEN',pl:'TI'},{rod:'M',z:'0',h:'mužský<br>neživotný',sg:'TEN',pl:'TY'},{rod:'F',h:'ženský',sg:'TA',pl:'TY'},{rod:'N',h:'střední',sg:'TO',pl:'TA'}];
+  const doors = ziv
+    ? `<div class="grid2" style="grid-template-columns:auto repeat(4,1fr)"><span></span>${COLS.map(c=>`<span class="colh">${c.h}</span>`).join('')}
+        ${[['sg','👤','jednotné'],['pl','👥','množné']].map(([c,ic,nm],ri)=>`<span class="rowh"><span>${ic}</span>${nm}</span>`+
+          COLS.map((k,ci)=>`<button class="door ${k.rod}" data-act="sort" data-rod="${k.rod}" data-z="${k.z||''}" data-c="${c}"><kbd>${ri*4+ci+1}</kbd><b>${k[c]}</b><small>${k.z==='1'?'živý':k.z==='0'?'neživý':(c==='sg'?'jeden':'víc')}</small></button>`).join('')).join('')}
+       </div>`
+    : two
     ? `<div class="grid2"><span></span>${['M','F','N'].map(k=>`<span class="colh">${ROD[k].name}</span>`).join('')}
         ${[['sg','👤','jednotné'],['pl','👥','množné']].map(([c,ic,nm],ri)=>`<span class="rowh"><span>${ic}</span>${nm}</span>`+
           ['M','F','N'].map((k,ci)=>`<button class="door ${k}" data-act="sort" data-rod="${k}" data-c="${c}"><kbd>${ri*3+ci+1}</kbd><b>${c==='sg'?ROD[k].ukaz.toUpperCase():(k==='N'?'TA':k==='F'?'TY':'TI/TY')}</b><small>${c==='sg'?'jeden':'víc'}</small></button>`).join('')).join('')}
@@ -747,13 +775,15 @@ function sortRound(){
   g.answered=false;
   timerId=setTimeout(()=>sortAnswer(null,null), g.L.time);
 }
-function sortAnswer(rod,c){
+function sortAnswer(rod,c,z){
   const g=game; if(!g||g.answered) return; g.answered=true; stopTimer();
   const it=g.items[g.i], n=it.noun, two=g.L.axes.includes('cislo');
-  const okR = rod===n.rod, okC = !two || c===it.cislo, ok = okR && okC;
+  const zivAx=g.L.axes.includes('ziv'), okZ = !zivAx || n.rod!=='M' || (z==='1')===n.ziv;
+  const okR = rod===n.rod && okZ, okC = !two || c===it.cislo, ok = okR && okC;
+  if(zivAx && n.rod==='M') stat('ziv', n.ziv?'a':'i', rod==='M'&&okZ);
   stat('rod',n.rod,okR); if(two) stat('cislo',it.cislo,okC);
   const bar=$('#timer i'); if(bar){ const cs=getComputedStyle(bar).transform; bar.style.transition='none'; bar.style.transform=cs; }
-  document.querySelectorAll('.door').forEach(b=>{ b.disabled=true; if(b.dataset.rod===n.rod && (!two||b.dataset.c===it.cislo)) b.classList.add('hit'); });
+  document.querySelectorAll('.door').forEach(b=>{ b.disabled=true; if(b.dataset.rod===n.rod && (!two||b.dataset.c===it.cislo) && (!zivAx||n.rod!=='M'||b.dataset.z===(n.ziv?'1':'0'))) b.classList.add('hit'); });
   const sus=$('#sus');
   if(ok){
     const pts=scoreHit(10);
@@ -774,6 +804,7 @@ function sortAnswer(rod,c){
       <h3>${rod===null?'⏱ Podezřelý utekl!':'Chacha, vedle!'}</h3>
       <p>${it.cislo==='pl'?'Slovo je ve <b>množném čísle</b> (je jich víc). Rod poznáš, když ho převedeš na jeden kus a řekneš si ten / ta / to:':'Řekni si před slovo <b>ten</b>, <b>ta</b>, nebo <b>to</b>:'}</p>
       ${steps}
+      ${zivAx&&n.rod==='M'?`<p>${n.ziv?`<b>${esc(n.sg)}</b> je živá bytost → mužský <b>životný</b> (ti ${esc(n.pl||n.sg)}).`:`<b>${esc(n.sg)}</b> není živá bytost → mužský <b>neživotný</b> (ty ${esc(n.pl||n.sg)}).`}</p>`:''}
       <div class="actions"><button class="btn dark" data-act="next">Rozumím →</button></div></div>`;
     $('.hud .lives').innerHTML=livesArr().map(i=>`<span class="${i<g.lives?'':'lost'}">${shieldSVG()}</span>`).join('');
     $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -817,8 +848,8 @@ function askRound(){
         ${g.L.clue?'<button class="tool" data-act="clue" id="clueBtn">🔍 Stopa</button>':''}
       </div>
       <div id="clue"></div>
-      <div class="preview" id="prev"><span class="lbl">Lupa</span>Klepni na pádovou otázku a dosaď ji do věty místo zvýrazněného slova.</div>
-      <div class="cards">${[1,2,3,4,5,6,7].map(p=>`<button class="qcard" data-act="q" data-p="${p}"><kbd>${p}</kbd><span class="n">${p}.</span><span class="qq">${PAD[p].q}</span></button>`).join('')}</div>
+      ${g.L.numbersOnly?'<div class="clue">🎯 Těžká náročnost: pádové otázky si polož v duchu, karty ukazují jen čísla.</div>':'<div class="preview" id="prev"><span class="lbl">Lupa</span>Klepni na pádovou otázku a dosaď ji do věty místo zvýrazněného slova.</div>'}
+      <div class="cards">${[1,2,3,4,5,6,7].map(p=>`<button class="qcard ${g.L.numbersOnly?'big':''}" data-act="q" data-p="${p}" aria-label="${p}. pád"><kbd>${p}</kbd><span class="n">${p}.</span>${g.L.numbersOnly?'<span class="qq">pád</span>':`<span class="qq">${PAD[p].q}</span>`}</button>`).join('')}</div>
       <div class="accuse"><button class="btn" id="accuse" data-act="accuse" disabled>👉 Obvinit</button></div>
       <div id="fb"></div>
     </div>`);
@@ -828,7 +859,7 @@ function askPick(p){
   g.sel=p; g.peeks++; sfx.pick();
   document.querySelectorAll('.qcard').forEach(b=>b.classList.toggle('sel',+b.dataset.p===p));
   const s=g.items[g.i];
-  $('#prev').innerHTML=`<span class="lbl">Lupa: ${p}. pád – zní to dobře?</span><div class="sentence">${questionSentence(s,p)}</div>`;
+  if($('#prev')) $('#prev').innerHTML=`<span class="lbl">Lupa: ${p}. pád – zní to dobře?</span><div class="sentence">${questionSentence(s,p)}</div>`;
   const a=$('#accuse'); a.disabled=false; a.textContent=`👉 Obvinit: ${p}. pád`;
 }
 function askClue(){
@@ -850,7 +881,7 @@ function askAccuse(){
   $('#accuse').disabled=true;
   const how = `<div class="steps"><span class="step">${questionSentence(s,s.p)}</span><span class="arrow">→</span><span class="step">${esc(s.w)}</span><span class="arrow">→</span><span class="step" style="color:var(--m)">${s.p}. pád</span></div>`;
   if(ok){
-    const pts=scoreHit(g.clued?8:12);
+    const pts=scoreHit(g.L.numbersOnly?15:g.clued?8:12);
     S.weak['v'+s.id]=Math.max(0,(S.weak['v'+s.id]||0)-1);
     sfx.ok(); setTimeout(sfx.stamp,120);
     $('#say').textContent=`Přiznávám! Jsem v ${s.p}. pádě. 😰`;
@@ -882,8 +913,9 @@ function finish(){
   give('first');
   if(!failed && g.mist.length===0) give('perfect');
   if(g.best>=10) give('streak10');
-  if(S.stars.tridirna1===3&&S.stars.tridirna2===3) give('rody');
-  if(S.stars.vyslech1===3&&S.stars.vyslech2===3) give('pady');
+  const all3=id=>DISTRICTS[0].missions.find(m=>m.id===id).levels.every(L=>S.stars[id+L.lv]===3);
+  if(all3('tridirna')) give('rody');
+  if(all3('vyslech')) give('pady');
   if(S.xp>=1000) give('veteran');
   save(); updateTop();
   const rk=rankOf(S.xp), up=rk.i>prevRank;
@@ -922,6 +954,7 @@ function profile(){
         <small style="color:var(--ink2);font-weight:800">${r.next?`Do hodnosti ${r.next[1]}: ${to-S.xp} bodů`:'Nejvyšší hodnost!'}</small></div></div>
       <h3>Rod</h3><div class="bars">${['M','F','N'].map(k=>bar(ROD[k].name,S.stats.rod[k],ROD[k].color)).join('')}</div>
       <h3>Číslo</h3><div class="bars">${bar('jednotné',S.stats.cislo.sg,'var(--lamp2)')}${bar('množné',S.stats.cislo.pl,'var(--lamp2)')}</div>
+      <h3>Životnost (mužský rod)</h3><div class="bars">${bar('životný',(S.stats.ziv||{}).a,'var(--m)')}${bar('neživotný',(S.stats.ziv||{}).i,'var(--m)')}</div>
       <h3>Pády</h3><div class="bars">${[1,2,3,4,5,6,7].map(p=>bar(`${p}. ${PAD[p].q}`,S.stats.pad[p],'var(--m)')).join('')}</div>
       <h3>Odznaky</h3><div class="badges">${BADGES.map(b=>`<div class="badge ${S.badges.includes(b.id)?'':'off'}"><span class="bi">${b.ico}</span>${b.name}<br><small style="color:var(--ink2)">${b.d}</small></div>`).join('')}</div>
       <div class="actions"><button class="btn ghost" style="color:var(--ink2)" data-act="reset">Smazat postup</button></div>
@@ -935,7 +968,8 @@ document.addEventListener('click',e=>{
   if(a==='home') home();
   else if(a==='district') district(b.dataset.id);
   else if(a==='play') startGame(b.dataset.d,b.dataset.m,b.dataset.lv);
-  else if(a==='sort') sortAnswer(b.dataset.rod,b.dataset.c);
+  else if(a==='sort') sortAnswer(b.dataset.rod,b.dataset.c,b.dataset.z);
+  else if(a==='lv'){ S.sel[b.dataset.m]=+b.dataset.lv; save(); const y=window.scrollY; district(b.dataset.d); window.scrollTo(0,y); }
   else if(a==='next') next();
   else if(a==='q') askPick(+b.dataset.p);
   else if(a==='accuse') askAccuse();
