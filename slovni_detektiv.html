@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="cs" data-theme="dark">
 <head>
 <script src="/fdc-plugin/fdc-guard.js"></script>
 <meta charset="UTF-8">
@@ -17,29 +17,53 @@
   --m:#3a86ff; --f:#e8457b; --n:#22b07d;
   --ok:#22b07d; --bad:#e63946; --light:#f4f1ea;
   --radius:18px;
+  /* ── TÉMA: tmavé (noční město) ── */
+  --sky1:#0b1428; --sky2:#1b2c50; --sky3:#3b3358; --scene-shade:rgba(8,12,24,.55); --scene-glow:rgba(255,209,102,.10);
+  --text:#f4f1ea; --heading:#ffd166; --bar:rgba(10,17,33,.82); --bar-line:rgba(255,255,255,.08);
+  --chip:rgba(255,255,255,.08); --chip-hover:rgba(255,255,255,.16); --hud-chip:rgba(10,17,33,.7); --track:rgba(255,255,255,.12);
+  --card1:rgba(255,255,255,.10); --card2:rgba(255,255,255,.03); --card-line:rgba(255,255,255,.12);
+  --open1:rgba(255,209,102,.28); --open2:rgba(244,166,58,.10); --open-line:rgba(255,209,102,.55); --tag:rgba(0,0,0,.35);
+  --wall1:#3c4a6b; --wall2:#2a3552; --wall-line:rgba(255,255,255,.22); --floor1:#1b2236; --floor2:#11172a;
+}
+[data-theme="light"]{
+  --sky1:#7cc8f5; --sky2:#bfe6fb; --sky3:#fff1d2; --scene-shade:rgba(255,255,255,.25); --scene-glow:rgba(255,255,255,.25);
+  --text:#1d2a44; --heading:#b8650a; --bar:rgba(255,255,255,.88); --bar-line:rgba(20,40,80,.10);
+  --chip:rgba(20,40,80,.08); --chip-hover:rgba(20,40,80,.15); --hud-chip:rgba(255,255,255,.85); --track:rgba(20,40,80,.14);
+  --card1:rgba(255,255,255,.88); --card2:rgba(255,255,255,.70); --card-line:rgba(20,40,80,.12);
+  --open1:#fff4d6; --open2:#ffe2a8; --open-line:#f4a63a; --tag:rgba(20,40,80,.12);
+  --wall1:#dfe5ee; --wall2:#c8d1de; --wall-line:rgba(40,60,100,.18); --floor1:#9aa7bb; --floor2:#7d8aa0;
+}
+[data-theme="girly"]{
+  --sky1:#f7a8d4; --sky2:#f8c9ee; --sky3:#ffe6f2; --scene-shade:rgba(255,230,242,.25); --scene-glow:rgba(255,255,255,.25);
+  --text:#4a1d3a; --heading:#c01880; --bar:rgba(255,240,248,.9); --bar-line:rgba(192,24,128,.12);
+  --chip:rgba(192,24,128,.08); --chip-hover:rgba(192,24,128,.16); --hud-chip:rgba(255,245,250,.88); --track:rgba(192,24,128,.15);
+  --card1:rgba(255,255,255,.88); --card2:rgba(255,236,246,.75); --card-line:rgba(192,24,128,.18);
+  --open1:#ffe3f1; --open2:#ffc6e2; --open-line:#e8457b; --tag:rgba(192,24,128,.12);
+  --wall1:#f6e3f0; --wall2:#ead0e4; --wall-line:rgba(150,40,110,.16); --floor1:#c99bbd; --floor2:#b086a6;
+  --lamp:#ff9ccf; --lamp2:#e8457b; --paper:#fff6fa; --paper2:#fde1ef; --m:#6a5cff;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%}
-body{font-family:'Nunito',system-ui,sans-serif;color:var(--light);background:var(--night);overflow-x:hidden}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--text);background:var(--sky2);overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 h1,h2,h3{font-family:'Baloo 2',sans-serif;line-height:1.1;margin:0}
 
 /* ── Scéna (pozadí) ── */
-#scene{position:fixed;inset:0;z-index:-2;background:linear-gradient(#0b1428 0%,#1b2c50 55%,#3b3358 100%)}
+#scene{position:fixed;inset:0;z-index:-2;background:linear-gradient(var(--sky1) 0%,var(--sky2) 55%,var(--sky3) 100%)}
 #scene svg{position:absolute;inset:0;width:100%;height:100%}
 #scene .photo{position:absolute;inset:0;background:var(--scene-photo) center/cover no-repeat}
-#scene::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,209,102,.10),transparent 60%),linear-gradient(transparent 40%,rgba(8,12,24,.55))}
+#scene::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,var(--scene-glow),transparent 60%),linear-gradient(transparent 40%,var(--scene-shade))}
 
 /* ── Horní lišta ── */
-.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(10,17,33,.82);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bar);backdrop-filter:blur(8px);border-bottom:1px solid var(--bar-line)}
 .brand{display:flex;align-items:center;gap:8px;font-family:'Baloo 2';font-weight:800;font-size:1.25rem;letter-spacing:.2px}
-.brand b{color:var(--lamp)}
+.brand b{color:var(--heading)}
 .brand svg{width:30px;height:30px}
 .topbar .sp{flex:1}
-.chip{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.08);font-weight:800;font-size:.85rem;white-space:nowrap}
-.chip.rank{color:var(--lamp)}
-.iconbtn{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:1.1rem}
-.iconbtn:hover{background:rgba(255,255,255,.16)}
+.chip{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:var(--chip);font-weight:800;font-size:.85rem;white-space:nowrap}
+.chip.rank{color:var(--heading)}
+.iconbtn{width:38px;height:38px;border-radius:12px;background:var(--chip);display:grid;place-items:center;font-size:1.1rem}
+.iconbtn:hover{background:var(--chip-hover)}
 .demo-badge{background:var(--f);color:#fff;padding:3px 9px;border-radius:8px;font-size:.75rem;font-weight:900}
 
 main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
@@ -60,18 +84,18 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .bubble::after{content:"";position:absolute;left:-10px;bottom:22px;border:10px solid transparent;border-right-color:var(--paper);border-left:0}
 .bubble small{display:block;color:var(--ink2);font-weight:700;margin-top:6px}
 .section-title{display:flex;align-items:center;gap:10px;margin:8px 0 12px;font-size:1.35rem}
-.section-title::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,rgba(255,209,102,.6),transparent)}
+.section-title::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--heading),transparent);opacity:.6}
 
 /* ── Mapa města ── */
 .districts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
-.district{position:relative;text-align:left;border-radius:var(--radius);padding:16px;min-height:150px;background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);overflow:hidden;transition:transform .15s,box-shadow .15s}
+.district{position:relative;text-align:left;border-radius:var(--radius);padding:16px;min-height:150px;background:linear-gradient(160deg,var(--card1),var(--card2));border:1px solid var(--card-line);backdrop-filter:blur(3px);overflow:hidden;transition:transform .15s,box-shadow .15s}
 .district:not(.locked):hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
 .district .ico{font-size:2.2rem}
 .district h3{font-size:1.15rem;margin:6px 0 4px}
 .district p{margin:0;font-size:.88rem;opacity:.85}
-.district.open{background:linear-gradient(160deg,rgba(255,209,102,.28),rgba(244,166,58,.10));border-color:rgba(255,209,102,.55)}
+.district.open{background:linear-gradient(160deg,var(--open1),var(--open2));border-color:var(--open-line)}
 .district.locked{opacity:.55;cursor:default}
-.district .tag{position:absolute;top:12px;right:12px;font-size:.72rem;font-weight:900;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.35)}
+.district .tag{position:absolute;top:12px;right:12px;font-size:.72rem;font-weight:900;padding:3px 8px;border-radius:999px;background:var(--tag)}
 .district .glow{position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(var(--lamp),transparent 70%);opacity:.25}
 
 /* ── Mise ── */
@@ -93,24 +117,24 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 
 /* ── HUD ── */
 .hud{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
-.hud .chip{background:rgba(10,17,33,.7)}
+.hud .chip{background:var(--hud-chip)}
 .hud .sp{flex:1}
 .lives{display:flex;gap:3px}
 .lives svg{width:22px;height:22px}
 .lives .lost{opacity:.2;filter:grayscale(1)}
-.combo{color:var(--lamp);transition:transform .2s}
+.combo{color:var(--heading);transition:transform .2s}
 .combo.pop{animation:pop .35s}
 @keyframes pop{50%{transform:scale(1.35)}}
-.progress{height:6px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden;margin-bottom:12px}
+.progress{height:6px;border-radius:6px;background:var(--track);overflow:hidden;margin-bottom:12px}
 .progress i{display:block;height:100%;background:linear-gradient(90deg,var(--lamp),var(--lamp2));transition:width .3s}
 
 /* ── Třídírna: řada podezřelých ── */
 .lineup{position:relative;height:250px;border-radius:var(--radius);overflow:hidden;
   background:
-    repeating-linear-gradient(transparent 0 29px,rgba(255,255,255,.22) 29px 31px),
-    linear-gradient(#3c4a6b,#2a3552);border:1px solid rgba(255,255,255,.12)}
+    repeating-linear-gradient(transparent 0 29px,var(--wall-line) 29px 31px),
+    linear-gradient(var(--wall1),var(--wall2));border:1px solid var(--card-line)}
 .lineup .nums{position:absolute;left:8px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-around;font-family:'Special Elite';font-size:.75rem;opacity:.5}
-.lineup .floor{position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(#1b2236,#11172a)}
+.lineup .floor{position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(var(--floor1),var(--floor2))}
 .lineup .spot{position:absolute;left:50%;top:-40px;width:340px;height:330px;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 0,rgba(255,240,190,.32),transparent 65%);pointer-events:none}
 .suspect{position:absolute;left:50%;bottom:14px;width:150px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
 .suspect svg{width:120px;height:150px;filter:drop-shadow(0 8px 8px rgba(0,0,0,.35))}
@@ -129,7 +153,7 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .fx{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);pointer-events:none;z-index:5}
 .fx .stamp{font-size:1.6rem;background:rgba(251,243,224,.92);animation:stampIn .35s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes stampIn{from{transform:scale(2.4) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(-8deg);opacity:1}}
-.timer{height:8px;border-radius:8px;background:rgba(255,255,255,.12);overflow:hidden;margin:10px 0 14px}
+.timer{height:8px;border-radius:8px;background:var(--track);overflow:hidden;margin:10px 0 14px}
 .timer i{display:block;height:100%;width:100%;background:var(--lamp);transform-origin:left}
 .timer.low i{background:var(--bad)}
 
@@ -160,7 +184,7 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .explain .arrow{opacity:.5;font-weight:900}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:14px;font-weight:900;font-size:1.05rem;background:linear-gradient(var(--lamp),var(--lamp2));color:#3a2600;box-shadow:0 5px 0 #b97614,0 10px 18px rgba(0,0,0,.3);transition:transform .1s}
 .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #b97614}
-.btn.ghost{background:rgba(255,255,255,.1);color:var(--light);box-shadow:none}
+.btn.ghost{background:var(--chip);color:var(--text);box-shadow:none}
 .btn.dark{background:var(--ink);color:var(--paper);box-shadow:0 5px 0 #000}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 
@@ -232,7 +256,7 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .modal p{font-weight:700;line-height:1.45}
 
 .demo-cta{margin-top:24px;text-align:center}
-.demo-cta a{color:var(--lamp);font-weight:900}
+.demo-cta a{color:var(--heading);font-weight:900}
 .shake{animation:shake .4s}
 @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:60;pointer-events:none;animation:fall linear forwards}
@@ -268,6 +292,7 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
   <span class="sp"></span>
   <span class="chip rank" id="rankChip"></span>
   <button class="iconbtn" data-act="profile" title="Spis detektiva" aria-label="Spis detektiva">📁</button>
+  <button class="iconbtn theme-btn" data-act="theme" title="Přepnout téma" aria-label="Přepnout téma">🌙</button>
   <button class="iconbtn" data-act="sound" id="soundBtn" title="Zvuk" aria-label="Zvuk">🔊</button>
 </header>
 
@@ -454,6 +479,18 @@ const BADGES = [
   {id:'veteran', ico:'🎖️', name:'Veterán', d:'Získej 1000 bodů'}
 ];
 
+/* ══════════════ TÉMA ══════════════ */
+const THEMES=['light','dark','girly'], THEME_ICONS={light:'☀️',dark:'🌙',girly:'🌸'}, THEME_KEY='fajndetektiv_theme';
+function setTheme(t){
+  if(!THEMES.includes(t)) t='dark';
+  document.documentElement.setAttribute('data-theme',t);
+  document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=THEME_ICONS[t]);
+  try{ localStorage.setItem(THEME_KEY,t); }catch(e){}
+  if(typeof drawCity==='function') drawCity();
+}
+function cycleTheme(){ const c=document.documentElement.dataset.theme; setTheme(THEMES[(THEMES.indexOf(c)+1)%THEMES.length]); }
+function initTheme(){ let t='dark'; try{ t=localStorage.getItem(THEME_KEY)||'dark'; }catch(e){} setTheme(t); }
+
 /* ══════════════ STAV ══════════════ */
 const KEY = 'fdc-detektiv-v1';
 const S = Object.assign({xp:0, stars:{}, stats:{rod:{},cislo:{},pad:{}}, weak:{}, badges:[], sound:true, intro:false}, load());
@@ -512,11 +549,19 @@ function say(text){
 }
 
 /* ══════════════ GRAFIKA ══════════════ */
+const CITY = {
+  dark:{far:'#1a2746',near:'#121c33',street:'#0c1324',win:['#ffd479','#9fd3ff'],winOp:[.45,.9],stars:70,orb:'moon',lamps:'rgba(255,214,120,.55)',bulb:'#ffe08a',post:'#0a0f1d'},
+  light:{far:'#a9bfdc',near:'#8aa2c4',street:'#71829e',win:['#eaf6ff','#cfe9ff'],winOp:[.55,.75],stars:0,orb:'sun',lamps:null,bulb:'#e9eef5',post:'#56647d',clouds:true},
+  girly:{far:'#e9a9d2',near:'#cf86ba',street:'#ad6a9f',win:['#fff3b8','#ffe0f4'],winOp:[.6,.85],stars:25,orb:'moon',lamps:'rgba(255,170,215,.6)',bulb:'#fff0f8',post:'#7d3e6d',hearts:true}
+};
 function drawCity(){
-  const svg=$('#city'), r=rng(7); let h='';
-  h+='<defs><radialGradient id="moon"><stop offset="0" stop-color="#fff8dc"/><stop offset="1" stop-color="#ffe9a8"/></radialGradient><radialGradient id="lampg"><stop offset="0" stop-color="rgba(255,214,120,.55)"/><stop offset="1" stop-color="rgba(255,214,120,0)"/></radialGradient></defs>';
-  for(let i=0;i<70;i++) h+=`<circle cx="${r()*1200}" cy="${r()*330}" r="${r()*1.6+.3}" fill="#fff" opacity="${(r()*.6+.2).toFixed(2)}"/>`;
-  h+='<circle cx="960" cy="110" r="70" fill="rgba(255,240,190,.08)"/><circle cx="960" cy="110" r="44" fill="url(#moon)"/><circle cx="975" cy="100" r="8" fill="rgba(0,0,0,.06)"/><circle cx="948" cy="124" r="5" fill="rgba(0,0,0,.05)"/>';
+  const svg=$('#city'), r=rng(7), C=CITY[document.documentElement.dataset.theme]||CITY.dark; let h='';
+  h+=`<defs><radialGradient id="moon"><stop offset="0" stop-color="#fff8dc"/><stop offset="1" stop-color="#ffe9a8"/></radialGradient><radialGradient id="lampg"><stop offset="0" stop-color="${C.lamps||'transparent'}"/><stop offset="1" stop-color="rgba(255,255,255,0)"/></radialGradient></defs>`;
+  for(let i=0;i<C.stars;i++) h+=`<circle cx="${r()*1200}" cy="${r()*330}" r="${r()*1.6+.3}" fill="#fff" opacity="${(r()*.6+.2).toFixed(2)}"/>`;
+  if(C.orb==='moon') h+='<circle cx="960" cy="110" r="70" fill="rgba(255,240,190,.10)"/><circle cx="960" cy="110" r="44" fill="url(#moon)"/><circle cx="975" cy="100" r="8" fill="rgba(0,0,0,.06)"/><circle cx="948" cy="124" r="5" fill="rgba(0,0,0,.05)"/>';
+  else h+='<circle cx="960" cy="110" r="90" fill="rgba(255,240,150,.35)"/><circle cx="960" cy="110" r="50" fill="#ffe066"/>';
+  if(C.clouds) [[180,120,1],[520,80,.8],[760,190,.7],[1100,240,.9]].forEach(([x,y,k])=>{ h+=`<g fill="#fff" opacity=".9" transform="translate(${x} ${y}) scale(${k})"><ellipse cx="0" cy="0" rx="60" ry="22"/><ellipse cx="-30" cy="-12" rx="30" ry="22"/><ellipse cx="22" cy="-18" rx="34" ry="26"/></g>`; });
+  if(C.hearts) for(let i=0;i<9;i++){ const x=r()*1150+20, y=r()*300+20, k=.5+r()*.8; h+=`<path transform="translate(${x} ${y}) scale(${k})" d="M0 6C-10-6-22 4-12 14L0 24L12 14C22 4 10-6 0 6Z" fill="#fff" opacity="${(.35+r()*.35).toFixed(2)}"/>`; }
   const layer=(y0,hmin,hmax,col,win,op)=>{
     let x=-20;
     while(x<1220){
@@ -524,14 +569,14 @@ function drawCity(){
       h+=`<rect x="${x}" y="${y}" width="${w}" height="${hh+40}" fill="${col}"/>`;
       if(r()<.35) h+=`<polygon points="${x+w*.15},${y} ${x+w/2},${y-25-r()*30} ${x+w*.85},${y}" fill="${col}"/>`;
       if(win) for(let wy=y+14; wy<y0-10; wy+=22) for(let wx=x+10; wx<x+w-14; wx+=18)
-        if(r()<.42) h+=`<rect x="${wx}" y="${wy}" width="9" height="12" rx="1" fill="${r()<.8?'#ffd479':'#9fd3ff'}" opacity="${op*(.5+r()*.5)}"/>`;
+        if(r()<.42) h+=`<rect x="${wx}" y="${wy}" width="9" height="12" rx="1" fill="${r()<.8?C.win[0]:C.win[1]}" opacity="${op*(.5+r()*.5)}"/>`;
       x+=w+r()*6;
     }
   };
-  layer(560,120,300,'#1a2746',true,.45);
-  layer(640,80,220,'#121c33',true,.9);
-  h+='<rect x="0" y="640" width="1200" height="60" fill="#0c1324"/>';
-  [150,520,880].forEach(x=>{ h+=`<circle cx="${x}" cy="540" r="90" fill="url(#lampg)"/><rect x="${x-3}" y="540" width="6" height="100" fill="#0a0f1d"/><rect x="${x-14}" y="532" width="28" height="12" rx="4" fill="#0a0f1d"/><circle cx="${x}" cy="546" r="6" fill="#ffe08a"/>`; });
+  layer(560,120,300,C.far,true,C.winOp[0]);
+  layer(640,80,220,C.near,true,C.winOp[1]);
+  h+=`<rect x="0" y="640" width="1200" height="60" fill="${C.street}"/>`;
+  [150,520,880].forEach(x=>{ h+=`${C.lamps?`<circle cx="${x}" cy="540" r="90" fill="url(#lampg)"/>`:''}<rect x="${x-3}" y="540" width="6" height="100" fill="${C.post}"/><rect x="${x-14}" y="532" width="28" height="12" rx="4" fill="${C.post}"/><circle cx="${x}" cy="546" r="6" fill="${C.bulb}"/>`; });
   svg.innerHTML=h;
 }
 const PALETTE=['#f28b54','#7bc96f','#6fa8ff','#c084fc','#f6c445','#ff7aa8','#4fd1c5','#e07a5f','#a3b18a','#9b8cff'];
@@ -900,6 +945,7 @@ document.addEventListener('click',e=>{
   else if(a==='read'){ const s=game.items[game.i]; say(s.t.replace(/[{}\[\]]/g,'')); }
   else if(a==='quit'){ const id=game.d.id; game=null; district(id); }
   else if(a==='profile') profile();
+  else if(a==='theme') cycleTheme();
   else if(a==='sound'){ S.sound=!S.sound; save(); updateTop(); }
   else if(a==='closeintro'){ S.intro=true; save(); b.closest('.modal').remove(); }
   else if(a==='reset'){ if(confirm('Opravdu smazat celý postup?')){ try{localStorage.removeItem(KEY);}catch(e){} location.reload(); } }
@@ -916,7 +962,7 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-drawCity(); updateTop(); home();
+initTheme(); updateTop(); home();
 </script>
 </body>
 </html>
