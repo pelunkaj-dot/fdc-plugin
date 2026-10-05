@@ -1,11 +1,10 @@
 name: fdc-guard inject
 
-# Fáze 1: jen ruční spuštění. Po ověření na zlomky.html odkomentovat push.
 on:
   workflow_dispatch:
-  # push:
-  #   branches: [main]
-  #   paths: ['**.html']
+  push:
+    branches: [main]
+    paths: ['**.html']
 
 permissions:
   contents: write
