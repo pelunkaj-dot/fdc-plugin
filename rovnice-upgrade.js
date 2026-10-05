@@ -385,14 +385,93 @@
     return eqs;
   }
 
-  const originalCheckStep = checkStep;
+  // ---- Matematická kontrola mezikroků ------------------------------------
+  // Nehlídáme konkrétní školní postup. Mezivýsledek je správný, pokud popisuje
+  // tutéž jedinou hodnotu x. Tautologie (2=2) ani spory (2=3) se neuznávají.
+  function rvNormalizeMath(s) {
+    return String(s || "")
+      .replace(/[−–—]/g,"-")
+      .replace(/×|·/g,"*")
+      .replace(/:/g,"/")
+      .replace(/,/g,".")
+      .replace(/\s+/g,"")
+      .toLowerCase();
+  }
+
+  function rvPrepareAt(s,xVal) {
+    let e=rvNormalizeMath(s);
+    // 2x, 2(x+1), x(x+1) a )( jsou běžné školní zápisy násobení.
+    e=e.replace(/(\d|\))(?=x|\()/g,"$1*");
+    e=e.replace(/x(?=\d|\()/g,"x*");
+    e=e.replace(/\)(?=\d|x|\()/g,")*");
+    e=e.replace(/\bx\b/g,"("+String(xVal)+")");
+    return e;
+  }
+
+  function rvEvalAt(s,xVal) {
+    const e=rvPrepareAt(s,xVal);
+    if (!e || !/^[\d+\-*/().]+$/.test(e)) return NaN;
+    try {
+      const v=Function('"use strict";return ('+e+')')();
+      return Number.isFinite(v)?v:NaN;
+    } catch(_) { return NaN; }
+  }
+
+  function rvResidual(rawL,rawR,xVal) {
+    const l=rvEvalAt(rawL,xVal), r=rvEvalAt(rawR,xVal);
+    return Number.isFinite(l)&&Number.isFinite(r) ? l-r : NaN;
+  }
+
+  function rvNearly(a,b,eps=1e-7) {
+    return Number.isFinite(a)&&Number.isFinite(b)&&Math.abs(a-b)<=eps*Math.max(1,Math.abs(a),Math.abs(b));
+  }
+
+  function rvDirectAnswer(rawL,rawR,solution) {
+    const l=rvNormalizeMath(rawL), r=rvNormalizeMath(rawR);
+    const num=s=>{
+      if(!/^[+\-]?(?:\d+(?:\.\d+)?|\.\d+)$/.test(s)) return NaN;
+      return Number(s);
+    };
+    if(l==="x" && rvNearly(num(r),solution)) return true;
+    if(r==="x" && rvNearly(num(l),solution)) return true;
+    return false;
+  }
+
+  function rvClassifyEquation(rawL,rawR,expectedSolution) {
+    // Z několika bodů zjistíme, zda rovnice není totožnost/spor a zda má
+    // lokálně stejný jediný kořen. U současných lineárních/racionálních úloh
+    // je to podstatně přísnější než původní pouhé dosazení výsledku.
+    const atRoot=rvResidual(rawL,rawR,expectedSolution);
+    if(!rvNearly(atRoot,0)) return "wrong";
+
+    const samples=[-13,-9,-5,-2,-1,0,1,2,4,7,11,17]
+      .filter(v=>!rvNearly(v,expectedSolution));
+    const vals=samples.map(x=>rvResidual(rawL,rawR,x)).filter(Number.isFinite);
+    if(vals.length<3) return "invalid";
+
+    // Pokud je rovnice pravdivá prakticky všude, jde o tautologii typu 2=2.
+    const zeroCount=vals.filter(v=>rvNearly(v,0)).length;
+    if(zeroCount>=Math.ceil(vals.length*0.8)) return "wrong";
+
+    // Stejný kořen nestačí, pokud se rovnice stane pravdivou ještě v jiném
+    // testovaném bodě. Tím odřízneme např. x(x-4)=0 pro očekávané x=4.
+    if(zeroCount>0) return "wrong";
+    return "valid";
+  }
+
   checkStep = function(studentInput, solution) {
-    const input = studentInput.trim();
-    const direct = input.match(/^\s*x\s*=\s*(-?\d+(?:[.,]\d+)?)\s*$/i) ||
-                   input.match(/^\s*(-?\d+(?:[.,]\d+)?)\s*=\s*x\s*$/i);
-    if (direct) return originalCheckStep(studentInput, solution);
-    if (!/x/i.test(input)) return "wrong";
-    return originalCheckStep(studentInput, solution);
+    const input=String(studentInput||"").trim();
+    if(!input) return "invalid";
+    const parts=input.split("=");
+    if(parts.length!==2) return "invalid";
+    const rawL=parts[0].trim(), rawR=parts[1].trim();
+    if(!rawL||!rawR) return "invalid";
+
+    if(rvDirectAnswer(rawL,rawR,solution)) return "done";
+
+    // Mezivýsledek musí pořád obsahovat x. Číselná pravda není algebraický krok.
+    if(!/[xX]/.test(rawL+rawR)) return "wrong";
+    return rvClassifyEquation(rawL,rawR,solution);
   };
 
   if (!ST.stats) ST.stats = {};
