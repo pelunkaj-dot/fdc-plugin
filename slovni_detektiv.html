@@ -164,6 +164,30 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .gang .words{display:block;font-size:.72rem;color:var(--ink2);margin-top:2px}
 .gang.off svg{filter:grayscale(1);opacity:.35}
 .qcard.big{padding:14px 8px}
+.forge{position:relative;height:210px;border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  background:radial-gradient(ellipse at 50% 110%,rgba(255,120,40,.6),transparent 60%),linear-gradient(#2d201c,#130c0b);border:1px solid rgba(255,255,255,.08)}
+.forge .glow{position:absolute;left:50%;bottom:-60px;width:420px;height:200px;transform:translateX(-50%);background:radial-gradient(rgba(255,150,60,.45),transparent 65%);animation:flick 1.6s ease-in-out infinite;pointer-events:none}
+@keyframes flick{50%{opacity:.6}}
+.anvil{width:min(320px,80%);display:block;margin-bottom:6px}
+.anvil-word{position:relative;z-index:2;display:flex;align-items:flex-end;gap:2px;margin-bottom:-8px;font-family:'Baloo 2';font-weight:800;font-size:2.4rem;line-height:1}
+.ingot{color:#ffdcb0;text-shadow:0 0 14px #ff7a1a,0 0 4px #ff9c40}
+.slot{min-width:56px;padding:0 8px;border-bottom:4px dashed #ffb36b;color:#ffb36b;text-align:center}
+.slot.whole{min-width:150px}
+.slot.hot{border-bottom-color:transparent;color:#fff3c4;text-shadow:0 0 16px #ffb300,0 0 6px #ff6a00;animation:pop .4s}
+.hammer{position:absolute;right:calc(50% - 150px);top:18px;font-size:3rem;transform-origin:80% 80%;transform:rotate(25deg);z-index:3}
+.hammer.strike{animation:strike .45s ease-in}
+@keyframes strike{40%{transform:rotate(-45deg) translate(-20px,30px)}100%{transform:rotate(25deg)}}
+.spark{position:absolute;left:50%;bottom:70px;width:5px;height:5px;border-radius:50%;background:#ffd36b;box-shadow:0 0 8px #ff9c40;animation:spark .8s ease-out forwards;z-index:4}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy));opacity:0}}
+.frame{font-family:'Special Elite',monospace;color:var(--ink);font-size:1.1rem}
+.blank{letter-spacing:2px}
+.vzchip{display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:4px 12px 4px 6px;border-radius:999px;background:var(--paper2);font-weight:800;color:var(--ink)}
+.opts.tiles{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+.opt.tile{background:linear-gradient(#e3e8ee,#aab4bf);border-color:#9aa4b0;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 4px 0 #66707c;font-family:'Baloo 2';font-size:1.45rem;color:#1d232b}
+.opt.tile small{font-family:'Nunito';font-size:.8rem;color:#3c444e}
+.opt.tile.right{background:linear-gradient(#d9f6e8,#9fdcbf);border-color:var(--ok)}
+.opt.tile.wrong{background:linear-gradient(#f6d9dc,#d9a3a9);border-color:var(--bad)}
+@media (max-width:560px){.anvil-word{font-size:1.9rem}.hammer{right:8px}}
 .tryagain{margin-top:12px;padding:11px 14px;border-radius:12px;background:#fff1f2;border:2px solid #f3b6bf;color:var(--ink);font-weight:800;animation:shake .35s}
 .tryagain.soft{background:#fff6dc;border-color:#f4cf7a;animation:none}
 .tryagain .actions{justify-content:flex-start;margin-top:10px}
@@ -603,7 +627,10 @@ const DISTRICTS = [
       {lv:1, name:'Vedené vyšetřování', sub:'krok za krokem, 2. pád ti napovíme', guided:true, showGen:true, count:8},
       {lv:2, name:'Samostatné vyšetřování', sub:'krok za krokem, 2. pád si řekneš sám', guided:true, showGen:false, count:8, full:true},
       {lv:3, name:'Rychlé usvědčení', sub:'rovnou vyber jeden ze 14 vzorů', guided:false, count:10, full:true}]},
-    {id:'kovarna', soon:true, ico:'🔨', name:'Kovárna koncovek', desc:'Ukovej správný tvar slova.'},
+    {id:'kovarna', type:'forge', ico:'🔨', name:'Kovárna koncovek', desc:'Ukovej správný tvar slova: přilož ke kmeni tu pravou koncovku – podle vzoru.', levels:[
+      {lv:1, name:'Podle vzoru', sub:'jednotné číslo, tvar vzoru ti ukážeme', nums:['sg'], vzorForm:true, opts:4, count:10},
+      {lv:2, name:'Obě čísla', sub:'jednotné i množné, víš jen vzor', nums:['sg','pl'], opts:6, count:10, full:true},
+      {lv:3, name:'Mistr kovář', sub:'celé tvary bez vzoru, pozor na i/y', nums:['sg','pl'], whole:true, opts:4, count:10, full:true}]},
     {id:'pripad', soon:true, ico:'📜', name:'Velký případ', desc:'Najdi podvržené koncovky v textu.'}
   ]},
   {id:'prid', ico:'🎨', name:'Náměstí přídavných jmen', desc:'Shoda s podstatným jménem, druhy.', soon:true},
@@ -620,6 +647,7 @@ const BADGES = [
   {id:'rody', ico:'🚪', name:'Znalec rodů', d:'3 hvězdy ve všech náročnostech Třídírny'},
   {id:'pady', ico:'💡', name:'Znalec pádů', d:'3 hvězdy ve všech náročnostech Výslechu'},
   {id:'vzory', ico:'🕵️', name:'Znalec vzorů', d:'3 hvězdy ve všech náročnostech Usvědčení'},
+  {id:'kovar', ico:'🔨', name:'Mistr kovář', d:'3 hvězdy ve všech náročnostech Kovárny'},
   {id:'album', ico:'📒', name:'Sběratel gangů', d:'Usvědči slovo z každého ze 14 gangů'},
   {id:'veteran', ico:'🎖️', name:'Veterán', d:'Získej 1000 bodů'}
 ];
@@ -934,8 +962,8 @@ function remember(item){
 }
 
 function next(){ game.i++; if(game.i>=game.items.length || game.lives<=0) finish(); else ROUND[game.m.type](); }
-const BUILD = {sort:L=>buildSort(L), ask:L=>buildAsk(L), convict:L=>buildConvict(L)};
-const ROUND = {sort:()=>sortRound(), ask:()=>askRound(), convict:()=>convictRound()};
+const BUILD = {sort:L=>buildSort(L), ask:L=>buildAsk(L), convict:L=>buildConvict(L), forge:L=>buildForge(L)};
+const ROUND = {sort:()=>sortRound(), ask:()=>askRound(), convict:()=>convictRound(), forge:()=>forgeRound()};
 
 /* ── Třídírna ── */
 function buildSort(L){
@@ -1294,6 +1322,157 @@ function convictAnswer(v,el){
   g.answered=true; save();
   $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
+
+/* ── Kovárna koncovek (tvary slov) ── */
+// Koncovky vzorů a slova s kmenem; tabulky byly zkontrolovány ručně (viz commit).
+const KEND={
+ 'pán':{s:['','a','ovi|u','a','e','ovi|u','em'],p:['i','ů','ům','y','i','ech','y']},
+ 'muž':{s:['','e','i|ovi','e','i','i|ovi','em'],p:['i','ů','ům','e','i','ích','i']},
+ 'předseda':{s:['a','y','ovi','u','o','ovi','ou'],p:['ové','ů','ům','y','ové','ech','y']},
+ 'soudce':{s:['e','e','i|ovi','e','e','i|ovi','em'],p:['i','ů','ům','e','i','ích','i']},
+ 'hrad':{s:['','u','u','','e','ě|u','em'],p:['y','ů','ům','y','y','ech','y']},
+ 'stroj':{s:['','e','i','','i','i','em'],p:['e','ů','ům','e','e','ích','i']},
+ 'žena':{s:['a','y','ě','u','o','ě','ou'],p:['y','','ám','y','y','ách','ami']},
+ 'růže':{s:['e','e','i','i','e','i','í'],p:['e','í','ím','e','e','ích','emi']},
+ 'píseň':{s:['','e','i','','i','i','í'],p:['e','í','ím','e','e','ích','emi']},
+ 'kost':{s:['','i','i','','i','i','í'],p:['i','í','em','i','i','ech','mi']},
+ 'město':{s:['o','a','u','o','o','ě|u','em'],p:['a','','ům','a','a','ech','y']},
+ 'moře':{s:['e','e','i','e','e','i','em'],p:['e','í','ím','e','e','ích','i']},
+ 'kuře':{s:['e','ete','eti','e','e','eti','etem'],p:['ata','at','atům','ata','ata','atech','aty']},
+ 'stavení':{s:['í','í','í','í','í','í','ím'],p:['í','í','ím','í','í','ích','ími']}
+};
+// slovo, vzor, kmen, přepisy (klíč s1..s7 / p1..p7)
+const KW=[
+ ['pán','pán','pán'],['student','pán','student'],['kamarád','pán','kamarád'],['medvěd','pán','medvěd'],
+ ['muž','muž','muž'],['lékař','muž','lékař'],['hasič','muž','hasič'],['rytíř','muž','rytíř'],
+ ['předseda','předseda','předsed'],['hrdina','předseda','hrdin'],
+ ['soudce','soudce','soudc'],['vůdce','soudce','vůdc'],['správce','soudce','správc'],
+ ['hrad','hrad','hrad'],['plot','hrad','plot'],['most','hrad','most'],
+ ['stroj','stroj','stroj'],['míč','stroj','míč'],['klíč','stroj','klíč'],['pokoj','stroj','pokoj'],
+ ['žena','žena','žen'],['ryba','žena','ryb'],['lampa','žena','lamp'],['sova','žena','sov'],['koruna','žena','korun'],['škola','žena','škol',{s3:'škole',s6:'škole'}],
+ ['růže','růže','růž'],['židle','růže','židl'],['lekce','růže','lekc'],
+ ['píseň','píseň',null,{full:'píseň,písně,písni,píseň,písni,písni,písní;písně,písní,písním,písně,písně,písních,písněmi'}],
+ ['dlaň','píseň',null,{full:'dlaň,dlaně,dlani,dlaň,dlani,dlani,dlaní;dlaně,dlaní,dlaním,dlaně,dlaně,dlaních,dlaněmi'}],
+ ['postel','píseň','postel'],['tramvaj','píseň','tramvaj'],
+ ['kost','kost','kost'],['věc','kost','věc'],['radost','kost','radost'],['řeč','kost','řeč'],
+ ['město','město','měst'],['slovo','město','slov',{s6:'slově|slovu'}],['kolo','město','kol',{s6:'kole'}],['auto','město','aut',{s6:'autě|autu'}],
+ ['moře','moře','moř'],['pole','moře','pol'],['srdce','moře','srdc'],
+ ['kuře','kuře','kuř'],['prase','kuře','pras'],['zvíře','kuře','zvíř'],
+ ['stavení','stavení','staven'],['nádraží','stavení','nádraž'],['náměstí','stavení','náměst']
+];
+function kForms(w){ const [word,vz,stem,ov={}]=w; if(ov.full){ const [a,b]=ov.full.split(';'); return {s:a.split(',').map(x=>[x]),p:b.split(',').map(x=>[x])}; }
+ const E=KEND[vz]; const mk=(arr,k)=>arr.map((e,i)=>(ov[k+(i+1)]||e.split('|').map(x=>stem+x).join('|')).split('|'));
+ const r={s:mk(E.s,'s'),p:mk(E.p,'p')}; r.s[0]=[word]; return r; }
+
+const KWORDS = KW.map(w=>({w:w[0], vzor:w[1], stem:w[2], f:kForms(w)}));
+const PAD_FRAME = {1:{sg:'To je',pl:'To jsou'},2:'bez',3:'díky',4:'vidím',5:'Hej,',6:'o',7:'s'};
+const CIS = {sg:'jednotné číslo', pl:'množné číslo'};
+function frameWord(p,c,w){ let f=PAD_FRAME[p]; if(typeof f==='object') f=f[c]; if(p===7 && /^[szšž]/i.test(w)) f='se'; return f; }
+function frameHTML(p,c,inner,w){ const f=frameWord(p,c,w); return p===5 ? `${f} ${inner}!` : `${f} ${inner}`; }
+const stripIY = t=>t.replace(/[iíyý]/g,'I');
+function buildForge(L){
+  const pool=KWORDS.filter(k=>L.whole||k.stem), out=[];
+  let tries=0, lastV=null;
+  while(out.length<L.count && tries++<400){
+    const vs=[...new Set(pool.map(k=>k.vzor))].filter(v=>v!==lastV);
+    const [v]=weightedPick(vs, v=>1+2*errRate('kovvzor',v), 1);
+    const c=L.nums[Math.random()*L.nums.length|0];
+    const pads=(c==='sg'?[2,3,4,5,6,7]:[1,2,3,4,5,6,7]);
+    const [pd]=weightedPick(pads, x=>1+2.5*errRate('kov',x), 1);
+    const cand=pool.filter(k=>k.vzor===v && !out.some(o=>o.k===k));
+    if(!cand.length) continue;
+    const k=cand[Math.random()*cand.length|0];
+    out.push({k, p:pd, c, w:k.w, form:k.w, forge:true}); lastV=v;
+  }
+  return out;
+}
+function forgeTargets(it){ return it.k.f[it.c==='sg'?'s':'p'][it.p-1]; }
+function vzorForm(v,p,c){ const k=KWORDS.find(x=>x.w===v); return k.f[c==='sg'?'s':'p'][p-1][0]; }
+function forgeOptions(it,L){
+  const T=forgeTargets(it), all=[...it.k.f.s.flat(),...it.k.f.p.flat()];
+  if(L.whole){
+    const wrong=[...new Set(all)].filter(x=>!T.includes(x));
+    const trap=T[0].replace(/[iyíý](?=[^iyíý]*$)/, ch=>({i:'y',y:'i','í':'ý','ý':'í'})[ch]);
+    const pick=shuffle(wrong).slice(0,L.opts-1-(trap!==T[0]&&!all.includes(trap)?1:0));
+    if(trap!==T[0] && !all.includes(trap)) pick.push(trap);
+    return shuffle([T[0],...pick]).map(x=>({v:x, html:esc(x)}));
+  }
+  const st=it.k.stem, ok=T[0].slice(st.length);
+  const ends=[...new Set(all.map(x=>x.slice(st.length)))].filter(e=>!T.includes(st+e));
+  return shuffle([ok,...shuffle(ends).slice(0,L.opts-1)]).map(e=>({v:e, html:e?'-'+esc(e):'<small>bez koncovky</small>'}));
+}
+function forgeRound(){
+  const g=game, it=g.items[g.i], L=g.L, k=it.k;
+  it.opts=it.opts||forgeOptions(it,L);
+  const pq = it.p===5 ? 'oslovujeme' : PAD[it.p].q;
+  const slot = L.whole ? '<span class="slot whole" id="slot">?</span>' : `<span class="ingot">${esc(k.stem)}</span><span class="slot" id="slot">?</span>`;
+  const vz = L.whole ? '' : `<span class="vzchip">${gangSVG(k.vzor).replace('<svg','<svg width="34" height="42"')}<span>vzor <b>${k.vzor}</b>${L.vzorForm?`: ${frameHTML(it.p,it.c,'<b>'+esc(vzorForm(k.vzor,it.p,it.c))+'</b>',k.vzor)}`:''}</span></span>`;
+  show(`${hudHTML('Zakázka')}
+    <div class="forge" id="forge"><div class="glow"></div>
+      <div class="hammer" id="hammer">🔨</div>
+      <div class="anvil-word">${slot}</div>
+      <svg class="anvil" viewBox="0 0 300 90" aria-hidden="true"><path d="M20 10h220c20 0 40 8 50 18-22 0-40 6-52 14l-8 8H90l-6-10C60 36 38 30 20 26z" fill="#4a4f59"/><path d="M95 50h125l14 26H80z" fill="#3a3e46"/><rect x="70" y="76" width="175" height="12" rx="3" fill="#2c2f36"/><path d="M20 10h220c20 0 40 8 50 18" stroke="#7a818d" stroke-width="3" fill="none"/></svg>
+    </div>
+    <div class="paper step">
+      <div class="stepnum">Zakázka: slovo <b>${esc(k.w)}</b></div>
+      <h3>Ukuj ${it.p}. pád · ${CIS[it.c]}</h3>
+      <p class="hint">${pq} → <span class="frame">${frameHTML(it.p,it.c,'<span class="blank">______</span>',k.w)}</span></p>
+      ${vz}
+      <div id="hintbox"></div>
+      <div class="opts ${L.whole?'':'tiles'}">${it.opts.map((o,i)=>`<button class="opt tile" data-act="fopt" data-v="${esc(o.v)}"><kbd>${i+1}</kbd>${o.html}</button>`).join('')}</div>
+      <div id="tryfb"></div><div id="fb"></div>
+    </div>`);
+  newItem(); newQuestion(()=>forgeHint(it));
+  g.answered=false;
+}
+function forgeHint(it){
+  const L=game.L, k=it.k, vf=vzorForm(k.vzor,it.p,it.c);
+  if(L.vzorForm){
+    const T=forgeTargets(it); let n=0;
+    document.querySelectorAll('.opt').forEach(b=>{ if(!b.disabled && !T.includes(k.stem+b.dataset.v) && n<2){ b.disabled=true; b.classList.add('wrong'); n++; } });
+    return `Dvě koncovky, které to určitě nejsou, jsem odebral. Porovnej konec tvaru <b>${esc(vf)}</b> se slovem <b>${esc(k.w)}</b>.`;
+  }
+  return `Slovo <b>${esc(k.w)}</b> se skloňuje podle vzoru <b>${k.vzor}</b>. Vzor má ve ${it.p}. pádě (${CIS[it.c]}): ${frameHTML(it.p,it.c,'<b>'+esc(vf)+'</b>',k.vzor)}.`;
+}
+function forgeAnswer(v,el){
+  const g=game; if(!g||g.answered) return;
+  const it=g.items[g.i], L=g.L, k=it.k, T=forgeTargets(it);
+  const made = L.whole ? v : k.stem+v, ok=T.includes(made);
+  const how = `<div class="steps"><span class="step">${esc(k.w)}</span><span class="arrow">→ vzor</span><span class="step">${k.vzor}: ${frameHTML(it.p,it.c,esc(vzorForm(k.vzor,it.p,it.c)),k.vzor)}</span><span class="arrow">→</span><span class="step" style="color:var(--ok)">${frameHTML(it.p,it.c,esc(T.join(' / ')),k.w)}</span></div>`;
+  if(ok){
+    g.answered=true; $('#tryfb').innerHTML='';
+    const f=!g.itemWrongs; stat('kov',it.p,true,f); stat('kovc',it.c,true,f); stat('kovvzor',k.vzor,true,f);
+    document.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===v) b.classList.add('right'); });
+    const slot=$('#slot'); slot.textContent=L.whole?made:v; slot.classList.add('hot');
+    const hm=$('#hammer'); hm.classList.remove('strike'); void hm.offsetWidth; hm.classList.add('strike');
+    sparks();
+    const pts=scoreSolved(L.whole?16:L.vzorForm?10:13);
+    const wk='k|'+k.w+'|'+it.p+'|'+it.c;
+    S.weak[wk]= g.itemWrongs ? (S.weak[wk]||0)+1 : Math.max(0,(S.weak[wk]||0)-1);
+    sfx.ok(g.streak); setTimeout(sfx.stamp,120); $('#score').textContent=g.score;
+    $('#fb').innerHTML=`<div class="explain good"><h3>Ukováno! +${pts}</h3>${how}<div class="actions"><button class="btn dark" data-act="next">Další zakázka →</button></div></div>`;
+    $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
+    save(); return;
+  }
+  if(el){ el.disabled=true; el.classList.add('wrong'); }
+  confuse(stripIY(made)===stripIY(T[0]) ? 'iy|kov' : `kov|${it.p}|${it.c}`);
+  const fg=$('#forge'); fg.classList.remove('shake'); void fg.offsetWidth; fg.classList.add('shake');
+  if(!wrongAttempt()){ $('#tryfb').scrollIntoView({behavior:'smooth',block:'nearest'}); save(); return; }
+  g.answered=true; stat('kov',it.p,false,false); stat('kovc',it.c,false,false); stat('kovvzor',k.vzor,false,false);
+  scoreFailed(it); const wk='k|'+k.w+'|'+it.p+'|'+it.c; S.weak[wk]=(S.weak[wk]||0)+1;
+  document.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; const mv=L.whole?b.dataset.v:k.stem+b.dataset.v; if(T.includes(mv)) b.classList.add('right'); });
+  $('#fb').innerHTML=`<div class="explain"><h3>Takhle se to kuje:</h3><p>Slovo <b>${esc(k.w)}</b> se skloňuje podle vzoru <b>${k.vzor}</b>. Vezmi koncovku vzoru a přilož ji ke kmeni:</p>${how}
+    <div class="actions"><button class="btn dark" data-act="next">Rozumím →</button></div></div>`;
+  $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
+  save();
+}
+function sparks(){
+  const f=$('#forge'); if(!f) return;
+  for(let i=0;i<18;i++){ const sp=document.createElement('i'); sp.className='spark';
+    sp.style.setProperty('--dx',(Math.random()*240-120)+'px'); sp.style.setProperty('--dy',(-40-Math.random()*110)+'px');
+    sp.style.animationDelay=(Math.random()*.08)+'s'; f.appendChild(sp); setTimeout(()=>sp.remove(),900); }
+}
+
 /* ── Konec případu ── */
 function finish(){
   const g=game; if(g.done) return; g.done=true;
@@ -1312,6 +1491,7 @@ function finish(){
   if(all3('tridirna')) give('rody');
   if(all3('vyslech')) give('pady');
   if(all3('usvedceni')) give('vzory');
+  if(all3('kovarna')) give('kovar');
   if(Object.keys(VZORY).every(v=>(S.album[v]||[]).length)) give('album');
   if(S.xp>=1000) give('veteran');
   save(); updateTop();
@@ -1328,7 +1508,7 @@ function finish(){
     </div>
     ${up?`<div class="rankup">🎉 Povýšení! Nová hodnost: ${rk.name}</div>`:''}
     ${earned.map(b=>`<span class="newbadge">${b.ico} ${b.name}</span>`).join('')}
-    ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.vz?` – vzor ${esc(it.noun.vzor)} (bez ${esc(it.noun.gen)})`:it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
+    ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.forge?` – ${it.p}. pád, ${CIS[it.c]}: ${esc(forgeTargets(it)[0])}`:it.vz?` – vzor ${esc(it.noun.vzor)} (bez ${esc(it.noun.gen)})`:it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
     <div class="actions">
       <button class="btn" data-act="play" data-d="${g.d.id}" data-m="${g.m.id}" data-lv="${g.L.lv}">↻ Znovu</button>
       <button class="btn dark" data-act="district" data-id="${g.d.id}">Zpět na ulici</button>
@@ -1467,6 +1647,8 @@ function confInfo(k){
   if(t==='krok') return {txt:`Usvědčení – krok „${({rod:'rod a životnost',end1:'koncovka v 1. pádě',gen:'koncovka ve 2. pádě'})[a]||a}“`,
     tip:({rod:'Řekněte si ten / ta / to a u mužského rodu, zda jde o živou bytost.',end1:'Ukažte si na poslední písmeno slova v základním tvaru (1. pád).',gen:'Říkejte nahlas „bez …“ a poslouchejte, jak slovo končí.'})[a]||''};
   if(t==='vzor') return {txt:`Plete si vzory ${a} a ${b}`, tip:vzTip(a,b)};
+  if(t==='iy') return {txt:'Píše i/y v koncovkách', tip:'Koncovky se řídí vzorem: tvrdé vzory (pán, hrad, žena, město) mají v množném čísle často -y (s pány, hrady), měkké (muž, stroj, růže, moře) -i/-e. Ať si dítě nahlas řekne tvar vzoru.'};
+  if(t==='kov') return {txt:`Tvoření tvaru: ${a}. pád, ${CIS[b]}`, tip:'Postup: urči vzor, řekni si tvar vzoru v daném pádě (např. s pány) a stejnou koncovku přidej ke kmeni slova (s kamarády).'};
   return {txt:k, tip:''};
 }
 function recommend(){
@@ -1476,6 +1658,7 @@ function recommend(){
   [['a','životné'],['i','neživotné']].forEach(([k,l])=>add('ziv',k,`mužský rod – ${l}`,'Třídírna','Těžká'));
   [1,2,3,4,5,6,7].forEach(p=>{ const c=pc((S.stats.pad||{})[p]); add('pad',p,`${p}. pád`,'Výslech', c.tot&&c.first/c.tot<.6?'Lehká':'Střední'); });
   Object.keys(VZORY).forEach(v=>add('vzor',v,`vzor ${v}`,'Usvědčení','Lehká'));
+  [1,2,3,4,5,6,7].forEach(p=>add('kov',p,`tvary ve ${p}. pádě`,'Kovárna',p===1?'Střední':'Lehká'));
   const weak=C.filter(x=>x.r<.85).sort((a,b)=>a.r-b.r);
   if(weak.length){
     const groups=[]; weak.forEach(w=>{ let gr=groups.find(x=>x.mission===w.mission); if(!gr) groups.push(gr={mission:w.mission, lv:w.lv, items:[]}); if(gr.items.length<3) gr.items.push(w); });
@@ -1500,6 +1683,7 @@ function parentDash(){
   const conf=Object.entries(S.conf||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
   const weakW=Object.entries(S.weak||{}).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([k])=>{
     if(k[0]==='v'&&/^v\d+$/.test(k)){ const s=SENTENCES[+k.slice(1)]; return s?`<span class="pchip" title="Výslech">${esc(s.t.replace(/[{}]/g,'').replace(/\[(.+?)\]/,'«$1»'))}</span>`:''; }
+    if(k.startsWith('k|')){ const [,w,p,c]=k.split('|'); return `<span class="pchip" title="Kovárna">${esc(w)} → ${p}. pád, ${c==='sg'?'j. č.':'mn. č.'}</span>`; }
     if(k[0]==='z'&&NOUNS.some(n=>'z'+n.sg===k)){ const n=NOUNS.find(n=>'z'+n.sg===k); return `<span class="pchip" title="Usvědčení">${esc(n.sg)} → vzor ${esc(n.vzor)}</span>`; }
     const n=NOUNS.find(n=>n.sg===k); return n?`<span class="pchip" title="Třídírna">${ROD[n.rod].ukaz} ${esc(n.sg)}</span>`:''; }).join('');
   const hist=(S.hist||[]).slice(0,10).map(h=>{ const d=new Date(h.t); return `<tr><td>${d.getDate()}. ${d.getMonth()+1}.</td><td>${esc(h.m)}</td><td>${DIFF[h.lv-1]}</td><td class="pst">${starsTxt(h.st)}</td><td>${h.acc} %</td><td>${h.n}</td></tr>`; }).join('');
@@ -1522,6 +1706,8 @@ function parentDash(){
       ${skillRow('jednotné číslo',(S.stats.cislo||{}).sg)}${skillRow('množné číslo',(S.stats.cislo||{}).pl)}
       ${skillRow('mužský životný',(S.stats.ziv||{}).a)}${skillRow('mužský neživotný',(S.stats.ziv||{}).i)}</div>
     <div class="pgroup"><h4>Pády <small>Výslech</small></h4>${[1,2,3,4,5,6,7].map(p=>skillRow(`${p}. pád (${PAD[p].q})`,(S.stats.pad||{})[p])).join('')}</div>
+    <div class="pgroup"><h4>Tvary slov <small>Kovárna</small></h4>${[1,2,3,4,5,6,7].map(p=>skillRow(`${p}. pád – tvoření tvaru`,(S.stats.kov||{})[p])).join('')}
+      ${skillRow('jednotné číslo',(S.stats.kovc||{}).sg)}${skillRow('množné číslo',(S.stats.kovc||{}).pl)}</div>
     <div class="pgroup"><h4>Vzory <small>Usvědčení</small></h4>${Object.keys(VZORY).map(v=>skillRow('vzor '+v,(S.stats.vzor||{})[v])).join('')}</div>
     <p class="pnote">Stav: <b>✓ zvládá</b> = aspoň 85 % napoprvé · <b>~ procvičuje</b> = 60–85 % · <b>! potřebuje pomoc</b> = pod 60 % · hodnotíme až od 3 pokusů.</p>
     <h3>Na co se zaměřit</h3>
@@ -1555,6 +1741,7 @@ document.addEventListener('click',e=>{
   else if(a==='lv'){ S.sel[b.dataset.m]=+b.dataset.lv; save(); const y=window.scrollY; district(b.dataset.d); window.scrollTo(0,y); }
   else if(a==='next') next();
   else if(a==='copt') convictAnswer(b.dataset.v,b);
+  else if(a==='fopt') forgeAnswer(b.dataset.v,b);
   else if(a==='tryagain') $('#tryfb').innerHTML='';
   else if(a==='wanthint'){ showHint(); $('#tryfb').innerHTML='<div class="tryagain soft">💡 Nápověda je nahoře. Zkus to znovu.</div>'; }
   else if(a==='cstep'){ game.si++; convictStep(); }
@@ -1581,6 +1768,7 @@ document.addEventListener('keydown',e=>{
   if(game.m.type==='sort' && !game.answered && n>=1){
     const btn=document.querySelectorAll('.door')[n-1]; if(btn) btn.click();
   } else if(game.m.type==='ask' && !game.answered && n>=1 && n<=7){ const c=document.querySelector(`.qcard[data-p="${n}"]`); if(c&&!c.disabled) askPick(n); }
+  else if(game.m.type==='forge' && !game.answered && n>=1){ const o=document.querySelectorAll('.opt')[n-1]; if(o) o.click(); }
   else if(game.m.type==='convict' && !game.stepAnswered && n>=1){ const o=document.querySelectorAll('.opt')[n-1]; if(o) o.click(); }
   else if(e.key==='Enter'){
     const nb=$('[data-act="next"]')||$('[data-act="cstep"]'); if(nb){ e.preventDefault(); nb.click(); }
