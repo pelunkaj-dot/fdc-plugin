@@ -632,8 +632,6 @@ function updateTop(){
 }
 function locked(district, mission, L){
   if(L.full && DEMO) return 'jen v plné verzi';
-  const prev=mission.levels.find(x=>x.lv===L.lv-1);
-  if(prev && !S.stars[`${mission.id}${prev.lv}`]) return `nejdřív ${prev.name}`;
   return '';
 }
 
@@ -678,7 +676,7 @@ function district(id){
         ${m.soon?'<span class="soonchip">připravujeme</span>':`<div class="levels">${m.levels.map(L=>{
           const lk=locked(d,m,L), st=S.stars[m.id+L.lv]||0;
           return `<button class="lvbtn" ${lk?'disabled':''} data-act="play" data-d="${d.id}" data-m="${m.id}" data-lv="${L.lv}">
-            <span>Úroveň ${L.lv}: ${L.name}</span><small>${lk?'🔒 '+lk:L.sub}</small><span class="stars">${starsTxt(st)}</span></button>`;
+            <span>Úroveň ${L.lv}: ${L.name}</span><small>${lk?'🔒 '+lk:L.sub}${!lk&&L.lv>1&&!S.stars[m.id+(L.lv-1)]?' · doporučujeme začít úrovní '+(L.lv-1):''}</small><span class="stars">${starsTxt(st)}</span></button>`;
         }).join('')}</div>`}
         </div></div>`).join('')}
     </div>`);
