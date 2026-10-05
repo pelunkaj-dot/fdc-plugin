@@ -402,6 +402,56 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   font-size:.82rem;font-weight:600;cursor:pointer;
   transition:opacity .13s;white-space:nowrap}
 .btn-ask-no:hover{opacity:.7}
+
+/* RODIČOVSKÁ SEKCE */
+.parent-btn{background:var(--surface2);border:1.5px solid var(--border);border-radius:18px;
+  padding:6px 11px;color:var(--text);font-family:'Outfit',sans-serif;font-size:.78rem;
+  font-weight:700;cursor:pointer;white-space:nowrap;transition:border-color .13s,background .28s}
+.parent-btn:hover{border-color:var(--active)}
+.parent-modal{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.58);
+  display:none;align-items:center;justify-content:center;padding:18px}
+.parent-modal.show{display:flex}
+.parent-box{width:min(780px,100%);max-height:88svh;overflow:auto;background:var(--surface);
+  border:1px solid var(--border);border-radius:20px;box-shadow:0 22px 80px rgba(0,0,0,.28);
+  padding:20px;transition:background .28s}
+.parent-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.parent-head h2{font-size:1.35rem;margin:0}
+.parent-close{background:none;border:none;color:var(--text2);font-size:1.5rem;cursor:pointer;padding:3px 7px}
+.parent-gate{display:grid;gap:12px;max-width:430px;margin:8px auto}
+.parent-gate p{color:var(--text2);font-size:.88rem;line-height:1.5}
+.parent-gate label{display:grid;gap:5px;font-size:.82rem;font-weight:700}
+.parent-gate input{width:100%;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);
+  color:var(--text);padding:11px 12px;outline:none}
+.parent-gate input:focus{border-color:var(--active)}
+.parent-error{min-height:1.2em;color:var(--wrong);font-size:.78rem;font-weight:700}
+.parent-note{color:var(--text3);font-size:.72rem;line-height:1.45}
+.parent-action{border:none;border-radius:10px;padding:10px 14px;font-family:'Outfit',sans-serif;
+  font-weight:700;cursor:pointer}
+.parent-action.primary{background:var(--active);color:var(--on-active)}
+.parent-action.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.parent-action.danger{background:var(--wrong-bg);color:var(--wrong);border:1px solid var(--wrong)}
+.parent-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.parent-stat{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:11px;text-align:center}
+.parent-stat strong{display:block;font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--active)}
+.parent-stat span{font-size:.7rem;color:var(--text2)}
+.parent-cat{border:1px solid var(--border);border-radius:12px;padding:12px;margin:9px 0}
+.parent-cat-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}
+.parent-cat-head strong{font-size:.9rem}
+.parent-cat-head span{font-size:.74rem;color:var(--text2)}
+.parent-topic-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:6px 0;border-top:1px solid var(--border)}
+.parent-topic-row:first-of-type{border-top:none}
+.parent-topic-name{font-size:.78rem;color:var(--text2)}
+.parent-topic-stars{font-family:'Space Mono',monospace;font-size:.76rem;color:var(--c-l);white-space:nowrap}
+.parent-info{background:var(--surface2);border-radius:12px;padding:12px;color:var(--text2);
+  font-size:.78rem;line-height:1.55;margin-top:12px}
+.parent-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px}
+.parent-actions-left{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:560px){
+  .parent-summary{grid-template-columns:1fr}
+  .parent-actions,.parent-actions-left{flex-direction:column}
+  .parent-action{width:100%}
+}
+
 </style>
 </head>
 <body>
@@ -414,6 +464,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   <div class="app-header">
     <div class="app-logo">FajnJednotky</div>
     <div class="hdr-right">
+      <button class="parent-btn" id="parent-open-btn" type="button">Pro rodiče</button>
       <div class="badge"><span class="badge-fire">🔥</span><span id="hdr-streak">0</span></div>
       <div class="badge"><span class="badge-xp">⚡</span><span id="hdr-xp">0</span></div>
       <button class="theme-btn" onclick="cycleTheme()" title="Přepnout téma">☀️</button>
@@ -501,6 +552,34 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     <button class="help-close" onclick="closeHelp()">✕</button>
   </div>
   <div id="help-panel-body"></div>
+</div>
+
+
+<!-- ═══ PRO RODIČE ═══ -->
+<div class="parent-modal" id="parent-modal" aria-hidden="true">
+  <div class="parent-box" role="dialog" aria-modal="true" aria-labelledby="parent-title">
+    <div class="parent-head">
+      <h2 id="parent-title">Pro rodiče</h2>
+      <button class="parent-close" id="parent-close-btn" type="button" aria-label="Zavřít">×</button>
+    </div>
+    <div id="parent-gate"></div>
+    <div id="parent-dashboard" hidden>
+      <div class="parent-summary" id="parent-summary"></div>
+      <div id="parent-progress"></div>
+      <div class="parent-info">
+        <strong>Jak přehled číst:</strong> hvězdy ukazují nejlepší dosažený výsledek v jednotlivých tématech.
+        Modul průběžně vrací chybně řešené úlohy, takže dítě dostává další příležitost převod pochopit a opravit.
+        Údaje se ukládají pouze v tomto prohlížeči na tomto zařízení.
+      </div>
+      <div class="parent-actions">
+        <div class="parent-actions-left">
+          <button class="parent-action danger" id="parent-reset-btn" type="button">Vymazat pokrok</button>
+          <button class="parent-action secondary" id="parent-password-btn" type="button">Změnit heslo</button>
+        </div>
+        <button class="parent-action primary" id="parent-done-btn" type="button">Hotovo</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1399,7 +1478,7 @@ const CATS = {
 // ══════════════════════════════════════════════════
 // STAV A PERSISTENCE
 // ══════════════════════════════════════════════════
-let ST = { xp:0, streak:0, progress:{} };
+let ST = { xp:0, streak:0, progress:{}, parentAuth:{salt:'',hash:''} };
 function loadST() {
   try {
     const s=localStorage.getItem('fajnjednotky_v2');
@@ -1415,6 +1494,156 @@ function setStars(cid,tid,stars) {
   const cur = ST.progress[cid][tid]?.stars ?? 0;
   ST.progress[cid][tid] = { stars:Math.max(cur,stars) };
   saveST();
+}
+
+
+// ══════════════════════════════════════════════════
+// PRO RODIČE — heslo a přehled pokroku
+// ══════════════════════════════════════════════════
+let parentUnlocked = false;
+const parentEncoder = new TextEncoder();
+
+async function hashParentText(text) {
+  const data = await crypto.subtle.digest('SHA-256', parentEncoder.encode(text));
+  return [...new Uint8Array(data)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function randomParentSalt() {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return [...bytes].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function hasParentPassword() {
+  return !!(ST.parentAuth && ST.parentAuth.salt && ST.parentAuth.hash);
+}
+async function setParentPassword(password) {
+  const salt = randomParentSalt();
+  ST.parentAuth = { salt, hash: await hashParentText(salt + password) };
+  saveST();
+}
+async function verifyParentPassword(password) {
+  if(!hasParentPassword()) return false;
+  return (await hashParentText(ST.parentAuth.salt + password)) === ST.parentAuth.hash;
+}
+function openParent() {
+  const modal=document.getElementById('parent-modal');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  renderParentAccess();
+}
+function closeParent() {
+  const modal=document.getElementById('parent-modal');
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden','true');
+}
+function renderParentAccess() {
+  const gate=document.getElementById('parent-gate');
+  const dash=document.getElementById('parent-dashboard');
+  if(parentUnlocked) {
+    gate.innerHTML='';
+    dash.hidden=false;
+    renderParentDashboard();
+    return;
+  }
+  dash.hidden=true;
+  if(!hasParentPassword()) {
+    gate.innerHTML=`
+      <form class="parent-gate" id="parent-setup-form">
+        <p>Rodičovský přehled je chráněný heslem. Při prvním otevření si nastav vlastní heslo alespoň o 4 znacích.</p>
+        <label>Heslo<input name="a" type="password" minlength="4" required autocomplete="new-password"></label>
+        <label>Heslo znovu<input name="b" type="password" minlength="4" required autocomplete="new-password"></label>
+        <div class="parent-error" aria-live="polite"></div>
+        <button class="parent-action primary" type="submit">Nastavit heslo</button>
+        <div class="parent-note">Heslo není nikam odesíláno. V zařízení se ukládá pouze jeho jednosměrně zpracovaná podoba.</div>
+      </form>`;
+    const form=document.getElementById('parent-setup-form');
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();
+      if(form.a.value!==form.b.value){
+        form.querySelector('.parent-error').textContent='Hesla se neshodují.';
+        return;
+      }
+      await setParentPassword(form.a.value);
+      parentUnlocked=true;
+      renderParentAccess();
+    });
+    form.a.focus();
+    return;
+  }
+  gate.innerHTML=`
+    <form class="parent-gate" id="parent-login-form">
+      <p>Zadej rodičovské heslo.</p>
+      <label>Heslo<input name="password" type="password" required autocomplete="current-password"></label>
+      <div class="parent-error" aria-live="polite"></div>
+      <button class="parent-action primary" type="submit">Otevřít přehled</button>
+      <button class="parent-action secondary" type="button" id="parent-forgot-btn">Zapomněl(a) jsem heslo</button>
+      <div class="parent-note">Obnovení hesla nesmaže výsledky dítěte.</div>
+    </form>`;
+  const form=document.getElementById('parent-login-form');
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    if(await verifyParentPassword(form.password.value)){
+      parentUnlocked=true;
+      renderParentAccess();
+    } else {
+      form.querySelector('.parent-error').textContent='Heslo nesouhlasí.';
+      form.password.select();
+    }
+  });
+  document.getElementById('parent-forgot-btn').addEventListener('click', resetParentPassword);
+  form.password.focus();
+}
+function resetParentPassword() {
+  ST.parentAuth={salt:'',hash:''};
+  parentUnlocked=false;
+  saveST();
+  renderParentAccess();
+}
+function renderParentDashboard() {
+  let earned=0,max=0,started=0;
+  Object.entries(CATS).forEach(([cid,cat])=>{
+    cat.topics.forEach((_,i)=>{
+      const s=getStars(cid,i);
+      earned+=s; max+=3; if(s>0) started++;
+    });
+  });
+  document.getElementById('parent-summary').innerHTML=`
+    <div class="parent-stat"><strong>${ST.xp}</strong><span>XP celkem</span></div>
+    <div class="parent-stat"><strong>${earned}/${max}</strong><span>hvězd</span></div>
+    <div class="parent-stat"><strong>${started}</strong><span>procvičených témat</span></div>`;
+
+  const out=[];
+  Object.entries(CATS).forEach(([cid,cat])=>{
+    let catStars=0;
+    const rows=cat.topics.map((topic,i)=>{
+      const s=getStars(cid,i); catStars+=s;
+      const stars=s>0 ? '★'.repeat(s)+'☆'.repeat(3-s) : '—';
+      return `<div class="parent-topic-row"><div class="parent-topic-name">${topic.name}</div><div class="parent-topic-stars">${stars}</div></div>`;
+    }).join('');
+    out.push(`<section class="parent-cat">
+      <div class="parent-cat-head"><strong>${cat.name}</strong><span>${catStars}/${cat.topics.length*3} hvězd</span></div>
+      ${rows}
+    </section>`);
+  });
+  document.getElementById('parent-progress').innerHTML=out.join('');
+}
+function resetParentProgress() {
+  if(!confirm('Opravdu chceš vymazat celý uložený pokrok dítěte? Rodičovské heslo zůstane zachováno.')) return;
+  const auth=ST.parentAuth || {salt:'',hash:''};
+  ST={xp:0,streak:0,progress:{},parentAuth:auth};
+  saveST();
+  renderHome();
+  renderParentDashboard();
+  document.getElementById('hdr-xp').textContent=ST.xp;
+  document.getElementById('hdr-streak').textContent=ST.streak;
+}
+function bindParentControls() {
+  document.getElementById('parent-open-btn')?.addEventListener('click',openParent);
+  document.getElementById('parent-close-btn')?.addEventListener('click',closeParent);
+  document.getElementById('parent-done-btn')?.addEventListener('click',closeParent);
+  document.getElementById('parent-password-btn')?.addEventListener('click',resetParentPassword);
+  document.getElementById('parent-reset-btn')?.addEventListener('click',resetParentProgress);
+  document.getElementById('parent-modal')?.addEventListener('click',e=>{if(e.target.id==='parent-modal') closeParent();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape') closeParent();});
 }
 
 // ══════════════════════════════════════════════════
@@ -2106,6 +2335,7 @@ loadST();
 initTheme();
 initChaos();
 renderHome();
+bindParentControls();
 
 </script>
 </body>
