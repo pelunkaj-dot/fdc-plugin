@@ -123,6 +123,46 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .seg[disabled]{opacity:.5;cursor:not-allowed}
 .mission .lvdesc{margin:10px 0 12px;color:var(--ink)}
 .demo-note{display:block;margin-top:10px;color:var(--ink2);font-weight:700}
+.board{position:relative;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;padding:18px;border-radius:var(--radius);min-height:190px;
+  background:#c4925a radial-gradient(rgba(0,0,0,.10) 1px,transparent 1.6px) 0 0/9px 9px;
+  box-shadow:inset 0 0 0 9px #8a5a2e,inset 0 0 30px rgba(0,0,0,.35),0 10px 24px rgba(0,0,0,.3)}
+.polaroid{position:relative;flex:0 0 auto;background:#fff;padding:8px 8px 10px;transform:rotate(-3deg);box-shadow:0 6px 12px rgba(0,0,0,.35);text-align:center;color:var(--ink)}
+.polaroid svg{width:96px;height:118px;background:#dfe5ee;display:block}
+.polaroid b{display:block;margin-top:4px;font-family:'Special Elite',monospace;font-size:1.25rem}
+.pin{position:absolute;top:-7px;left:50%;width:14px;height:14px;border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 35%,#ff9a9a,#c1121f);box-shadow:0 2px 3px rgba(0,0,0,.4);z-index:2}
+.notes{flex:1;min-width:180px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.note{position:relative;background:#fff8c4;color:var(--ink);padding:10px 12px 8px;min-width:104px;font-weight:900;box-shadow:0 4px 8px rgba(0,0,0,.3);animation:noteIn .35s both}
+.note::before{content:"";position:absolute;top:-5px;left:50%;width:10px;height:10px;border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 35%,#9ad0ff,#1d63c9)}
+.note small{display:block;font-size:.7rem;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.4px}
+.note:nth-child(odd){rotate:2deg}.note:nth-child(even){rotate:-2deg}
+.note.bad{background:#ffd9d9}.note.gang{background:#2a2118;color:#ffd166}.note.gang small{color:#cdbb9a}
+.note.empty{opacity:.55;font-weight:700}
+@keyframes noteIn{from{opacity:0;transform:scale(1.5)}}
+.step{margin-top:14px}
+.step h3{color:var(--ink);font-size:1.3rem;margin:2px 0 4px}
+.stepnum{font-family:'Special Elite',monospace;color:var(--ink2);font-size:.85rem}
+.step .hint{margin:0;color:var(--ink2);font-weight:700}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px}
+.opt{position:relative;background:#fff;color:var(--ink);border:2px solid var(--paper2);border-radius:12px;padding:12px 8px;font-weight:900;font-size:1.1rem;box-shadow:0 4px 0 #cbb88f;transition:transform .1s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.opt:hover:not([disabled]){transform:translateY(-2px)}
+.opt small{font-size:.76rem;font-weight:700;color:var(--ink2)}
+.opt kbd{position:absolute;left:6px;top:4px;font-size:.65rem;opacity:.5;font-family:inherit}
+.opt.rod.M{border-top:6px solid var(--m)}.opt.rod.F{border-top:6px solid var(--f)}.opt.rod.N{border-top:6px solid var(--n)}
+.opt.right{border-color:var(--ok);background:#e6f8ef}.opt.wrong{border-color:var(--bad);background:#fde8ea}
+.opts.gangs{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+.opt.gangopt{padding:8px 4px 8px;font-size:1rem}
+.mini svg{width:52px;height:64px;display:block}
+.ghead{margin-top:12px;font-weight:900;color:var(--ink2);font-size:.85rem;text-transform:uppercase;letter-spacing:.4px}
+.reveal{display:flex;gap:12px;align-items:center;margin-top:8px}
+.reveal .mini svg{width:72px;height:90px}
+.reveal p{margin:8px 0 0}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:10px}
+.gang{background:#fff;border-radius:12px;padding:8px 6px;text-align:center;border-top:5px solid;color:var(--ink)}
+.gang svg{width:58px;height:72px}
+.gang b{display:block}
+.gang small{display:block;color:var(--ink2);font-weight:700;font-size:.75rem}
+.gang .words{display:block;font-size:.72rem;color:var(--ink2);margin-top:2px}
+.gang.off svg{filter:grayscale(1);opacity:.35}
 .qcard.big{padding:14px 8px}
 .qcard.big .n{font-size:2.2rem}
 .soonchip{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--paper2);color:var(--ink2);font-weight:800;font-size:.8rem}
@@ -322,108 +362,115 @@ const ROD = {
   N:{ukaz:'to',  name:'střední', color:'var(--n)'}
 };
 // slovo | množné číslo (= stejný tvar, prázdné = nemá) | rod (+a = životný)
-const NOUNS = `hrad|hrady|M
-strom|stromy|M
-stůl|stoly|M
-dům|domy|M
-míč|míče|M
-klíč|klíče|M
-nůž|nože|M
-koš|koše|M
-deštník|deštníky|M
-vlak|vlaky|M
-autobus|autobusy|M
-obchod|obchody|M
-sešit|sešity|M
-batoh|batohy|M
-hrnek|hrnky|M
-talíř|talíře|M
-počítač|počítače|M
-rohlík|rohlíky|M
-dort|dorty|M
-les|lesy|M
-kopec|kopce|M
-zámek|zámky|M
+const NOUNS = `hrad|hrady|M|hrad|hradu
+strom|stromy|M|hrad|stromu
+stůl|stoly|M|hrad|stolu
+dům|domy|M|hrad|domu
+míč|míče|M|stroj|míče
+klíč|klíče|M|stroj|klíče
+nůž|nože|M|stroj|nože
+koš|koše|M|stroj|koše
+deštník|deštníky|M|hrad|deštníku
+vlak|vlaky|M|hrad|vlaku
+autobus|autobusy|M|hrad|autobusu
+obchod|obchody|M|hrad|obchodu
+sešit|sešity|M|hrad|sešitu
+batoh|batohy|M|hrad|batohu
+hrnek|hrnky|M|hrad|hrnku
+talíř|talíře|M|stroj|talíře
+počítač|počítače|M|stroj|počítače
+rohlík|rohlíky|M|hrad|rohlíku
+dort|dorty|M|hrad|dortu
+les|lesy|M|hrad|lesa
+kopec|kopce|M|stroj|kopce
+zámek|zámky|M|hrad|zámku
 kámen|kameny|M
-pokoj|pokoje|M
-sýr|sýry|M
-plot|ploty|M
-telefon|telefony|M
-polštář|polštáře|M
-pes|psi|Ma
-kocour|kocouři|Ma
-král|králové|Ma
-rytíř|rytíři|Ma
-kluk|kluci|Ma
-děda|dědové|Ma
-tatínek|tatínkové|Ma
-učitel|učitelé|Ma
-lékař|lékaři|Ma
-hasič|hasiči|Ma
-medvěd|medvědi|Ma
-vlk|vlci|Ma
-zajíc|zajíci|Ma
-kůň|koně|Ma
-ježek|ježci|Ma
-soudce|soudci|Ma
-motýl|motýli|Ma
-papoušek|papoušci|Ma
-žena|ženy|F
-kniha|knihy|F
-škola|školy|F
-ryba|ryby|F
-lampa|lampy|F
-tužka|tužky|F
-taška|tašky|F
-hruška|hrušky|F
-jahoda|jahody|F
-kočka|kočky|F
-myš|myši|F
-sova|sovy|F
-liška|lišky|F
-maminka|maminky|F
-babička|babičky|F
-růže|=|F
-židle|=|F
-ulice|=|F
-píseň|písně|F
-dlaň|dlaně|F
-kost|kosti|F
-noc|noci|F
-věc|věci|F
-řeka|řeky|F
-hvězda|hvězdy|F
-koruna|koruny|F
-pohádka|pohádky|F
-postel|postele|F
-mrkev||F
-město|města|N
-okno|okna|N
-auto|auta|N
-kolo|kola|N
-jablko|jablka|N
-slovo|slova|N
-pero|pera|N
-mléko||N
-moře|=|N
-pole|=|N
-srdce|=|N
-vejce|=|N
-kuře|kuřata|N
-kotě|koťata|N
-štěně|štěňata|N
-prase|prasata|N
-zvíře|zvířata|N
-nádraží|=|N
-náměstí|=|N
-letadlo|letadla|N
-divadlo|divadla|N
-kino|kina|N
-zrcadlo|zrcadla|N
-hnízdo|hnízda|N
-vajíčko|vajíčka|N`.split('\n').map(l=>{
-  const [sg,pl,g]=l.split('|');
-  return {sg, pl: pl==='=' ? sg : (pl||null), same: pl==='=', rod:g[0], ziv:g[1]==='a'};
+pokoj|pokoje|M|stroj|pokoje
+sýr|sýry|M|hrad|sýra
+plot|ploty|M|hrad|plotu
+telefon|telefony|M|hrad|telefonu
+polštář|polštáře|M|stroj|polštáře
+pes|psi|Ma|pán|psa
+kocour|kocouři|Ma|pán|kocoura
+král|králové|Ma|muž|krále
+rytíř|rytíři|Ma|muž|rytíře
+kluk|kluci|Ma|pán|kluka
+děda|dědové|Ma|předseda|dědy
+tatínek|tatínkové|Ma|pán|tatínka
+učitel|učitelé|Ma|muž|učitele
+lékař|lékaři|Ma|muž|lékaře
+hasič|hasiči|Ma|muž|hasiče
+medvěd|medvědi|Ma|pán|medvěda
+vlk|vlci|Ma|pán|vlka
+zajíc|zajíci|Ma|muž|zajíce
+kůň|koně|Ma|muž|koně
+ježek|ježci|Ma|pán|ježka
+soudce|soudci|Ma|soudce|soudce
+motýl|motýli|Ma|pán|motýla
+papoušek|papoušci|Ma|pán|papouška
+žena|ženy|F|žena|ženy
+kniha|knihy|F|žena|knihy
+škola|školy|F|žena|školy
+ryba|ryby|F|žena|ryby
+lampa|lampy|F|žena|lampy
+tužka|tužky|F|žena|tužky
+taška|tašky|F|žena|tašky
+hruška|hrušky|F|žena|hrušky
+jahoda|jahody|F|žena|jahody
+kočka|kočky|F|žena|kočky
+myš|myši|F|kost|myši
+sova|sovy|F|žena|sovy
+liška|lišky|F|žena|lišky
+maminka|maminky|F|žena|maminky
+babička|babičky|F|žena|babičky
+růže|=|F|růže|růže
+židle|=|F|růže|židle
+ulice|=|F|růže|ulice
+píseň|písně|F|píseň|písně
+dlaň|dlaně|F|píseň|dlaně
+kost|kosti|F|kost|kosti
+noc|noci|F|kost|noci
+věc|věci|F|kost|věci
+řeka|řeky|F|žena|řeky
+hvězda|hvězdy|F|žena|hvězdy
+koruna|koruny|F|žena|koruny
+pohádka|pohádky|F|žena|pohádky
+postel|postele|F|píseň|postele
+mrkev||F|píseň|mrkve
+město|města|N|město|města
+okno|okna|N|město|okna
+auto|auta|N|město|auta
+kolo|kola|N|město|kola
+jablko|jablka|N|město|jablka
+slovo|slova|N|město|slova
+pero|pera|N|město|pera
+mléko||N|město|mléka
+moře|=|N|moře|moře
+pole|=|N|moře|pole
+srdce|=|N|moře|srdce
+vejce|=|N|moře|vejce
+kuře|kuřata|N|kuře|kuřete
+kotě|koťata|N|kuře|kotěte
+štěně|štěňata|N|kuře|štěněte
+prase|prasata|N|kuře|prasete
+zvíře|zvířata|N|kuře|zvířete
+nádraží|=|N|stavení|nádraží
+náměstí|=|N|stavení|náměstí
+letadlo|letadla|N|město|letadla
+divadlo|divadla|N|město|divadla
+kino|kina|N|město|kina
+zrcadlo|zrcadla|N|město|zrcadla
+hnízdo|hnízda|N|město|hnízda
+vajíčko|vajíčka|N|město|vajíčka
+předseda|předsedové|Ma|předseda|předsedy
+hrdina|hrdinové|Ma|předseda|hrdiny
+vůdce|vůdci|Ma|soudce|vůdce
+správce|správci|Ma|soudce|správce
+báseň|básně|F|píseň|básně
+tramvaj|tramvaje|F|píseň|tramvaje
+řeč|řeči|F|kost|řeči`.split('\n').map(l=>{
+  const [sg,pl,g,vzor,gen]=l.split('|');
+  return {sg, pl: pl==='=' ? sg : (pl||null), same: pl==='=', rod:g[0], ziv:g[1]==='a', vzor:vzor||null, gen:gen||null};
 });
 
 const PAD = {
@@ -474,7 +521,10 @@ const DISTRICTS = [
       {lv:1, name:'Předložka napoví', sub:'pády se stopami', maxL:1, clue:true, count:8},
       {lv:2, name:'Bez nápovědy', sub:'všechny pády, otázky na kartách', maxL:2, clue:false, count:8, full:true},
       {lv:3, name:'Jen čísla pádů', sub:'bez otázek, lupy i stop – otázky znáš zpaměti', maxL:2, clue:false, numbersOnly:true, count:10, full:true}]},
-    {id:'usvedceni', soon:true, ico:'🕵️', name:'Usvědčení', desc:'Rod → koncovka → vzor. Odhal, do kterého gangu slovo patří.'},
+    {id:'usvedceni', type:'convict', ico:'🕵️', name:'Usvědčení', desc:'Rod → koncovka → 2. pád → vzor. Odhal, do kterého gangu slovo patří.', levels:[
+      {lv:1, name:'Vedené vyšetřování', sub:'krok za krokem, 2. pád ti napovíme', guided:true, showGen:true, count:8},
+      {lv:2, name:'Samostatné vyšetřování', sub:'krok za krokem, 2. pád si řekneš sám', guided:true, showGen:false, count:8, full:true},
+      {lv:3, name:'Rychlé usvědčení', sub:'rovnou vyber jeden ze 14 vzorů', guided:false, count:10, full:true}]},
     {id:'kovarna', soon:true, ico:'🔨', name:'Kovárna koncovek', desc:'Ukovej správný tvar slova.'},
     {id:'pripad', soon:true, ico:'📜', name:'Velký případ', desc:'Najdi podvržené koncovky v textu.'}
   ]},
@@ -491,6 +541,8 @@ const BADGES = [
   {id:'streak10', ico:'🔥', name:'Neomylný', d:'10 správně v řadě'},
   {id:'rody', ico:'🚪', name:'Znalec rodů', d:'3 hvězdy ve všech náročnostech Třídírny'},
   {id:'pady', ico:'💡', name:'Znalec pádů', d:'3 hvězdy ve všech náročnostech Výslechu'},
+  {id:'vzory', ico:'🕵️', name:'Znalec vzorů', d:'3 hvězdy ve všech náročnostech Usvědčení'},
+  {id:'album', ico:'📒', name:'Sběratel gangů', d:'Usvědči slovo z každého ze 14 gangů'},
   {id:'veteran', ico:'🎖️', name:'Veterán', d:'Získej 1000 bodů'}
 ];
 
@@ -508,7 +560,7 @@ function initTheme(){ let t='dark'; try{ t=localStorage.getItem(THEME_KEY)||'dar
 
 /* ══════════════ STAV ══════════════ */
 const KEY = 'fdc-detektiv-v1';
-const S = Object.assign({xp:0, stars:{}, stats:{rod:{},cislo:{},pad:{},ziv:{}}, weak:{}, sel:{}, badges:[], sound:true, intro:false}, load());
+const S = Object.assign({xp:0, stars:{}, stats:{rod:{},cislo:{},pad:{},ziv:{}}, weak:{}, sel:{}, album:{}, badges:[], sound:true, intro:false}, load());
 function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function stat(cat,k,ok){ S.stats[cat]=S.stats[cat]||{}; const a=S.stats[cat][k]||(S.stats[cat][k]=[0,0]); a[1]++; if(ok)a[0]++; }
@@ -740,8 +792,8 @@ function district(id){
 function startGame(dId,mId,lv){
   const d=DISTRICTS.find(x=>x.id===dId), m=d.missions.find(x=>x.id===mId), L=m.levels.find(x=>x.lv==lv);
   game={d,m,L,i:0,score:0,streak:0,best:0,ok:0,tot:0,lives:L.lives||3,mist:[],done:false};
-  game.items = m.type==='sort' ? buildSort(L) : buildAsk(L);
-  (m.type==='sort'?sortRound:askRound)();
+  game.items = BUILD[m.type](L);
+  ROUND[m.type]();
 }
 function hudHTML(label){
   const g=game;
@@ -770,7 +822,9 @@ function scoreMiss(item){
     const copy={...item,retry:true}; g.items.splice(Math.min(g.i+3,g.items.length),0,copy);
   }
 }
-function next(){ game.i++; if(game.i>=game.items.length || game.lives<=0) finish(); else (game.m.type==='sort'?sortRound:askRound)(); }
+function next(){ game.i++; if(game.i>=game.items.length || game.lives<=0) finish(); else ROUND[game.m.type](); }
+const BUILD = {sort:L=>buildSort(L), ask:L=>buildAsk(L), convict:L=>buildConvict(L)};
+const ROUND = {sort:()=>sortRound(), ask:()=>askRound(), convict:()=>convictRound()};
 
 /* ── Třídírna ── */
 function buildSort(L){
@@ -932,6 +986,142 @@ function askAccuse(){
   save();
 }
 
+
+/* ── Usvědčení (vzory) ── */
+const VZORY = {
+  'pán':{rod:'Ma',gen:'pána'}, 'muž':{rod:'Ma',gen:'muže'}, 'předseda':{rod:'Ma',gen:'předsedy'}, 'soudce':{rod:'Ma',gen:'soudce'},
+  'hrad':{rod:'Mi',gen:'hradu'}, 'stroj':{rod:'Mi',gen:'stroje'},
+  'žena':{rod:'F',gen:'ženy'}, 'růže':{rod:'F',gen:'růže'}, 'píseň':{rod:'F',gen:'písně'}, 'kost':{rod:'F',gen:'kosti'},
+  'město':{rod:'N',gen:'města'}, 'moře':{rod:'N',gen:'moře'}, 'kuře':{rod:'N',gen:'kuřete'}, 'stavení':{rod:'N',gen:'stavení'}
+};
+const VZ_BY_ROD = {Ma:['pán','muž','předseda','soudce'], Mi:['hrad','stroj'], F:['žena','růže','píseň','kost'], N:['město','moře','kuře','stavení']};
+const ROD4 = {
+  Ma:{l:'TEN – živý', s:'mužský životný', c:'M', col:'#3a86ff'},
+  Mi:{l:'TEN – neživý', s:'mužský neživotný', c:'M', col:'#7aa9e8'},
+  F:{l:'TA', s:'ženský', c:'F', col:'#e8457b'},
+  N:{l:'TO', s:'střední', c:'N', col:'#22b07d'}
+};
+const END1 = {Ma:[['C','souhláskou'],['a','-a'],['e','-e']], F:[['a','-a'],['e','-e / -ě'],['C','souhláskou']], N:[['o','-o'],['e','-e / -ě'],['í','-í']]};
+const GEN  = {Ma:[['a','-a'],['e','-e']], Mi:[['ua','-u / -a'],['e','-e']], F:[['e','-e / -ě'],['i','-i']], N:[['e','-e'],['ete','-ete / -ěte']]};
+const rodKey = n=> n.rod==='M' ? (n.ziv?'Ma':'Mi') : n.rod;
+function end1Of(n){
+  const k=rodKey(n), z=n.sg.slice(-1);
+  if(k==='Ma') return z==='a'?'a' : z==='e'?'e' : 'C';
+  if(k==='F')  return z==='a'?'a' : /[eě]/.test(z)?'e' : 'C';
+  if(k==='N')  return z==='o'?'o' : z==='í'?'í' : 'e';
+  return null;
+}
+function genOf(n){
+  const k=rodKey(n), g=n.gen;
+  if(k==='Ma') return /a$/.test(g)?'a':'e';
+  if(k==='Mi') return /[ua]$/.test(g)?'ua':'e';
+  if(k==='F')  return /[eě]$/.test(g)?'e':'i';
+  return /[eě]te$/.test(g)?'ete':'e';
+}
+function needsGen(n){ const k=rodKey(n), e=end1Of(n); return k==='Mi' || (k==='Ma'&&e==='C') || (k==='F'&&e==='C') || (k==='N'&&e==='e'); }
+function treeVzor(n){   // postup ze školy – slouží i jako kontrola dat
+  const k=rodKey(n), e=end1Of(n), g=needsGen(n)?genOf(n):null;
+  if(k==='Ma') return e==='a'?'předseda' : e==='e'?'soudce' : g==='a'?'pán':'muž';
+  if(k==='Mi') return g==='ua'?'hrad':'stroj';
+  if(k==='F')  return e==='a'?'žena' : e==='e'?'růže' : g==='e'?'píseň':'kost';
+  return e==='o'?'město' : e==='í'?'stavení' : g==='ete'?'kuře':'moře';
+}
+const gangSVG = v=>suspectSVG('gang:'+v, {color:ROD4[VZORY[v].rod].col, hat:Object.keys(VZORY).indexOf(v)%4});
+function gangCard(v,extra=''){ return `<span class="mini">${gangSVG(v)}</span><b>${v}</b><small>bez ${VZORY[v].gen}${extra}</small>`; }
+
+function buildConvict(L){
+  const pool=NOUNS.filter(n=>n.vzor&&n.gen), out=[];
+  let last=null, tries=0;
+  while(out.length<L.count && tries++<300){
+    const vs=Object.keys(VZORY).filter(v=>v!==last);
+    const [v]=weightedPick(vs, v=>1+2.5*errRate('vzor',v), 1);
+    const cand=pool.filter(n=>n.vzor===v && !out.some(o=>o.noun===n));
+    if(!cand.length) continue;
+    const [n]=weightedPick(cand, n=>1+3*(S.weak['z'+n.sg]||0), 1);
+    out.push({noun:n, form:n.sg, vz:true}); last=v;
+  }
+  return out;
+}
+function convictSteps(n,L){
+  if(!L.guided) return ['vzor14'];
+  const st=['rod']; if(rodKey(n)!=='Mi') st.push('end1'); if(needsGen(n)) st.push('gen'); st.push('vzor');
+  return st;
+}
+function stepView(id,n,L){
+  const k=rodKey(n), R=ROD[n.rod];
+  const zivWhy = n.rod==='M' ? (n.ziv?' – je to živá bytost, proto <b>životný</b>':' – není to živá bytost, proto <b>neživotný</b>') : '';
+  const e=end1Of(n), eLab=e&&END1[k] ? END1[k].find(x=>x[0]===e)[1] : '';
+  const g=needsGen(n)?genOf(n):null, gLab=g ? GEN[k].find(x=>x[0]===g)[1] : '';
+  const path = `${R.ukaz} ${esc(n.sg)} (${ROD4[k].s})${eLab?` → končí ${eLab}`:''}${g?` → bez ${esc(n.gen)}`:''} → vzor <b>${n.vzor}</b>`;
+  if(id==='rod') return {q:'Jakého je rodu?', hint:'Řekni si před slovo <b>ten / ta / to</b>. U mužského rodu: je to živá bytost?',
+    opts:Object.entries(ROD4).map(([v,r])=>({v, html:`${r.l}<small>${r.s}</small>`, cls:'rod '+r.c})), ok:k,
+    note:[ROD4[k].s, `${R.ukaz} ${esc(n.sg)}`], why:`Řekni si: <b>${R.ukaz} ${esc(n.sg)}</b>${zivWhy}.`};
+  if(id==='end1') return {q:'Jak končí v 1. pádě?', hint:`Podívej se na konec slova <b>${esc(n.sg)}</b>.`,
+    opts:END1[k].map(([v,l])=>({v, html:l})), ok:e,
+    note:['1. pád', `končí ${eLab}`], why:`<b>${esc(n.sg)}</b> končí na <b>${esc(n.sg.slice(-1))}</b> → ${eLab}.`};
+  if(id==='gen') return {q:'Jak končí ve 2. pádě?',
+    hint: L.showGen ? `Zeptej se: bez koho? čeho? → bez <b>${esc(n.gen)}</b>` : `Řekni si v duchu: bez koho? čeho? → bez ${esc(n.sg)}…?`,
+    opts:GEN[k].map(([v,l])=>({v, html:l})), ok:g,
+    note:['2. pád', `bez ${esc(n.gen)}`], why:`Řekni si: bez <b>${esc(n.gen)}</b> → končí ${gLab}.`};
+  if(id==='vzor') return {q:'Do kterého gangu patří?', hint:'Stopy na nástěnce tě dovedou ke správnému vzoru.',
+    opts:VZ_BY_ROD[k].map(v=>({v, html:gangCard(v), cls:'gangopt'})), ok:n.vzor,
+    note:['vzor', n.vzor], why:`Stopy: ${path}.`};
+  return {q:'Do kterého gangu patří?', hint:'Urči rod a řekni si 2. pád (bez koho? čeho?). Pak vyber vzor.',
+    groups:Object.entries(VZ_BY_ROD).map(([rk,vs])=>({h:ROD4[rk].s, opts:vs.map(v=>({v, html:gangCard(v), cls:'gangopt'}))})), ok:n.vzor,
+    note:['vzor', n.vzor], why:`Postup: ${path}.`};
+}
+function convictRound(){
+  const g=game, it=g.items[g.i], n=it.noun;
+  g.steps=convictSteps(n,g.L); g.si=0; g.wordOk=true; g.answered=false;
+  show(`${hudHTML('Podezřelý')}
+    <div class="board"><div class="polaroid"><span class="pin"></span>${suspectSVG(n.sg)}<b>${esc(n.sg)}</b></div>
+      <div class="notes" id="notes"><div class="note empty"><small>stopy</small>zatím nic…</div></div></div>
+    <div class="paper step" id="step"></div>`);
+  convictStep();
+}
+function convictStep(){
+  const g=game, it=g.items[g.i], id=g.steps[g.si], V=stepView(id,it.noun,g.L);
+  g.stepAnswered=false;
+  let i=0;
+  const btn=o=>`<button class="opt ${o.cls||''}" data-act="copt" data-v="${esc(o.v)}"><kbd>${++i}</kbd>${o.html}</button>`;
+  $('#step').innerHTML=`<div class="stepnum">Krok ${g.si+1} / ${g.steps.length}</div><h3>${V.q}</h3><p class="hint">${V.hint}</p>
+    ${V.groups ? V.groups.map(gr=>`<div class="ghead">${gr.h}</div><div class="opts gangs">${gr.opts.map(btn).join('')}</div>`).join('') : `<div class="opts ${id==='vzor'?'gangs':''}">${V.opts.map(btn).join('')}</div>`}
+    <div id="fb"></div>`;
+}
+function convictAnswer(v){
+  const g=game; if(!g||g.stepAnswered) return; g.stepAnswered=true;
+  const it=g.items[g.i], n=it.noun, id=g.steps[g.si], V=stepView(id,n,g.L), ok=v===V.ok;
+  document.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===V.ok) b.classList.add('right'); else if(b.dataset.v===v) b.classList.add('wrong'); });
+  if(!ok) g.wordOk=false;
+  const notes=$('#notes'); const em=notes.querySelector('.empty'); if(em) em.remove();
+  const last=g.si===g.steps.length-1;
+  notes.insertAdjacentHTML('beforeend',`<div class="note ${ok?'':'bad'} ${last?'gang':''}"><small>${V.note[0]}</small>${V.note[1]}</div>`);
+  if(!last){
+    if(ok){ sfx.pick(g.si+2); setTimeout(()=>{ g.si++; convictStep(); },550); }
+    else { sfx.bad(); $('#fb').innerHTML=`<div class="explain"><h3>Pozor, tady ne.</h3><p>${V.why}</p><div class="actions"><button class="btn dark" data-act="cstep">Pokračovat →</button></div></div>`; }
+    return;
+  }
+  // konec vyšetřování slova
+  stat('vzor',n.vzor,g.wordOk);
+  let head;
+  if(g.wordOk){
+    const pts=scoreHit(g.L.guided?(g.L.showGen?12:15):18);
+    S.weak['z'+n.sg]=Math.max(0,(S.weak['z'+n.sg]||0)-1);
+    const al=S.album[n.vzor]||(S.album[n.vzor]=[]); if(!al.includes(n.sg)) al.push(n.sg);
+    sfx.ok(g.streak); setTimeout(sfx.stamp,140); $('#score').textContent=g.score;
+    head=`<h3>Usvědčen! +${pts}</h3>`;
+  } else {
+    scoreMiss(it); S.weak['z'+n.sg]=(S.weak['z'+n.sg]||0)+1; sfx.bad();
+    head=`<h3>Tentokrát ti unikl.</h3><p>${V.why}</p>`;
+  }
+  $('#fb').innerHTML=`<div class="explain ${g.wordOk?'good':''}">${head}
+    <div class="reveal"><span class="mini">${gangSVG(n.vzor)}</span><div><span class="stamp ${g.wordOk?'ok':''}">gang ${n.vzor.toUpperCase()}</span>
+      <p><b>${esc(n.sg)}</b> se skloňuje jako <b>${n.vzor}</b>: ${n.vzor} – bez ${VZORY[n.vzor].gen}, ${esc(n.sg)} – bez ${esc(n.gen)}.</p></div></div>
+    <div class="actions"><button class="btn dark" data-act="next">Další podezřelý →</button></div></div>`;
+  g.answered=true; save();
+  $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
 /* ── Konec případu ── */
 function finish(){
   const g=game; if(g.done) return; g.done=true;
@@ -948,6 +1138,8 @@ function finish(){
   const all3=id=>DISTRICTS[0].missions.find(m=>m.id===id).levels.every(L=>S.stars[id+L.lv]===3);
   if(all3('tridirna')) give('rody');
   if(all3('vyslech')) give('pady');
+  if(all3('usvedceni')) give('vzory');
+  if(Object.keys(VZORY).every(v=>(S.album[v]||[]).length)) give('album');
   if(S.xp>=1000) give('veteran');
   save(); updateTop();
   const rk=rankOf(S.xp), up=rk.i>prevRank;
@@ -963,7 +1155,7 @@ function finish(){
     </div>
     ${up?`<div class="rankup">🎉 Povýšení! Nová hodnost: ${rk.name}</div>`:''}
     ${earned.map(b=>`<span class="newbadge">${b.ico} ${b.name}</span>`).join('')}
-    ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
+    ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.vz?` – vzor ${esc(it.noun.vzor)} (bez ${esc(it.noun.gen)})`:it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
     <div class="actions">
       <button class="btn" data-act="play" data-d="${g.d.id}" data-m="${g.m.id}" data-lv="${g.L.lv}">↻ Znovu</button>
       <button class="btn dark" data-act="district" data-id="${g.d.id}">Zpět na ulici</button>
@@ -988,6 +1180,8 @@ function profile(){
       <h3>Číslo</h3><div class="bars">${bar('jednotné',S.stats.cislo.sg,'var(--lamp2)')}${bar('množné',S.stats.cislo.pl,'var(--lamp2)')}</div>
       <h3>Životnost (mužský rod)</h3><div class="bars">${bar('životný',(S.stats.ziv||{}).a,'var(--m)')}${bar('neživotný',(S.stats.ziv||{}).i,'var(--m)')}</div>
       <h3>Pády</h3><div class="bars">${[1,2,3,4,5,6,7].map(p=>bar(`${p}. ${PAD[p].q}`,S.stats.pad[p],'var(--m)')).join('')}</div>
+      <h3>Album gangů</h3><div class="album">${Object.keys(VZORY).map(v=>{ const w=S.album[v]||[], a=(S.stats.vzor||{})[v];
+        return `<div class="gang ${w.length?'':'off'}" style="border-top-color:${ROD4[VZORY[v].rod].col}">${gangSVG(v)}<b>${v}</b><small>${w.length?`${w.length} ${w.length===1?'slovo':w.length<5?'slova':'slov'}${a&&a[1]?` · ${Math.round(a[0]/a[1]*100)} %`:''}`:'zatím nikdo'}</small>${w.length?`<span class="words">${w.slice(-4).map(esc).join(', ')}</span>`:''}</div>`; }).join('')}</div>
       <h3>Odznaky</h3><div class="badges">${BADGES.map(b=>`<div class="badge ${S.badges.includes(b.id)?'':'off'}"><span class="bi">${b.ico}</span>${b.name}<br><small style="color:var(--ink2)">${b.d}</small></div>`).join('')}</div>
       <div class="actions"><button class="btn ghost" style="color:var(--ink2)" data-act="reset">Smazat postup</button></div>
     </div>`);
@@ -1003,6 +1197,8 @@ document.addEventListener('click',e=>{
   else if(a==='sort') sortAnswer(b.dataset.rod,b.dataset.c,b.dataset.z);
   else if(a==='lv'){ S.sel[b.dataset.m]=+b.dataset.lv; save(); const y=window.scrollY; district(b.dataset.d); window.scrollTo(0,y); }
   else if(a==='next') next();
+  else if(a==='copt') convictAnswer(b.dataset.v);
+  else if(a==='cstep'){ game.si++; convictStep(); }
   else if(a==='q') askPick(+b.dataset.p);
   else if(a==='accuse') askAccuse();
   else if(a==='clue') askClue();
@@ -1020,8 +1216,9 @@ document.addEventListener('keydown',e=>{
   if(game.m.type==='sort' && !game.answered && n>=1){
     const btn=document.querySelectorAll('.door')[n-1]; if(btn) btn.click();
   } else if(game.m.type==='ask' && !game.answered && n>=1 && n<=7) askPick(n);
+  else if(game.m.type==='convict' && !game.stepAnswered && n>=1){ const o=document.querySelectorAll('.opt')[n-1]; if(o) o.click(); }
   else if(e.key==='Enter'){
-    const nb=$('[data-act="next"]'); if(nb){ e.preventDefault(); nb.click(); }
+    const nb=$('[data-act="next"]')||$('[data-act="cstep"]'); if(nb){ e.preventDefault(); nb.click(); }
     else if(game.m.type==='ask' && game.sel){ e.preventDefault(); askAccuse(); }
   }
 });
