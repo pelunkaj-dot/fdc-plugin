@@ -559,8 +559,15 @@
     oldRenderEquation();
     const note = document.querySelector(".paper-note");
     if (note) note.innerHTML = "✏️ Napiš další krok nebo rovnou výsledek.";
+    const prog=document.getElementById("ex-prog");
+    if(prog && SES?.eqs?.length) prog.style.width=((SES.cur+1)/SES.eqs.length*100)+"%";
     const inp = document.getElementById("eq-input");
-    if (inp) inp.placeholder = SES?.eqs?.[SES.cur]?.solutionType ? "další krok, nebo slovní výsledek…" : "napiš další krok nebo výsledek…";
+    const currentEq = SES?.eqs?.[SES.cur];
+    if (inp) inp.placeholder = currentEq?.solutionType ? "další krok, nebo slovní výsledek…" : "napiš další krok nebo výsledek…";
+    const hint = document.querySelector("#input-area .input-hint");
+    if (hint) hint.innerHTML = currentEq?.solutionType
+      ? 'Piš další rovnici, nebo výsledek slovně: <kbd>žádné řešení</kbd> / <kbd>nekonečně mnoho řešení</kbd> · potvrdit: <kbd>Enter</kbd>'
+      : 'Piš rovnici ve tvaru <kbd>levá = pravá</kbd>. Nemusíš opisovat každý krok — když výsledek vidíš, napiš rovnou <kbd>x = …</kbd> · potvrdit: <kbd>Enter</kbd>';
 
     const oldSkip = document.getElementById("btn-skip");
     if (oldSkip) {
@@ -591,7 +598,7 @@
     SES.skipped++;
     ST.stats.skipped++;
     bumpTopicStat(SES.topicIdx,"skipped");
-    ST.streak = 0;
+    // Přeskočení není chyba. Streak necháváme beze změny.
     saveST();
 
     const topic = TOPICS[SES.topicIdx];
@@ -637,7 +644,7 @@
     const isLast = SES.cur >= SES.eqs.length - 1;
     banner.innerHTML = `
       <div class="done-banner-title" style="color:var(--warn)">Řešení zobrazeno</div>
-      <div class="done-banner-sub">Zkus si všimnout, který krok ti chyběl.</div>
+      <div class="done-banner-sub">Podívej se na výsledek a zkus další rovnici.</div>
       <button class="btn-next-eq" onclick="nextEquation()">${isLast?"Zobrazit výsledky →":"Další rovnice →"}</button>`;
     body.appendChild(banner);
 
@@ -647,6 +654,18 @@
   };
 
   const oldProcessStep = processStep;
+  function rvStrategyHint(eq) {
+    const txt=plainDisplay(eq?.display||"");
+    if(eq?.solutionType==="none" || eq?.solutionType==="all")
+      return "Upravuj obě strany. Sleduj, co zůstane po odstranění členů s x.";
+    if(/\/|⁄/.test(txt) || txt.includes("frac"))
+      return "Zkus nejprve odstranit zlomky společným násobkem jmenovatelů.";
+    if(/[()]/.test(txt))
+      return "Zkontroluj roznásobení závorek a hlavně znaménka.";
+    if((txt.match(/x/gi)||[]).length>1)
+      return "Zkus dostat členy s x na jednu stranu a čísla na druhou.";
+    return "Zkus určit, jakou stejnou operaci provést na obou stranách.";
+  }
   processStep = function(raw) {
     const wasDone = SES?.done;
     const beforeSolved = SES?.solved || 0;
@@ -658,11 +677,19 @@
       bumpTopicStat(SES.topicIdx,"solved");
       saveST();
     }
-    if ((SES?.wrongCount || 0) > beforeWrong && SES.wrongCount >= 2) {
+    if ((SES?.wrongCount || 0) > beforeWrong) {
       const hints = document.querySelectorAll(".step-item.step-wrong .step-hint");
       const last = hints[hints.length-1];
-      if (last && /řešení je x/i.test(last.textContent)) {
-        last.textContent = "Zkus určit, jakou stejnou operaci provést na obou stranách.";
+      if (SES.wrongCount >= 2) {
+        if (last) last.textContent = rvStrategyHint(SES.eqs[SES.cur]);
+        else {
+          const items=document.querySelectorAll(".step-item.step-wrong");
+          const item=items[items.length-1];
+          if(item){
+            const h=document.createElement("span"); h.className="step-hint";
+            h.textContent=rvStrategyHint(SES.eqs[SES.cur]); item.appendChild(h);
+          }
+        }
       }
     }
   };
@@ -678,7 +705,7 @@
     document.getElementById("res-eq").textContent = solved+"/"+total+" vyřešeno";
     document.getElementById("res-stars").textContent = "★".repeat(stars)+"☆".repeat(3-stars);
     document.getElementById("res-title").textContent =
-      ["Zkus to znovu!","Už se do toho dostáváš!","Dobře!","Perfektní!"][stars];
+      ["Tady je co trénovat","Už se do toho dostáváš!","Dobře!","Perfektní!"][stars];
     document.getElementById("res-score").textContent =
       solved+" vyřešeno · "+(SES.revealed||0)+" řešení zobrazeno · "+(SES.skipped||0)+" přeskočeno";
     document.getElementById("res-xp").textContent = "+"+SES.xpGained;
