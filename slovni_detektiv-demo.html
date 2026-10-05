@@ -535,25 +535,57 @@ function rng(seed){ return ()=>{ seed=(seed+0x6D2B79F5)|0; let t=Math.imul(seed^
 const starsTxt = n=>'★'.repeat(n)+'☆'.repeat(3-n);
 
 /* ── zvuk a řeč ── */
-let AC;
-function tone(f,d,type='sine',vol=.14,delay=0){
+/* Měkké tóny (zvonkohra/marimba) – pentatonika, takže cokoli zazní spolu, ladí. */
+let AC, MASTER;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    MASTER=AC.createGain(); MASTER.gain.value=.55;
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2800;
+    const comp=AC.createDynamicsCompressor();
+    MASTER.connect(lp).connect(comp).connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+const PENTA=[0,2,4,7,9,12,14,16,19,21,24,26,28];
+const hz=semi=>523.25*Math.pow(2,semi/12);           // C5 = 0
+function note(semi,{d=.45,vol=.11,delay=0,bell=true,glide=0}={}){
   if(!S.sound) return;
   try{
-    AC = AC || new (window.AudioContext||window.webkitAudioContext)();
-    const t=AC.currentTime+delay, o=AC.createOscillator(), g=AC.createGain();
-    o.type=type; o.frequency.setValueAtTime(f,t);
-    g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.001,t+d);
-    o.connect(g).connect(AC.destination); o.start(t); o.stop(t+d+.02);
+    const c=audio(), t=c.currentTime+delay, f=hz(semi);
+    const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.0005,t+d); g.connect(MASTER);
+    const o=c.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(f,t);
+    if(glide) o.frequency.exponentialRampToValueAtTime(f*Math.pow(2,glide/12),t+d);
+    o.connect(g); o.start(t); o.stop(t+d+.05);
+    if(bell){ // jemný „cink“ – vyšší harmonická, která rychle odezní
+      const o2=c.createOscillator(), g2=c.createGain();
+      o2.type='sine'; o2.frequency.setValueAtTime(f*3.01,t);
+      g2.gain.setValueAtTime(vol*.22,t); g2.gain.exponentialRampToValueAtTime(.0003,t+d*.35);
+      o2.connect(g2).connect(MASTER); o2.start(t); o2.stop(t+d*.35+.05);
+    }
   }catch(e){}
 }
+const OK_MOTIFS=[[0,2],[0,4],[1,3],[2,4],[0,3],[1,4],[2,5],[0,2,4],[1,2],[3,5]];
+const BAD_MOTIFS=[[-5,-8],[-3,-7],[-7,-10],[-8,-12]];
+let lastOk=-1, lastBad=-1;
+function varied(list,last){ let i; do{ i=Math.random()*list.length|0; }while(list.length>1&&i===last); return i; }
 const sfx = {
-  ok(){ tone(660,.12,'triangle'); tone(990,.2,'triangle',.12,.09); },
-  bad(){ tone(196,.28,'sawtooth',.07); tone(147,.3,'sawtooth',.06,.12); },
-  stamp(){ tone(80,.16,'square',.12); },
-  pick(){ tone(520,.05,'triangle',.08); },
-  win(){ [523,659,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.12,i*.12)); },
-  combo(n){ tone(700+n*60,.1,'square',.05); }
+  ok(streak=0){
+    const i=varied(OK_MOTIFS,lastOk); lastOk=i;
+    const lift=Math.min(streak,6);                   // série = motivy stoupají
+    OK_MOTIFS[i].forEach((step,k)=>note(PENTA[step+lift],{d:.5,vol:.1,delay:k*.09}));
+  },
+  bad(){
+    const i=varied(BAD_MOTIFS,lastBad); lastBad=i;
+    BAD_MOTIFS[i].forEach((s,k)=>note(s-12,{d:.35,vol:.08,delay:k*.16,bell:false,glide:-1}));
+  },
+  stamp(){ note(-24,{d:.18,vol:.07,bell:false,glide:-5}); },
+  pick(p=1){ note(PENTA[p-1]-12,{d:.18,vol:.05,bell:false}); },
+  win(){ [0,2,3,4,5,7].forEach((s,k)=>note(PENTA[s],{d:.9,vol:.09,delay:k*.11})); },
+  combo(n){ [7,8,9].forEach((s,k)=>note(PENTA[Math.min(s+(n>=8?2:0),12)],{d:.3,vol:.05,delay:.25+k*.06})); }
 };
+
 function say(text){
   if(!('speechSynthesis' in window)) return;
   try{
@@ -788,7 +820,7 @@ function sortAnswer(rod,c,z){
   if(ok){
     const pts=scoreHit(10);
     S.weak[n.sg]=Math.max(0,(S.weak[n.sg]||0)-1);
-    sfx.ok(); setTimeout(sfx.stamp,120);
+    sfx.ok(game.streak); setTimeout(sfx.stamp,140);
     $('#stage').insertAdjacentHTML('beforeend',`<div class="fx"><span class="stamp ok">ZAŘAZENO +${pts}</span></div>`);
     $('#score').textContent=g.score;
     setTimeout(()=>{ sus.classList.remove('bob'); sus.classList.add('exit-'+({M:'l',F:'c',N:'r'})[n.rod]); },500);
@@ -856,7 +888,7 @@ function askRound(){
 }
 function askPick(p){
   const g=game; if(!g||g.answered) return;
-  g.sel=p; g.peeks++; sfx.pick();
+  g.sel=p; g.peeks++; sfx.pick(p);
   document.querySelectorAll('.qcard').forEach(b=>b.classList.toggle('sel',+b.dataset.p===p));
   const s=g.items[g.i];
   if($('#prev')) $('#prev').innerHTML=`<span class="lbl">Lupa: ${p}. pád – zní to dobře?</span><div class="sentence">${questionSentence(s,p)}</div>`;
@@ -883,7 +915,7 @@ function askAccuse(){
   if(ok){
     const pts=scoreHit(g.L.numbersOnly?15:g.clued?8:12);
     S.weak['v'+s.id]=Math.max(0,(S.weak['v'+s.id]||0)-1);
-    sfx.ok(); setTimeout(sfx.stamp,120);
+    sfx.ok(game.streak); setTimeout(sfx.stamp,140);
     $('#say').textContent=`Přiznávám! Jsem v ${s.p}. pádě. 😰`;
     $('#score').textContent=g.score;
     $('#fb').innerHTML=`<div class="explain good"><h3>Usvědčen! +${pts}</h3>${how}<div class="actions"><button class="btn dark" data-act="next">Další výslech →</button></div></div>`;
