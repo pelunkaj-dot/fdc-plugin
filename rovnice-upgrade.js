@@ -367,14 +367,17 @@
   }
 
   function isSuitable(eq, level, topic) {
-    if (!eq || !Number.isFinite(eq.solution)) return false;
+    if (!eq) return false;
+    const special = eq.solutionType === "none" || eq.solutionType === "all";
+    if (!special && !Number.isFinite(eq.solution)) return false;
     const txt = plainDisplay(eq.display);
     if (!/x/i.test(txt)) return false;
     if (/\+\s*0\b|−\s*0\b|-\s*0\b/.test(txt)) return false;
     if (/\b0\s*[xX]\b|[xX]\s*[·*]\s*0\b/.test(txt)) return false;
     // Nulový výsledek je matematicky v pořádku, ale v generovaném procvičování
     // příliš často zkrátí zamýšlený postup. Nulu si necháme pro cílené téma později.
-    if (eq.solution === 0) return false;
+    if (!special && eq.solution === 0) return false;
+    if (special) return true;
 
     const abs = Math.abs(eq.solution);
     if (level === 1 && abs > 12) return false;
@@ -489,8 +492,25 @@
     return "valid";
   }
 
+  function rvSpecialAnswer(input,type) {
+    const n=normalize(String(input||"").replace(/[.!]/g," ").trim());
+    if(type==="none") return /^(zadne reseni|nema reseni|bez reseni|reseni neexistuje|prazdna mnozina|∅)$/.test(n);
+    if(type==="all") return /^(nekonecne mnoho reseni|nekonecne reseni|vsechna realna cisla|vsechna cisla|libovolne x|x je libovolne)$/.test(n);
+    return false;
+  }
+
   checkStep = function(studentInput, solution) {
+    const specialType = (typeof SES!=="undefined" && SES?.eqs?.[SES.cur]) ? SES.eqs[SES.cur].solutionType : null;
     const input=String(studentInput||"").trim();
+    if(specialType==="none" || specialType==="all") {
+      if(rvSpecialAnswer(input,specialType)) return "done";
+      const pp=input.split("=");
+      if(pp.length!==2 || !/[xX]/.test(input)) return "wrong";
+      const vals=[-11,-5,-2,0,1,3,7,13].map(x=>rvResidual(pp[0],pp[1],x)).filter(Number.isFinite);
+      if(vals.length<5) return "invalid";
+      const zeros=vals.filter(v=>rvNearly(v,0)).length;
+      return specialType==="all" ? (zeros===vals.length?"valid":"wrong") : (zeros===0?"valid":"wrong");
+    }
     if(!input) return "invalid";
     const parts=input.split("=");
     if(parts.length!==2) return "invalid";
@@ -540,7 +560,7 @@
     const note = document.querySelector(".paper-note");
     if (note) note.innerHTML = "✏️ Napiš další krok nebo rovnou výsledek.";
     const inp = document.getElementById("eq-input");
-    if (inp) inp.placeholder = "napiš další krok nebo výsledek…";
+    if (inp) inp.placeholder = SES?.eqs?.[SES.cur]?.solutionType ? "další krok, nebo slovní výsledek…" : "napiš další krok nebo výsledek…";
 
     const oldSkip = document.getElementById("btn-skip");
     if (oldSkip) {
@@ -603,7 +623,8 @@
     saveST();
 
     const eq = SES.eqs[SES.cur];
-    showStepItem("valid", `x = ${eq.solution}`, "← řešení");
+    const solutionText = eq.solutionType==="none" ? "Žádné řešení" : eq.solutionType==="all" ? "Nekonečně mnoho řešení" : `x = ${eq.solution}`;
+    showStepItem("valid", solutionText, "← řešení");
     const ia = document.getElementById("input-area");
     if (ia) ia.style.display = "none";
     SES.done = true;
