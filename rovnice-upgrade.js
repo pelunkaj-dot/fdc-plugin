@@ -260,6 +260,19 @@
     return gen_decAxPbEcxPd();
   }
 
+  function gen_l4_noSolution() {
+    const a=rFrom([2,3,4,5,6,7]), b=nzFrom([-12,-10,-8,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,8,10,12]);
+    const d=b+(Math.random()<.5?1:-1)*rFrom([1,2,3,4,5,6,7,8]);
+    const bs=b>=0?"+ "+b:"− "+Math.abs(b), ds=d>=0?"+ "+d:"− "+Math.abs(d);
+    return {display:a+X+" "+bs+" = "+a+X+" "+ds,solutionType:"none",category:"l4-special"};
+  }
+  function gen_l4_allSolutions() {
+    const a=rFrom([2,3,4,5,6]), b=nzFrom([-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8]), k=rFrom([2,3,4]);
+    const bs=b>=0?"+ "+b:"− "+Math.abs(b), kb=k*b, kbs=kb>=0?"+ "+kb:"− "+Math.abs(kb);
+    return {display:k+"("+a+X+" "+bs+") = "+(k*a)+X+" "+kbs,solutionType:"all",category:"l4-special"};
+  }
+  function gen_l4_specialMix(){ return Math.random()<.5?gen_l4_noSolution():gen_l4_allSolutions(); }
+
   const mixIndex = TOPICS.length-1;
   const extraTopics = [
     {
@@ -333,6 +346,12 @@
       desc:"Desetinné koeficienty, obě strany a práce přes nulu", section:"Úroveň 4 · Mistr",
       gen:[gen_l4_decimalNegative], level:4,
       keywords:"mistr desetinna cisla zaporne hodnoty x na obou stranach"
+    },
+    {
+      name:"Má rovnice vůbec řešení?", eq:"4x+3=4x−5",
+      desc:"Rozpoznej spor nebo totožnost: žádné řešení × nekonečně mnoho řešení", section:"Úroveň 4 · Mistr",
+      gen:[gen_l4_specialMix], level:4,
+      keywords:"mistr zadne řešení žádné reseni nekonecne mnoho všechna reseni totoznost spor bez reseni"
     }
   ];
   TOPICS.splice(mixIndex,0,...extraTopics);
