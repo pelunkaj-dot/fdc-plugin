@@ -164,6 +164,14 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .gang .words{display:block;font-size:.72rem;color:var(--ink2);margin-top:2px}
 .gang.off svg{filter:grayscale(1);opacity:.35}
 .qcard.big{padding:14px 8px}
+.tryagain{margin-top:12px;padding:11px 14px;border-radius:12px;background:#fff1f2;border:2px solid #f3b6bf;color:var(--ink);font-weight:800;animation:shake .35s}
+.tryagain.soft{background:#fff6dc;border-color:#f4cf7a;animation:none}
+.tryagain .actions{justify-content:flex-start;margin-top:10px}
+.tryagain .btn.ghost{background:var(--paper2);color:var(--ink)}
+.hintclue{border-left-color:var(--m);background:#eef4ff;margin-top:10px}
+.door.wrong{opacity:.35;filter:grayscale(.8)}
+.door.wrong::after{content:"✕";position:absolute;inset:0;display:grid;place-items:center;font-size:2.4rem;font-weight:900;color:#fff}
+.opt.wrong{opacity:.55}
 .qcard.big .n{font-size:2.2rem}
 .soonchip{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--paper2);color:var(--ink2);font-weight:800;font-size:.8rem}
 
@@ -808,20 +816,48 @@ function hudHTML(label){
 }
 const livesArr = ()=>[...Array(game.L.lives||3).keys()];
 const mult = ()=> game.streak>=8?3 : game.streak>=3?2 : 1;
-function scoreHit(base){
-  const g=game; g.streak++; g.best=Math.max(g.best,g.streak); g.ok++; g.tot++;
-  const pts=base*mult(); g.score+=pts;
-  if(g.streak===3||g.streak===8){ sfx.combo(g.streak); const c=$('#combo'); if(c){c.classList.add('pop');} }
+/* ── Pokusy: 1. chyba = zkus znovu, 2. = znovu, nebo nápověda?, 3. = nápověda, 4. = řešení ── */
+const MSG1=['To není ono.','Tohle nesedí.','Vedle!','Hmm, to ne.','Tudy cesta nevede.','Skoro, ale ne.'];
+const MSG2=['Ani tohle není dobře.','Pořád to nesedí.','Ještě to není ono.','Tohle taky ne.'];
+const pickMsg=a=>a[Math.random()*a.length|0];
+function newItem(){ const g=game; g.itemWrongs=0; g.itemHint=false; }
+function newQuestion(hintFn){ const g=game; g.tries=0; g.hinted=false; g.hintFn=hintFn; }
+function wrongAttempt(){            // vrací true, když je čas ukázat řešení
+  const g=game; g.tries++; g.itemWrongs++; sfx.bad();
+  const box=$('#tryfb'); if(!box) return g.tries>=4;
+  if(g.tries===1) box.innerHTML=`<div class="tryagain">❌ ${pickMsg(MSG1)} <b>Zkus to znovu.</b></div>`;
+  else if(g.tries===2) box.innerHTML = g.hinted
+    ? `<div class="tryagain">❌ ${pickMsg(MSG2)} Podívej se ještě jednou na nápovědu a zkus to.</div>`
+    : `<div class="tryagain">❌ ${pickMsg(MSG2)} Zkusíš to znovu, nebo chceš nápovědu?
+        <div class="actions"><button class="btn ghost" data-act="tryagain">↻ Zkusím to znovu</button><button class="btn" data-act="wanthint">💡 Chci nápovědu</button></div></div>`;
+  else if(g.tries===3){ showHint(); box.innerHTML=`<div class="tryagain">❌ Ještě ne. Mrkni na nápovědu a zkus to znovu.</div>`; }
+  else { box.innerHTML=''; return true; }
+  return false;
+}
+function showHint(){
+  const g=game; if(!g||g.hinted||!g.hintFn) return;
+  g.hinted=true; g.itemHint=true;
+  const hb=$('#hintbox'); if(hb) hb.innerHTML=`<div class="clue hintclue">💡 <b>Nápověda:</b> ${g.hintFn()}</div>`;
+}
+function scoreSolved(base){
+  const g=game, first=!g.itemWrongs, c=first?1:(g.itemHint?.35:.6);
+  if(first){ g.streak++; g.best=Math.max(g.best,g.streak); } else g.streak=0;
+  const pts=Math.max(1,Math.round(base*c*(first?mult():1)));
+  g.score+=pts; g.ok+=c; g.tot++;
+  if(first && (g.streak===3||g.streak===8)){ sfx.combo(g.streak); const cb=$('#combo'); if(cb) cb.classList.add('pop'); }
+  if(g.itemWrongs>=2) remember(g.items[g.i]);
   return pts;
 }
-function scoreMiss(item){
-  const g=game; g.streak=0; g.tot++;
+function scoreFailed(item){ const g=game; g.streak=0; g.tot++; remember(item); }
+function remember(item){
+  const g=game;
   if(!g.mist.includes(item)) g.mist.push(item);
-  // chybné slovo se ještě jednou vrátí (opakování chyb)
+  // slovo se ještě jednou vrátí (opakování chyb)
   if(!item.retry && g.items.length < g.L.count+4){
     const copy={...item,retry:true}; g.items.splice(Math.min(g.i+3,g.items.length),0,copy);
   }
 }
+
 function next(){ game.i++; if(game.i>=game.items.length || game.lives<=0) finish(); else ROUND[game.m.type](); }
 const BUILD = {sort:L=>buildSort(L), ask:L=>buildAsk(L), convict:L=>buildConvict(L)};
 const ROUND = {sort:()=>sortRound(), ask:()=>askRound(), convict:()=>convictRound()};
@@ -852,52 +888,70 @@ function sortRound(){
     <div class="lineup" id="stage"><div class="spot"></div><div class="nums"><span>200</span><span>180</span><span>160</span><span>140</span><span>120</span><span>100</span><span>80</span></div><div class="floor"></div>
       <div class="suspect enter" id="sus">${suspectSVG(it.form)}<div class="placard">${esc(it.form)}</div></div></div>
     <div class="timer" id="timer"><i></i></div>
+    <div id="hintbox"></div>
     ${doors}
+    <div id="tryfb"></div>
     <div id="fb"></div>`);
+  newItem(); newQuestion(()=>sortHint(it));
   setTimeout(()=>{ const s=$('#sus'); if(s){ s.classList.remove('enter'); s.style.transform='translateX(-50%)'; s.classList.add('bob'); } },560);
   const bar=$('#timer i'); bar.style.transition='none'; bar.style.transform='scaleX(1)';
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ bar.style.transition=`transform ${g.L.time}ms linear`; bar.style.transform='scaleX(0)'; }));
   setTimeout(()=>$('#timer')&&$('#timer').classList.add('low'), g.L.time*.7);
-  g.answered=false;
+  g.answered=false; g.timed=true;
   timerId=setTimeout(()=>sortAnswer(null,null), g.L.time);
 }
-function sortAnswer(rod,c,z){
-  const g=game; if(!g||g.answered) return; g.answered=true; stopTimer();
+function sortHint(it){
+  const n=it.noun, two=game.L.axes.includes('cislo'), ziv=game.L.axes.includes('ziv'), f=esc(it.form);
+  let h = two
+    ? `Nejdřív si řekni: je to <b>jeden</b> kus, nebo jich je <b>víc</b>? Pak převeď slovo na jeden kus a řekni si před něj <b>ten</b>, <b>ta</b>, nebo <b>to</b>.`
+    : `Řekni si nahlas: <b>ten ${f}</b>? <b>ta ${f}</b>? <b>to ${f}</b>? Které zní správně?`;
+  if(ziv) h+=' U mužského rodu se ještě zeptej: je to <b>živá bytost</b> (ti psi), nebo <b>věc</b> (ty hrady)?';
+  return h;
+}
+function sortAnswer(rod,c,z,el){
+  const g=game; if(!g||g.answered) return;
+  if(g.timed){ g.timed=false; stopTimer(); const bar=$('#timer i'); if(bar){ const cs=getComputedStyle(bar).transform; bar.style.transition='none'; bar.style.transform=cs; } }
   const it=g.items[g.i], n=it.noun, two=g.L.axes.includes('cislo');
   const zivAx=g.L.axes.includes('ziv'), okZ = !zivAx || n.rod!=='M' || (z==='1')===n.ziv;
   const okR = rod===n.rod && okZ, okC = !two || c===it.cislo, ok = okR && okC;
-  if(zivAx && n.rod==='M') stat('ziv', n.ziv?'a':'i', rod==='M'&&okZ);
-  stat('rod',n.rod,okR); if(two) stat('cislo',it.cislo,okC);
-  const bar=$('#timer i'); if(bar){ const cs=getComputedStyle(bar).transform; bar.style.transition='none'; bar.style.transform=cs; }
-  document.querySelectorAll('.door').forEach(b=>{ b.disabled=true; if(b.dataset.rod===n.rod && (!two||b.dataset.c===it.cislo) && (!zivAx||n.rod!=='M'||b.dataset.z===(n.ziv?'1':'0'))) b.classList.add('hit'); });
+  const isRight=b=>b.dataset.rod===n.rod && (!two||b.dataset.c===it.cislo) && (!zivAx||n.rod!=='M'||b.dataset.z===(n.ziv?'1':'0'));
   const sus=$('#sus');
+  const statAll=v=>{ if(zivAx && n.rod==='M') stat('ziv', n.ziv?'a':'i', v); stat('rod',n.rod,v); if(two) stat('cislo',it.cislo,v); };
   if(ok){
-    const pts=scoreHit(10);
-    S.weak[n.sg]=Math.max(0,(S.weak[n.sg]||0)-1);
+    g.answered=true; statAll(true);
+    document.querySelectorAll('.door').forEach(b=>{ b.disabled=true; if(isRight(b)) b.classList.add('hit'); });
+    $('#tryfb').innerHTML='';
+    const pts=scoreSolved(10);
+    S.weak[n.sg]= g.itemWrongs ? (S.weak[n.sg]||0)+1 : Math.max(0,(S.weak[n.sg]||0)-1);
     sfx.ok(game.streak); setTimeout(sfx.stamp,140);
     $('#stage').insertAdjacentHTML('beforeend',`<div class="fx"><span class="stamp ok">ZAŘAZENO +${pts}</span></div>`);
     $('#score').textContent=g.score;
     setTimeout(()=>{ sus.classList.remove('bob'); sus.classList.add('exit-'+({M:'l',F:'c',N:'r'})[n.rod]); },500);
-    setTimeout(next,1050);
-  } else {
-    scoreMiss(it); g.lives--; S.weak[n.sg]=(S.weak[n.sg]||0)+1;
-    sfx.bad(); sus.classList.add('laugh'); $('#stage').classList.add('shake');
-    const R=ROD[n.rod];
-    const steps = it.cislo==='pl'
-      ? `<div class="steps"><span class="step">${esc(it.form)}</span><span class="arrow">→ převeď na jeden →</span><span class="step">${R.ukaz} ${esc(n.sg)}</span><span class="arrow">→</span><span class="step" style="color:${R.color}">${R.name} rod, množné číslo</span></div>`
-      : `<div class="steps"><span class="step">${R.ukaz} ${esc(n.sg)}</span><span class="arrow">→</span><span class="step" style="color:${R.color}">${R.name} rod${two?', jednotné číslo':''}</span></div>`;
-    $('#fb').innerHTML=`<div class="paper explain">
-      <h3>${rod===null?'⏱ Podezřelý utekl!':'Chacha, vedle!'}</h3>
-      <p>${it.cislo==='pl'?'Slovo je ve <b>množném čísle</b> (je jich víc). Rod poznáš, když ho převedeš na jeden kus a řekneš si ten / ta / to:':'Řekni si před slovo <b>ten</b>, <b>ta</b>, nebo <b>to</b>:'}</p>
-      ${steps}
-      ${zivAx&&n.rod==='M'?`<p>${n.ziv?`<b>${esc(n.sg)}</b> je živá bytost → mužský <b>životný</b> (ti ${esc(n.pl||n.sg)}).`:`<b>${esc(n.sg)}</b> není živá bytost → mužský <b>neživotný</b> (ty ${esc(n.pl||n.sg)}).`}</p>`:''}
-      <div class="actions"><button class="btn dark" data-act="next">Rozumím →</button></div></div>`;
-    $('.hud .lives').innerHTML=livesArr().map(i=>`<span class="${i<g.lives?'':'lost'}">${shieldSVG()}</span>`).join('');
-    $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
+    setTimeout(next,1150);
+    save(); return;
   }
+  if(el){ el.disabled=true; el.classList.add('wrong'); }
+  sus.classList.remove('laugh'); void sus.offsetWidth; sus.classList.add('laugh');
+  const st=$('#stage'); st.classList.remove('shake'); void st.offsetWidth; st.classList.add('shake');
+  const reveal=wrongAttempt();
+  if(rod===null && g.tries===1) $('#tryfb').innerHTML=`<div class="tryagain">⏱ Čas vypršel – nevadí, teď už bez spěchu. <b>Zkus to.</b></div>`;
+  if(!reveal){ save(); return; }
+  g.answered=true; statAll(false); g.lives--; scoreFailed(it); S.weak[n.sg]=(S.weak[n.sg]||0)+1;
+  document.querySelectorAll('.door').forEach(b=>{ b.disabled=true; if(isRight(b)) b.classList.add('hit'); });
+  const R=ROD[n.rod];
+  const steps = it.cislo==='pl'
+    ? `<div class="steps"><span class="step">${esc(it.form)}</span><span class="arrow">→ převeď na jeden →</span><span class="step">${R.ukaz} ${esc(n.sg)}</span><span class="arrow">→</span><span class="step" style="color:${R.color}">${R.name} rod, množné číslo</span></div>`
+    : `<div class="steps"><span class="step">${R.ukaz} ${esc(n.sg)}</span><span class="arrow">→</span><span class="step" style="color:${R.color}">${R.name} rod${two?', jednotné číslo':''}</span></div>`;
+  $('#fb').innerHTML=`<div class="paper explain">
+    <h3>Takhle to je:</h3>
+    <p>${it.cislo==='pl'?'Slovo je ve <b>množném čísle</b> (je jich víc). Rod poznáš, když ho převedeš na jeden kus a řekneš si ten / ta / to:':'Řekni si před slovo <b>ten</b>, <b>ta</b>, nebo <b>to</b>:'}</p>
+    ${steps}
+    ${zivAx&&n.rod==='M'?`<p>${n.ziv?`<b>${esc(n.sg)}</b> je živá bytost → mužský <b>životný</b> (ti ${esc(n.pl||n.sg)}).`:`<b>${esc(n.sg)}</b> není živá bytost → mužský <b>neživotný</b> (ty ${esc(n.pl||n.sg)}).`}</p>`:''}
+    <div class="actions"><button class="btn dark" data-act="next">Rozumím →</button></div></div>`;
+  $('.hud .lives').innerHTML=livesArr().map(i=>`<span class="${i<g.lives?'':'lost'}">${shieldSVG()}</span>`).join('');
+  $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
   save();
 }
-
 /* ── Výslech ── */
 function buildAsk(L){
   const pool=SENTENCES.filter(s=>s.l<=L.maxL), out=[];
@@ -934,14 +988,18 @@ function askRound(){
         ${g.L.clue?'<button class="tool" data-act="clue" id="clueBtn">🔍 Stopa</button>':''}
       </div>
       <div id="clue"></div>
-      ${g.L.numbersOnly?'<div class="clue">🎯 Těžká náročnost: pádové otázky si polož v duchu, karty ukazují jen čísla.</div>':'<div class="preview" id="prev"><span class="lbl">Lupa</span>Klepni na pádovou otázku a dosaď ji do věty místo zvýrazněného slova.</div>'}
+      <div id="hintbox"></div>
+      ${g.L.numbersOnly?'<div class="clue" id="hardnote">🎯 Těžká náročnost: pádové otázky si polož v duchu, karty ukazují jen čísla.</div>':'<div class="preview" id="prev"><span class="lbl">Lupa</span>Klepni na pádovou otázku a dosaď ji do věty místo zvýrazněného slova.</div>'}
       <div class="cards">${[1,2,3,4,5,6,7].map(p=>`<button class="qcard ${g.L.numbersOnly?'big':''}" data-act="q" data-p="${p}" aria-label="${p}. pád"><kbd>${p}</kbd><span class="n">${p}.</span>${g.L.numbersOnly?'<span class="qq">pád</span>':`<span class="qq">${PAD[p].q}</span>`}</button>`).join('')}</div>
       <div class="accuse"><button class="btn" id="accuse" data-act="accuse" disabled>👉 Obvinit</button></div>
+      <div id="tryfb"></div>
       <div id="fb"></div>
     </div>`);
+  newItem(); newQuestion(()=>askHint(s));
 }
 function askPick(p){
   const g=game; if(!g||g.answered) return;
+  if(document.querySelector(`.qcard[data-p="${p}"]`)?.disabled) return;
   g.sel=p; g.peeks++; sfx.pick(p);
   document.querySelectorAll('.qcard').forEach(b=>b.classList.toggle('sel',+b.dataset.p===p));
   const s=g.items[g.i];
@@ -959,34 +1017,49 @@ function askClue(){
   $('#clue').innerHTML=`<div class="clue">🔍 ${txt}</div>`;
   const b=$('#clueBtn'); if(b) b.disabled=true;
 }
+function askHint(s){
+  const g=game; let t='';
+  if(g.L.numbersOnly){
+    document.querySelectorAll('.qcard').forEach(b=>{ const q=b.querySelector('.qq'); if(q) q.textContent=PAD[+b.dataset.p].q; });
+    t+='Na kartách teď vidíš pádové otázky. ';
+    const hn=$('#hardnote'); if(hn) hn.remove();
+  }
+  const m=s.t.match(/\{(.+?)\}/);
+  if(m){ $('#sent').innerHTML=sentenceHTML(s.t,true); t+=`Všimni si předložky <b>${esc(m[1])}</b>. Dosaď do věty místo slova pádové otázky i s touto předložkou a poslouchej, která věta zní správně.`; }
+  else if(s.p===5) t+='Všimni si čárky a vykřičníku. Co se ve větě se slovem děje?';
+  else t+='Nahraď zvýrazněné slovo pádovou otázkou a přečti si celou větu nahlas. Která otázka do věty pasuje?';
+  if(g.L.numbersOnly) t+=`<div class="preview" id="prev"><span class="lbl">Lupa</span>Klepni na kartu a otázka se dosadí do věty.</div>`;
+  return t;
+}
 function askAccuse(){
-  const g=game; if(!g||g.answered||!g.sel) return; g.answered=true;
+  const g=game; if(!g||g.answered||!g.sel) return;
   const s=g.items[g.i], ok=g.sel===s.p;
-  stat('pad',s.p,ok);
-  document.querySelectorAll('.qcard').forEach(b=>{ b.disabled=true; const p=+b.dataset.p; if(p===s.p) b.classList.add('right'); else if(p===g.sel) b.classList.add('wrong'); });
-  $('#accuse').disabled=true;
   const how = `<div class="steps"><span class="step">${questionSentence(s,s.p)}</span><span class="arrow">→</span><span class="step">${esc(s.w)}</span><span class="arrow">→</span><span class="step" style="color:var(--m)">${s.p}. pád</span></div>`;
+  const lockAll=()=>{ document.querySelectorAll('.qcard').forEach(b=>{ b.disabled=true; if(+b.dataset.p===s.p) b.classList.add('right'); }); $('#accuse').disabled=true; };
   if(ok){
-    const pts=scoreHit(g.L.numbersOnly?15:g.clued?8:12);
-    S.weak['v'+s.id]=Math.max(0,(S.weak['v'+s.id]||0)-1);
+    g.answered=true; stat('pad',s.p,true); lockAll(); $('#tryfb').innerHTML='';
+    const pts=scoreSolved(g.L.numbersOnly?15:g.clued?8:12);
+    S.weak['v'+s.id]= g.itemWrongs ? (S.weak['v'+s.id]||0)+1 : Math.max(0,(S.weak['v'+s.id]||0)-1);
     sfx.ok(game.streak); setTimeout(sfx.stamp,140);
     $('#say').textContent=`Přiznávám! Jsem v ${s.p}. pádě. 😰`;
     $('#score').textContent=g.score;
     $('#fb').innerHTML=`<div class="explain good"><h3>Usvědčen! +${pts}</h3>${how}<div class="actions"><button class="btn dark" data-act="next">Další výslech →</button></div></div>`;
-  } else {
-    scoreMiss(s); S.weak['v'+s.id]=(S.weak['v'+s.id]||0)+1;
-    sfx.bad(); $('#sus').classList.add('laugh');
-    $('#say').textContent='Chachá! To nejsem já! 😏';
-    $('#fb').innerHTML=`<div class="explain"><h3>Tohle neprošlo.</h3>
-      <p>Slovo <b>${esc(s.w)}</b> je ve <b>${s.p}. pádě</b>. Takhle se na něj zeptáš:</p>${how}
-      ${s.p===4||s.p===2?`<p style="font-size:.95rem;color:var(--ink2)">Pozor: 2. i 4. pád se ptají <b>koho?</b> – rozhodne druhé slovo: <b>čeho?</b> (2.) nebo <b>co?</b> (4.).</p>`:''}
-      <div class="actions"><button class="btn dark" data-act="next">Rozumím →</button></div></div>`;
+    $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
+    save(); return;
   }
+  const card=document.querySelector(`.qcard[data-p="${g.sel}"]`); if(card){ card.classList.remove('sel'); card.classList.add('wrong'); card.disabled=true; }
+  g.sel=null; const a=$('#accuse'); a.disabled=true; a.textContent='👉 Obvinit';
+  const sus=$('#sus'); sus.classList.remove('laugh'); void sus.offsetWidth; sus.classList.add('laugh');
+  $('#say').textContent=pickMsg(['Chachá! To nejsem já! 😏','Vedle, detektive! 😜','Tak to teda ne! 🙃','Studená stopa! 🧊']);
+  if(!wrongAttempt()){ $('#tryfb').scrollIntoView({behavior:'smooth',block:'nearest'}); save(); return; }
+  g.answered=true; stat('pad',s.p,false); lockAll(); scoreFailed(s); S.weak['v'+s.id]=(S.weak['v'+s.id]||0)+1;
+  $('#fb').innerHTML=`<div class="explain"><h3>Takhle to je:</h3>
+    <p>Slovo <b>${esc(s.w)}</b> je ve <b>${s.p}. pádě</b>. Takhle se na něj zeptáš:</p>${how}
+    ${s.p===4||s.p===2?`<p style="font-size:.95rem;color:var(--ink2)">Pozor: 2. i 4. pád se ptají <b>koho?</b> – rozhodne druhé slovo: <b>čeho?</b> (2.) nebo <b>co?</b> (4.).</p>`:''}
+    <div class="actions"><button class="btn dark" data-act="next">Rozumím →</button></div></div>`;
   $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
   save();
 }
-
-
 /* ── Usvědčení (vzory) ── */
 const VZORY = {
   'pán':{rod:'Ma',gen:'pána'}, 'muž':{rod:'Ma',gen:'muže'}, 'předseda':{rod:'Ma',gen:'předsedy'}, 'soudce':{rod:'Ma',gen:'soudce'},
@@ -1072,7 +1145,8 @@ function stepView(id,n,L){
 }
 function convictRound(){
   const g=game, it=g.items[g.i], n=it.noun;
-  g.steps=convictSteps(n,g.L); g.si=0; g.wordOk=true; g.answered=false;
+  g.steps=convictSteps(n,g.L); g.si=0; g.wordFailed=false; g.answered=false;
+  newItem();
   show(`${hudHTML('Podezřelý')}
     <div class="board"><div class="polaroid"><span class="pin"></span>${suspectSVG(n.sg)}<b>${esc(n.sg)}</b></div>
       <div class="notes" id="notes"><div class="note empty"><small>stopy</small>zatím nic…</div></div></div>
@@ -1084,44 +1158,59 @@ function convictStep(){
   g.stepAnswered=false;
   let i=0;
   const btn=o=>`<button class="opt ${o.cls||''}" data-act="copt" data-v="${esc(o.v)}"><kbd>${++i}</kbd>${o.html}</button>`;
-  $('#step').innerHTML=`<div class="stepnum">Krok ${g.si+1} / ${g.steps.length}</div><h3>${V.q}</h3><p class="hint">${V.hint}</p>
+  newQuestion(()=>convictHint(id,it.noun,g.L));
+  $('#step').innerHTML=`<div class="stepnum">Krok ${g.si+1} / ${g.steps.length}</div><h3>${V.q}</h3><p class="hint">${V.hint}</p><div id="hintbox"></div>
     ${V.groups ? V.groups.map(gr=>`<div class="ghead">${gr.h}</div><div class="opts gangs">${gr.opts.map(btn).join('')}</div>`).join('') : `<div class="opts ${id==='vzor'?'gangs':''}">${V.opts.map(btn).join('')}</div>`}
-    <div id="fb"></div>`;
+    <div id="tryfb"></div><div id="fb"></div>`;
 }
-function convictAnswer(v){
-  const g=game; if(!g||g.stepAnswered) return; g.stepAnswered=true;
+function convictHint(id,n,L){
+  const k=rodKey(n), sg=esc(n.sg);
+  if(id==='rod') return `Řekni si nahlas: <b>ten ${sg}</b>? <b>ta ${sg}</b>? <b>to ${sg}</b>? Když je to „ten“, zeptej se ještě: je to živá bytost?`;
+  if(id==='end1') return `Podívej se na poslední písmeno slova <b>${sg}</b> – je to „<b>${esc(n.sg.slice(-1))}</b>“.`;
+  if(id==='gen') return `Řekni si nahlas: <b>bez ${esc(n.gen)}</b>. Jaká písmena jsou na konci?`;
+  if(id==='vzor') return `Porovnej 2. pád: <b>bez ${esc(n.gen)}</b>. Který vzor má ve 2. pádě stejnou koncovku?`;
+  document.querySelectorAll('.opt').forEach(b=>{ if(VZORY[b.dataset.v] && VZORY[b.dataset.v].rod!==k) b.disabled=true; });
+  return `Je to rod <b>${ROD4[k].s}</b> – ostatní gangy jsem schoval. Porovnej 2. pád: <b>bez ${esc(n.gen)}</b>.`;
+}
+function convictAnswer(v,el){
+  const g=game; if(!g||g.stepAnswered) return;
   const it=g.items[g.i], n=it.noun, id=g.steps[g.si], V=stepView(id,n,g.L), ok=v===V.ok;
-  document.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===V.ok) b.classList.add('right'); else if(b.dataset.v===v) b.classList.add('wrong'); });
-  if(!ok) g.wordOk=false;
-  const notes=$('#notes'); const em=notes.querySelector('.empty'); if(em) em.remove();
   const last=g.si===g.steps.length-1;
+  if(!ok){
+    if(el){ el.disabled=true; el.classList.add('wrong'); }
+    if(!wrongAttempt()) return;
+    g.wordFailed=true;
+  }
+  g.stepAnswered=true; $('#tryfb').innerHTML='';
+  document.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===V.ok) b.classList.add('right'); });
+  const notes=$('#notes'); const em=notes.querySelector('.empty'); if(em) em.remove();
   notes.insertAdjacentHTML('beforeend',`<div class="note ${ok?'':'bad'} ${last?'gang':''}"><small>${V.note[0]}</small>${V.note[1]}</div>`);
   if(!last){
     if(ok){ sfx.pick(g.si+2); setTimeout(()=>{ g.si++; convictStep(); },550); }
-    else { sfx.bad(); $('#fb').innerHTML=`<div class="explain"><h3>Pozor, tady ne.</h3><p>${V.why}</p><div class="actions"><button class="btn dark" data-act="cstep">Pokračovat →</button></div></div>`; }
+    else $('#fb').innerHTML=`<div class="explain"><h3>Takhle to je:</h3><p>${V.why}</p><div class="actions"><button class="btn dark" data-act="cstep">Pokračovat →</button></div></div>`;
     return;
   }
   // konec vyšetřování slova
-  stat('vzor',n.vzor,g.wordOk);
+  const wordOk=!g.wordFailed;
+  stat('vzor',n.vzor,wordOk);
   let head;
-  if(g.wordOk){
-    const pts=scoreHit(g.L.guided?(g.L.showGen?12:15):18);
-    S.weak['z'+n.sg]=Math.max(0,(S.weak['z'+n.sg]||0)-1);
+  if(wordOk){
+    const pts=scoreSolved(g.L.guided?(g.L.showGen?12:15):18);
+    S.weak['z'+n.sg]= g.itemWrongs ? (S.weak['z'+n.sg]||0)+1 : Math.max(0,(S.weak['z'+n.sg]||0)-1);
     const al=S.album[n.vzor]||(S.album[n.vzor]=[]); if(!al.includes(n.sg)) al.push(n.sg);
     sfx.ok(g.streak); setTimeout(sfx.stamp,140); $('#score').textContent=g.score;
     head=`<h3>Usvědčen! +${pts}</h3>`;
   } else {
-    scoreMiss(it); S.weak['z'+n.sg]=(S.weak['z'+n.sg]||0)+1; sfx.bad();
+    scoreFailed(it); S.weak['z'+n.sg]=(S.weak['z'+n.sg]||0)+1;
     head=`<h3>Tentokrát ti unikl.</h3><p>${V.why}</p>`;
   }
-  $('#fb').innerHTML=`<div class="explain ${g.wordOk?'good':''}">${head}
-    <div class="reveal"><span class="mini">${gangSVG(n.vzor)}</span><div><span class="stamp ${g.wordOk?'ok':''}">gang ${n.vzor.toUpperCase()}</span>
+  $('#fb').innerHTML=`<div class="explain ${wordOk?'good':''}">${head}
+    <div class="reveal"><span class="mini">${gangSVG(n.vzor)}</span><div><span class="stamp ${wordOk?'ok':''}">gang ${n.vzor.toUpperCase()}</span>
       <p><b>${esc(n.sg)}</b> se skloňuje jako <b>${n.vzor}</b>: ${n.vzor} – bez ${VZORY[n.vzor].gen}, ${esc(n.sg)} – bez ${esc(n.gen)}.</p></div></div>
     <div class="actions"><button class="btn dark" data-act="next">Další podezřelý →</button></div></div>`;
   g.answered=true; save();
   $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-
 /* ── Konec případu ── */
 function finish(){
   const g=game; if(g.done) return; g.done=true;
@@ -1194,10 +1283,12 @@ document.addEventListener('click',e=>{
   if(a==='home') home();
   else if(a==='district') district(b.dataset.id);
   else if(a==='play') startGame(b.dataset.d,b.dataset.m,b.dataset.lv);
-  else if(a==='sort') sortAnswer(b.dataset.rod,b.dataset.c,b.dataset.z);
+  else if(a==='sort') sortAnswer(b.dataset.rod,b.dataset.c,b.dataset.z,b);
   else if(a==='lv'){ S.sel[b.dataset.m]=+b.dataset.lv; save(); const y=window.scrollY; district(b.dataset.d); window.scrollTo(0,y); }
   else if(a==='next') next();
-  else if(a==='copt') convictAnswer(b.dataset.v);
+  else if(a==='copt') convictAnswer(b.dataset.v,b);
+  else if(a==='tryagain') $('#tryfb').innerHTML='';
+  else if(a==='wanthint'){ showHint(); $('#tryfb').innerHTML='<div class="tryagain soft">💡 Nápověda je nahoře. Zkus to znovu.</div>'; }
   else if(a==='cstep'){ game.si++; convictStep(); }
   else if(a==='q') askPick(+b.dataset.p);
   else if(a==='accuse') askAccuse();
@@ -1215,7 +1306,7 @@ document.addEventListener('keydown',e=>{
   const n=+e.key;
   if(game.m.type==='sort' && !game.answered && n>=1){
     const btn=document.querySelectorAll('.door')[n-1]; if(btn) btn.click();
-  } else if(game.m.type==='ask' && !game.answered && n>=1 && n<=7) askPick(n);
+  } else if(game.m.type==='ask' && !game.answered && n>=1 && n<=7){ const c=document.querySelector(`.qcard[data-p="${n}"]`); if(c&&!c.disabled) askPick(n); }
   else if(game.m.type==='convict' && !game.stepAnswered && n>=1){ const o=document.querySelectorAll('.opt')[n-1]; if(o) o.click(); }
   else if(e.key==='Enter'){
     const nb=$('[data-act="next"]')||$('[data-act="cstep"]'); if(nb){ e.preventDefault(); nb.click(); }
