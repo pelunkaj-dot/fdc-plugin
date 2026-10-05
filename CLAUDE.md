@@ -19,8 +19,12 @@ Didaktiku nikdy neobětovat kvůli efektu, rychlosti ani zjednodušení kódu.
   za nižší (jen doporučení), v demu jen Lehká.
 - **Správnost obsahu:** jazykový/matematický obsah musí být bezchybný; data ověřovat automaticky,
   kde to jde (např. FajnDetektiv: postup ze školy = zapsaný vzor u každého slova).
-- **Zpětná vazba pro rodiče/školy:** cíl je lepší než u konkurence – při rozšiřování na to myslet
-  (přehledy úspěšnosti po kategoriích, slabá místa, vývoj v čase).
+- **Zpětná vazba pro rodiče/školy:** cíl je lepší než u konkurence. Každý modul má tlačítko **„Pro rodiče“**
+  chráněné heslem (min. 4 znaky, solený SHA-256 hash v localStorage; „Zapomněl(a) jsem heslo“ s kontrolou
+  dospělého, obnova nesmaže statistiky; změna hesla; vynulování výsledků jen odtud).
+  Obsah (vzor: FajnDetektiv): napoprvé / s pomocí / neúspěšně, čas hraní, aktivita po dnech,
+  zvládnutí po dovednostech, typické záměny s radou pro rodiče, doporučení co hrát dál,
+  problémová slova, poslední výsledky, popis didaktiky, tisk.
 
 ## Hra a vzhled
 - Hratelnost a zábava: příběh, postavy, sbírání, hodnosti, odznaky, mapy – ne jen kvíz.

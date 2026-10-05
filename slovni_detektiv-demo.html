@@ -322,7 +322,76 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:60;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(105vh) rotate(720deg)}}
 
+/* ── Pro rodiče ── */
+.parent-btn{border:1.5px solid var(--bar-line);color:var(--text)}
+.parent-btn .pb-short{display:none}
+.pmodal{position:fixed;inset:0;z-index:60;background:rgba(5,9,20,.72);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto;animation:fadeUp .2s both}
+.pbox{width:min(860px,100%);margin:auto;color:var(--ink);background-image:none;padding:20px}
+.phead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
+.phead h2{font-size:1.6rem;color:var(--ink)}
+.phead .noprint{display:flex;gap:6px;flex-shrink:0}
+.pkicker{font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink2);font-weight:800}
+.pbox h3{font-size:1.15rem;margin:22px 0 8px;color:var(--ink)}
+.pgate{max-width:380px;margin:10px auto;display:flex;flex-direction:column;gap:8px}
+.pgate p{margin:0 0 6px;font-weight:700;line-height:1.45}
+.pgate label{font-weight:900;font-size:.9rem}
+.pgate input{font:inherit;padding:11px 12px;border-radius:10px;border:2px solid var(--paper2);background:#fff;color:var(--ink)}
+.perr{min-height:20px;color:var(--bad);font-weight:800;font-size:.9rem}
+.plink{text-decoration:underline;color:var(--ink2);font-weight:700;margin-top:4px}
+.pnote{color:var(--ink2);font-weight:600;font-size:.85rem;line-height:1.45}
+.ptiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.ptile{background:#fff;border:2px solid var(--paper2);border-radius:12px;padding:10px;text-align:center}
+.ptile b{display:block;font-family:'Baloo 2';font-size:1.6rem;line-height:1.1}
+.ptile span{font-size:.78rem;font-weight:800;color:var(--ink2)}
+.prec{margin-top:14px;padding:12px 14px;border-radius:12px;background:#eef4ff;border-left:5px solid #3a6fd8;font-weight:700;line-height:1.45}
+.plegend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-size:.82rem;font-weight:800;color:var(--ink2)}
+.plegend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.s1{background:#1f9e6e}.s2{background:#e8a33a}.s3{background:#d64545}.s0{background:#e6dcc4}
+.pchart{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;align-items:end;height:150px;padding:6px 4px 0;border-bottom:1px solid #d9ccb0}
+.pday{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:default}
+.pcol{width:70%;max-width:26px;height:110px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+.pcol i{display:block;width:100%;border-radius:2px}
+.pcol i:first-child{border-radius:4px 4px 2px 2px}
+.pday:hover .pcol i{filter:brightness(1.1)}
+.pv{font-size:.7rem;font-weight:800;color:var(--ink2);min-height:14px}
+.pd{font-size:.68rem;font-weight:700;color:var(--ink2);margin-top:3px}
+.pgroup{margin-top:10px;background:#fff;border-radius:12px;padding:10px 12px;border:2px solid var(--paper2)}
+.pgroup h4{margin:0 0 6px;font-size:1rem}.pgroup h4 small{color:var(--ink2);font-weight:700}
+.prow{display:grid;grid-template-columns:minmax(120px,190px) 1fr 56px 158px;gap:10px;align-items:center;padding:4px 0;font-size:.88rem;font-weight:700}
+.pbar{display:flex;gap:2px;height:12px}
+.pbar i{display:block;height:100%}
+.pbar i:first-child{border-radius:4px 0 0 4px}.pbar i:last-child{border-radius:0 4px 4px 0}.pbar i:only-child{border-radius:4px}
+.pn{text-align:right;font-weight:900}.pn small{display:block;font-size:.68rem;color:var(--ink2);font-weight:700}
+.pm{font-size:.8rem;font-weight:800;padding:3px 8px;border-radius:999px;text-align:center;white-space:nowrap}
+.pm.ok{background:#e3f5ec;color:#156b4b}.pm.mid{background:#fdf0d8;color:#8a5a0b}.pm.low{background:#fbe1e1;color:#9b2626}.pm.na{background:#f1ece0;color:#7a6c55}
+.pconf{display:grid;gap:8px}
+.pci{background:#fff;border-radius:12px;padding:10px 12px;border-left:5px solid #e8a33a}
+.pci p{margin:6px 0 0;font-weight:600;color:var(--ink2);line-height:1.45}
+.pcount{display:inline-block;padding:1px 8px;border-radius:999px;background:#fdf0d8;font-size:.78rem;font-weight:900}
+.pchips{display:flex;flex-wrap:wrap;gap:6px}
+.pchip{background:#fff;border:2px solid var(--paper2);border-radius:999px;padding:4px 10px;font-weight:700;font-size:.85rem}
+.ptable{overflow-x:auto}
+.ptable table{width:100%;border-collapse:collapse;font-size:.88rem}
+.ptable th,.ptable td{text-align:left;padding:6px 8px;border-bottom:1px solid #e6dcc4}
+.ptable th{color:var(--ink2);font-size:.78rem;text-transform:uppercase}
+.pst{color:#c98a17;letter-spacing:1px}
+.pdid{background:#fff;border-radius:12px;padding:6px 14px;font-weight:600;line-height:1.5}
+.pbox .btn.ghost{background:var(--paper2);color:var(--ink)}
+@media print{
+  body>*:not(.pmodal){display:none!important}
+  .pmodal{position:static;background:none;padding:0;overflow:visible}
+  .pbox{box-shadow:none;width:100%}
+  .noprint{display:none!important}
+}
 @media (max-width:560px){
+  .parent-btn .pb-full{display:none}.parent-btn .pb-short{display:inline}
+  .brand>span{display:none}
+  .iconbtn{width:34px;height:34px}
+  .chip{padding:5px 9px}
+  .prow{grid-template-columns:1fr 50px;row-gap:4px}
+  .prow .pbar{grid-column:1/-1;order:3}
+  .prow .pm{grid-column:1/-1;order:4;justify-self:start}
+  .pbox{padding:14px}
   .rk-name{display:none}
   .topbar{gap:6px;padding:8px 12px}
   .brand{font-size:1.1rem}
@@ -351,6 +420,7 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
   <span id="demoBadge" class="demo-badge" hidden>DEMO</span>
   <span class="sp"></span>
   <span class="chip rank" id="rankChip"></span>
+  <button class="chip parent-btn" data-act="parent" title="Přehled pro rodiče"><span class="pb-full">Pro rodiče</span><span class="pb-short">👪</span></button>
   <button class="iconbtn" data-act="profile" title="Spis detektiva" aria-label="Spis detektiva">📁</button>
   <button class="iconbtn theme-btn" data-act="theme" title="Přepnout téma" aria-label="Přepnout téma">🌙</button>
   <button class="iconbtn" data-act="sound" id="soundBtn" title="Zvuk" aria-label="Zvuk">🔊</button>
@@ -568,11 +638,15 @@ function initTheme(){ let t='dark'; try{ t=localStorage.getItem(THEME_KEY)||'dar
 
 /* ══════════════ STAV ══════════════ */
 const KEY = 'fdc-detektiv-v1';
-const S = Object.assign({xp:0, stars:{}, stats:{rod:{},cislo:{},pad:{},ziv:{}}, weak:{}, sel:{}, album:{}, badges:[], sound:true, intro:false}, load());
+const S = Object.assign({xp:0, stars:{}, stats:{rod:{},cislo:{},pad:{},ziv:{}}, weak:{}, sel:{}, album:{}, conf:{}, days:{}, hist:[], parent:{salt:'',hash:''}, badges:[], sound:true, intro:false}, load());
 function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
-function stat(cat,k,ok){ S.stats[cat]=S.stats[cat]||{}; const a=S.stats[cat][k]||(S.stats[cat][k]=[0,0]); a[1]++; if(ok)a[0]++; }
-function errRate(cat,k){ const a=(S.stats[cat]||{})[k]; return a&&a[1] ? 1-a[0]/a[1] : .35; }
+// a = [vyřešeno (i s pomocí), celkem, napoprvé]
+function stat(cat,k,ok,first){ S.stats[cat]=S.stats[cat]||{}; const a=S.stats[cat][k]||(S.stats[cat][k]=[0,0,0]); a[1]++; if(ok)a[0]++; if(a[2]===undefined)a[2]=0; if(ok&&first)a[2]++; }
+function dayKey(t=new Date()){ return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0'); }
+function dayLog(){ S.days=S.days||{}; return S.days[dayKey()]||(S.days[dayKey()]={first:0,help:0,fail:0,min:0}); }
+function confuse(key){ S.conf=S.conf||{}; S.conf[key]=(S.conf[key]||0)+1; }
+function errRate(cat,k){ const a=(S.stats[cat]||{})[k]; return a&&a[1] ? 1-(a[2]!==undefined?a[2]:a[0])/a[1] : .35; }
 function rankOf(xp){ let r=RANKS[0],i=0; RANKS.forEach((x,j)=>{ if(xp>=x[0]){r=x;i=j;} }); return {name:r[1], i, next:RANKS[i+1]}; }
 
 /* ══════════════ POMOCNÉ ══════════════ */
@@ -799,7 +873,7 @@ function district(id){
 /* ══════════════ HERNÍ JÁDRO ══════════════ */
 function startGame(dId,mId,lv){
   const d=DISTRICTS.find(x=>x.id===dId), m=d.missions.find(x=>x.id===mId), L=m.levels.find(x=>x.lv==lv);
-  game={d,m,L,i:0,score:0,streak:0,best:0,ok:0,tot:0,lives:L.lives||3,mist:[],done:false};
+  game={d,m,L,i:0,score:0,streak:0,best:0,ok:0,tot:0,lives:L.lives||3,mist:[],done:false,start:Date.now()};
   game.items = BUILD[m.type](L);
   ROUND[m.type]();
 }
@@ -842,13 +916,14 @@ function showHint(){
 function scoreSolved(base){
   const g=game, first=!g.itemWrongs, c=first?1:(g.itemHint?.35:.6);
   if(first){ g.streak++; g.best=Math.max(g.best,g.streak); } else g.streak=0;
+  dayLog()[first?'first':'help']++;
   const pts=Math.max(1,Math.round(base*c*(first?mult():1)));
   g.score+=pts; g.ok+=c; g.tot++;
   if(first && (g.streak===3||g.streak===8)){ sfx.combo(g.streak); const cb=$('#combo'); if(cb) cb.classList.add('pop'); }
   if(g.itemWrongs>=2) remember(g.items[g.i]);
   return pts;
 }
-function scoreFailed(item){ const g=game; g.streak=0; g.tot++; remember(item); }
+function scoreFailed(item){ const g=game; g.streak=0; g.tot++; dayLog().fail++; remember(item); }
 function remember(item){
   const g=game;
   if(!g.mist.includes(item)) g.mist.push(item);
@@ -916,7 +991,7 @@ function sortAnswer(rod,c,z,el){
   const okR = rod===n.rod && okZ, okC = !two || c===it.cislo, ok = okR && okC;
   const isRight=b=>b.dataset.rod===n.rod && (!two||b.dataset.c===it.cislo) && (!zivAx||n.rod!=='M'||b.dataset.z===(n.ziv?'1':'0'));
   const sus=$('#sus');
-  const statAll=v=>{ if(zivAx && n.rod==='M') stat('ziv', n.ziv?'a':'i', v); stat('rod',n.rod,v); if(two) stat('cislo',it.cislo,v); };
+  const statAll=v=>{ const f=!g.itemWrongs; if(zivAx && n.rod==='M') stat('ziv', n.ziv?'a':'i', v, f); stat('rod',n.rod,v,f); if(two) stat('cislo',it.cislo,v,f); };
   if(ok){
     g.answered=true; statAll(true);
     document.querySelectorAll('.door').forEach(b=>{ b.disabled=true; if(isRight(b)) b.classList.add('hit'); });
@@ -931,6 +1006,12 @@ function sortAnswer(rod,c,z,el){
     save(); return;
   }
   if(el){ el.disabled=true; el.classList.add('wrong'); }
+  if(rod!==null){
+    const lab=(r,zz)=> r==='M'&&zivAx ? (zz==='1'?'mužský životný':'mužský neživotný') : ROD[r].name+(r==='M'?'':'');
+    if(rod!==n.rod) confuse(`rod|${lab(n.rod,n.ziv?'1':'0')}|${lab(rod,z)}`);
+    else if(!okZ) confuse(`ziv|${n.ziv?'životný':'neživotný'}`);
+    if(two && c!==it.cislo) confuse(`cislo|${it.cislo}`);
+  }
   sus.classList.remove('laugh'); void sus.offsetWidth; sus.classList.add('laugh');
   const st=$('#stage'); st.classList.remove('shake'); void st.offsetWidth; st.classList.add('shake');
   const reveal=wrongAttempt();
@@ -1037,7 +1118,7 @@ function askAccuse(){
   const how = `<div class="steps"><span class="step">${questionSentence(s,s.p)}</span><span class="arrow">→</span><span class="step">${esc(s.w)}</span><span class="arrow">→</span><span class="step" style="color:var(--m)">${s.p}. pád</span></div>`;
   const lockAll=()=>{ document.querySelectorAll('.qcard').forEach(b=>{ b.disabled=true; if(+b.dataset.p===s.p) b.classList.add('right'); }); $('#accuse').disabled=true; };
   if(ok){
-    g.answered=true; stat('pad',s.p,true); lockAll(); $('#tryfb').innerHTML='';
+    g.answered=true; stat('pad',s.p,true,!g.itemWrongs); lockAll(); $('#tryfb').innerHTML='';
     const pts=scoreSolved(g.L.numbersOnly?15:g.clued?8:12);
     S.weak['v'+s.id]= g.itemWrongs ? (S.weak['v'+s.id]||0)+1 : Math.max(0,(S.weak['v'+s.id]||0)-1);
     sfx.ok(game.streak); setTimeout(sfx.stamp,140);
@@ -1047,6 +1128,7 @@ function askAccuse(){
     $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
     save(); return;
   }
+  confuse(`pad|${Math.min(g.sel,s.p)}|${Math.max(g.sel,s.p)}`);
   const card=document.querySelector(`.qcard[data-p="${g.sel}"]`); if(card){ card.classList.remove('sel'); card.classList.add('wrong'); card.disabled=true; }
   g.sel=null; const a=$('#accuse'); a.disabled=true; a.textContent='👉 Obvinit';
   const sus=$('#sus'); sus.classList.remove('laugh'); void sus.offsetWidth; sus.classList.add('laugh');
@@ -1178,6 +1260,7 @@ function convictAnswer(v,el){
   const last=g.si===g.steps.length-1;
   if(!ok){
     if(el){ el.disabled=true; el.classList.add('wrong'); }
+    if(id==='vzor'||id==='vzor14'){ const pr=[v,V.ok].sort(); confuse(`vzor|${pr[0]}|${pr[1]}`); } else confuse(`krok|${id}`);
     if(!wrongAttempt()) return;
     g.wordFailed=true;
   }
@@ -1192,7 +1275,7 @@ function convictAnswer(v,el){
   }
   // konec vyšetřování slova
   const wordOk=!g.wordFailed;
-  stat('vzor',n.vzor,wordOk);
+  stat('vzor',n.vzor,wordOk,!g.itemWrongs);
   let head;
   if(wordOk){
     const pts=scoreSolved(g.L.guided?(g.L.showGen?12:15):18);
@@ -1218,7 +1301,8 @@ function finish(){
   const stars=failed?0: acc>=.9?3 : acc>=.75?2 : acc>=.5?1 : 0;
   const key=g.m.id+g.L.lv, prevRank=rankOf(S.xp).i;
   S.stars[key]=Math.max(S.stars[key]||0,stars);
-  S.xp+=g.score;
+  S.xp+=g.score; logTime();
+  S.hist=S.hist||[]; S.hist.unshift({t:Date.now(), m:g.m.name, lv:g.L.lv, st:stars, acc:Math.round(acc*100), n:g.tot}); S.hist.length=Math.min(S.hist.length,40);
   const earned=[];
   const give=id=>{ if(!S.badges.includes(id)){ S.badges.push(id); earned.push(BADGES.find(b=>b.id===id)); } };
   give('first');
@@ -1272,9 +1356,193 @@ function profile(){
       <h3>Album gangů</h3><div class="album">${Object.keys(VZORY).map(v=>{ const w=S.album[v]||[], a=(S.stats.vzor||{})[v];
         return `<div class="gang ${w.length?'':'off'}" style="border-top-color:${ROD4[VZORY[v].rod].col}">${gangSVG(v)}<b>${v}</b><small>${w.length?`${w.length} ${w.length===1?'slovo':w.length<5?'slova':'slov'}${a&&a[1]?` · ${Math.round(a[0]/a[1]*100)} %`:''}`:'zatím nikdo'}</small>${w.length?`<span class="words">${w.slice(-4).map(esc).join(', ')}</span>`:''}</div>`; }).join('')}</div>
       <h3>Odznaky</h3><div class="badges">${BADGES.map(b=>`<div class="badge ${S.badges.includes(b.id)?'':'off'}"><span class="bi">${b.ico}</span>${b.name}<br><small style="color:var(--ink2)">${b.d}</small></div>`).join('')}</div>
-      <div class="actions"><button class="btn ghost" style="color:var(--ink2)" data-act="reset">Smazat postup</button></div>
+      <p style="color:var(--ink2);font-weight:700;margin-top:16px">Výsledky může vynulovat jen rodič v sekci <b>Pro rodiče</b>.</p>
     </div>`);
 }
+
+
+/* ══════════════ PŘEHLED PRO RODIČE ══════════════ */
+let parentUnlocked=false, adultQ=null;
+async function phash(t){
+  try{ if(window.crypto&&crypto.subtle){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); } }catch(e){}
+  return 'f'+hash(t).toString(16)+hash('#'+t).toString(16);   // záloha, když prohlížeč nemá crypto.subtle
+}
+function psalt(){ try{ const a=new Uint32Array(4); crypto.getRandomValues(a); return [...a].map(n=>n.toString(16)).join(''); }catch(e){ return Math.random().toString(16).slice(2)+Date.now().toString(16); } }
+function pModal(inner){
+  let m=$('#pmodal');
+  if(!m){ m=document.createElement('div'); m.id='pmodal'; m.className='pmodal'; document.body.appendChild(m);
+    m.addEventListener('click',e=>{ if(e.target===m) closeParent(); }); }
+  m.innerHTML=`<div class="paper pbox" role="dialog" aria-modal="true" aria-label="Přehled pro rodiče">
+    <div class="phead"><div><div class="pkicker">FajnDetektiv · podstatná jména</div><h2>Přehled pro rodiče</h2></div>
+    <div class="noprint">${parentUnlocked?'<button class="tool" data-act="p-print">🖨 Tisk</button> ':''}<button class="tool" data-act="p-close" aria-label="Zavřít">✕</button></div></div>${inner}</div>`;
+}
+function closeParent(){ const m=$('#pmodal'); if(m) m.remove(); }
+function openParent(){ if(parentUnlocked) return parentDash(); parentGate(); }
+function parentGate(mode){
+  const first=!S.parent||!S.parent.hash;
+  if(mode==='forgot'){
+    const a=12+Math.floor(Math.random()*8), b=13+Math.floor(Math.random()*7); adultQ=a*b;
+    return pModal(`<div class="pgate"><p>Pro ověření, že jste dospělý, vypočítejte: <b>${a} × ${b}</b> = ?</p>
+      <input id="pp-adult" inputmode="numeric" autocomplete="off" placeholder="výsledek">
+      <div class="perr" id="pp-err"></div>
+      <button class="btn" data-act="p-forgot-ok">Ověřit a nastavit nové heslo</button>
+      <p class="pnote">Obnovení hesla nesmaže statistiky ani pokrok dítěte.</p>
+      <button class="plink" data-act="p-back">Zpět</button></div>`);
+  }
+  pModal(first
+    ? `<div class="pgate"><p>Přehled je chráněný heslem, aby do něj dítě nechodilo. Stačí jednoduché heslo alespoň o 4 znacích.</p>
+        <label>Nastavit rodičovské heslo</label><input id="pp-1" type="password" autocomplete="new-password" placeholder="alespoň 4 znaky">
+        <input id="pp-2" type="password" autocomplete="new-password" placeholder="heslo znovu">
+        <div class="perr" id="pp-err"></div><button class="btn" data-act="p-setup">Nastavit a otevřít</button>
+        <p class="pnote">Heslo i statistiky zůstávají jen v tomto zařízení.</p></div>`
+    : `<div class="pgate"><label>Rodičovské heslo</label><input id="pp-1" type="password" autocomplete="current-password">
+        <div class="perr" id="pp-err"></div><button class="btn" data-act="p-login">Otevřít přehled</button>
+        <button class="plink" data-act="p-forgot">Zapomněl(a) jsem heslo</button></div>`);
+  setTimeout(()=>{ const i=$('#pp-1'); if(i) i.focus(); },50);
+}
+async function parentAction(a){
+  const err=t=>{ const e=$('#pp-err'); if(e) e.textContent=t; };
+  if(a==='p-close') return closeParent();
+  if(a==='p-print') return window.print();
+  if(a==='p-back') return parentGate();
+  if(a==='p-forgot') return parentGate('forgot');
+  if(a==='p-forgot-ok'){ if(+$('#pp-adult').value.trim()!==adultQ) return err('To není správně.'); S.parent={salt:'',hash:''}; save(); return parentGate(); }
+  if(a==='p-setup'){
+    const p1=$('#pp-1').value, p2=$('#pp-2').value;
+    if(p1.length<4) return err('Heslo musí mít alespoň 4 znaky.');
+    if(p1!==p2) return err('Hesla se neshodují.');
+    const salt=psalt(); S.parent={salt, hash:await phash(salt+'|'+p1)}; save(); parentUnlocked=true; return parentDash();
+  }
+  if(a==='p-login'){
+    const p1=$('#pp-1').value;
+    if(await phash(S.parent.salt+'|'+p1)!==S.parent.hash) return err('Heslo nesouhlasí.');
+    parentUnlocked=true; return parentDash();
+  }
+  if(a==='p-pass'){ S.parent={salt:'',hash:''}; parentUnlocked=false; save(); return parentGate(); }
+  if(a==='p-reset'){
+    if(!confirm('Opravdu vynulovat všechny výsledky, body, hvězdy, album a statistiky? Rodičovské heslo zůstane zachované.')) return;
+    const keep={parent:S.parent, sound:S.sound, intro:true, sel:S.sel};
+    Object.keys(S).forEach(k=>delete S[k]);
+    Object.assign(S,{xp:0,stars:{},stats:{rod:{},cislo:{},pad:{},ziv:{},vzor:{}},weak:{},badges:[],album:{},conf:{},days:{},hist:[]},keep);
+    save(); updateTop(); return parentDash();
+  }
+}
+const plural=(n,a,b,c)=> n===1?a : (n>=2&&n<=4)?b : c;
+const pc = a=> a ? {tot:a[1]||0, ok:a[0]||0, first:a[2]!==undefined?a[2]:(a[0]||0)} : {tot:0,ok:0,first:0};
+function mastery(c){
+  if(c.tot<3) return {i:'·', t:'málo dat', k:'na'};
+  const r=c.first/c.tot;
+  return r>=.85 ? {i:'✓', t:'zvládá', k:'ok'} : r>=.6 ? {i:'~', t:'procvičuje', k:'mid'} : {i:'!', t:'potřebuje pomoc', k:'low'};
+}
+function skillRow(label,a){
+  const c=pc(a), help=c.ok-c.first, fail=c.tot-c.ok, m=mastery(c);
+  const seg=(n,cls,t)=> n ? `<i class="${cls}" style="flex:${n}" title="${label} – ${t}: ${n}×"></i>` : '';
+  return `<div class="prow"><span class="pl">${label}</span>
+    <span class="pbar">${c.tot ? seg(c.first,'s1','napoprvé')+seg(help,'s2','s pomocí')+seg(fail,'s3','neúspěšně') : '<i class="s0" style="flex:1"></i>'}</span>
+    <span class="pn">${c.tot?Math.round(c.first/c.tot*100)+' %':'–'}<small>${c.tot}×</small></span>
+    <span class="pm ${m.k}"><b>${m.i}</b> ${m.t}</span></div>`;
+}
+const PADTIP = {
+  '2-4':'2. i 4. pád se ptají „koho?“. Rozhoduje druhé slovo: bez koho? čeho? (2.) × vidím koho? co? (4.). Zkuste dvojice vět: „Bojím se psa.“ × „Vidím psa.“',
+  '1-4':'U neživotných slov zní 1. a 4. pád stejně (hrad – hrad). Ptejte se celou větou: Kdo/co něco dělá? (1.) × Koho/co vidím? (4.)',
+  '3-6':'3. pád: ke komu? ke čemu? – 6. pád: o kom? o čem? Pomůže dosadit předložku: ke stolu × o stole.',
+  '4-6':'Po předložkách na / v rozhoduje otázka kam? (4.) × kde? (6.): skočil na stůl × leží na stole.',
+  '4-7':'Po předložkách za / pod / nad / před rozhoduje otázka kam? (4.) × kde? (7.).',
+  '2-3':'Dosaďte do věty obě otázky: bez koho? čeho? (2.) × ke komu? ke čemu? (3.) a poslechněte si, která sedí.'
+};
+function vzTip(a,b){
+  const pair=[a,b].sort().join('-');
+  if(['muž-pán','hrad-stroj'].includes(pair)) return 'Rozhoduje koncovka 2. pádu: bez pána, bez hradu (tvrdé zakončení) × bez muže, bez stroje (-e).';
+  if(pair==='růže-žena') return 'Podívejte se na 1. pád: končí na -a (žena), nebo na -e (růže)?';
+  if(pair==='kost-píseň') return 'Rozhoduje 2. pád: bez písně (-e) × bez kosti (-i).';
+  if(pair==='kuře-moře') return 'Rozhoduje 2. pád: bez moře × bez kuřete – u vzoru kuře přibude -et-.';
+  return 'Postupujte krok za krokem: rod → koncovka v 1. pádě → 2. pád → vzor. Vzor je až poslední krok, ne odhad.';
+}
+function confInfo(k){
+  const [t,a,b]=k.split('|');
+  if(t==='pad') return {txt:`Plete si ${a}. a ${b}. pád`, tip:PADTIP[a+'-'+b]||'Dosaďte do věty místo slova pádovou otázku i s předložkou a poslechněte si, která věta zní správně.'};
+  if(t==='rod') return {txt:`Rod ${a} považuje za ${b}`, tip:'Ať si dítě řekne před slovo ten / ta / to. U množného čísla nejdřív převeďte slovo na jeden kus (knihy → ta kniha).'};
+  if(t==='ziv') return {txt:`Životnost mužského rodu (správně: ${a})`, tip:'Životné jsou živé bytosti včetně zvířat (ti psi), neživotné jsou věci (ty hrady).'};
+  if(t==='cislo') return {txt: a==='pl'?'Množné číslo považuje za jednotné':'Jednotné číslo považuje za množné', tip:'Zeptejte se: je to jeden kus, nebo jich je víc?'};
+  if(t==='krok') return {txt:`Usvědčení – krok „${({rod:'rod a životnost',end1:'koncovka v 1. pádě',gen:'koncovka ve 2. pádě'})[a]||a}“`,
+    tip:({rod:'Řekněte si ten / ta / to a u mužského rodu, zda jde o živou bytost.',end1:'Ukažte si na poslední písmeno slova v základním tvaru (1. pád).',gen:'Říkejte nahlas „bez …“ a poslouchejte, jak slovo končí.'})[a]||''};
+  if(t==='vzor') return {txt:`Plete si vzory ${a} a ${b}`, tip:vzTip(a,b)};
+  return {txt:k, tip:''};
+}
+function recommend(){
+  const C=[], add=(cat,k,label,mission,lv)=>{ const c=pc((S.stats[cat]||{})[k]); if(c.tot>=3) C.push({r:c.first/c.tot,label,mission,lv}); };
+  ['M','F','N'].forEach(k=>add('rod',k,`${ROD[k].name} rod`,'Třídírna','Lehká'));
+  [['sg','jednotné číslo'],['pl','množné číslo']].forEach(([k,l])=>add('cislo',k,l,'Třídírna','Střední'));
+  [['a','životné'],['i','neživotné']].forEach(([k,l])=>add('ziv',k,`mužský rod – ${l}`,'Třídírna','Těžká'));
+  [1,2,3,4,5,6,7].forEach(p=>{ const c=pc((S.stats.pad||{})[p]); add('pad',p,`${p}. pád`,'Výslech', c.tot&&c.first/c.tot<.6?'Lehká':'Střední'); });
+  Object.keys(VZORY).forEach(v=>add('vzor',v,`vzor ${v}`,'Usvědčení','Lehká'));
+  const weak=C.filter(x=>x.r<.85).sort((a,b)=>a.r-b.r);
+  if(weak.length){
+    const groups=[]; weak.forEach(w=>{ let gr=groups.find(x=>x.mission===w.mission); if(!gr) groups.push(gr={mission:w.mission, lv:w.lv, items:[]}); if(gr.items.length<3) gr.items.push(w); });
+    const line=gr=>`<b>${gr.mission} – ${gr.lv}</b> (${gr.items.map(w=>`${w.label}: ${Math.round(w.r*100)} % napoprvé`).join(', ')})`;
+    return `Doporučujeme zahrát ${line(groups[0])}.${groups.length>1?` Potom: ${groups.slice(1,3).map(line).join('; ')}.`:''}`;
+  }
+  if(!C.length) return 'Zatím je málo dat. Doporučujeme začít misí <b>Třídírna – Lehká</b> a pak <b>Výslech – Lehká</b>.';
+  const next=DISTRICTS[0].missions.filter(m=>m.levels).flatMap(m=>m.levels.map(L=>({m,L}))).find(x=>(S.stars[x.m.id+x.L.lv]||0)<3);
+  return next ? `Všechny procvičované dovednosti jdou dítěti dobře. Zkuste vyšší náročnost: <b>${next.m.name} – ${DIFF[next.L.lv-1]}</b>.` : 'Výborně – všechny mise jsou na tři hvězdy. Brzy přibudou další.';
+}
+function parentDash(){
+  const days=S.days||{}, keys=Object.keys(days);
+  const T=keys.reduce((t,k)=>({first:t.first+days[k].first, help:t.help+days[k].help, fail:t.fail+days[k].fail, min:t.min+(days[k].min||0)}),{first:0,help:0,fail:0,min:0});
+  const tot=T.first+T.help+T.fail, pct=n=>tot?Math.round(n/tot*100)+' %':'–';
+  // aktivita za 14 dní
+  const last=[]; for(let i=13;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); last.push({d, k:dayKey(d), v:days[dayKey(d)]||{first:0,help:0,fail:0,min:0}}); }
+  const maxN=Math.max(1,...last.map(x=>x.v.first+x.v.help+x.v.fail));
+  const bars=last.map(x=>{ const v=x.v, n=v.first+v.help+v.fail, lab=`${x.d.getDate()}. ${x.d.getMonth()+1}.`;
+    const seg=(m,cls)=> m?`<i class="${cls}" style="height:${m/maxN*100}%"></i>`:'';
+    return `<div class="pday" title="${lab}: ${n} úloh – ${v.first} napoprvé, ${v.help} s pomocí, ${v.fail} neúspěšně${v.min?`, ${Math.round(v.min)} min`:''}">
+      <span class="pv">${n||''}</span><div class="pcol">${seg(v.fail,'s3')}${seg(v.help,'s2')}${seg(v.first,'s1')}</div><span class="pd">${x.d.getDate()}.</span></div>`; }).join('');
+  const conf=Object.entries(S.conf||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const weakW=Object.entries(S.weak||{}).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([k])=>{
+    if(k[0]==='v'&&/^v\d+$/.test(k)){ const s=SENTENCES[+k.slice(1)]; return s?`<span class="pchip" title="Výslech">${esc(s.t.replace(/[{}]/g,'').replace(/\[(.+?)\]/,'«$1»'))}</span>`:''; }
+    if(k[0]==='z'&&NOUNS.some(n=>'z'+n.sg===k)){ const n=NOUNS.find(n=>'z'+n.sg===k); return `<span class="pchip" title="Usvědčení">${esc(n.sg)} → vzor ${esc(n.vzor)}</span>`; }
+    const n=NOUNS.find(n=>n.sg===k); return n?`<span class="pchip" title="Třídírna">${ROD[n.rod].ukaz} ${esc(n.sg)}</span>`:''; }).join('');
+  const hist=(S.hist||[]).slice(0,10).map(h=>{ const d=new Date(h.t); return `<tr><td>${d.getDate()}. ${d.getMonth()+1}.</td><td>${esc(h.m)}</td><td>${DIFF[h.lv-1]}</td><td class="pst">${starsTxt(h.st)}</td><td>${h.acc} %</td><td>${h.n}</td></tr>`; }).join('');
+  pModal(`
+    <div class="ptiles">
+      <div class="ptile"><b>${tot}</b><span>úloh celkem</span></div>
+      <div class="ptile"><b>${pct(T.first)}</b><span>napoprvé</span></div>
+      <div class="ptile"><b>${pct(T.help)}</b><span>s pomocí</span></div>
+      <div class="ptile"><b>${pct(T.fail)}</b><span>neúspěšně</span></div>
+      <div class="ptile"><b>${Math.round(T.min)}</b><span>${plural(Math.round(T.min),'minuta','minuty','minut')} hraní</span></div>
+      <div class="ptile"><b>${(S.hist||[]).length}</b><span>${plural((S.hist||[]).length,'dokončený případ','dokončené případy','dokončených případů')}</span></div>
+    </div>
+    <div class="prec">🎯 ${recommend()}</div>
+    <div class="plegend"><span><i class="s1"></i>napoprvé</span><span><i class="s2"></i>s pomocí (opravilo se)</span><span><i class="s3"></i>neúspěšně (ukázali jsme řešení)</span></div>
+    <h3>Aktivita za posledních 14 dní</h3>
+    <div class="pchart">${bars}</div>
+    <h3>Dovednosti</h3>
+    <div class="pgroup"><h4>Rod, číslo a životnost <small>Třídírna</small></h4>
+      ${['M','F','N'].map(k=>skillRow(ROD[k].name+' rod',(S.stats.rod||{})[k])).join('')}
+      ${skillRow('jednotné číslo',(S.stats.cislo||{}).sg)}${skillRow('množné číslo',(S.stats.cislo||{}).pl)}
+      ${skillRow('mužský životný',(S.stats.ziv||{}).a)}${skillRow('mužský neživotný',(S.stats.ziv||{}).i)}</div>
+    <div class="pgroup"><h4>Pády <small>Výslech</small></h4>${[1,2,3,4,5,6,7].map(p=>skillRow(`${p}. pád (${PAD[p].q})`,(S.stats.pad||{})[p])).join('')}</div>
+    <div class="pgroup"><h4>Vzory <small>Usvědčení</small></h4>${Object.keys(VZORY).map(v=>skillRow('vzor '+v,(S.stats.vzor||{})[v])).join('')}</div>
+    <p class="pnote">Stav: <b>✓ zvládá</b> = aspoň 85 % napoprvé · <b>~ procvičuje</b> = 60–85 % · <b>! potřebuje pomoc</b> = pod 60 % · hodnotíme až od 3 pokusů.</p>
+    <h3>Na co se zaměřit</h3>
+    ${conf.length ? `<div class="pconf">${conf.map(([k,n])=>{ const c=confInfo(k); return `<div class="pci"><b>${c.txt}</b> <span class="pcount">${n}×</span><p>💡 ${c.tip}</p></div>`; }).join('')}</div>` : '<p class="pnote">Zatím žádné opakované záměny. 👍</p>'}
+    ${weakW?`<h3>Slova a věty, které dělají potíže</h3><div class="pchips">${weakW}</div>`:''}
+    <h3>Poslední případy</h3>
+    ${hist?`<div class="ptable"><table><thead><tr><th>Den</th><th>Mise</th><th>Náročnost</th><th>Hvězdy</th><th>Úspěšnost</th><th>Úloh</th></tr></thead><tbody>${hist}</tbody></table></div>`:'<p class="pnote">Zatím žádný dokončený případ.</p>'}
+    <h3>Jak modul učí</h3>
+    <div class="pdid">
+      <p>Dítě se u každé úlohy může <b>samo opravit</b>: po 1. chybě zkouší znovu, po 2. si může vzít nápovědu, po 3. nápovědu dostane (vede k postupu, neprozradí výsledek) a teprve po 4. chybě ukážeme řešení s vysvětlením.</p>
+      <p><b>Napoprvé</b> je nejlepší ukazatel skutečného zvládnutí. <b>S pomocí</b> znamená, že se dítě opravilo – i to je učení. <b>Neúspěšně</b> označuje úlohy, u kterých potřebovalo vidět řešení; ty se mu proto vracejí častěji.</p>
+      <p>Postup odpovídá škole: rod (ten / ta / to), pád (pádová otázka dosazená do věty), vzor (rod → koncovka 1. pádu → 2. pád).</p>
+    </div>
+    <div class="actions noprint" style="justify-content:flex-start">
+      <button class="btn ghost" data-act="p-pass">Změnit heslo</button>
+      <button class="btn ghost" data-act="p-reset">Vynulovat výsledky dítěte</button>
+      <button class="btn dark" data-act="p-close">Hotovo</button></div>
+    <p class="pnote">Heslo i statistiky zůstávají jen v tomto zařízení a prohlížeči.</p>`);
+}
+
+function logTime(){ const g=game; if(!g||!g.start||g.timeLogged) return; g.timeLogged=true; dayLog().min+=Math.min(30,(Date.now()-g.start)/60000); }
 
 /* ══════════════ OVLÁDÁNÍ ══════════════ */
 document.addEventListener('click',e=>{
@@ -1294,14 +1562,20 @@ document.addEventListener('click',e=>{
   else if(a==='accuse') askAccuse();
   else if(a==='clue') askClue();
   else if(a==='read'){ const s=game.items[game.i]; say(s.t.replace(/[{}\[\]]/g,'')); }
-  else if(a==='quit'){ const id=game.d.id; game=null; district(id); }
+  else if(a==='quit'){ const id=game.d.id; logTime(); save(); game=null; district(id); }
   else if(a==='profile') profile();
   else if(a==='theme') cycleTheme();
   else if(a==='sound'){ S.sound=!S.sound; save(); updateTop(); }
   else if(a==='closeintro'){ S.intro=true; save(); b.closest('.modal').remove(); }
-  else if(a==='reset'){ if(confirm('Opravdu smazat celý postup?')){ try{localStorage.removeItem(KEY);}catch(e){} location.reload(); } }
+  else if(a==='parent') openParent();
+  else if(a&&a.startsWith('p-')) parentAction(a,b);
 });
 document.addEventListener('keydown',e=>{
+  if($('#pmodal')){
+    if(e.key==='Escape') closeParent();
+    else if(e.key==='Enter'){ const b=$('#pmodal [data-act="p-login"],#pmodal [data-act="p-setup"],#pmodal [data-act="p-forgot-ok"]'); if(b){ e.preventDefault(); b.click(); } }
+    return;
+  }
   if(!game||game.done) return;
   const n=+e.key;
   if(game.m.type==='sort' && !game.answered && n>=1){
