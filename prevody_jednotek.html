@@ -762,7 +762,7 @@ function pl_slovniUlohy() {
         qMath:`${v} ha = ? a`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} a`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4),ans=v*100,ws=genWrongs(ans,100),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Lesní plocha má rozlohu <b>${v} km²</b>. Kolik je to hektarů?`,
+      return {qText:`Les má rozlohu <b>${v} km²</b>. Kolik je to hektarů?`,
         qMath:`${v} km² = ? ha`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} ha`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5)*100,ans=v/100,ws=genWrongs(ans,1),opts=shuffle([ans,...ws].slice(0,4));
@@ -837,7 +837,7 @@ function ob_slovniUlohy() {
         qMath:`${cl} cl = ? ml`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} ml`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,4),ans=v*10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Džbán pojme <b>${v} l</b>. Kolik je to decilitrů?`,
+      return {qText:`Džbán pojme <b>${v} l</b> vody. Kolik je to decilitrů?`,
         qMath:`${v} l = ? dl`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} dl`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
@@ -845,7 +845,7 @@ function ob_slovniUlohy() {
         qMath:`${v} hl = ? dl`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} dl`,val:toCz(x)}))}; },
     ()=>{ const v=ri(2,9)*50,ans=v/100,ws=genWrongs(ans,0.5),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Láhev obsahuje <b>${v} cl</b>. Kolik je to litrů?`,
+      return {qText:`Láhev obsahuje <b>${v} cl</b> nápoje. Kolik je to litrů?`,
         qMath:`${v} cl = ? l`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} l`,val:toCz(x)}))}; },
   ];
@@ -1076,7 +1076,7 @@ function cas_slovniUlohy() {
     ()=>{ const h=ri(1,4),m=rFrom([0,15,30,45]),ans=h*60+m;
       const ws=[h*60,h*100+m,ans+15,ans-15].filter(v=>v>0&&v!==ans);
       const opts=shuffle([ans,...shuffle(ws).slice(0,3)]);
-      return {qText:`Pohádka začíná za <b>${h} h ${m} min</b>. Za kolik minut začne?`,
+      return {qText:`Do začátku pohádky zbývá <b>${h} h ${m} min</b>. Kolik je to celkem minut?`,
         qMath:`${h} h ${m} min = ? min`, type:'choice', answer:String(ans),
         options:opts.map(x=>({html:`${x} min`,val:String(x)}))}; },
   ];
@@ -1124,7 +1124,7 @@ function hm_porovnani() {
 function hm_slovniUlohy() {
   const pool=[
     ()=>{ const v=ri(1,9),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Koupili jste <b>${v} kg</b> jablek. Kolik je to gramů?`,
+      return {qText:`Máš <b>${v} kg</b> jablek. Kolik je to gramů?`,
         qMath:`${v} kg = ? g`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,5),ans=v*1000,ws=genWrongs(ans,1000),opts=shuffle([ans,...ws].slice(0,4));
@@ -1132,7 +1132,7 @@ function hm_slovniUlohy() {
         qMath:`${v} t = ? kg`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} kg`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,9)*10,ans=v*10,ws=genWrongs(ans,10),opts=shuffle([ans,...ws].slice(0,4));
-      return {qText:`Recept potřebuje <b>${v} dkg (dag)</b> cukru. Kolik je to gramů?`,
+      return {qText:`Do receptu je potřeba <b>${v} dkg (dag)</b> cukru. Kolik je to gramů?`,
         qMath:`${v} dkg (dag) = ? g`, type:'choice', answer:toCz(ans),
         options:opts.map(x=>({html:`${toCz(x)} g`,val:toCz(x)}))}; },
     ()=>{ const v=ri(1,9)*100,ans=v/1000,ws=genWrongs(ans,0.1),opts=shuffle([ans,...ws].slice(0,4));
@@ -1228,9 +1228,9 @@ const CATS = {
           '1 cm² = 100 mm²','1 dm² = 100 cm²','1 m² = 100 dm²',
           '1 m² = 10 000 cm²','1 m² = 1 000 000 mm²'
         ], steps:[
-          'Krok délky byl ×10, krok plochy je ×100 (druhá mocnina!).',
+          'U sousedních délkových jednotek je krok ×10, u odpovídajících plošných jednotek ×100.',
           'Příklad: 1 m = 100 cm, ale 1 m² = 100 × 100 = 10 000 cm²',
-          'Toto je nejčastější chyba — nezapomeň na mocninu.'
+          'Tohle bývá častá chyba — u plošných jednotek nezapomeň na druhou mocninu.'
         ]}},
       { name:'Hektary, ary, km²', desc:'m²↔a · m²↔ha · ha↔km²',
         gen:[pl_haA, pl_haM2, pl_km2Ha, pl_m2Cm2],
@@ -1277,7 +1277,7 @@ const CATS = {
           'Nápoje se často měří v cl: plechovka 33 cl = 330 ml.',
           'Sklenice vína 15 cl = 150 ml.',
         ]}},
-      { name:'Objemové jednotky', desc:'cm³↔l · dm³↔m³ · vztah litrů a m³',
+      { name:'Objemové jednotky', desc:'dm³↔ml · m³↔l · hl↔l',
         gen:[ob_dm3Ml, ob_m3L, ob_hlL],
         help:{ title:'Objem a litry', table:[
           '1 cm³ = 1 ml','1 dm³ = 1 l','1 m³ = 1 000 l = 1 000 dm³',
@@ -1299,7 +1299,7 @@ const CATS = {
   cas: {
     name:'Čas', icon:'h·min·s', cls:'cc', cVar:'--c-c', bgUnit:'h·min·s·dny',
     topics:[
-      { name:'Sekundy a minuty', desc:'s↔min · smíšený zápis min:s',
+      { name:'Sekundy a minuty', desc:'s↔min · smíšený zápis minut a sekund',
         gen:[cas_sMin, cas_smisenaMinS],
         help:{ title:'Sekundy a minuty', table:[
           '1 min = 60 s','1 h = 60 min = 3 600 s'
@@ -2022,7 +2022,7 @@ function renderHome() {
   Object.entries(CATS).forEach(([cid, cat]) => {
     const totalStars = cat.topics.reduce((s,_,i)=>s+getStars(cid,i), 0);
     const maxStars   = cat.topics.length * 3;
-    const starsStr   = totalStars>0 ? `★ ${totalStars}/${maxStars}` : 'Nezačato';
+    const starsStr   = totalStars>0 ? `★ ${totalStars}/${maxStars}` : 'Zatím bez výsledku';
     const card = document.createElement('div');
     card.className = `cat-card ${cat.cls}`;
     card.innerHTML = `
