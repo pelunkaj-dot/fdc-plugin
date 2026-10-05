@@ -164,6 +164,12 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .gang .words{display:block;font-size:.72rem;color:var(--ink2);margin-top:2px}
 .gang.off svg{filter:grayscale(1);opacity:.35}
 .qcard.big{padding:14px 8px}
+.adjbase{margin-left:6px;padding:2px 10px;border-radius:999px;background:var(--paper2);color:var(--ink);font-weight:800}
+.opt.drawer{background:linear-gradient(#b98a5a,#8e6236);border-color:#6f4a26;color:#fff8ec;box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 4px 0 #5a3b1c}
+.opt.drawer small{color:#f3dfc4}
+.opt.drawer::after{content:"";display:block;width:34px;height:6px;border-radius:4px;background:#e9c98e;margin:6px auto 0}
+.opt.drawer.right{background:linear-gradient(#3fbf8d,#22946a);border-color:var(--ok)}
+.opt.drawer.wrong{background:linear-gradient(#cf6b72,#a8434b);opacity:.6}
 .casefile{margin-top:4px}
 .cfhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .cfhead h3{color:var(--ink);font-size:1.4rem}
@@ -656,7 +662,17 @@ const DISTRICTS = [
       {lv:2, name:'Hledej sám', sub:'4 padělky kdekoli v textu', fakes:4, opts:4, count:2, full:true},
       {lv:3, name:'Mistrovský padělatel', sub:'5 rafinovaných padělků (i/y, hovorové tvary)', fakes:5, sly:true, opts:4, count:2, full:true}]},
   ]},
-  {id:'prid', ico:'🎨', name:'Náměstí přídavných jmen', desc:'Shoda s podstatným jménem, druhy.', soon:true},
+  {id:'prid', ico:'🎨', name:'Náměstí přídavných jmen', desc:'Druhy přídavných jmen a shoda s podstatným jménem.', missions:[
+    {id:'druhy', type:'pick', gen:'druh', ico:'🗂️', name:'Kartotéka druhů', desc:'Zařaď přídavné jméno do správného šuplíku: tvrdé, měkké, nebo přivlastňovací?', levels:[
+      {lv:1, name:'Tvrdé, nebo měkké?', sub:'základní tvar, dva šuplíky', mode:1, count:12},
+      {lv:2, name:'Tři šuplíky', sub:'i přivlastňovací, různé rody', mode:2, count:12, full:true},
+      {lv:3, name:'Čtyři vzory', sub:'jakýkoli tvar → vzor mladý, jarní, otcův, nebo matčin', mode:3, count:12, full:true}]},
+    {id:'shoda', type:'pick', gen:'agree', ico:'💞', name:'Shoda', desc:'Přídavné jméno musí ladit se svým podstatným jménem v rodě, čísle i pádě.', levels:[
+      {lv:1, name:'Ten, ta, to', sub:'1. pád, jednotné číslo', types:['tvrde'], nums:['sg'], pads:[1], opts:3, count:10},
+      {lv:2, name:'Všechny pády', sub:'jednotné číslo, tvrdá i měkká', types:['tvrde','mekke'], nums:['sg'], pads:[1,2,3,4,6,7], opts:4, count:10, full:true},
+      {lv:3, name:'Malí psi, malé hrady', sub:'i množné číslo a přivlastňovací', types:['tvrde','mekke','privl'], nums:['sg','pl'], pads:[1,1,2,3,4,6,7], opts:4, count:10, full:true}]},
+    {id:'hlidka', soon:true, ico:'✏️', name:'Pravopisná hlídka', desc:'Najdi chyby v koncovkách přídavných jmen v textu.'}
+  ]},
   {id:'slov', ico:'🚂', name:'Nádraží sloves', desc:'Osoba, číslo, čas, způsob.', soon:true},
   {id:'zajm', ico:'🌳', name:'Park zájmen', desc:'Druhy zájmen a jejich tvary.', soon:true},
   {id:'cisl', ico:'🏦', name:'Banka číslovek', desc:'Druhy číslovek a skloňování.', soon:true}
@@ -672,6 +688,7 @@ const BADGES = [
   {id:'vzory', ico:'🕵️', name:'Znalec vzorů', d:'3 hvězdy ve všech náročnostech Usvědčení'},
   {id:'kovar', ico:'🔨', name:'Mistr kovář', d:'3 hvězdy ve všech náročnostech Kovárny'},
   {id:'velkydet', ico:'📜', name:'Velký detektiv', d:'3 hvězdy ve všech náročnostech Velkého případu'},
+  {id:'pridavna', ico:'🎨', name:'Znalec přídavných jmen', d:'3 hvězdy ve všech náročnostech Kartotéky i Shody'},
   {id:'album', ico:'📒', name:'Sběratel gangů', d:'Usvědči slovo z každého ze 14 gangů'},
   {id:'veteran', ico:'🎖️', name:'Veterán', d:'Získej 1000 bodů'}
 ];
@@ -986,8 +1003,8 @@ function remember(item){
 }
 
 function next(){ game.i++; if(game.i>=game.items.length || game.lives<=0) finish(); else ROUND[game.m.type](); }
-const BUILD = {sort:L=>buildSort(L), ask:L=>buildAsk(L), convict:L=>buildConvict(L), forge:L=>buildForge(L), case:L=>buildCase(L)};
-const ROUND = {sort:()=>sortRound(), ask:()=>askRound(), convict:()=>convictRound(), forge:()=>forgeRound(), case:()=>caseRound()};
+const BUILD = {sort:L=>buildSort(L), ask:L=>buildAsk(L), convict:L=>buildConvict(L), forge:L=>buildForge(L), case:L=>buildCase(L), pick:L=>buildPick(L)};
+const ROUND = {sort:()=>sortRound(), ask:()=>askRound(), convict:()=>convictRound(), forge:()=>forgeRound(), case:()=>caseRound(), pick:()=>pickRound()};
 
 /* ── Třídírna ── */
 function buildSort(L){
@@ -1659,6 +1676,128 @@ function caseNext(wait){
   save();
 }
 
+
+/* ══════════════ NÁMĚSTÍ PŘÍDAVNÝCH JMEN ══════════════ */
+// Tabulky vzorů mladý, jarní, otcův/matčin – ručně zkontrolováno (viz commit).
+const AEND={
+ mlady:{Ma:{s:['ý','ého','ému','ého','ý','ém','ým'],p:['í','ých','ým','é','í','ých','ými']},
+        Mi:{s:['ý','ého','ému','ý','ý','ém','ým'],p:['é','ých','ým','é','é','ých','ými']},
+        F:{s:['á','é','é','ou','á','é','ou'],p:['é','ých','ým','é','é','ých','ými']},
+        N:{s:['é','ého','ému','é','é','ém','ým'],p:['á','ých','ým','á','á','ých','ými']}},
+ jarni:{Ma:{s:['í','ího','ímu','ího','í','ím','ím'],p:['í','ích','ím','í','í','ích','ími']},
+        Mi:{s:['í','ího','ímu','í','í','ím','ím'],p:['í','ích','ím','í','í','ích','ími']},
+        F:{s:['í','í','í','í','í','í','í'],p:['í','ích','ím','í','í','ích','ími']},
+        N:{s:['í','ího','ímu','í','í','ím','ím'],p:['í','ích','ím','í','í','ích','ími']}},
+ // přivlastňovací: '@' = základní tvar (otcův / matčin)
+ privl:{Ma:{s:['@','a','u','a','@','ě|u','ým'],p:['i','ých','ým','y','i','ých','ými']},
+        Mi:{s:['@','a','u','@','@','ě|u','ým'],p:['y','ých','ým','y','y','ých','ými']},
+        F:{s:['a','y','ě','u','a','ě','ou'],p:['y','ých','ým','y','y','ých','ými']},
+        N:{s:['o','a','u','o','o','ě|u','ým'],p:['a','ých','ým','a','a','ých','ými']}}
+};
+const ADJ=[
+ ...'malý hodný veselý zelený krásný nový silný smutný bílý černý rychlý pomalý tlustý hladový zlatý mladý slabý'.split(' ').map(w=>({w,druh:'tvrde',vzor:'mladý',stem:w.slice(0,-1),t:'mlady'})),
+ ...'jarní letní zimní podzimní moderní cizí ranní večerní první poslední sousední hlavní domácí lesní školní'.split(' ').map(w=>({w,druh:'mekke',vzor:'jarní',stem:w.slice(0,-1),t:'jarni'})),
+ ...[['otcův','otcov','otci'],['bratrův','bratrov','bratrovi'],['dědův','dědov','dědovi'],['tatínkův','tatínkov','tatínkovi'],['sousedův','sousedov','sousedovi']].map(([w,stem,own])=>({w,druh:'privl',vzor:'otcův',stem,own,t:'privl'})),
+ ...[['matčin','matčin','matce'],['sestřin','sestřin','sestře'],['babiččin','babiččin','babičce'],['maminčin','maminčin','mamince']].map(([w,stem,own])=>({w,druh:'privl',vzor:'matčin',stem,own,t:'privl'}))
+];
+function adjForms(a){ const E=AEND[a.t], r={};
+ for(const g of ['Ma','Mi','F','N']) r[g]={s:E[g].s.map(e=>e.split('|').map(x=>x==='@'?a.w:a.stem+x)), p:E[g].p.map(e=>e.split('|').map(x=>a.stem+x))};
+ return r; }
+
+const AFORMS = Object.fromEntries(ADJ.map(a=>[a.w, adjForms(a)]));
+const DRUH = {tvrde:'tvrdé', mekke:'měkké', privl:'přivlastňovací'};
+const DRUH_SUB = {tvrde:'vzor mladý', mekke:'vzor jarní', privl:'vzory otcův, matčin'};
+const VZROD = {'pán':'Ma','muž':'Ma','předseda':'Ma','soudce':'Ma','hrad':'Mi','stroj':'Mi','žena':'F','růže':'F','píseň':'F','kost':'F','město':'N','moře':'N','kuře':'N','stavení':'N'};
+const ADJ_UNI = {tvrde:['malý','nový','krásný','bílý','černý','zelený','zlatý'], mekke:['první','poslední','cizí','sousední','domácí'], privl:['otcův','bratrův','dědův','matčin','sestřin','babiččin']};
+const af=(a,rk,c,p)=>AFORMS[a.w][rk][c==='sg'?'s':'p'][p-1];
+const randOf=arr=>arr[Math.random()*arr.length|0];
+
+function genDruh(L){
+  const pool = L.mode===1 ? ADJ.filter(a=>a.druh!=='privl') : ADJ;
+  return weightedPick(pool, a=>1+2*errRate('adjdruh',a.druh)+2*(S.weak['a|'+a.w]||0), L.count).map(a=>{
+    let form=a.w;
+    if(L.mode===2) form=af(a, randOf(['Ma','F','N']),'sg',1)[0];
+    if(L.mode===3){ const rk=randOf(['Ma','Mi','F','N']), c=randOf(['sg','pl']), p=randOf([1,2,3,4,6,7]); form=randOf(af(a,rk,c,p)); }
+    const keys = L.mode===1 ? ['tvrde','mekke'] : L.mode===2 ? ['tvrde','mekke','privl'] : ['mladý','jarní','otcův','matčin'];
+    const ok = L.mode===3 ? a.vzor : a.druh;
+    const end = a.druh==='tvrde' ? 'končí na <b>-ý</b>' : a.druh==='mekke' ? `končí na <b>-í</b> a pro ten / ta / to je stejné (${a.w} pes, ${a.w} kniha, ${a.w} město)` : `ptáme se <b>čí?</b> – patří ${a.own}`;
+    return { sign:form, w:form, a, q:'Do kterého šuplíku patří?', sub:`Slovo <b>${esc(form)}</b>`,
+      opts: keys.map(k=> L.mode===3 ? {v:k, html:`vzor<br><b>${k}</b>`, cls:'drawer'} : {v:k, html:`<b>${DRUH[k]}</b><small>${DRUH_SUB[k]}</small>`, cls:'drawer'}),
+      ok:[ok],
+      hint:`Převeď slovo na tvar pro <b>ten</b> v 1. pádě (ten …) a podívej se na konec. Zeptej se: jaký?, nebo čí?${L.mode===3?' U přivlastňovacích: patří muži (-ův), nebo ženě (-in)?':''}`,
+      why:`<div class="steps"><span class="step">${esc(form)}</span><span class="arrow">→</span><span class="step">ten ${esc(a.w)}</span><span class="arrow">→</span><span class="step">${end}</span><span class="arrow">→</span><span class="step" style="color:var(--ok)">${DRUH[a.druh]} (vzor ${a.vzor})</span></div>`,
+      stats:[['adjdruh',a.druh]].concat(L.mode===3?[['adjvzor',a.vzor]]:[]),
+      conf:v=>`adj|${a.druh}|${L.mode===3?ADJ.find(x=>x.vzor===v).druh:v}`, weak:'a|'+a.w, base:L.mode===1?10:L.mode===2?12:15 };
+  });
+}
+const frameKey=(p,c)=> p===1 ? (c==='sg'?'je':'jsou') : String(p);
+function genAgree(L){
+  const out=[];
+  for(let t=0; out.length<L.count && t<200; t++){
+    const type=randOf(L.types), aw=randOf(ADJ_UNI[type]), a=ADJ.find(x=>x.w===aw);
+    const k=KWORDS[Math.random()*KWORDS.length|0], rk=VZROD[k.vzor], c=randOf(L.nums), p=randOf(L.pads);
+    if(!(S.weak['s|'+rk+c+p]>0) && Math.random()<.4*(1-errRate('shoda','r'+rk))) continue;   // víc procvičuj slabá místa
+    const nf=k.f[c==='sg'?'s':'p'][p-1][0];
+    // všechna čtení (číslo, pád), která dávají stejný rámec i stejný tvar podstatného jména
+    const valid=new Set();
+    ['sg','pl'].forEach(c2=>[1,2,3,4,6,7].forEach(p2=>{ if(frameKey(p2,c2)===frameKey(p,c) && k.f[c2==='sg'?'s':'p'][p2-1].includes(nf)) af(a,rk,c2,p2).forEach(f=>valid.add(f)); }));
+    const T=af(a,rk,c,p), all=new Set(['Ma','Mi','F','N'].flatMap(g=>['sg','pl'].flatMap(cc=>[1,2,3,4,6,7].flatMap(pp=>af(a,g,cc,pp)))));
+    const sameSlot=['Ma','Mi','F','N'].flatMap(g=>af(a,g,c,p)).filter(f=>!valid.has(f));
+    const rest=[...all].filter(f=>!valid.has(f) && !sameSlot.includes(f));
+    const opts=[...new Set([T[0], ...shuffle([...new Set(sameSlot)]), ...shuffle(rest)])].slice(0,L.opts);
+    if(opts.length<2) continue;
+    const fw=frameWord(p,c,T[0]);
+    const ROD_T=ROD4[rk].s, one=k.f.s[0][0];
+    const iyNote = (rk==='Ma'&&c==='pl'&&p===1) ? '<p>V 1. pádě množného čísla rodu mužského životného píšeme <b>-í</b>: malí psi, noví kamarádi (ale malé hrady, malé ženy, malá města).</p>' : '';
+    out.push({ sign:nf, w:nf, q:'Doplň přídavné jméno', sub:`<span class="frame">${fw} <span class="blank">______</span> ${esc(nf)}${p===1?'.':''}</span> <span class="adjbase">(${esc(a.w)})</span>`,
+      opts:shuffle(opts).map(f=>({v:f, html:esc(f)})), ok:[...valid],
+      hint:`Urči u podstatného jména <b>${esc(nf)}</b> rod (ten / ta / to ${esc(one)}), číslo a pád. Přídavné jméno <b>${esc(a.w)}</b> musí mít stejný rod, číslo i pád.`,
+      why:`<div class="steps"><span class="step">${esc(nf)}</span><span class="arrow">→</span><span class="step">${ROD_T}, ${CIS[c]}, ${p}. pád</span><span class="arrow">→</span><span class="step" style="color:var(--ok)">${fw} ${esc(T[0])} ${esc(nf)}</span></div>${iyNote}`,
+      stats:[['shoda','r'+rk],['shodac',c],['shodap',p]],
+      conf:v=> stripIY(v)===stripIY(T[0]) ? 'shoda|iy' : sameSlot.includes(v) ? 'shoda|rod' : 'shoda|pad',
+      weak:'s|'+rk+c+p, base:L.pads.length===1?10:L.nums.length===1?13:16 });
+  }
+  return out;
+}
+const PICKGEN = {druh:genDruh, agree:genAgree};
+function buildPick(L){ return PICKGEN[game.m.gen](L); }
+function pickRound(){
+  const g=game, it=g.items[g.i];
+  show(`${hudHTML('Podezřelý')}
+    <div class="lineup" id="stage"><div class="spot"></div><div class="floor"></div>
+      <div class="suspect enter" id="sus">${suspectSVG(it.sign)}<div class="placard">${esc(it.sign)}</div></div></div>
+    <div class="paper step">
+      <h3>${it.q}</h3><p class="hint">${it.sub}</p>
+      <div id="hintbox"></div>
+      <div class="opts">${it.opts.map((o,i)=>`<button class="opt ${o.cls||''}" data-act="popt" data-v="${esc(o.v)}"><kbd>${i+1}</kbd>${o.html}</button>`).join('')}</div>
+      <div id="tryfb"></div><div id="fb"></div></div>`);
+  setTimeout(()=>{ const s=$('#sus'); if(s){ s.classList.remove('enter'); s.style.transform='translateX(-50%)'; s.classList.add('bob'); } },560);
+  newItem(); newQuestion(()=>it.hint); g.answered=false;
+}
+function pickAnswer(v,el){
+  const g=game; if(!g||g.answered) return;
+  const it=g.items[g.i], ok=it.ok.includes(v);
+  if(ok){
+    g.answered=true; $('#tryfb').innerHTML='';
+    it.stats.forEach(([c,k])=>stat(c,k,true,!g.itemWrongs));
+    document.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===v) b.classList.add('right'); });
+    const pts=scoreSolved(it.base);
+    S.weak[it.weak]= g.itemWrongs ? (S.weak[it.weak]||0)+1 : Math.max(0,(S.weak[it.weak]||0)-1);
+    sfx.ok(g.streak); setTimeout(sfx.stamp,120); $('#score').textContent=g.score;
+    $('#stage').insertAdjacentHTML('beforeend',`<div class="fx"><span class="stamp ok">SEDÍ! +${pts}</span></div>`);
+    $('#fb').innerHTML=`<div class="explain good"><h3>Správně! +${pts}</h3>${it.why}<div class="actions"><button class="btn dark" data-act="next">Další →</button></div></div>`;
+    $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'}); save(); return;
+  }
+  if(el){ el.disabled=true; el.classList.add('wrong'); }
+  confuse(it.conf(v));
+  const sus=$('#sus'); sus.classList.remove('laugh'); void sus.offsetWidth; sus.classList.add('laugh');
+  if(!wrongAttempt()){ $('#tryfb').scrollIntoView({behavior:'smooth',block:'nearest'}); save(); return; }
+  g.answered=true; it.stats.forEach(([c,k])=>stat(c,k,false,false)); scoreFailed(it); S.weak[it.weak]=(S.weak[it.weak]||0)+1;
+  document.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(it.ok.includes(b.dataset.v)) b.classList.add('right'); });
+  $('#fb').innerHTML=`<div class="explain"><h3>Takhle to je:</h3>${it.why}<div class="actions"><button class="btn dark" data-act="next">Rozumím →</button></div></div>`;
+  $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'}); save();
+}
+
 /* ── Konec případu ── */
 function finish(){
   const g=game; if(g.done) return; g.done=true;
@@ -1673,12 +1812,13 @@ function finish(){
   give('first');
   if(!failed && g.mist.length===0) give('perfect');
   if(g.best>=10) give('streak10');
-  const all3=id=>DISTRICTS[0].missions.find(m=>m.id===id).levels.every(L=>S.stars[id+L.lv]===3);
+  const all3=id=>DISTRICTS.flatMap(d=>d.missions||[]).find(m=>m.id===id).levels.every(L=>S.stars[id+L.lv]===3);
   if(all3('tridirna')) give('rody');
   if(all3('vyslech')) give('pady');
   if(all3('usvedceni')) give('vzory');
   if(all3('kovarna')) give('kovar');
   if(all3('pripad')) give('velkydet');
+  if(all3('druhy')&&all3('shoda')) give('pridavna');
   if(Object.keys(VZORY).every(v=>(S.album[v]||[]).length)) give('album');
   if(S.xp>=1000) give('veteran');
   save(); updateTop();
@@ -1695,7 +1835,7 @@ function finish(){
     </div>
     ${up?`<div class="rankup">🎉 Povýšení! Nová hodnost: ${rk.name}</div>`:''}
     ${earned.map(b=>`<span class="newbadge">${b.ico} ${b.name}</span>`).join('')}
-    ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.story?` – spis „${esc(it.story.t)}“`:it.forge?` – ${it.p}. pád, ${CIS[it.c]}: ${esc(forgeTargets(it)[0])}`:it.vz?` – vzor ${esc(it.noun.vzor)} (bez ${esc(it.noun.gen)})`:it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
+    ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.a?` – ${DRUH[it.a.druh]} (vzor ${it.a.vzor})`:it.sub&&it.ok?` – ${esc(it.ok[0])} ${esc(it.sign)}`:it.story?` – spis „${esc(it.story.t)}“`:it.forge?` – ${it.p}. pád, ${CIS[it.c]}: ${esc(forgeTargets(it)[0])}`:it.vz?` – vzor ${esc(it.noun.vzor)} (bez ${esc(it.noun.gen)})`:it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
     <div class="actions">
       <button class="btn" data-act="play" data-d="${g.d.id}" data-m="${g.m.id}" data-lv="${g.L.lv}">↻ Znovu</button>
       <button class="btn dark" data-act="district" data-id="${g.d.id}">Zpět na ulici</button>
@@ -1740,7 +1880,7 @@ function pModal(inner){
   if(!m){ m=document.createElement('div'); m.id='pmodal'; m.className='pmodal'; document.body.appendChild(m);
     m.addEventListener('click',e=>{ if(e.target===m) closeParent(); }); }
   m.innerHTML=`<div class="paper pbox" role="dialog" aria-modal="true" aria-label="Přehled pro rodiče">
-    <div class="phead"><div><div class="pkicker">FajnDetektiv · podstatná jména</div><h2>Přehled pro rodiče</h2></div>
+    <div class="phead"><div><div class="pkicker">FajnDetektiv · slovní druhy</div><h2>Přehled pro rodiče</h2></div>
     <div class="noprint">${parentUnlocked?'<button class="tool" data-act="p-print">🖨 Tisk</button> ':''}<button class="tool" data-act="p-close" aria-label="Zavřít">✕</button></div></div>${inner}</div>`;
 }
 function closeParent(){ const m=$('#pmodal'); if(m) m.remove(); }
@@ -1834,6 +1974,10 @@ function confInfo(k){
   if(t==='krok') return {txt:`Usvědčení – krok „${({rod:'rod a životnost',end1:'koncovka v 1. pádě',gen:'koncovka ve 2. pádě'})[a]||a}“`,
     tip:({rod:'Řekněte si ten / ta / to a u mužského rodu, zda jde o živou bytost.',end1:'Ukažte si na poslední písmeno slova v základním tvaru (1. pád).',gen:'Říkejte nahlas „bez …“ a poslouchejte, jak slovo končí.'})[a]||''};
   if(t==='vzor') return {txt:`Plete si vzory ${a} a ${b}`, tip:vzTip(a,b)};
+  if(t==='adj') return {txt:`Plete si ${DRUH[a]} a ${DRUH[b]} přídavná jména`, tip:'Převeďte slovo na tvar pro „ten“ v 1. pádě: -ý = tvrdé (mladý), -í = měkké (jarní – stejné pro ten / ta / to), -ův / -in = přivlastňovací (otcův, matčin – ptáme se „čí?“).'};
+  if(t==='shoda'&&a==='iy') return {txt:'i/y v koncovkách přídavných jmen', tip:'V 1. pádě množného čísla rodu mužského životného píšeme -í: malí psi, hodní kluci. Jinak -é / -á: malé hrady, malé ženy, malá města.'};
+  if(t==='shoda'&&a==='rod') return {txt:'Shoda přídavného jména v rodě', tip:'Nejdřív určete rod podstatného jména (ten / ta / to). Přídavné jméno má stejný rod: malý pes, malá kočka, malé kuře.'};
+  if(t==='shoda'&&a==='pad') return {txt:'Shoda přídavného jména v pádě', tip:'Zeptejte se na podstatné jméno pádovou otázkou – přídavné jméno má stejný pád: s malým psem, o malém psovi.'};
   if(t==='pripad') return {txt:'V textu označuje správná slova jako chybná', tip:'Ať si dítě větu přečte nahlas a u podezřelého slova se zeptá pádovou otázkou. Když tvar s otázkou sedí, slovo je v pořádku.'};
   if(t==='iy') return {txt:'Píše i/y v koncovkách', tip:'Koncovky se řídí vzorem: tvrdé vzory (pán, hrad, žena, město) mají v množném čísle často -y (s pány, hrady), měkké (muž, stroj, růže, moře) -i/-e. Ať si dítě nahlas řekne tvar vzoru.'};
   if(t==='kov') return {txt:`Tvoření tvaru: ${a}. pád, ${CIS[b]}`, tip:'Postup: urči vzor, řekni si tvar vzoru v daném pádě (např. s pány) a stejnou koncovku přidej ke kmeni slova (s kamarády).'};
@@ -1846,6 +1990,9 @@ function recommend(){
   [['a','životné'],['i','neživotné']].forEach(([k,l])=>add('ziv',k,`mužský rod – ${l}`,'Třídírna','Těžká'));
   [1,2,3,4,5,6,7].forEach(p=>{ const c=pc((S.stats.pad||{})[p]); add('pad',p,`${p}. pád`,'Výslech', c.tot&&c.first/c.tot<.6?'Lehká':'Střední'); });
   Object.keys(VZORY).forEach(v=>add('vzor',v,`vzor ${v}`,'Usvědčení','Lehká'));
+  ['tvrde','mekke','privl'].forEach(k=>add('adjdruh',k,`${DRUH[k]} přídavná jména`,'Kartotéka druhů',k==='privl'?'Střední':'Lehká'));
+  Object.keys(ROD4).forEach(k=>add('shoda','r'+k,`shoda s rodem ${ROD4[k].s}`,'Shoda','Lehká'));
+  add('shodac','pl','shoda v množném čísle','Shoda','Těžká');
   add('pripad','find','hledání chyb v textu','Velký případ','Lehká'); add('pripad','fix','oprava tvarů v textu','Velký případ','Lehká');
   [1,2,3,4,5,6,7].forEach(p=>add('kov',p,`tvary ve ${p}. pádě`,'Kovárna',p===1?'Střední':'Lehká'));
   const weak=C.filter(x=>x.r<.85).sort((a,b)=>a.r-b.r);
@@ -1855,7 +2002,7 @@ function recommend(){
     return `Doporučujeme zahrát ${line(groups[0])}.${groups.length>1?` Potom: ${groups.slice(1,3).map(line).join('; ')}.`:''}`;
   }
   if(!C.length) return 'Zatím je málo dat. Doporučujeme začít misí <b>Třídírna – Lehká</b> a pak <b>Výslech – Lehká</b>.';
-  const next=DISTRICTS[0].missions.filter(m=>m.levels).flatMap(m=>m.levels.map(L=>({m,L}))).find(x=>(S.stars[x.m.id+x.L.lv]||0)<3);
+  const next=DISTRICTS.flatMap(d=>d.missions||[]).filter(m=>m.levels).flatMap(m=>m.levels.map(L=>({m,L}))).find(x=>(S.stars[x.m.id+x.L.lv]||0)<3);
   return next ? `Všechny procvičované dovednosti jdou dítěti dobře. Zkuste vyšší náročnost: <b>${next.m.name} – ${DIFF[next.L.lv-1]}</b>.` : 'Výborně – všechny mise jsou na tři hvězdy. Brzy přibudou další.';
 }
 function parentDash(){
@@ -1872,6 +2019,8 @@ function parentDash(){
   const conf=Object.entries(S.conf||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
   const weakW=Object.entries(S.weak||{}).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([k])=>{
     if(k[0]==='v'&&/^v\d+$/.test(k)){ const s=SENTENCES[+k.slice(1)]; return s?`<span class="pchip" title="Výslech">${esc(s.t.replace(/[{}]/g,'').replace(/\[(.+?)\]/,'«$1»'))}</span>`:''; }
+    if(k.startsWith('a|')) return `<span class="pchip" title="Kartotéka druhů">${esc(k.slice(2))}</span>`;
+    if(k.startsWith('s|')){ const m=k.match(/^s\|(Ma|Mi|F|N)(sg|pl)(\d)$/); return m?`<span class="pchip" title="Shoda">shoda: ${ROD4[m[1]].s}, ${CIS[m[2]]}, ${m[3]}. pád</span>`:''; }
     if(k.startsWith('k|')){ const [,w,p,c]=k.split('|'); return `<span class="pchip" title="Kovárna">${esc(w)} → ${p}. pád, ${c==='sg'?'j. č.':'mn. č.'}</span>`; }
     if(k[0]==='z'&&NOUNS.some(n=>'z'+n.sg===k)){ const n=NOUNS.find(n=>'z'+n.sg===k); return `<span class="pchip" title="Usvědčení">${esc(n.sg)} → vzor ${esc(n.vzor)}</span>`; }
     const n=NOUNS.find(n=>n.sg===k); return n?`<span class="pchip" title="Třídírna">${ROD[n.rod].ukaz} ${esc(n.sg)}</span>`:''; }).join('');
@@ -1899,6 +2048,10 @@ function parentDash(){
       ${skillRow('jednotné číslo',(S.stats.kovc||{}).sg)}${skillRow('množné číslo',(S.stats.kovc||{}).pl)}</div>
     <div class="pgroup"><h4>Práce s textem <small>Velký případ</small></h4>${skillRow('najít chybný tvar v textu',(S.stats.pripad||{}).find)}${skillRow('opravit chybný tvar',(S.stats.pripad||{}).fix)}</div>
     <div class="pgroup"><h4>Vzory <small>Usvědčení</small></h4>${Object.keys(VZORY).map(v=>skillRow('vzor '+v,(S.stats.vzor||{})[v])).join('')}</div>
+    <div class="pgroup"><h4>Přídavná jména – druhy <small>Kartotéka druhů</small></h4>${['tvrde','mekke','privl'].map(k=>skillRow(DRUH[k],(S.stats.adjdruh||{})[k])).join('')}</div>
+    <div class="pgroup"><h4>Přídavná jména – shoda <small>Shoda</small></h4>${Object.keys(ROD4).map(k=>skillRow('s rodem: '+ROD4[k].s,(S.stats.shoda||{})['r'+k])).join('')}
+      ${skillRow('jednotné číslo',(S.stats.shodac||{}).sg)}${skillRow('množné číslo',(S.stats.shodac||{}).pl)}
+      ${[1,2,3,4,6,7].map(p=>skillRow(`${p}. pád`,(S.stats.shodap||{})[p])).join('')}</div>
     <p class="pnote">Stav: <b>✓ zvládá</b> = aspoň 85 % napoprvé · <b>~ procvičuje</b> = 60–85 % · <b>! potřebuje pomoc</b> = pod 60 % · hodnotíme až od 3 pokusů.</p>
     <h3>Na co se zaměřit</h3>
     ${conf.length ? `<div class="pconf">${conf.map(([k,n])=>{ const c=confInfo(k); return `<div class="pci"><b>${c.txt}</b> <span class="pcount">${n}×</span><p>💡 ${c.tip}</p></div>`; }).join('')}</div>` : '<p class="pnote">Zatím žádné opakované záměny. 👍</p>'}
@@ -1932,6 +2085,7 @@ document.addEventListener('click',e=>{
   else if(a==='next') next();
   else if(a==='copt') convictAnswer(b.dataset.v,b);
   else if(a==='fopt') forgeAnswer(b.dataset.v,b);
+  else if(a==='popt') pickAnswer(b.dataset.v,b);
   else if(a==='pw') caseTap(b);
   else if(a==='xopt') caseFix(b.dataset.v,b);
   else if(a==='cnext'){ $('#fb').innerHTML=''; if(game&&game.afterFix){ const f=game.afterFix; game.afterFix=null; f(); } }
@@ -1962,6 +2116,7 @@ document.addEventListener('keydown',e=>{
     const btn=document.querySelectorAll('.door')[n-1]; if(btn) btn.click();
   } else if(game.m.type==='ask' && !game.answered && n>=1 && n<=7){ const c=document.querySelector(`.qcard[data-p="${n}"]`); if(c&&!c.disabled) askPick(n); }
   else if(game.m.type==='case' && game.phase==='fix' && n>=1){ const o=document.querySelectorAll('#fixpanel .opt')[n-1]; if(o) o.click(); }
+  else if(game.m.type==='pick' && !game.answered && n>=1){ const o=document.querySelectorAll('.opt')[n-1]; if(o) o.click(); }
   else if(game.m.type==='forge' && !game.answered && n>=1){ const o=document.querySelectorAll('.opt')[n-1]; if(o) o.click(); }
   else if(game.m.type==='convict' && !game.stepAnswered && n>=1){ const o=document.querySelectorAll('.opt')[n-1]; if(o) o.click(); }
   else if(e.key==='Enter'){
