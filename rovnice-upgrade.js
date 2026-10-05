@@ -110,6 +110,233 @@
     }
   });
 
+  // ---- Bohatší obsah všech čtyř úrovní ----------------------------------
+  function nzFrom(arr){ return rFrom(arr.filter(v=>v!==0)); }
+
+  function gen_l1_addSub() {
+    const x = ri(1,12);
+    const b = ri(1,9);
+    const plus = Math.random()<0.5;
+    const c = plus ? x+b : x-b;
+    return {
+      display: plus ? `${X} + ${b} = ${c}` : `${X} − ${b} = ${c}`,
+      solution:x, category:"l1"
+    };
+  }
+
+  function gen_l1_mul() {
+    const x = ri(1,10);
+    const a = rFrom([2,3,4,5,6,7,8,9]);
+    return { display:`${a}${X} = ${a*x}`, solution:x, category:"l1" };
+  }
+
+  function gen_l1_twoStep() {
+    const x = ri(1,10);
+    const a = rFrom([2,3,4,5]);
+    const b = ri(1,9);
+    const signPlus = Math.random()<0.5;
+    const c = signPlus ? a*x+b : a*x-b;
+    return {
+      display: signPlus ? `${a}${X} + ${b} = ${c}` : `${a}${X} − ${b} = ${c}`,
+      solution:x, category:"l1"
+    };
+  }
+
+  function gen_l2_negativeResult() {
+    const x = rFrom([-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1]);
+    const a = rFrom([2,3,4,5,6]);
+    const b = nzFrom([-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9]);
+    const c = a*x+b;
+    const bs = b>=0?`+ ${b}`:`− ${Math.abs(b)}`;
+    return {display:`${a}${X} ${bs} = ${c}`,solution:x,category:"l2"};
+  }
+
+  function gen_l2_crossZero() {
+    const x = rFrom([-9,-8,-7,-6,-5,-4,-3,-2,-1]);
+    const b = rFrom([5,6,7,8,9,10,11,12]);
+    const c = x+b;
+    return {display:`${X} + ${b} = ${c}`,solution:x,category:"l2"};
+  }
+
+  function gen_l2_bracket() {
+    const x = rFrom([-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8]);
+    const a = rFrom([2,3,4,5]);
+    const b = nzFrom([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]);
+    const c = a*(x+b);
+    const bs = b>=0?`+ ${b}`:`− ${Math.abs(b)}`;
+    return {display:`${a}(${X} ${bs}) = ${c}`,solution:x,category:"l2"};
+  }
+
+  function gen_l3_bothSides() {
+    for(let t=0;t<100;t++){
+      const x = rFrom([-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9,10,11,12]);
+      const a = rFrom([2,3,4,5,6,7]);
+      const c = rFrom([1,2,3,4,5,6].filter(v=>v!==a));
+      const b = nzFrom([-12,-10,-8,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,8,10,12]);
+      const d = a*x+b-c*x;
+      if(Math.abs(d)>30) continue;
+      const bs=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;
+      const ds=d>=0?`+ ${d}`:`− ${Math.abs(d)}`;
+      return {display:`${a}${X} ${bs} = ${c}${X} ${ds}`,solution:x,category:"l3"};
+    }
+    return gen_axObouStr();
+  }
+
+  function gen_l3_twoBrackets() {
+    for(let t=0;t<120;t++){
+      const x = rFrom([-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9]);
+      const a = rFrom([2,3,4,5]);
+      const c = rFrom([2,3,4,5].filter(v=>v!==a));
+      const b = nzFrom([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]);
+      const d = (a*(x+b)/c)-x;
+      if(!Number.isInteger(d) || d===0 || Math.abs(d)>10) continue;
+      const bs=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;
+      const ds=d>=0?`+ ${d}`:`− ${Math.abs(d)}`;
+      return {display:`${a}(${X} ${bs}) = ${c}(${X} ${ds})`,solution:x,category:"l3"};
+    }
+    return gen_azavorkou_obou();
+  }
+
+  function gen_l3_fractionSum() {
+    for(let t=0;t<120;t++){
+      const a = rFrom([2,3,4]);
+      const b = rFrom([3,4,5,6].filter(v=>v!==a));
+      const x = rFrom([-12,-10,-8,-6,-4,-3,-2,2,3,4,6,8,10,12]);
+      const c = x/a + x/b;
+      if(!Number.isInteger(c)) continue;
+      return {display:`${fracInline("x",a)} + ${fracInline("x",b)} = ${c}`,solution:x,category:"l3"};
+    }
+    return gen_xDaPxDb();
+  }
+
+  function gen_l4_negBeforeBoth() {
+    for(let t=0;t<160;t++){
+      const x = rFrom([-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9,10,11,12]);
+      const a = rFrom([2,3,4,5,6]);
+      const c = rFrom([2,3,4,5]);
+      const b = nzFrom([-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8]);
+      const d = nzFrom([-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8]);
+      const left = -a*(x+b);
+      const k = left - c*(x+d);
+      if(Math.abs(k)>40) continue;
+      const bs=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;
+      const ds=d>=0?`+ ${d}`:`− ${Math.abs(d)}`;
+      const ks=k>=0?`+ ${k}`:`− ${Math.abs(k)}`;
+      return {display:`−${a}(${X} ${bs}) = ${c}(${X} ${ds}) ${ks}`,solution:x,category:"l4"};
+    }
+    return gen_hardNegBrackets();
+  }
+
+  function gen_l4_fractionBothSides() {
+    for(let t=0;t<200;t++){
+      const x = rFrom([-12,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9,10,12]);
+      const a = rFrom([2,3,4,5]);
+      const b = nzFrom([-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9]);
+      const c = rFrom([1,2,3,4]);
+      const d = nzFrom([-9,-8,-7,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,9]);
+      const m = rFrom([2,3,4,5]);
+      const n = rFrom([2,3,4,5,6].filter(v=>v!==m));
+      const rhs = (a*x+b)/m - (c*x+d)/n;
+      if(!Number.isInteger(rhs) || Math.abs(rhs)>18) continue;
+      const bs=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;
+      const ds=d>=0?`+ ${d}`:`− ${Math.abs(d)}`;
+      return {display:`${fracInline(`${a}${X} ${bs}`,m)} − ${fracInline(`${c}${X} ${ds}`,n)} = ${rhs}`,solution:x,category:"l4"};
+    }
+    return gen_hardFractionBrackets();
+  }
+
+  function gen_l4_decimalNegative() {
+    for(let t=0;t<120;t++){
+      const x = rFrom([-12,-10,-8,-6,-4,-2,2,4,6,8,10,12]);
+      const a = rFrom([0.5,1.5,2.5,0.25,0.75,1.25]);
+      const c = rFrom([0.5,1.5,2.5,0.25,0.75,1.25].filter(v=>v!==a));
+      const b = nzFrom([-8,-6,-5,-4,-3,-2,-1,1,2,3,4,5,6,8]);
+      const d = a*x+b-c*x;
+      if(!Number.isInteger(d) || Math.abs(d)>20) continue;
+      const bs=b>=0?`+ ${b}`:`− ${Math.abs(b)}`;
+      const ds=d>=0?`+ ${d}`:`− ${Math.abs(d)}`;
+      return {display:`${toDec(a)}${X} ${bs} = ${toDec(c)}${X} ${ds}`,solution:x,category:"l4"};
+    }
+    return gen_decAxPbEcxPd();
+  }
+
+  const mixIndex = TOPICS.length-1;
+  const extraTopics = [
+    {
+      name:"Sčítání a odčítání s x", eq:"x+5=12",
+      desc:"Jedna jednoduchá úprava, bez záludností", section:"Úroveň 1 · Základ",
+      gen:[gen_l1_addSub], level:1,
+      keywords:"základ zaklad úplné základy scitani odcitani x plus minus jedna operace"
+    },
+    {
+      name:"Násobení a dělení", eq:"4x=20",
+      desc:"Jedna násobná vazba — najdi x dělením", section:"Úroveň 1 · Základ",
+      gen:[gen_l1_mul], level:1,
+      keywords:"základ zaklad nasobeni deleni ax=b přímé rovnice"
+    },
+    {
+      name:"Dva kroky", eq:"3x+4=19",
+      desc:"Nejdřív člen bez x, potom koeficient", section:"Úroveň 1 · Základ",
+      gen:[gen_l1_twoStep], level:1,
+      keywords:"základ zaklad dva kroky ax+b=c jednoduché"
+    },
+    {
+      name:"Záporný výsledek", eq:"3x+4=−11",
+      desc:"Řešení leží v záporných číslech", section:"Úroveň 2 · Školní",
+      gen:[gen_l2_negativeResult], level:2,
+      keywords:"zaporne záporné výsledek přechod přes nulu cela cisla"
+    },
+    {
+      name:"Přechod přes nulu", eq:"x+8=3",
+      desc:"Pracuj jistě s kladnými i zápornými čísly", section:"Úroveň 2 · Školní",
+      gen:[gen_l2_crossZero], level:2,
+      keywords:"prechod přes nulu zaporna cisla odcitani"
+    },
+    {
+      name:"Jedna závorka", eq:"3(x−2)=15",
+      desc:"Roznásob závorku a pokračuj jako u běžné rovnice", section:"Úroveň 2 · Školní",
+      gen:[gen_l2_bracket], level:2,
+      keywords:"závorka zavorka roznasobeni jedna závorka"
+    },
+    {
+      name:"x na obou stranách — náročnější", eq:"5x−7=2x+11",
+      desc:"Více kroků a práce se znaménky", section:"Úroveň 3 · Pokročilá",
+      gen:[gen_l3_bothSides], level:3,
+      keywords:"x na obou stranach více kroků znamenka pokrocile"
+    },
+    {
+      name:"Závorky na obou stranách", eq:"3(x−2)=2(x+4)",
+      desc:"Rozbal obě závorky a potom porovnej členy", section:"Úroveň 3 · Pokročilá",
+      gen:[gen_l3_twoBrackets], level:3,
+      keywords:"závorky na obou stranach dvě zavorky roznasobeni"
+    },
+    {
+      name:"Součet zlomků s x", eq:"x/3+x/4=7",
+      desc:"Najdi společný jmenovatel a odstraň zlomky", section:"Úroveň 3 · Pokročilá",
+      gen:[gen_l3_fractionSum], level:3,
+      keywords:"zlomky soucet zlomku nsj spolecny jmenovatel"
+    },
+    {
+      name:"Znaménko před závorkou", eq:"−3(x−4)=…",
+      desc:"Mínus před závorkou a x na obou stranách", section:"Úroveň 4 · Mistr",
+      gen:[gen_l4_negBeforeBoth], level:4,
+      keywords:"mistr znamenko před zavorkou minus závorky zaporne"
+    },
+    {
+      name:"Zlomky a závorky", eq:"(2x−3)/4−…",
+      desc:"Více zlomků, více členů a nutnost zvolit správné pořadí", section:"Úroveň 4 · Mistr",
+      gen:[gen_l4_fractionBothSides], level:4,
+      keywords:"mistr zlomky závorky kombinace jmenovatele více kroků"
+    },
+    {
+      name:"Desetinná čísla a záporné hodnoty", eq:"1,5x−4=0,5x−12",
+      desc:"Desetinné koeficienty, obě strany a práce přes nulu", section:"Úroveň 4 · Mistr",
+      gen:[gen_l4_decimalNegative], level:4,
+      keywords:"mistr desetinna cisla zaporne hodnoty x na obou stranach"
+    }
+  ];
+  TOPICS.splice(mixIndex,0,...extraTopics);
+
   const mixTopic = TOPICS[TOPICS.length-1];
   mixTopic.level = 3;
   mixTopic.keywords = (mixTopic.keywords || "") + " mix vše vse dohromady";
