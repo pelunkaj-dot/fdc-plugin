@@ -169,6 +169,9 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .tablo-f{font-family:'Special Elite',monospace;font-size:2.4rem;text-align:center;padding:18px 0 10px;letter-spacing:2px;text-shadow:0 0 12px rgba(255,197,49,.6);animation:flip .5s}
 @keyframes flip{from{transform:rotateX(90deg);opacity:0}}
 .vnotes{margin-top:12px;min-height:56px}
+.tablo.raz .tablo-f{font-size:1.6rem;letter-spacing:0;line-height:1.5}
+.tablo.raz mark{background:#ffc531;color:#111;border-radius:4px;padding:0 4px}
+@media (max-width:560px){.tablo.raz .tablo-f{font-size:1.2rem}}
 .vnotes .note{background:#e9f3ff}
 .vnotes .note.bad{background:#ffd9d9}
 @media (max-width:560px){.tablo-f{font-size:1.7rem}}
@@ -725,6 +728,20 @@ const DISTRICTS = [
       {lv:1, name:'Do dvaceti a desítky', sub:'pozor na čtrnáct, šedesát…', mode:1, count:10},
       {lv:2, name:'Do sta', sub:'čtyřicet sedm – zvlášť, nebo dohromady?', mode:2, count:10, full:true},
       {lv:3, name:'Řadové a přes sto', sub:'dvacátý první, sto čtyřicet sedm', mode:3, count:10, full:true}]}
+  ]},
+  {id:'pristav', ico:'⚓', name:'Přístav neohebných slov', desc:'Příslovce, předložky, spojky, částice, citoslovce – a všech deset slovních druhů.', missions:[
+    {id:'celnice', type:'pick', gen:'neoh', ico:'🛃', name:'Celnice', desc:'Proclij každé neohebné slovo: příslovce, předložka, spojka, částice, nebo citoslovce?', levels:[
+      {lv:1, name:'Tři přepážky', sub:'předložky, spojky, citoslovce', kinds:[7,8,10], count:12},
+      {lv:2, name:'Čtyři přepážky', sub:'+ příslovce', kinds:[6,7,8,10], count:12, full:true},
+      {lv:3, name:'Pět přepážek', sub:'+ částice (kéž, prý, ať, copak…)', kinds:[6,7,8,9,10], count:12, full:true}]},
+    {id:'kompas', type:'pick', gen:'prisl', ico:'🧭', name:'Kompas příslovcí', desc:'Kde? Kdy? Jak? Jak moc? Nasměruj příslovce podle otázky.', levels:[
+      {lv:1, name:'Kde, nebo kdy?', sub:'příslovce místa a času', kinds:['misto','cas'], count:12},
+      {lv:2, name:'Tři směry', sub:'+ příslovce způsobu', kinds:['misto','cas','zpusob'], count:12, full:true},
+      {lv:3, name:'Celý kompas', sub:'+ příslovce míry', kinds:['misto','cas','zpusob','mira'], count:12, full:true}]},
+    {id:'razie', type:'vsteps', ico:'🚨', name:'Velká razie', desc:'Urči slovní druh každého podezřelého slova – všech deset druhů.', levels:[
+      {lv:1, name:'Ohebná slova', sub:'podstatná a přídavná jména, zájmena, číslovky, slovesa', mode:1, razie:true, count:10},
+      {lv:2, name:'Všech deset', sub:'jedno slovo ve větě, deset možností', mode:2, razie:true, count:10, full:true},
+      {lv:3, name:'Rozbor věty', sub:'urči slovo po slovu celou větu', mode:3, razie:true, count:4, full:true}]}
   ]}
 ];
 const DIFF = ['Lehká','Střední','Těžká'];
@@ -742,7 +759,8 @@ const BADGES = [
   {id:'vypravci', ico:'🚂', name:'Hlavní výpravčí', d:'3 hvězdy ve všech misích Nádraží sloves'},
   {id:'zahradnik', ico:'🌳', name:'Strážce parku', d:'3 hvězdy ve všech misích Parku zájmen'},
   {id:'bankeR', ico:'🏦', name:'Ředitel banky', d:'3 hvězdy ve všech misích Banky číslovek'},
-  {id:'mesto', ico:'🏙️', name:'Detektiv celého města', d:'Vyřeš aspoň jeden případ v každé misi všech čtvrtí'},
+  {id:'kapitan', ico:'⚓', name:'Kapitán přístavu', d:'3 hvězdy ve všech misích Přístavu neohebných slov'},
+  {id:'mesto', ico:'🏙️', name:'Detektiv celého města', d:'Vyřeš aspoň jeden případ v každé z 20 misí všech čtvrtí'},
   {id:'album', ico:'📒', name:'Sběratel gangů', d:'Usvědči slovo z každého ze 14 gangů'},
   {id:'veteran', ico:'🎖️', name:'Veterán', d:'Získej 1000 bodů'}
 ];
@@ -1057,7 +1075,7 @@ function remember(item){
 }
 
 function next(){ game.i++; if(game.i>=game.items.length || game.lives<=0) finish(); else ROUND[game.m.type](); }
-const BUILD = {sort:L=>buildSort(L), ask:L=>buildAsk(L), convict:L=>buildConvict(L), forge:L=>buildForge(L), case:L=>buildCase(L), pick:L=>buildPick(L), vsteps:L=>buildVsteps(L), pfind:L=>buildPfind(L)};
+const BUILD = {sort:L=>buildSort(L), ask:L=>buildAsk(L), convict:L=>buildConvict(L), forge:L=>buildForge(L), case:L=>buildCase(L), pick:L=>buildPick(L), vsteps:L=>L.razie?buildRazie(L):buildVsteps(L), pfind:L=>buildPfind(L)};
 const ROUND = {sort:()=>sortRound(), ask:()=>askRound(), convict:()=>convictRound(), forge:()=>forgeRound(), case:()=>caseRound(), pick:()=>pickRound(), vsteps:()=>vstepsRound(), pfind:()=>pfindRound()};
 
 /* ── Třídírna ── */
@@ -1864,7 +1882,7 @@ function genAgree(L){
   }
   return out;
 }
-const PICKGEN = {druh:genDruh, agree:genAgree, vform:L=>genVform(L), pshoda:L=>genPshoda(L), zdruh:L=>genZdruh(L), zpast:L=>genZpast(L), cdruh:L=>genCdruh(L), cskl:L=>genCskl(L), cslovy:L=>genCslovy(L)};
+const PICKGEN = {druh:genDruh, agree:genAgree, vform:L=>genVform(L), pshoda:L=>genPshoda(L), zdruh:L=>genZdruh(L), zpast:L=>genZpast(L), cdruh:L=>genCdruh(L), cskl:L=>genCskl(L), cslovy:L=>genCslovy(L), neoh:L=>genNeoh(L), prisl:L=>genPrisl(L)};
 function buildPick(L){ return PICKGEN[game.m.gen](L); }
 function pickRound(){
   const g=game, it=g.items[g.i];
@@ -1948,6 +1966,7 @@ function vPickForm(mode){
 }
 function buildVsteps(L){ const out=[]; for(let i=0;i<L.count;i++){ const x=vPickForm(L.mode); out.push({...x, w:x.forms[0], form:x.forms[0], vs:true}); } return out; }
 function vStepDefs(it,L){
+  if(it.presteps) return it.presteps;
   const f=it.form, k=it.key, zp=kindZp(it.kind), steps=[];
   const S_=(id,q,hint,opts,ok,note,why)=>steps.push({id,q,hint,opts,ok,note,why});
   if(L.mode===1){
@@ -1977,9 +1996,10 @@ function casWhy(it){ const f=esc(it.form);
 function vstepsRound(){
   const g=game, it=g.items[g.i];
   it.steps=vStepDefs(it,g.L); g.si=0; g.wordFailed=false; g.answered=false; newItem();
-  show(`${hudHTML('Vlak')}
-    <div class="tablo"><div class="tablo-h"><span>🚆 ODJEZDY</span><span>${String(g.i+1).padStart(2,'0')}:${String((g.i*7)%60).padStart(2,'0')}</span></div>
-      <div class="tablo-f">${esc(it.form)}</div></div>
+  const raz=!!it.presteps;
+  show(`${hudHTML(raz?'Věta':'Vlak')}
+    <div class="tablo ${raz?'raz':''}"><div class="tablo-h"><span>${raz?'🚨 RAZIE':'🚆 ODJEZDY'}</span><span>${String(g.i+1).padStart(2,'0')}:${String((g.i*7)%60).padStart(2,'0')}</span></div>
+      <div class="tablo-f">${it.display?it.display(it.presteps[0].idx):esc(it.form)}</div></div>
     <div class="notes vnotes" id="notes"><div class="note empty"><small>jízdenka</small>zatím prázdná…</div></div>
     <div class="paper step" id="step"></div>`);
   vStep();
@@ -1987,6 +2007,7 @@ function vstepsRound(){
 function vStep(){
   const g=game, it=g.items[g.i], st=it.steps[g.si];
   newQuestion(()=>st.hint);
+  if(it.display){ const tf=$('.tablo-f'); if(tf) tf.innerHTML=it.display(st.idx); }
   $('#step').innerHTML=`<div class="stepnum">Krok ${g.si+1} / ${it.steps.length}</div><h3>${st.q}</h3><div id="hintbox"></div>
     <div class="opts">${st.opts.map((o,i)=>`<button class="opt" data-act="vopt" data-v="${esc(o.v)}"><kbd>${i+1}</kbd>${o.html}</button>`).join('')}</div>
     <div id="tryfb"></div><div id="fb"></div>`;
@@ -1997,13 +2018,13 @@ function vAnswer(v,el){
   const it=g.items[g.i], st=it.steps[g.si], ok=v===st.ok, last=g.si===it.steps.length-1;
   if(!ok){
     if(el){ el.disabled=true; el.classList.add('wrong'); }
-    confuse(`v|${st.id}|${st.ok}|${v}`);
+    confuse(st.conf ? st.conf(v) : `v|${st.id}|${st.ok}|${v}`);
     if(!wrongAttempt()) return;
     g.wordFailed=true;
   }
   g.stepAnswered=true; $('#tryfb').innerHTML='';
   const first=g.tries===0 && ok;
-  stat('vcat',st.id,ok,first); stat('v'+st.id,st.ok,ok,first);
+  if(st.stat) st.stat(ok,first); else { stat('vcat',st.id,ok,first); stat('v'+st.id,st.ok,ok,first); }
   document.querySelectorAll('.opt').forEach(b=>{ b.disabled=true; if(b.dataset.v===st.ok) b.classList.add('right'); });
   const notes=$('#notes'); const em=notes.querySelector('.empty'); if(em) em.remove();
   notes.insertAdjacentHTML('beforeend',`<div class="note ${ok?'':'bad'}"><small>${st.note[0]}</small>${st.note[1]}</div>`);
@@ -2013,11 +2034,12 @@ function vAnswer(v,el){
     return;
   }
   let head;
-  if(!g.wordFailed){ const pts=scoreSolved(g.L.mode===1?10:g.L.mode===2?14:16); sfx.ok(g.streak); setTimeout(sfx.stamp,120); $('#score').textContent=g.score; head=`<h3>Vlak vypraven! +${pts}</h3>`; }
-  else { scoreFailed(it); head=`<h3>Tenhle vlak ujel.</h3><p>${st.why}</p>`; }
+  const raz=!!it.presteps;
+  if(!g.wordFailed){ const pts=scoreSolved(g.L.mode===1?10:g.L.mode===2?14:16+2*it.steps.length); sfx.ok(g.streak); setTimeout(sfx.stamp,120); $('#score').textContent=g.score; head=`<h3>${raz?'Razie úspěšná!':'Vlak vypraven!'} +${pts}</h3>`; }
+  else { scoreFailed(it); head=`<h3>${raz?'Někdo nám proklouzl.':'Tenhle vlak ujel.'}</h3><p>${st.why}</p>`; }
   $('#fb').innerHTML=`<div class="explain ${g.wordFailed?'':'good'}">${head}
-    <div class="steps"><span class="step">${esc(it.form)}</span><span class="arrow">→</span><span class="step" style="color:var(--ok)">${g.L.mode===1?`${PRON_L[it.key]}, čas ${CAS_L[it.kind]}`:catsTxt(it.kind,it.key)}</span></div>
-    <div class="actions"><button class="btn dark" data-act="next">Další vlak →</button></div></div>`;
+    <div class="steps"><span class="step">${esc(it.form)}</span><span class="arrow">→</span><span class="step" style="color:var(--ok)">${it.summary ? it.summary : g.L.mode===1?`${PRON_L[it.key]}, čas ${CAS_L[it.kind]}`:catsTxt(it.kind,it.key)}</span></div>
+    <div class="actions"><button class="btn dark" data-act="next">${raz?'Další věta →':'Další vlak →'}</button></div></div>`;
   g.answered=true; save(); $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
@@ -2341,6 +2363,83 @@ function genCslovy(L){
   return out;
 }
 
+
+/* ══════════════ PŘÍSTAV NEOHEBNÝCH SLOV ══════════════ */
+const SD = {1:'podstatné jméno',2:'přídavné jméno',3:'zájmeno',4:'číslovka',5:'sloveso',6:'příslovce',7:'předložka',8:'spojka',9:'částice',10:'citoslovce'};
+const SD_WHY = {1:'název osoby, zvířete, věci nebo vlastnosti – ptáme se <b>kdo? co?</b>',2:'vyjadřuje vlastnost – ptáme se <b>jaký? který? čí?</b>',3:'zastupuje jméno (já, ten, náš, kdo…)',4:'vyjadřuje počet nebo pořadí – <b>kolik? kolikátý?</b>',5:'vyjadřuje děj nebo stav – <b>co dělá?</b>',6:'blíže určuje děj – <b>kde? kdy? jak?</b>',7:'stojí před jménem a pojí se s pádem (na, do, k, u…)',8:'spojuje slova nebo věty (a, i, ale, nebo, protože, když)',9:'uvozuje větu, vyjadřuje přání, pochybnost nebo souhlas (kéž, ať, prý, asi, ano)',10:'napodobuje zvuky nebo vyjadřuje pocity (haf, au, hurá)'};
+// ručně označkované věty: slovo|druh (* = neptat se), interpunkce samostatně
+const SDS = [
+  'Náš|3 malý|2 pes|1 rychle|6 běžel|5 k|7 řece|1 .',
+  'Včera|6 jsme|5 viděli|5 tři|4 veverky|1 na|7 stromě|1 .',
+  'Haf|10 , štěkal|5 pes|1 a|8 utekl|5 za|7 dům|1 .',
+  'Babička|1 nám|3 upekla|5 dva|4 velké|2 koláče|1 .',
+  'Kéž|9 by|5* zítra|6 svítilo|5 slunce|1 .',
+  'Au|10 , to|3 bolí|5 !',
+  'Petr|1 i|8 Jana|1 šli|5 do|7 školy|1 pěšky|6 .',
+  'Ať|9 přijde|5 hned|6 domů|6 !',
+  'Na|7 louce|1 kvetly|5 žluté|2 a|8 modré|2 květiny|1 .',
+  'Prý|9 bude|5 zítra|6 pršet|5 .',
+  'Ten|3 první|4 vlak|1 jede|5 velmi|6 pomalu|6 .',
+  'Mňau|10 , ozvalo|5 se|5* koťátko|1 pod|7 stolem|1 .',
+  'Kluci|1 hráli|5 fotbal|1 , ale|8 brzy|6 přestali|5 .',
+  'Copak|9 nevidíš|5 tu|3 krásnou|2 duhu|1 ?',
+  'Ano|9 , přijdu|5 k|7 vám|3 večer|6 .',
+  'Sestra|1 čte|5 knihu|1 , protože|8 ji|3 baví|5 .',
+  'Bác|10 ! Strom|1 spadl|5 přes|7 cestu|1 .',
+  'Druhý|4 den|1 jsme|5 jeli|5 k|7 moři|1 vlakem|1 .',
+  'Asi|9 zítra|6 nepřijdu|5 .',
+  'Dědeček|1 sedí|5 doma|6 u|7 okna|1 a|8 tiše|6 zpívá|5 .',
+  'Hurá|10 , máme|5 prázdniny|1 !',
+  'Kdo|3 to|3 nakreslil|5 tak|6 hezky|6 ?',
+  'Pět|4 kluků|1 hrálo|5 na|7 hřišti|1 nebo|8 doma|6 .',
+  'Pes|1 skočil|5 do|7 vody|1 , když|8 uviděl|5 kachnu|1 .'
+].map(t=>t.split(' ').map(tk=>{ const m=tk.match(/^(.+)\|(\d+)(\*?)$/); return m ? {w:m[1], d:+m[2], ask:!m[3]} : {w:tk, d:0, ask:false}; }));
+function sdText(toks, hl){ return toks.map((t,i)=>{ const w = i===hl ? `<mark>${esc(t.w)}</mark>` : esc(t.w); return (t.d===0 && /^[.,!?]$/.test(t.w) ? '' : ' ')+w; }).join('').trim(); }
+function sdSentence(toks){ return sdText(toks,-1).replace(/<[^>]+>/g,''); }
+function sdWhy(t){ return `<b>${esc(t.w)}</b> – ${SD_WHY[t.d]} → <b>${SD[t.d]}</b>.`; }
+
+/* Celnice – neohebná slova ve větě */
+function genNeoh(L){
+  const cand=[]; SDS.forEach((toks,si)=>toks.forEach((t,i)=>{ if(t.ask && L.kinds.includes(t.d)) cand.push({si,i,t}); }));
+  return weightedPick(cand, x=>1+2*errRate('sdruh',x.t.d)+2*(S.weak['sd|'+x.t.w]||0), L.count).map(({si,i,t})=>({
+    sign:t.w, w:t.w, q:'Ke které přepážce patří?', sub:`<span class="frame">${sdText(SDS[si],i)}</span>`,
+    opts:L.kinds.map(d=>({v:String(d), html:`<b>${SD[d]}</b>`, cls:'drawer'})), ok:[String(t.d)],
+    hint:'Stojí před jménem (na, do, k)? Spojuje slova nebo věty? Napodobuje zvuk či pocit? Odpovídá na kde? kdy? jak?'+(L.kinds.includes(9)?' Uvozuje větu a vyjadřuje přání nebo pochybnost (kéž, ať, prý)?':''),
+    why:`<p>${sdWhy(t)}</p>`, stats:[['sdruh',t.d]], conf:x=>`sd|${t.d}|${x}`, weak:'sd|'+t.w, base:L.kinds.length===3?10:L.kinds.length===4?13:16 }));
+}
+
+/* Kompas příslovcí */
+const PRISL = {misto:'doma venku nahoře dole tady tam vlevo vpravo všude daleko blízko uvnitř', cas:'včera dnes zítra brzy pozdě teď nyní potom vždycky často letos předevčírem',
+  zpusob:'rychle pomalu hezky tiše nahlas dobře špatně opatrně pěšky potichu', mira:'velmi příliš docela úplně skoro nesmírně'};
+const PR_L = {misto:'místa', cas:'času', zpusob:'způsobu', mira:'míry'}, PR_Q = {misto:'kde? kam? odkud?', cas:'kdy? jak dlouho? jak často?', zpusob:'jak? jakým způsobem?', mira:'jak moc? do jaké míry?'};
+function genPrisl(L){
+  const pool=L.kinds.flatMap(k=>PRISL[k].split(' ').map(w=>[w,k]));
+  return weightedPick(pool, x=>1+2*errRate('prisl',x[1])+2*(S.weak['pr|'+x[0]]||0), L.count).map(([w,k])=>({
+    sign:w, w, q:'Kam ukazuje kompas?', sub:`Příslovce <b>${esc(w)}</b>`,
+    opts:L.kinds.map(x=>({v:x, html:`<b>${PR_L[x]}</b><small>${PR_Q[x]}</small>`, cls:'drawer'})), ok:[k],
+    hint:'Polož otázku: kde? (místa), kdy? (času), jak? (způsobu), jak moc? (míry). Na kterou slovo odpovídá?',
+    why:`<p><b>${esc(w)}</b> odpovídá na otázku <b>${PR_Q[k]}</b> → příslovce <b>${PR_L[k]}</b>.</p>`,
+    stats:[['prisl',k]], conf:x=>`pr|${k}|${x}`, weak:'pr|'+w, base:L.kinds.length===2?10:L.kinds.length===3?13:16 }));
+}
+
+/* Velká razie – kroky v enginu „vsteps“ */
+function buildRazie(L){
+  const out=[];
+  for(let n=0;n<L.count;n++){
+    const si=Math.random()*SDS.length|0, toks=SDS[si];
+    let idx=toks.map((t,i)=>i).filter(i=>toks[i].ask && (L.mode!==1 || toks[i].d<=5));
+    if(L.mode<3){ const [i]=weightedPick(idx, i=>1+2*errRate('sdruh',toks[i].d), 1); idx=[i]; } else idx=idx.slice(0,6);
+    const kinds = L.mode===1 ? [1,2,3,4,5] : [1,2,3,4,5,6,7,8,9,10];
+    const steps=idx.map(i=>({ id:'w', idx:i, q:L.mode===3?`Slovo „${toks[i].w}“ – jaký je to slovní druh?`:'Jaký je to slovní druh?',
+      hint:'Zeptej se: kdo? co? (podst. jméno), jaký? (příd. jméno), zastupuje jméno? (zájmeno), kolik? (číslovka), co dělá? (sloveso), kde? kdy? jak? (příslovce), stojí před jménem? (předložka), spojuje? (spojka), přání či pochybnost? (částice), zvuk či pocit? (citoslovce)',
+      opts:kinds.map(d=>({v:String(d), html:`<b>${d}.</b> ${SD[d]}`})), ok:String(toks[i].d), note:[toks[i].w, SD[toks[i].d]], why:sdWhy(toks[i]),
+      stat:(ok,first)=>stat('sdruh',toks[i].d,ok,first), conf:v=>`sd|${toks[i].d}|${v}` }));
+    out.push({ w:sdSentence(toks), form:sdSentence(toks), presteps:steps, display:i=>sdText(toks,i),
+      summary: steps.map(st=>`${esc(toks[st.idx].w)} = ${st.ok}.`).join(', ') });
+  }
+  return out;
+}
+
 /* ── Konec případu ── */
 function finish(){
   const g=game; if(g.done) return; g.done=true;
@@ -2365,7 +2464,8 @@ function finish(){
   if(all3('jizdni')&&all3('vyhybka')&&all3('hlaseni')) give('vypravci');
   if(all3('zdruhy')&&all3('pasti')&&all3('patrani')) give('zahradnik');
   if(all3('trezor')&&all3('pokladna')&&all3('seky')) give('bankeR');
-  if(['tridirna','vyslech','usvedceni','kovarna','pripad','druhy','shoda','hlidka','jizdni','vyhybka','hlaseni','zdruhy','pasti','patrani','trezor','pokladna','seky'].every(id=>DISTRICTS.flatMap(d=>d.missions||[]).find(m=>m.id===id).levels.some(L=>S.stars[id+L.lv]))) give('mesto');
+  if(all3('celnice')&&all3('kompas')&&all3('razie')) give('kapitan');
+  if(['tridirna','vyslech','usvedceni','kovarna','pripad','druhy','shoda','hlidka','jizdni','vyhybka','hlaseni','zdruhy','pasti','patrani','trezor','pokladna','seky','celnice','kompas','razie'].every(id=>DISTRICTS.flatMap(d=>d.missions||[]).find(m=>m.id===id).levels.some(L=>S.stars[id+L.lv]))) give('mesto');
   if(Object.keys(VZORY).every(v=>(S.album[v]||[]).length)) give('album');
   if(S.xp>=1000) give('veteran');
   save(); updateTop();
@@ -2382,7 +2482,7 @@ function finish(){
     </div>
     ${up?`<div class="rankup">🎉 Povýšení! Nová hodnost: ${rk.name}</div>`:''}
     ${earned.map(b=>`<span class="newbadge">${b.ico} ${b.name}</span>`).join('')}
-    ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.vs?` – ${catsTxt(it.kind,it.key)}`:it.a?` – ${DRUH[it.a.druh]} (vzor ${it.a.vzor})`:it.sub&&it.ok?` – ${esc(it.ok[0])} ${esc(it.sign)}`:it.story?` – spis „${esc(it.story.t)}“`:it.forge?` – ${it.p}. pád, ${CIS[it.c]}: ${esc(forgeTargets(it)[0])}`:it.vz?` – vzor ${esc(it.noun.vzor)} (bez ${esc(it.noun.gen)})`:it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
+    ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.presteps?` – ${it.summary}`:it.vs?` – ${catsTxt(it.kind,it.key)}`:it.a?` – ${DRUH[it.a.druh]} (vzor ${it.a.vzor})`:it.sub&&it.ok?` – ${esc(it.ok[0])} ${esc(it.sign)}`:it.story?` – spis „${esc(it.story.t)}“`:it.forge?` – ${it.p}. pád, ${CIS[it.c]}: ${esc(forgeTargets(it)[0])}`:it.vz?` – vzor ${esc(it.noun.vzor)} (bez ${esc(it.noun.gen)})`:it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
     <div class="actions">
       <button class="btn" data-act="play" data-d="${g.d.id}" data-m="${g.m.id}" data-lv="${g.L.lv}">↻ Znovu</button>
       <button class="btn dark" data-act="district" data-id="${g.d.id}">Zpět na ulici</button>
@@ -2543,6 +2643,8 @@ function confInfo(k){
   if(t==='cw'&&a==='space') return {txt:'Píše složené číslovky dohromady', tip:'Složené číslovky píšeme zvlášť: čtyřicet sedm, sto dvacet tři. Dohromady jen typ sedmačtyřicet.'};
   if(t==='cw'&&a==='spell') return {txt:'Pravopis číslovek', tip:'Pozor na čtrnáct (ne čtyrnáct), šestnáct (ne šesnáct), patnáct, šedesát (ne šestdesát).'};
   if(t==='cw') return {txt:'Psaní číslovek slovy', tip:'Čtěte číslo nahlas po částech: 147 → sto · čtyřicet · sedm.'};
+  if(t==='sd') return {txt:`Plete si slovní druhy: ${SD[a]} × ${SD[b]}`, tip:`${cap(SD[a])}: ${SD_WHY[a].replace(/<[^>]+>/g,'')}. ${cap(SD[b])}: ${SD_WHY[b].replace(/<[^>]+>/g,'')}.`};
+  if(t==='pr') return {txt:`Plete si příslovce ${PR_L[a]} a ${PR_L[b]}`, tip:'Ptejte se: kde? (místa), kdy? (času), jak? (způsobu), jak moc? (míry).'};
   if(t==='pripad') return {txt:'V textu označuje správná slova jako chybná', tip:'Ať si dítě větu přečte nahlas a u podezřelého slova se zeptá pádovou otázkou. Když tvar s otázkou sedí, slovo je v pořádku.'};
   if(t==='iy') return {txt:'Píše i/y v koncovkách', tip:'Koncovky se řídí vzorem: tvrdé vzory (pán, hrad, žena, město) mají v množném čísle často -y (s pány, hrady), měkké (muž, stroj, růže, moře) -i/-e. Ať si dítě nahlas řekne tvar vzoru.'};
   if(t==='kov') return {txt:`Tvoření tvaru: ${a}. pád, ${CIS[b]}`, tip:'Postup: urči vzor, řekni si tvar vzoru v daném pádě (např. s pány) a stejnou koncovku přidej ke kmeni slova (s kamarády).'};
@@ -2568,6 +2670,8 @@ function recommend(){
   Object.keys(CK).forEach(k=>add('cdruh',k,`číslovky ${CK[k]}`,'Trezor druhů',['zaklad','rad'].includes(k)?'Lehká':'Střední'));
   [['dva','dva / dvě'],['oba','oba / obě'],['tri','tři'],['ctyri','čtyři']].forEach(([k,l])=>add('cskl',k,'skloňování '+l,'Pokladna',['dva'].includes(k)?'Lehká':k==='oba'?'Střední':'Těžká'));
   [['do20','do 20'],['do100','do 100'],['pres100','přes 100'],['rad','řadové']].forEach(([k,l])=>add('cslovy',k,'číslovky slovy '+l,'Šeky slovy',k==='do20'?'Lehká':k==='do100'?'Střední':'Těžká'));
+  Object.keys(SD).forEach(k=>add('sdruh',k,`slovní druh: ${SD[k]}`, k>5?'Celnice':'Velká razie', k>5?(k==9?'Těžká':'Střední'):'Lehká'));
+  Object.keys(PR_L).forEach(k=>add('prisl',k,'příslovce '+PR_L[k],'Kompas příslovcí',k==='mira'?'Těžká':k==='zpusob'?'Střední':'Lehká'));
   add('pripad','find','hledání chyb v textu','Velký případ','Lehká'); add('pripad','fix','oprava tvarů v textu','Velký případ','Lehká');
   [1,2,3,4,5,6,7].forEach(p=>add('kov',p,`tvary ve ${p}. pádě`,'Kovárna',p===1?'Střední':'Lehká'));
   const weak=C.filter(x=>x.r<.85).sort((a,b)=>a.r-b.r);
@@ -2594,6 +2698,8 @@ function parentDash(){
   const conf=Object.entries(S.conf||{}).sort((a,b)=>b[1]-a[1]).slice(0,6);
   const weakW=Object.entries(S.weak||{}).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([k])=>{
     if(k[0]==='v'&&/^v\d+$/.test(k)){ const s=SENTENCES[+k.slice(1)]; return s?`<span class="pchip" title="Výslech">${esc(s.t.replace(/[{}]/g,'').replace(/\[(.+?)\]/,'«$1»'))}</span>`:''; }
+    if(k.startsWith('sd|')) return `<span class="pchip" title="Slovní druhy">${esc(k.slice(3))}</span>`;
+    if(k.startsWith('pr|')) return `<span class="pchip" title="Kompas příslovcí">${esc(k.slice(3))}</span>`;
     if(k.startsWith('c|')) return `<span class="pchip" title="Trezor druhů">${esc(k.slice(2))}</span>`;
     if(k.startsWith('cs|')) return `<span class="pchip" title="Pokladna">${esc(k.slice(3))}</span>`;
     if(k.startsWith('cw|')) return `<span class="pchip" title="Šeky slovy">${k[3]==='r'?esc(k.slice(4))+'.':esc(k.slice(4))+' Kč'}</span>`;
@@ -2643,6 +2749,8 @@ function parentDash(){
     <div class="pgroup"><h4>Číslovky <small>Trezor, Pokladna, Šeky</small></h4>${Object.keys(CK).map(k=>skillRow('druh: '+CK[k],(S.stats.cdruh||{})[k])).join('')}
       ${[['dva','skloňování dva / dvě'],['oba','skloňování oba / obě'],['tri','skloňování tři'],['ctyri','skloňování čtyři']].map(([k,l])=>skillRow(l,(S.stats.cskl||{})[k])).join('')}
       ${[['do20','psaní slovy do 20'],['do100','psaní slovy do 100'],['pres100','psaní slovy přes 100'],['rad','řadové číslovky slovy']].map(([k,l])=>skillRow(l,(S.stats.cslovy||{})[k])).join('')}</div>
+    <div class="pgroup"><h4>Slovní druhy <small>Velká razie, Celnice</small></h4>${Object.keys(SD).map(k=>skillRow(`${k}. ${SD[k]}`,(S.stats.sdruh||{})[k])).join('')}</div>
+    <div class="pgroup"><h4>Příslovce – druhy <small>Kompas příslovcí</small></h4>${Object.keys(PR_L).map(k=>skillRow('příslovce '+PR_L[k],(S.stats.prisl||{})[k])).join('')}</div>
     <p class="pnote">Stav: <b>✓ zvládá</b> = aspoň 85 % napoprvé · <b>~ procvičuje</b> = 60–85 % · <b>! potřebuje pomoc</b> = pod 60 % · hodnotíme až od 3 pokusů.</p>
     <h3>Na co se zaměřit</h3>
     ${conf.length ? `<div class="pconf">${conf.map(([k,n])=>{ const c=confInfo(k); return `<div class="pci"><b>${c.txt}</b> <span class="pcount">${n}×</span><p>💡 ${c.tip}</p></div>`; }).join('')}</div>` : '<p class="pnote">Zatím žádné opakované záměny. 👍</p>'}
