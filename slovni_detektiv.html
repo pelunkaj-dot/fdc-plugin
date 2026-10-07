@@ -607,7 +607,48 @@ vůdce|vůdci|Ma|soudce|vůdce
 správce|správci|Ma|soudce|správce
 báseň|básně|F|píseň|básně
 tramvaj|tramvaje|F|píseň|tramvaje
-řeč|řeči|F|kost|řeči`.split('\n').map(l=>{
+řeč|řeči|F|kost|řeči
+vlas|vlasy|M|hrad|vlasu
+zub|zuby|M|hrad|zubu
+nos|nosy|M|hrad|nosu
+dárek|dárky|M|hrad|dárku
+obraz|obrazy|M|hrad|obrazu
+chléb|chleby|M|hrad|chleba
+meč|meče|M|stroj|meče
+kraj|kraje|M|stroj|kraje
+čaj|čaje|M|stroj|čaje
+pytel|pytle|M|stroj|pytle
+koláč|koláče|M|stroj|koláče
+měsíc|měsíce|M|stroj|měsíce
+bratr|bratři|Ma|pán|bratra
+syn|synové|Ma|pán|syna
+holub|holubi|Ma|pán|holuba
+sokol|sokoli|Ma|pán|sokola
+kovář|kováři|Ma|muž|kováře
+malíř|malíři|Ma|muž|malíře
+strýc|strýcové|Ma|muž|strýce
+cestovatel|cestovatelé|Ma|muž|cestovatele
+sluha|sluhové|Ma|předseda|sluhy
+starosta|starostové|Ma|předseda|starosty
+zástupce|zástupci|Ma|soudce|zástupce
+kráva|krávy|F|žena|krávy
+holka|holky|F|žena|holky
+louka|louky|F|žena|louky
+lžíce|=|F|růže|lžíce
+vesnice|=|F|růže|vesnice
+košile|=|F|růže|košile
+skříň|skříně|F|píseň|skříně
+kolej|koleje|F|píseň|koleje
+zeď|zdi|F|kost|zdi
+paměť|paměti|F|kost|paměti
+jezero|jezera|N|město|jezera
+křeslo|křesla|N|město|křesla
+sluníčko|sluníčka|N|město|sluníčka
+hřiště|=|N|moře|hřiště
+house|housata|N|kuře|housete
+tele|telata|N|kuře|telete
+přání|=|N|stavení|přání
+údolí|=|N|stavení|údolí`.split('\n').map(l=>{
   const [sg,pl,g,vzor,gen]=l.split('|');
   return {sg, pl: pl==='=' ? sg : (pl||null), same: pl==='=', rod:g[0], ziv:g[1]==='a', vzor:vzor||null, gen:gen||null};
 });
@@ -639,11 +680,18 @@ const SENTENCES = [
   {t:'Mluvili jsme {o} [výletě].',p:6,l:1},{t:'Ryby plavou {v} [řece].',p:6,l:1},{t:'Kniha leží {na} [stole].',p:6,l:1},
   {t:'{Po} [obědě] jsme šli ven.',p:6,l:1},{t:'{Při} [hře] se smějeme.',p:6,l:1},{t:'Bydlíme {ve} [městě].',p:6,l:1},
   {t:'Šel jsem ven {se} [psem].',p:7,l:1},{t:'Míč je {pod} [stolem].',p:7,l:1},{t:'Letadlo letí {nad} [městem].',p:7,l:1},
-  {t:'{Za} [domem] je zahrada.',p:7,l:1},{t:'Píšu [tužkou].',p:7,l:2},{t:'Jedeme [vlakem].',p:7,l:2},{t:'Krájím chleba [nožem].',p:7,l:2}
+  {t:'{Za} [domem] je zahrada.',p:7,l:1},{t:'Píšu [tužkou].',p:7,l:2},{t:'Jedeme [vlakem].',p:7,l:2},{t:'Krájím chleba [nožem].',p:7,l:2},
+  {t:'[Kočka] spí na gauči.',p:1,l:1},{t:'Ve škole zvoní [zvonek].',p:1,l:2},{t:'[Slunce] hřeje.',p:1,l:1},{t:'Po silnici jede [autobus].',p:1,l:2},{t:'[Děda] čte noviny.',p:1,l:1},
+  {t:'Vrátil se {ze} [školy].',p:2,l:1},{t:'Stál {vedle} [stromu].',p:2,l:1},{t:'{Kolem} [domu] běží pes.',p:2,l:1},{t:'Mám radost {z} [dárku].',p:2,l:1},{t:'Napil se [mléka].',p:2,l:2},{t:'Vážím si [babičky].',p:2,l:2},
+  {t:'Přistrčil židli {ke} [stolu].',p:3,l:1},{t:'Šli jsme {naproti} [mamince].',p:3,l:1},{t:'Poděkoval [učiteli].',p:3,l:2},{t:'Věřím [kamarádovi].',p:3,l:2},{t:'Pes se přiblížil {k} [plotu].',p:3,l:1},{t:'Řekl to [sestře].',p:3,l:2},
+  {t:'Jdeme {na} [hřiště].',p:4,l:1},{t:'Hodil míč {přes} [řeku].',p:4,l:1},{t:'Mám dárek {pro} [dědečka].',p:4,l:1},{t:'Maminka koupila [chleba].',p:4,l:2},{t:'Vidím [vlak].',p:4,l:2},{t:'Kluci hrají [fotbal].',p:4,l:2},
+  {t:'[Mami], podej mi to.',p:5,l:1},{t:'Pojď sem, [Honzo]!',p:5,l:1},{t:'[Kamaráde], pomoz mi!',p:5,l:1},{t:'Dobrý den, paní [učitelko].',p:5,l:2},
+  {t:'Ptáci zpívají {na} [stromě].',p:6,l:1},{t:'Mluvili jsme {o} [prázdninách].',p:6,l:1},{t:'{Po} [večeři] jsme si četli.',p:6,l:1},{t:'Kočka spí {v} [koši].',p:6,l:1},{t:'Přemýšlel jsem {o} [úkolu].',p:6,l:1},
+  {t:'Šla na procházku {s} [maminkou].',p:7,l:1},{t:'Ptáček sedí {nad} [oknem].',p:7,l:1},{t:'{Před} [školou] stojí strom.',p:7,l:1},{t:'Malujeme [štětcem].',p:7,l:2},{t:'Píšu [perem].',p:7,l:2},{t:'Jel jsem [autobusem].',p:7,l:2},{t:'Kočka se schovala {pod} [postelí].',p:7,l:1}
 ].map((s,i)=>({...s,id:i,w:s.t.match(/\[(.+?)\]/)[1]}));
 
 const PREP = {};
-[['do z ze od u bez kolem vedle podle',2],['k ke díky kvůli proti',3],['pro přes',4],['po při o',6],['s se',7]]
+[['do z ze od u bez kolem vedle podle',2],['k ke díky kvůli proti naproti',3],['pro přes',4],['po při o',6],['s se',7]]
   .forEach(([ws,p])=>ws.split(' ').forEach(w=>PREP[w]=`ráda chodí se <b>${p}. pádem</b> (${PAD[p].q})`));
 PREP.na = 'může být <b>4. pád</b> (na koho? na co? – kam?) i <b>6. pád</b> (na kom? na čem? – kde?)';
 PREP.v = PREP.ve = 'obvykle chodí s <b>6. pádem</b> (v kom? v čem? – kde?)';
@@ -1471,7 +1519,15 @@ const KW=[
  ['město','město','měst'],['slovo','město','slov',{s6:'slově|slovu'}],['kolo','město','kol',{s6:'kole'}],['auto','město','aut',{s6:'autě|autu'}],
  ['moře','moře','moř'],['pole','moře','pol'],['srdce','moře','srdc'],
  ['kuře','kuře','kuř'],['prase','kuře','pras'],['zvíře','kuře','zvíř'],
- ['stavení','stavení','staven'],['nádraží','stavení','nádraž'],['náměstí','stavení','náměst']
+ ['stavení','stavení','staven'],['nádraží','stavení','nádraž'],['náměstí','stavení','náměst'],
+ ['holub','pán','holub'],['sokol','pán','sokol'],
+ ['obraz','hrad','obraz',{s6:'obraze|obrazu'}],['nos','hrad','nos',{s6:'nose|nosu'}],
+ ['meč','stroj','meč'],['kraj','stroj','kraj'],['čaj','stroj','čaj'],['koláč','stroj','koláč'],
+ ['kráva','žena','kráv'],['chata','žena','chat'],['voda','žena','vod'],
+ ['kolej','píseň','kolej'],
+ ['jezero','město','jezer',{s6:'jezeře'}],['kino','město','kin',{s6:'kině'}],
+ ['tele','kuře','tel'],['house','kuře','hous'],
+ ['přání','stavení','přán'],['údolí','stavení','údol']
 ];
 function kForms(w){ const [word,vz,stem,ov={}]=w; if(ov.full){ const [a,b]=ov.full.split(';'); return {s:a.split(',').map(x=>[x]),p:b.split(',').map(x=>[x])}; }
  const E=KEND[vz]; const mk=(arr,k)=>arr.map((e,i)=>(ov[k+(i+1)]||e.split('|').map(x=>stem+x).join('|')).split('|'));
@@ -1596,7 +1652,13 @@ const CASES=[
  {t:'Soud na hradě', s:'Na [hrad|6|s] se konal soud. [soudce|1|s] se ptal [správce|2|s], kdo ukradl [kolo|4|s] a dva [klíč|4|p]. Správce mluvil o [vůdce|6|s] zlodějů. Zloděj ujížděl na [kolo|6|s] přes [plot|4|p] a [most|4|p]. Nakonec našli kolo u [plot|2|s] za [stroj|7|p].'},
  {t:'Moudrá sova', s:'Ve [škola|6|s] byla zvláštní [lekce|1|s]. Učila ji moudrá [sova|1|s]. Děti seděly na [židle|6|p] a psaly [slovo|4|p] do sešitů. Sova vyprávěla o [rytíř|6|p] a [hrad|6|p]. Na konci [lekce|2|s] dala každému [student|3|s] jednu [růže|4|s].'},
  {t:'Prasátko v tramvaji', s:'Malé [prase|1|s] nastoupilo do [tramvaj|2|s]. Řidič se podíval na [prase|4|s] a usmál se. Prasátko jelo kolem [náměstí|2|s] a [nádraží|2|s] až k [most|3|s]. Tam vystoupilo a běželo za [kuře|7|p]. Večer spalo spokojeně v [postel|6|s] se [srdce|7|s] plným [radost|2|s].'},
- {t:'Zvířecí doktor', s:'[lékař|1|s] ze [stavení|2|s] u [moře|2|s] léčil všechna [zvíře|4|p]. Jednou k němu přivedli [kuře|4|s] a dvě [prase|4|p]. Lékař jim prohlédl [srdce|4|p] i [kost|4|p]. Zvířata mu poděkovala tichou [píseň|7|s]. S [radost|7|s] pak odjel [auto|7|s] domů.'}
+ {t:'Zvířecí doktor', s:'[lékař|1|s] ze [stavení|2|s] u [moře|2|s] léčil všechna [zvíře|4|p]. Jednou k němu přivedli [kuře|4|s] a dvě [prase|4|p]. Lékař jim prohlédl [srdce|4|p] i [kost|4|p]. Zvířata mu poděkovala tichou [píseň|7|s]. S [radost|7|s] pak odjel [auto|7|s] domů.'},
+ {t:'Hasiči v akci', s:'Ve [město|6|s] hořel [stroj|1|s]. Rychle přijeli [hasič|1|p] s [auto|7|p]. Hasili oheň u [most|2|s] i u [plot|2|p]. Jeden [hasič|1|s] zachránil malé [kuře|4|s]. Všichni [muž|1|p] i [žena|1|p] pak hasičům děkovali.'},
+ {t:'Rytířská výprava', s:'Statečný [rytíř|1|s] vyjel z [hrad|2|s]. Jel přes [pole|4|p] a [most|4|p] až k [moře|3|s]. Na [nádraží|6|s] potkal [vůdce|4|s] zlodějů. Vrátil se s [koruna|7|s] a [klíč|7|p] od [pokoj|2|p].'},
+ {t:'Školní besídka', s:'Ve [škola|6|s] byla [lekce|1|s] zpěvu. Děti zpívaly [píseň|4|p] o [zvíře|6|p]. Paní učitelka rozdala [růže|4|p] všem [kamarád|3|p]. Na konci [lekce|2|s] tleskal i [předseda|1|s] obce.'},
+ {t:'Ztracený míč', s:'[kamarád|1|p] hráli na [náměstí|6|s] s [míč|7|s]. Míč přeletěl přes [plot|4|s] a spadl do [pole|2|s]. Hledali ho mezi [stroj|7|p] i pod [most|7|s]. Nakonec ho našel [pán|1|s] s [lampa|7|s].'},
+ {t:'U moře', s:'U [moře|2|s] stálo bílé [stavení|1|s]. Ve [stavení|6|s] bydlel [lékař|1|s] se [žena|7|s]. Každé ráno chodil na [most|4|s] a pozoroval [ryba|4|p]. Večer psal [slovo|4|p] do deníku.'},
+ {t:'Zimní večer', s:'V [pokoj|6|s] svítila [lampa|1|s]. Babička seděla na [židle|6|s] a zpívala [píseň|4|p]. Na [postel|6|s] spala [sova|1|s] i malé [kuře|1|s]. S [radost|7|s] jsme poslouchali každé [slovo|4|s].'}
 ];
 
 const SLOT_RE=/\[([^|\]]+)\|(\d)\|([sp])\]/g;
@@ -1609,7 +1671,13 @@ const SPELLS=[
  {t:'Rytířský turnaj', s:'Na {zlatý}[hrad|6|s] se konal turnaj. {silný}[rytíř|1|p] bojovali s {černý}[vůdce|7|s] zlodějů. Sledovali je {hodný}[předseda|1|s] a {krásný}[žena|1|p]. Vítěz dostal {zlatý}[koruna|4|s] a {matčin}[růže|4|s].'},
  {t:'Letní moře', s:'U {letní}[moře|2|s] stálo {bílý}[stavení|1|s]. Na {zelený}[pole|6|p] za ním se pásla {hladový}[zvíře|1|p]. Děti si hrály s {nový}[míč|7|s]. Večer jsme zpívali {veselý}[píseň|4|p] s {tatínkův}[kamarád|7|p].'},
  {t:'Zvířecí lékař', s:'{hodný}[lékař|1|s] léčil {malý}[zvíře|4|p] ze {sousední}[stavení|2|p]. Prohlédl {tlustý}[prase|4|s] i {slabý}[kuře|4|p]. Pak jel {nový}[auto|7|s] za {bratrův}[kamarád|7|p].'},
- {t:'Večerní tramvaj', s:'{večerní}[tramvaj|1|s] jela přes {hlavní}[most|4|s]. Seděli v ní {smutný}[muž|1|p] a {veselý}[žena|1|p]. Řidič pozdravil {domácí}[správce|4|s] i {mladý}[soudce|4|p]. Na {poslední}[nádraží|6|s] všichni vystoupili.'}
+ {t:'Večerní tramvaj', s:'{večerní}[tramvaj|1|s] jela přes {hlavní}[most|4|s]. Seděli v ní {smutný}[muž|1|p] a {veselý}[žena|1|p]. Řidič pozdravil {domácí}[správce|4|s] i {mladý}[soudce|4|p]. Na {poslední}[nádraží|6|s] všichni vystoupili.'},
+ {t:'Hasičská zbrojnice', s:'Na {hlavní}[náměstí|6|s] stály {nový}[stroj|1|p]. {mladý}[hasič|1|p] myli {bílý}[auto|4|p]. {hodný}[předseda|1|s] jim přinesl {zlatý}[koruna|4|s]. Večer odjeli {rychlý}[auto|7|p] domů.'},
+ {t:'Lesní zvířata', s:'V {lesní}[stavení|6|s] bydlela {hladový}[zvíře|1|p]. {malý}[kuře|1|p] spala u {sousední}[pole|2|s]. {tlustý}[prase|1|s] se válelo na {zelený}[pole|6|s]. {černý}[sova|1|s] seděla na {bílý}[plot|6|s].'},
+ {t:'Návštěva u babičky', s:'V {babiččin}[pokoj|6|s] stály {nový}[židle|1|p]. Na {dědův}[postel|6|s] ležely {otcův}[klíč|1|p] i {matčin}[koruna|1|s]. {veselý}[kamarád|1|p] zpívali {krásný}[píseň|4|p].'},
+ {t:'Ranní tramvaj', s:'{ranní}[tramvaj|1|s] vezla {smutný}[student|4|p] do {nový}[škola|2|s]. Na {poslední}[nádraží|6|s] čekali {veselý}[muž|1|p] a {mladý}[žena|1|p]. Všichni jeli přes {zlatý}[most|4|s].'},
+ {t:'Rybník', s:'U {zelený}[pole|2|p] plavaly {zlatý}[ryba|1|p]. {hladový}[medvěd|1|s] je pozoroval ze {sousední}[most|2|s]. Nakonec odešel se {smutný}[srdce|7|s].'},
+ {t:'Zimní radovánky', s:'Na {hlavní}[náměstí|6|s] svítily {zlatý}[lampa|1|p]. {veselý}[student|1|p] zpívali {zimní}[píseň|4|p]. {hodný}[správce|1|s] jim rozdal {nový}[míč|4|p].'}
 ];
 const TOK_RE=/\{([^}]+)\}\[([^|\]]+)\|(\d)\|([sp])\]|\[([^|\]]+)\|(\d)\|([sp])\]/g;
 function adjFakes(sl,mode){
@@ -1818,10 +1886,10 @@ const AEND={
         N:{s:['o','a','u','o','o','ě|u','ým'],p:['a','ých','ým','a','a','ých','ými']}}
 };
 const ADJ=[
- ...'malý hodný veselý zelený krásný nový silný smutný bílý černý rychlý pomalý tlustý hladový zlatý mladý slabý'.split(' ').map(w=>({w,druh:'tvrde',vzor:'mladý',stem:w.slice(0,-1),t:'mlady'})),
- ...'jarní letní zimní podzimní moderní cizí ranní večerní první poslední sousední hlavní domácí lesní školní'.split(' ').map(w=>({w,druh:'mekke',vzor:'jarní',stem:w.slice(0,-1),t:'jarni'})),
- ...[['otcův','otcov','otci'],['bratrův','bratrov','bratrovi'],['dědův','dědov','dědovi'],['tatínkův','tatínkov','tatínkovi'],['sousedův','sousedov','sousedovi']].map(([w,stem,own])=>({w,druh:'privl',vzor:'otcův',stem,own,t:'privl'})),
- ...[['matčin','matčin','matce'],['sestřin','sestřin','sestře'],['babiččin','babiččin','babičce'],['maminčin','maminčin','mamince']].map(([w,stem,own])=>({w,druh:'privl',vzor:'matčin',stem,own,t:'privl'}))
+ ...'malý hodný veselý zelený krásný nový silný smutný bílý černý rychlý pomalý tlustý hladový zlatý mladý slabý teplý studený kulatý šikovný pilný líný hravý červený žlutý'.split(' ').map(w=>({w,druh:'tvrde',vzor:'mladý',stem:w.slice(0,-1),t:'mlady'})),
+ ...'jarní letní zimní podzimní moderní cizí ranní večerní první poslední sousední hlavní domácí lesní školní zahradní noční páteční'.split(' ').map(w=>({w,druh:'mekke',vzor:'jarní',stem:w.slice(0,-1),t:'jarni'})),
+ ...[['otcův','otcov','otci'],['bratrův','bratrov','bratrovi'],['dědův','dědov','dědovi'],['tatínkův','tatínkov','tatínkovi'],['sousedův','sousedov','sousedovi'],['strýcův','strýcov','strýci']].map(([w,stem,own])=>({w,druh:'privl',vzor:'otcův',stem,own,t:'privl'})),
+ ...[['matčin','matčin','matce'],['sestřin','sestřin','sestře'],['babiččin','babiččin','babičce'],['maminčin','maminčin','mamince'],['tetin','tetin','tetě']].map(([w,stem,own])=>({w,druh:'privl',vzor:'matčin',stem,own,t:'privl'}))
 ];
 function adjForms(a){ const E=AEND[a.t], r={};
  for(const g of ['Ma','Mi','F','N']) r[g]={s:E[g].s.map(e=>e.split('|').map(x=>x==='@'?a.w:a.stem+x)), p:E[g].p.map(e=>e.split('|').map(x=>a.stem+x))};
@@ -1831,7 +1899,7 @@ const AFORMS = Object.fromEntries(ADJ.map(a=>[a.w, adjForms(a)]));
 const DRUH = {tvrde:'tvrdé', mekke:'měkké', privl:'přivlastňovací'};
 const DRUH_SUB = {tvrde:'vzor mladý', mekke:'vzor jarní', privl:'vzory otcův, matčin'};
 const VZROD = {'pán':'Ma','muž':'Ma','předseda':'Ma','soudce':'Ma','hrad':'Mi','stroj':'Mi','žena':'F','růže':'F','píseň':'F','kost':'F','město':'N','moře':'N','kuře':'N','stavení':'N'};
-const ADJ_UNI = {tvrde:['malý','nový','krásný','bílý','černý','zelený','zlatý'], mekke:['první','poslední','cizí','sousední','domácí'], privl:['otcův','bratrův','dědův','matčin','sestřin','babiččin']};
+const ADJ_UNI = {tvrde:['malý','nový','krásný','bílý','černý','zelený','zlatý','červený','žlutý','kulatý'], mekke:['první','poslední','cizí','sousední','domácí'], privl:['otcův','bratrův','dědův','matčin','sestřin','babiččin']};
 const af=(a,rk,c,p)=>AFORMS[a.w][rk][c==='sg'?'s':'p'][p-1];
 const randOf=arr=>arr[Math.random()*arr.length|0];
 
@@ -1938,7 +2006,13 @@ const VERBS=[
  ['malovat','maluju|maluji,maluješ,maluje,malujeme,malujete,malují|malujou','maloval','maluj,malujme,malujte'],
  ['plavat','plavu,plaveš,plave,plaveme,plavete,plavou','plaval','plav,plavme,plavte'],
  ['skákat','skáču,skáčeš,skáče,skáčeme,skáčete,skáčou','skákal','skákej,skákejme,skákejte'],
- ['jíst','jím,jíš,jí,jíme,jíte,jedí','jedl','jez,jezme,jezte']
+ ['jíst','jím,jíš,jí,jíme,jíte,jedí','jedl','jez,jezme,jezte'],
+ ['cestovat','cestuju|cestuji,cestuješ,cestuje,cestujeme,cestujete,cestují|cestujou','cestoval','cestuj,cestujme,cestujte'],
+ ['pracovat','pracuju|pracuji,pracuješ,pracuje,pracujeme,pracujete,pracují|pracujou','pracoval','pracuj,pracujme,pracujte'],
+ ['tancovat','tancuju|tancuji,tancuješ,tancuje,tancujeme,tancujete,tancují|tancujou','tancoval','tancuj,tancujme,tancujte'],
+ ['čekat','čekám,čekáš,čeká,čekáme,čekáte,čekají','čekal','čekej,čekejme,čekejte'],
+ ['poslouchat','poslouchám,posloucháš,poslouchá,posloucháme,posloucháte,poslouchají','poslouchal','poslouchej,poslouchejme,poslouchejte'],
+ ['plakat','pláču,pláčeš,pláče,pláčeme,pláčete,pláčou','plakal','plač,plačme,plačte']
 ];
 const PK=['1s','2s','3s','1p','2p','3p'];
 function vForms(v){ const [inf,pres,l,imp]=v, P=pres.split(','), I=imp.split(','), f={inf:[[inf]]};
@@ -2165,7 +2239,11 @@ const ZPASTI = [
   ['___ jsme vyhráli!','My','my','kdo vyhrál? my',2],['Podej ___ tu knihu.','mi','my','komu? mně',2],['Zítra ___ pojedeme k babičce.','my','my','kdo pojede? my',2],['Líbí se ___ tvoje kolo.','mi','my','komu? mně',2],
   ['Na ___ se nezlob.','mě','mm','na tebe',3],['Naproti ___ seděla babička.','mně','mm','naproti tobě',3],['Dívala se na ___ celý den.','mě','mm','na tebe',3],['Ke ___ do pokoje nechoď.','mně','mm','ke tobě',3],
   ['Proč ___ to neřekneš?','mi','my','komu? mně',3],['Zdálo se ___, že prší.','mi','my','komu? mně',3],['___ s kamarády hrajeme fotbal.','My','my','kdo hraje? my',3],['Dnes ___ bylo smutno.','mi','my','komu? mně',3],
-  ['Řekl ___ pravdu.','jí','jj','té holce',3],['Potkal ___ před školou.','ji','jj','tu holku',3],['Věřím ___.','jí','jj','té holce',3],['Hledám ___ už hodinu.','ji','jj','tu holku',3],['Bylo ___ smutno.','jí','jj','té holce',3]
+  ['Řekl ___ pravdu.','jí','jj','té holce',3],['Potkal ___ před školou.','ji','jj','tu holku',3],['Věřím ___.','jí','jj','té holce',3],['Hledám ___ už hodinu.','ji','jj','tu holku',3],['Bylo ___ smutno.','jí','jj','té holce',3],
+  ['Bez ___ to nepůjde.','mě','mm','bez tebe',1],['Usmála se na ___.','mě','mm','na tebe',1],['Přišel ke ___ domů.','mně','mm','ke tobě',1],['Psali o ___ v novinách.','mně','mm','o tobě',1],['Postav se za ___.','mě','mm','za tebe',1],
+  ['Nesmějte se ___.','mně','mm','nesmějte se tobě',2],['Zajímá ___ to.','mě','mm','zajímá tebe',2],['Je ___ to líto.','mně','mm','je tobě líto',2],['Učitelka ___ vyvolala.','mě','mm','vyvolala tebe',2],
+  ['Vzal ___ za ruku.','ji','jj','tu holku',2],['Babička ___ uvařila oběd.','jí','jj','té holce',2],['Kamarádka ___ půjčila tužku.','jí','jj','té holce',2],['Neznám ___.','ji','jj','tu holku',3],['Je ___ deset let.','jí','jj','té holce',3],
+  ['___ máme rádi zmrzlinu.','My','my','kdo? my',2],['Ukaž ___ to.','mi','my','komu? mně',2],['Zítra ___ přijde dopis.','mi','my','komu? mně',3],['___ všichni jsme kamarádi.','My','my','kdo? my',3]
 ];
 const ZPAIR = {mm:['mě','mně'], jj:['ji','jí'], my:['mi','my']};
 const ZP_RULE = {mm:'tebe → <b>mě</b> (2. a 4. pád), tobě → <b>mně</b> (3. a 6. pád)', jj:'tu holku → <b>ji</b> (4. pád), té holce → <b>jí</b> (3., 6. a 7. pád)', my:'kdo? → <b>my</b>, komu? → <b>mi</b>'};
@@ -2190,7 +2268,11 @@ const ZTEXTS = [
   {t:'Babiččiny koláče', s:'‹Moje|pr› babička peče koláče. ‹Ona|os› ‹nám|os› vždycky ‹nějaký|ne› upeče. ‹Takový|uk› koláč ‹nikdo|za› jiný neumí. Dala ‹mi|os› ‹ten|uk› největší.'},
   {t:'Poklad', s:'‹Ten|uk›, ‹kdo|vz› najde poklad, vyhraje. ‹My|os› jsme hledali všude. ‹Něčí|ne› stopy vedly k domu, ‹jehož|vz› dveře byly otevřené. ‹Co|ta› tam najdeme?'},
   {t:'Kamarádi', s:'‹Ty|os› a ‹já|os› jsme kamarádi. ‹Tvůj|pr› brácha ‹nás|os› ‹něco|ne› naučil. ‹Kdo|ta› ‹to|uk› umí? ‹Nikdo|za› kromě ‹něj|os›.'},
-  {t:'Na nádraží', s:'‹Tento|uk› vlak jede do Prahy. ‹Jaký|ta› vlak jede do Brna? ‹Některé|ne› vlaky tu nestaví. ‹Jejich|pr› jízdní řád ‹nikdo|za› nezná.'}
+  {t:'Na nádraží', s:'‹Tento|uk› vlak jede do Prahy. ‹Jaký|ta› vlak jede do Brna? ‹Některé|ne› vlaky tu nestaví. ‹Jejich|pr› jízdní řád ‹nikdo|za› nezná.'},
+  {t:'Ráno ve škole', s:'‹My|os› jsme přišli do třídy. ‹Naše|pr› paní učitelka ‹nám|os› řekla: ‹Kdo|ta› chybí? ‹Nikdo|za›! ‹Ten|uk› den byl ‹nějaký|ne› zvláštní.'},
+  {t:'Narozeniny', s:'‹Moje|pr› sestra má narozeniny. ‹Co|ta› ‹jí|os› koupíme? ‹Každý|ne› ‹něco|ne› přinese. ‹Já|os› ‹jí|os› dám ‹svou|pr› knihu.'},
+  {t:'Pes a kočka', s:'‹Ten|uk› pes je ‹náš|pr›. ‹Tamta|uk› kočka je ‹jejich|pr›. ‹Kdo|ta› ‹ho|os› nakrmí? ‹Nikdo|za› nemá čas.'},
+  {t:'Tajemství', s:'Kluk, ‹který|vz› sedí vedle ‹mě|os›, ‹mi|os› řekl tajemství. ‹Nikomu|za› ‹ho|os› neprozradím. ‹Čí|ta› je ‹to|uk› tajemství?'}
 ];
 function buildPfind(L){ const pool=ZTEXTS.filter(t=>L.vz || !/\|vz›/.test(t.s)); return shuffle(pool.slice()).slice(0,L.count).map(t=>({story:t, w:t.t, retry:true})); }
 function pfindRound(){
@@ -2304,7 +2386,10 @@ const CSKL = [
   ['Poděkoval ___ sousedům.','oběma','oba',2,3],['Psal o ___ kamarádech.','obou','oba',2,6],
   ['Přišel se ___ kamarády.','třemi','tri',3,7],['Bez ___ korun si to nekoupíš.','tří','tri',3,2],['Mluvili o ___ zlodějích.','třech','tri',3,6],['Dal bonbony ___ dětem.','třem','tri',3,3],
   ['Jel se ___ koňmi.','čtyřmi','ctyri',3,7],['U ___ stolů seděli hosté.','čtyř','ctyri',3,2],['Napsal ___ kamarádům.','čtyřem','ctyri',3,3],['Vyprávěl o ___ rytířích.','čtyřech','ctyri',3,6],
-  ['Hrála si se ___ sestrami.','dvěma','dva',3,7],['Pozdravil ___ sousedy.','oba','oba',3,4]
+  ['Hrála si se ___ sestrami.','dvěma','dva',3,7],['Pozdravil ___ sousedy.','oba','oba',3,4],
+  ['Ve třídě jsou ___ okna.','dvě','dva',1,1],['Pes má ___ uši.','dvě','dva',1,4],['Šla ven se ___ psy.','dvěma','dva',1,7],['Snědl ___ rohlíky.','dva','dva',1,4],['Mám ___ sešity.','dva','dva',1,4],['Přišla se ___ kamarádkami.','dvěma','dva',1,7],
+  ['Mezi ___ domy stojí strom.','dvěma','dva',2,7],['Zeptal se ___ kluků.','obou','oba',2,2],['Dal dárek ___ sestrám.','oběma','oba',2,3],['Myslím na ___ kamarády.','oba','oba',2,4],['Stěžoval si na ___ holky.','obě','oba',2,4],
+  ['Vyšel se ___ psy.','třemi','tri',3,7],['Je to dárek od ___ babiček.','tří','tri',3,2],['Zpíval ___ dětem.','čtyřem','ctyri',3,3],['Psal o ___ výletech.','čtyřech','ctyri',3,6],['Hrál si se ___ kočkami.','čtyřmi','ctyri',3,7],['Bez ___ hráčů nemůžeme hrát.','čtyř','ctyri',3,2]
 ];
 const CSET = {dva:['dva','dvě','dvou','dvěma','dvěmi'], oba:['oba','obě','obou','oběma','oběmi'], tri:['tři','tří','třem','třech','třemi','třema'], ctyri:['čtyři','čtyř','čtyřem','čtyřech','čtyřmi','čtyřma']};
 const CS_RULE = {dva:'dva / dvě – bez <b>dvou</b>, ke <b>dvěma</b>, o <b>dvou</b>, se <b>dvěma</b> (nikdy „dvěmi“)', oba:'oba / obě – bez <b>obou</b>, k <b>oběma</b>, o <b>obou</b>, s <b>oběma</b> (nikdy „oběmi“)', tri:'tři – bez <b>tří</b>, ke <b>třem</b>, o <b>třech</b>, se <b>třemi</b> („třema“ je hovorové)', ctyri:'čtyři – bez <b>čtyř</b>, ke <b>čtyřem</b>, o <b>čtyřech</b>, se <b>čtyřmi</b> („čtyřma“ je hovorové)'};
@@ -2392,7 +2477,33 @@ const SDS = [
   'Hurá|10 , máme|5 prázdniny|1 !',
   'Kdo|3 to|3 nakreslil|5 tak|6 hezky|6 ?',
   'Pět|4 kluků|1 hrálo|5 na|7 hřišti|1 nebo|8 doma|6 .',
-  'Pes|1 skočil|5 do|7 vody|1 , když|8 uviděl|5 kachnu|1 .'
+ 'Pes|1 skočil|5 do|7 vody|1 , když|8 uviděl|5 kachnu|1 .',
+  'Moje|3 sestra|1 má|5 dvě|4 kočky|1 .',
+  'Ptáci|1 zpívali|5 na|7 zahradě|1 velmi|6 hlasitě|6 .',
+  'Fuj|10 , to|3 je|5 ošklivý|2 brouk|1 !',
+  'Tatínek|1 opravil|5 kolo|1 a|8 jel|5 do|7 práce|1 .',
+  'Kéž|9 bychom|5* vyhráli|5 !',
+  'Třetí|4 den|1 jsme|5 šli|5 k|7 jezeru|1 .',
+  'Bum|10 ! Někdo|3 bouchl|5 dveřmi|1 .',
+  'Máme|5 doma|6 velkého|2 psa|1 a|8 malou|2 kočku|1 .',
+  'Ten|3 kluk|1 běží|5 rychleji|6 než|8 já|3 .',
+  'Ne|9 , dnes|6 nepůjdu|5 ven|6 .',
+  'Sedm|4 trpaslíků|1 pracovalo|5 v|7 dole|1 .',
+  'Na|7 obloze|1 svítily|5 jasné|2 hvězdy|1 .',
+  'Dědeček|1 často|6 vypráví|5 zajímavé|2 příběhy|1 .',
+  'Psík|1 spal|5 pod|7 stolem|1 , zatímco|8 kočka|1 hlídala|5 .',
+  'Ach|10 , to|3 je|5 krásný|2 den|1 !',
+  'Babička|1 i|8 dědeček|1 bydlí|5 na|7 vesnici|1 .',
+  'Možná|9 přijdeme|5 pozdě|6 .',
+  'Ve|7 třídě|1 sedí|5 dvacet|4 žáků|1 .',
+  'Honza|1 nebo|8 Petr|1 vyhraje|5 závod|1 .',
+  'Naše|3 škola|1 má|5 nové|2 hřiště|1 .',
+  'Kočka|1 tiše|6 vyskočila|5 na|7 okno|1 .',
+  'Ať|9 žije|5 král|1 !',
+  'Jejich|3 pes|1 štěká|5 , když|8 slyší|5 zvonek|1 .',
+  'Plesk|10 ! Míč|1 spadl|5 do|7 kaluže|1 .',
+  'Dnes|6 jsme|5 se|5* učili|5 nová|2 slova|1 .',
+  'Kdy|6 přijdeš|5 ?'
 ].map(t=>t.split(' ').map(tk=>{ const m=tk.match(/^(.+)\|(\d+)(\*?)$/); return m ? {w:m[1], d:+m[2], ask:!m[3]} : {w:tk, d:0, ask:false}; }));
 function sdText(toks, hl){ return toks.map((t,i)=>{ const w = i===hl ? `<mark>${esc(t.w)}</mark>` : esc(t.w); return (t.d===0 && /^[.,!?]$/.test(t.w) ? '' : ' ')+w; }).join('').trim(); }
 function sdSentence(toks){ return sdText(toks,-1).replace(/<[^>]+>/g,''); }
@@ -2409,8 +2520,8 @@ function genNeoh(L){
 }
 
 /* Kompas příslovcí */
-const PRISL = {misto:'doma venku nahoře dole tady tam vlevo vpravo všude daleko blízko uvnitř', cas:'včera dnes zítra brzy pozdě teď nyní potom vždycky často letos předevčírem',
-  zpusob:'rychle pomalu hezky tiše nahlas dobře špatně opatrně pěšky potichu', mira:'velmi příliš docela úplně skoro nesmírně'};
+const PRISL = {misto:'doma venku nahoře dole tady tam vlevo vpravo všude daleko blízko uvnitř nahoru dolů dovnitř ven zde', cas:'včera dnes zítra brzy pozdě teď nyní potom vždycky často letos předevčírem dříve později hned zatím',
+  zpusob:'rychle pomalu hezky tiše nahlas dobře špatně opatrně pěšky potichu krásně smutně vesele pozorně spolu', mira:'velmi příliš docela úplně skoro nesmírně velice zcela téměř'};
 const PR_L = {misto:'místa', cas:'času', zpusob:'způsobu', mira:'míry'}, PR_Q = {misto:'kde? kam? odkud?', cas:'kdy? jak dlouho? jak často?', zpusob:'jak? jakým způsobem?', mira:'jak moc? do jaké míry?'};
 function genPrisl(L){
   const pool=L.kinds.flatMap(k=>PRISL[k].split(' ').map(w=>[w,k]));
