@@ -490,6 +490,9 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 <main id="app"></main>
 
 <script src="fajndetektiv/lexikon.js"></script>
+<script src="fajndetektiv/vety.js"></script>
+<script src="fajndetektiv/pribehy.js"></script>
+<script src="fajndetektiv/cviceni.js"></script>
 <script>
 'use strict';
 const DEMO = /-demo(\.html?)?$/i.test(location.pathname);
@@ -540,13 +543,39 @@ const SENTENCES = [
   {t:'[Mami], podej mi to.',p:5,l:1},{t:'Pojď sem, [Honzo]!',p:5,l:1},{t:'[Kamaráde], pomoz mi!',p:5,l:1},{t:'Dobrý den, paní [učitelko].',p:5,l:2},
   {t:'Ptáci zpívají {na} [stromě].',p:6,l:1},{t:'Mluvili jsme {o} [prázdninách].',p:6,l:1},{t:'{Po} [večeři] jsme si četli.',p:6,l:1},{t:'Kočka spí {v} [koši].',p:6,l:1},{t:'Přemýšlel jsem {o} [úkolu].',p:6,l:1},
   {t:'Šla na procházku {s} [maminkou].',p:7,l:1},{t:'Ptáček sedí {nad} [oknem].',p:7,l:1},{t:'{Před} [školou] stojí strom.',p:7,l:1},{t:'Malujeme [štětcem].',p:7,l:2},{t:'Píšu [perem].',p:7,l:2},{t:'Jel jsem [autobusem].',p:7,l:2},{t:'Kočka se schovala {pod} [postelí].',p:7,l:1}
-].map((s,i)=>({...s,id:i,w:s.t.match(/\[(.+?)\]/)[1]}));
+].concat(frameSentences()).filter((s,i,a)=>a.findIndex(x=>x.t===s.t)===i).map((s,i)=>({...s,id:i,w:s.t.match(/\[(.+?)\]/)[1]}));
+// předložka v / ve, s / se, k / ke, z / ze podle začátku slova; null = podoba nejistá, slovo vynecháme
+function vocPrep(pr, w){
+  const V='aeiouyáéíóúůýě', x=w.toLowerCase().replace(/^ch/,'h'), vow=ch=>!!ch&&V.includes(ch), cv=!vow(x[0])&&vow(x[1]);
+  if(pr==='v'){ if(/^[vf]/.test(x) || (/^[szšžčc]/.test(x)&&!vow(x[1]))) return 've'; if(x.startsWith('mě')) return null; return vow(x[0])||cv ? 'v' : null; }
+  if(pr==='s'||pr==='z'){ if(/^[szšž]/.test(x)) return pr+'e'; return vow(x[0])||cv ? pr : null; }
+  if(pr==='k'){ if(/^[kg]/.test(x) || (/^[szšžc]/.test(x)&&!vow(x[1]))) return 'ke'; return vow(x[0])||cv ? 'k' : null; }
+  return pr;
+}
+// Věty z rámců (fajndetektiv/vety.js): každý rámec se naplní až 12 slovy ze skupiny, pořadí je pevné (kvůli statistikám)
+function frameSentences(){
+  const LX=Object.fromEntries(FDLEX.LEX.map(n=>[n.w,n])), up=x=>x.charAt(0).toUpperCase()+x.slice(1), out=[];
+  FD_RAMCE.trim().split('\n').forEach((line,fi)=>{
+    const [l,p,c,ws,t]=line.split('|'), all=(ws[0]==='@'?FD_SKUPINY[ws.slice(1)]:ws).split(' '), m=t.match(/\{(\w+)~\}/);
+    const o=(fi*7)%all.length, words=all.slice(o).concat(all.slice(0,o));   // každý rámec začíná jinde ve skupině
+    let n=0;
+    words.forEach(w=>{
+      const k=LX[w]; if(!k) throw new Error('Rámec věty: neznámé slovo '+w);
+      const form=(k.f[c][p-1]||[])[0]; if(!form || n>=12) return;
+      let tt=t;
+      if(m){ const pr=vocPrep(m[1].toLowerCase(),form); if(!pr) return; tt=tt.replace(m[0],'{'+(m[1]===m[1].toLowerCase()?pr:up(pr))+'}'); }
+      tt=tt.replace('[]','['+(tt.indexOf('[]')===0?up(form):form)+']');
+      out.push({t:tt, p:+p, l:+l, gen:true}); n++;
+    });
+  });
+  return out;
+}
 
 const PREP = {};
-[['do z ze od u bez kolem vedle podle',2],['k ke díky kvůli proti naproti',3],['pro přes',4],['po při o',6],['s se',7]]
+[['do z ze od u bez kolem vedle podle během podél',2],['k ke díky kvůli proti naproti',3],['pro přes',4],['po při o',6],['s se',7]]
   .forEach(([ws,p])=>ws.split(' ').forEach(w=>PREP[w]=`ráda chodí se <b>${p}. pádem</b> (${PAD[p].q})`));
 PREP.na = 'může být <b>4. pád</b> (na koho? na co? – kam?) i <b>6. pád</b> (na kom? na čem? – kde?)';
-PREP.v = PREP.ve = 'obvykle chodí s <b>6. pádem</b> (v kom? v čem? – kde?)';
+PREP.v = PREP.ve = 'obvykle chodí s <b>6. pádem</b> (v kom? v čem? – kde?); u dnů a časů (v sobotu, ve středu – kdy?) se <b>4. pádem</b>';
 ['pod','nad','před','za','mezi'].forEach(w=>PREP[w]='chodí se <b>7. pádem</b> (kde? – kým? čím?), když jde o směr (kam?), tak se 4. pádem');
 
 /* ══════════════ STRUKTURA MĚSTA (rozšiřitelná) ══════════════ */
@@ -1468,6 +1497,7 @@ const CASES=[
  {t:'Zimní večer', s:'V [pokoj|6|s] svítila [lampa|1|s]. Babička seděla na [židle|6|s] a zpívala [píseň|4|p]. Na [postel|6|s] spala [sova|1|s] i malé [kuře|1|s]. S [radost|7|s] jsme poslouchali každé [slovo|4|s].'}
 ];
 
+CASES.push(...FD_PRIPADY);   // další příběhy (fajndetektiv/pribehy.js)
 const SLOT_RE=/\[([^|\]]+)\|(\d)\|([sp])\]/g;
 // Pravopisná hlídka: {přídavné jméno}[podstatné jméno|pád|číslo] – podstatné jméno z ověřených tabulek
 const SPELLS=[
@@ -1504,6 +1534,7 @@ function adjFakes(sl,mode){
   return [...out];
 }
 
+SPELLS.push(...FD_HLIDKY);
 const KBY = Object.fromEntries(KALL.map(k=>[k.w,k]));
 function slotForms(sl){ return sl.kind==='adj' ? sl.target : sl.k.f[sl.c==='sg'?'s':'p'][sl.p-1]; }
 function caseFakes(sl,mode){
@@ -1685,7 +1716,7 @@ const VZROD = {'pán':'Ma','muž':'Ma','předseda':'Ma','soudce':'Ma','hrad':'Mi
 // přídavná jména pro cvičení shody + skupiny podstatných jmen, ke kterým se významově hodí
 // (o osoby, z zvířata, m místa, v věci, j jídlo, p příroda, a ostatní)
 const ADJ_SEM = {tvrde:{'malý':'ozmvjp','velký':'ozmvjp','krásný':'ozmvjpa','hezký':'ozmvp','starý':'ozmv','nový':'omva','veselý':'oz','smutný':'oz','hodný':'oz','chytrý':'oz','statečný':'oz','hladový':'oz','bílý':'zvp','černý':'zv','zelený':'vp','červený':'vj','zlatý':'v','kulatý':'vj','tajemný':'omva','oblíbený':'ozmvja','sladký':'j','čerstvý':'j','vysoký':'omp','divoký':'zp','dlouhý':'va','zajímavý':'oa'},
-  mekke:{'první':'ozmvjpa','poslední':'ozmvjpa','cizí':'ozmv','sousední':'m','domácí':'zj','lesní':'zp','zimní':'va','jarní':'pa','školní':'mva','zahradní':'mv'},
+  mekke:{'první':'ozmvjpa','poslední':'ozmvjpa','cizí':'ozmv','sousední':'m','domácí':'zj','lesní':'zp','zimní':'a','jarní':'a','školní':'mva','zahradní':'p'},
   privl:{'otcův':'ozmvj','bratrův':'ozmvj','dědův':'ozmvj','strýcův':'ozmvj','matčin':'ozmvj','sestřin':'ozmvj','babiččin':'ozmvj','tetin':'ozmvj'}};
 const ADJ_UNI = Object.fromEntries(Object.entries(ADJ_SEM).map(([k,o])=>[k,Object.keys(o)]));
 const af=(a,rk,c,p)=>AFORMS[a.w][rk][c==='sg'?'s':'p'][p-1];
@@ -1917,7 +1948,8 @@ function genVform(L){
 
 /* Nádražní hlášení – shoda přísudku s podmětem */
 const PS_ANIM_W=KWORDS.filter(k=>'oz'.includes(k.sem)&&!k.nopl).map(k=>k.w);
-const PS_INAN_W=KWORDS.filter(k=>k.sem==='v'&&!k.nopl).map(k=>k.w);
+const PS_BODY='tělo rameno čelo prst nehet krk bok kotník zub vlas nos jazyk obličej palec';   // části těla se do hlášení nehodí
+const PS_INAN_W=KWORDS.filter(k=>k.sem==='v'&&!k.nopl&&!PS_BODY.split(' ').includes(k.w)).map(k=>k.w);
 const PS_ANIM=[['spal','celé odpoledne'],['čekal','na nádraží'],['zmizel','beze stopy'],['byl','na nádraží už ráno'],['běhal','po nástupišti'],['skákal','radostí'],['seděl','v čekárně'],['přijel','prvním vlakem'],['odjel','do Brna'],['nastoupil','do posledního vagónu'],['vystoupil','na třetím nástupišti'],['stál','u pokladny'],['koukal','z okna vlaku'],['mával','na rozloučenou']];
 const PS_INAN=[['zmizel','beze stopy'],['byl','na nádraží už ráno'],['stál','u kolejí'],['ležel','na nástupišti'],['zůstal','v kupé'],['spadl','pod lavičku'],['přijel','zavazadlovým vozem'],['ležel','v úschovně zavazadel'],['visel','na věšáku v čekárně']];
 const PS_SPEC=[{t:'děti',rk:'F',c:'pl',why:'děti → ty děti → koncovka <b>-y</b> (děti si hrály)'},{t:'lidé',rk:'Ma',c:'pl',why:'lidé → ten člověk – mužský životný → <b>-i</b>'},{t:'rodiče',rk:'Ma',c:'pl',why:'rodiče → ten rodič – mužský životný → <b>-i</b>'}];
@@ -1977,6 +2009,7 @@ const ZAJ = {
 const ZSENT = [['Kluk, ‹který› stál u okna, se usmál.','vz'],['Kniha, ‹kterou› čtu, je napínavá.','vz'],['Dům, ve ‹kterém› bydlíme, je starý.','vz'],['Ten, ‹kdo› přijde první, vyhraje.','vz'],
   ['Pes, ‹jehož› majitel odešel, smutně štěkal.','vz'],['To je ten kluk, ‹kterého› znám.','vz'],['Holka, ‹jejíž› kolo stálo venku, odešla.','vz'],
   ['‹Kdo› to byl?','ta'],['‹Co› děláš?','ta'],['‹Který› vlak jede do Brna?','ta'],['‹Jaký› je dnes den?','ta'],['‹Čí› je ten pes?','ta'],['‹Kterou› knihu chceš?','ta']];
+Object.keys(FD_ZAJ).forEach(k=>FD_ZAJ[k].forEach(w=>{ if(!Object.values(ZAJ).some(a=>a.includes(w))) ZAJ[k].push(w); })); ZSENT.push(...FD_ZSENT);
 function genZdruh(L){
   const kinds = L.mode===1 ? ['os','pr','uk'] : L.mode===2 ? ['os','pr','uk','ta','za','ne'] : ['os','pr','uk','ta','vz','za','ne'];
   const out=[];
@@ -1995,22 +2028,23 @@ function genZdruh(L){
 }
 // Zájmenné pasti: [věta, správně, dvojice, test, úroveň]
 const ZPASTI = [
-  ['Pojď ke ___.','mně','mm','ke tobě',1],['Mluvili o ___.','mně','mm','o tobě',1],['Beze ___ nikam nechoď.','mě','mm','bez tebe',1],['To je dárek pro ___.','mě','mm','pro tebe',1],
-  ['Sedni si vedle ___.','mě','mm','vedle tebe',1],['Přišel až ke ___.','mně','mm','ke tobě',1],['Myslíš na ___?','mě','mm','na tebe',1],['Při ___ se nemusíš bát.','mně','mm','při tobě',1],
+  ['Pojď ke ___.','mně','mm','k tobě',1],['Mluvili o ___.','mně','mm','o tobě',1],['Beze ___ nikam nechoď.','mě','mm','bez tebe',1],['To je dárek pro ___.','mě','mm','pro tebe',1],
+  ['Sedni si vedle ___.','mě','mm','vedle tebe',1],['Přišel až ke ___.','mně','mm','k tobě',1],['Myslíš na ___?','mě','mm','na tebe',1],['Při ___ se nemusíš bát.','mně','mm','při tobě',1],
   ['Ten dopis je od ___.','mě','mm','od tebe',1],['Kamarád stál u ___.','mě','mm','u tebe',1],['Napiš o ___ básničku.','mně','mm','o tobě',1],['Kvůli ___ přišel pozdě.','mně','mm','kvůli tobě',1],
   ['Dej ___ to.','mně','mm','dej tobě',2],['Mamka ___ pochválila.','mě','mm','pochválila tebe',2],['___ se to líbí.','Mně','mm','tobě se to líbí',2],['Vidíš ___?','mě','mm','vidíš tebe',2],
   ['Pomoz ___ s úkolem.','mně','mm','pomoz tobě',2],['Bolí ___ hlava.','mě','mm','bolí tebe',2],['Pozvali ___ na oslavu.','mě','mm','pozvali tebe',2],['Je ___ zima.','mně','mm','je tobě zima',2],
   ['Viděl jsem ___ v parku.','ji','jj','tu holku',2],['Dal jsem ___ dárek.','jí','jj','té holce',2],['Napiš ___ dopis.','jí','jj','té holce',2],['Pozdravil ___ na ulici.','ji','jj','tu holku',2],
   ['Ta kniha ___ patří.','jí','jj','té holce',2],['Maminka ___ učesala.','ji','jj','tu holku',2],['Pomohl ___ s taškou.','jí','jj','té holce',2],
   ['___ jsme vyhráli!','My','my','kdo vyhrál? my',2],['Podej ___ tu knihu.','mi','my','komu? mně',2],['Zítra ___ pojedeme k babičce.','my','my','kdo pojede? my',2],['Líbí se ___ tvoje kolo.','mi','my','komu? mně',2],
-  ['Na ___ se nezlob.','mě','mm','na tebe',3],['Naproti ___ seděla babička.','mně','mm','naproti tobě',3],['Dívala se na ___ celý den.','mě','mm','na tebe',3],['Ke ___ do pokoje nechoď.','mně','mm','ke tobě',3],
+  ['Na ___ se nezlob.','mě','mm','na tebe',3],['Naproti ___ seděla babička.','mně','mm','naproti tobě',3],['Dívala se na ___ celý den.','mě','mm','na tebe',3],['Ke ___ do pokoje nechoď.','mně','mm','k tobě',3],
   ['Proč ___ to neřekneš?','mi','my','komu? mně',3],['Zdálo se ___, že prší.','mi','my','komu? mně',3],['___ s kamarády hrajeme fotbal.','My','my','kdo hraje? my',3],['Dnes ___ bylo smutno.','mi','my','komu? mně',3],
   ['Řekl ___ pravdu.','jí','jj','té holce',3],['Potkal ___ před školou.','ji','jj','tu holku',3],['Věřím ___.','jí','jj','té holce',3],['Hledám ___ už hodinu.','ji','jj','tu holku',3],['Bylo ___ smutno.','jí','jj','té holce',3],
-  ['Bez ___ to nepůjde.','mě','mm','bez tebe',1],['Usmála se na ___.','mě','mm','na tebe',1],['Přišel ke ___ domů.','mně','mm','ke tobě',1],['Psali o ___ v novinách.','mně','mm','o tobě',1],['Postav se za ___.','mě','mm','za tebe',1],
+  ['Bez ___ to nepůjde.','mě','mm','bez tebe',1],['Usmála se na ___.','mě','mm','na tebe',1],['Přišel ke ___ domů.','mně','mm','k tobě',1],['Psali o ___ v novinách.','mně','mm','o tobě',1],['Postav se za ___.','mě','mm','za tebe',1],
   ['Nesmějte se ___.','mně','mm','nesmějte se tobě',2],['Zajímá ___ to.','mě','mm','zajímá tebe',2],['Je ___ to líto.','mně','mm','je tobě líto',2],['Učitelka ___ vyvolala.','mě','mm','vyvolala tebe',2],
   ['Vzal ___ za ruku.','ji','jj','tu holku',2],['Babička ___ uvařila oběd.','jí','jj','té holce',2],['Kamarádka ___ půjčila tužku.','jí','jj','té holce',2],['Neznám ___.','ji','jj','tu holku',3],['Je ___ deset let.','jí','jj','té holce',3],
   ['___ máme rádi zmrzlinu.','My','my','kdo? my',2],['Ukaž ___ to.','mi','my','komu? mně',2],['Zítra ___ přijde dopis.','mi','my','komu? mně',3],['___ všichni jsme kamarádi.','My','my','kdo? my',3]
 ];
+FD_ZPASTI.forEach(x=>{ if(!ZPASTI.some(y=>y[0]===x[0])) ZPASTI.push(x); });   // další pasti (fajndetektiv/cviceni.js)
 const ZPAIR = {mm:['mě','mně'], jj:['ji','jí'], my:['mi','my']};
 const ZP_RULE = {mm:'tebe → <b>mě</b> (2. a 4. pád), tobě → <b>mně</b> (3. a 6. pád)', jj:'tu holku → <b>ji</b> (4. pád), té holce → <b>jí</b> (3., 6. a 7. pád)', my:'kdo? → <b>my</b>, komu? → <b>mi</b>'};
 const ZP_HINT = {mm:'Zkus místo mezery říct <b>tebe</b>, nebo <b>tobě</b>. Které zní správně?', jj:'Zkus místo mezery říct <b>tu holku</b>, nebo <b>té holce</b>.', my:'Zeptej se: <b>kdo?</b> to dělá, nebo <b>komu?</b> se to děje?'};
@@ -2040,6 +2074,7 @@ const ZTEXTS = [
   {t:'Pes a kočka', s:'‹Ten|uk› pes je ‹náš|pr›. ‹Tamta|uk› kočka je ‹jejich|pr›. ‹Kdo|ta› ‹ho|os› nakrmí? ‹Nikdo|za› nemá čas.'},
   {t:'Tajemství', s:'Kluk, ‹který|vz› sedí vedle ‹mě|os›, ‹mi|os› řekl tajemství. ‹Nikomu|za› ‹ho|os› neprozradím. ‹Čí|ta› je ‹to|uk› tajemství?'}
 ];
+ZTEXTS.push(...FD_ZTEXTS);
 function buildPfind(L){ const pool=ZTEXTS.filter(t=>L.vz || !/\|vz›/.test(t.s)); return shuffle(pool.slice()).slice(0,L.count).map(t=>({story:t, w:t.t, retry:true})); }
 function pfindRound(){
   const g=game, it=g.items[g.i], L=g.L;
@@ -2129,6 +2164,7 @@ const CNUM = [
   ...'dvojí trojí čtverý patery desatery dvoje troje'.split(' ').map(w=>[w,'druh',1]), ...'několikerý kolikerý'.split(' ').map(w=>[w,'druh',0]),
   ...'jednou dvakrát třikrát pětkrát stokrát dvojnásobný trojnásobný'.split(' ').map(w=>[w,'nas',1]), ...'několikrát mnohokrát kolikrát mnohonásobný'.split(' ').map(w=>[w,'nas',0])
 ];
+FD_CNUM.forEach(x=>{ if(!CNUM.some(y=>y[0]===x[0])) CNUM.push(x); });
 function genCdruh(L){
   const kinds = L.mode===1 ? ['zaklad','rad'] : ['zaklad','rad','druh','nas'];
   const pool = CNUM.filter(x=>kinds.includes(x[1]) && (L.mode===3 || x[2]));
@@ -2157,6 +2193,7 @@ const CSKL = [
   ['Mezi ___ domy stojí strom.','dvěma','dva',2,7],['Zeptal se ___ kluků.','obou','oba',2,2],['Dal dárek ___ sestrám.','oběma','oba',2,3],['Myslím na ___ kamarády.','oba','oba',2,4],['Stěžoval si na ___ holky.','obě','oba',2,4],
   ['Vyšel se ___ psy.','třemi','tri',3,7],['Je to dárek od ___ babiček.','tří','tri',3,2],['Zpíval ___ dětem.','čtyřem','ctyri',3,3],['Psal o ___ výletech.','čtyřech','ctyri',3,6],['Hrál si se ___ kočkami.','čtyřmi','ctyri',3,7],['Bez ___ hráčů nemůžeme hrát.','čtyř','ctyri',3,2]
 ];
+FD_CSKL.forEach(x=>{ if(!CSKL.some(y=>y[0]===x[0])) CSKL.push(x); });
 const CSET = {dva:['dva','dvě','dvou','dvěma','dvěmi'], oba:['oba','obě','obou','oběma','oběmi'], tri:['tři','tří','třem','třech','třemi','třema'], ctyri:['čtyři','čtyř','čtyřem','čtyřech','čtyřmi','čtyřma']};
 const CS_RULE = {dva:'dva / dvě – bez <b>dvou</b>, ke <b>dvěma</b>, o <b>dvou</b>, se <b>dvěma</b> (nikdy „dvěmi“)', oba:'oba / obě – bez <b>obou</b>, k <b>oběma</b>, o <b>obou</b>, s <b>oběma</b> (nikdy „oběmi“)', tri:'tři – bez <b>tří</b>, ke <b>třem</b>, o <b>třech</b>, se <b>třemi</b> („třema“ je hovorové)', ctyri:'čtyři – bez <b>čtyř</b>, ke <b>čtyřem</b>, o <b>čtyřech</b>, se <b>čtyřmi</b> („čtyřma“ je hovorové)'};
 const CS_TRAP = {dva:['dvěmi'], oba:['oběmi'], tri:['třema','třech'], ctyri:['čtyřma','čtyřech']};
@@ -2270,7 +2307,7 @@ const SDS = [
   'Plesk|10 ! Míč|1 spadl|5 do|7 kaluže|1 .',
   'Dnes|6 jsme|5 se|5* učili|5 nová|2 slova|1 .',
   'Kdy|6 přijdeš|5 ?'
-].map(t=>t.split(' ').map(tk=>{ const m=tk.match(/^(.+)\|(\d+)(\*?)$/); return m ? {w:m[1], d:+m[2], ask:!m[3]} : {w:tk, d:0, ask:false}; }));
+].concat(FD_SDS).map(t=>t.split(' ').map(tk=>{ const m=tk.match(/^(.+)\|(\d+)(\*?)$/); return m ? {w:m[1], d:+m[2], ask:!m[3]} : {w:tk, d:0, ask:false}; }));
 function sdText(toks, hl){ return toks.map((t,i)=>{ const w = i===hl ? `<mark>${esc(t.w)}</mark>` : esc(t.w); return (t.d===0 && /^[.,!?]$/.test(t.w) ? '' : ' ')+w; }).join('').trim(); }
 function sdSentence(toks){ return sdText(toks,-1).replace(/<[^>]+>/g,''); }
 function sdWhy(t){ return `<b>${esc(t.w)}</b> – ${SD_WHY[t.d]} → <b>${SD[t.d]}</b>.`; }
@@ -2288,6 +2325,7 @@ function genNeoh(L){
 /* Kompas příslovcí */
 const PRISL = {misto:'doma venku nahoře dole tady tam vlevo vpravo všude daleko blízko uvnitř nahoru dolů dovnitř ven zde', cas:'včera dnes zítra brzy pozdě teď nyní potom vždycky často letos předevčírem dříve později hned zatím',
   zpusob:'rychle pomalu hezky tiše nahlas dobře špatně opatrně pěšky potichu krásně smutně vesele pozorně spolu', mira:'velmi příliš docela úplně skoro nesmírně velice zcela téměř'};
+Object.keys(FD_PRISL).forEach(k=>{ PRISL[k]=[...new Set((PRISL[k]+' '+FD_PRISL[k]).split(' '))].join(' '); });
 const PR_L = {misto:'místa', cas:'času', zpusob:'způsobu', mira:'míry'}, PR_Q = {misto:'kde? kam? odkud?', cas:'kdy? jak dlouho? jak často?', zpusob:'jak? jakým způsobem?', mira:'jak moc? do jaké míry?'};
 function genPrisl(L){
   const pool=L.kinds.flatMap(k=>PRISL[k].split(' ').map(w=>[w,k]));

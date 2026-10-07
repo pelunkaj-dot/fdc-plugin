@@ -1,0 +1,136 @@
+/* FajnDetektiv – další data pro Park zájmen, Banku číslovek a Přístav neohebných slov (stejné formáty jako v hlavním souboru). */
+// Zájmenné pasti: [věta, správně, dvojice, zkouška, úroveň]
+const FD_ZPASTI = [
+ ['Kolem ___ proběhl pes.','mě','mm','kolem tebe',1],['Podle ___ to dopadne dobře.','mě','mm','podle tebe',1],['Proti ___ hrál nejlepší hráč.','mně','mm','proti tobě',1],
+ ['Díky ___ jsme vyhráli.','mně','mm','díky tobě',1],['Ten kluk se ptal po ___.','mně','mm','po tobě',1],['Vzpomeň si na ___.','mě','mm','na tebe',1],
+ ['Pes doběhl až ke ___.','mně','mm','k tobě',1],['Babička přišla až ke ___ domů.','mně','mm','k tobě',1],['U ___ doma je vždycky veselo.','mě','mm','u tebe',1],
+ ['Od ___ dostaneš dárek.','mě','mm','od tebe',1],['Sedni si ke ___.','mně','mm','k tobě',1],['Povídali si o ___ celý večer.','mně','mm','o tobě',1],
+ ['Do ___ se strefil míčem.','mě','mm','do tebe',1],['Přes ___ nic neuvidíš.','mě','mm','přes tebe',1],['Ten dárek je ode ___.','mě','mm','od tebe',1],
+ ['Místo ___ šel na trénink brácha.','mě','mm','místo tebe',2],['Nech ___ spát.','mě','mm','nech tebe',2],['Slyšíš ___?','mě','mm','slyšíš tebe',2],
+ ['Bylo ___ smutno.','mně','mm','bylo tobě smutno',2],['Táta ___ naučil plavat.','mě','mm','naučil tebe',2],['Babička ___ dala koláč.','mně','mm','dala tobě',2],
+ ['Zdá se ___, že prší.','mně','mm','zdá se tobě',2],['Komár ___ štípl.','mě','mm','štípl tebe',2],['Chutná ___ ta polévka.','mně','mm','chutná tobě',2],
+ ['Mrzí ___ to.','mě','mm','mrzí tebe',2],['Poslouchej ___ dobře.','mě','mm','poslouchej tebe',2],['Ta pohádka ___ rozesmála.','mě','mm','rozesmála tebe',2],
+ ['Pošli ___ fotku.','mně','mm','pošli tobě',2],['Nikdo ___ nevidí.','mě','mm','nevidí tebe',2],['Věř ___!','mně','mm','věř tobě',2],
+ ['Čekej na ___ u školy.','mě','mm','na tebe',3],['Na ___ to nezáleží.','mně','mm','na tobě',3],['Na ___ je řada.','mně','mm','na tobě',3],
+ ['Spolehni se na ___.','mě','mm','na tebe',3],['Kamarád se o ___ staral.','mě','mm','o tebe',3],['Maminka se o ___ bála.','mě','mm','o tebe',3],
+ ['Zaplatil za ___ lístek.','mě','mm','za tebe',3],['Na ___ byla vidět únava.','mně','mm','na tobě',3],
+ ['Napiš ___ dopis.','jí','jj','té holce',2],['Pozval ___ na oslavu.','ji','jj','tu holku',2],['Babička ___ upekla koláč.','jí','jj','té holce',2],
+ ['Zavolej ___ zítra.','jí','jj','té holce',2],['Potkal jsem ___ v parku.','ji','jj','tu holku',2],['Pomoz ___ s taškou.','jí','jj','té holce',2],
+ ['Kamarádi ___ fandili.','jí','jj','té holce',2],['Učitelka ___ pochválila.','ji','jj','tu holku',2],['Pes ___ poznal.','ji','jj','tu holku',2],
+ ['Dej ___ ten míč.','jí','jj','té holce',2],['Přinesl ___ květiny.','jí','jj','té holce',2],['Vyfotil ___ u moře.','ji','jj','tu holku',2],
+ ['Je ___ zima.','jí','jj','té holce',3],['Maminka ___ česala vlasy.','jí','jj','té holce',3],['Slyšel jsem ___ zpívat.','ji','jj','tu holku',3],
+ ['Chutná ___ zmrzlina.','jí','jj','té holce',3],['Bolí ___ zub.','ji','jj','tu holku',3],['Kamarádka ___ chybí.','jí','jj','té holce',3],
+ ['Podej ___ sůl.','mi','my','komu? mně',2],['___ jsme vyhráli!','My','my','kdo? my',2],['Zítra ___ pojedeme k moři.','my','my','kdo? my',2],
+ ['Je ___ smutno.','mi','my','komu? mně',2],['Babička ___ uplete svetr.','mi','my','komu? mně',2],['To ___ víme dávno.','my','my','kdo? my',2],
+ ['Pomoz ___, prosím.','mi','my','komu? mně',2],['Večer ___ zavolej.','mi','my','komu? mně',2],['Kamarád ___ půjčil kolo.','mi','my','komu? mně',2],
+ ['___ dva si rozumíme.','My','my','kdo? my',3],['Líbí se ___ tvoje kresba.','mi','my','komu? mně',3],['Dnes ___ půjdeme do kina.','my','my','kdo? my',3],
+ ['Tohle ___ nikdo neřekl.','mi','my','komu? mně',3],['Ve škole ___ učitelka vysvětlila úlohu.','mi','my','komu? mně',3],['Také ___ chceme jít ven.','my','my','kdo? my',3]
+];
+// Pokladna: [věta, správně, sada, úroveň, pád]
+const FD_CSKL = [
+ ['Na louce se pasou ___ koně.','dva','dva',1,1],['V košíku jsou ___ hrušky.','dvě','dva',1,1],['Snědl jsem ___ rohlíky.','dva','dva',1,4],
+ ['Dostala ___ dárky.','dva','dva',1,4],['Přečetl jsem ___ knížky.','dvě','dva',1,4],['Na stromě sedí ___ ptáci.','dva','dva',1,1],
+ ['Babička má ___ kočky.','dvě','dva',1,4],['V garáži stojí ___ auta.','dvě','dva',1,1],['Na hřišti hrají ___ týmy.','dva','dva',1,1],
+ ['Mám ___ sestry.','dvě','dva',1,4],['Koupili jsme ___ lístky do kina.','dva','dva',1,4],['Zbyla nám ___ jablka.','dvě','dva',1,1],
+ ['Bydlí tu ___ rodiny.','dvě','dva',1,1],['Vešel do třídy se ___ kamarády.','dvěma','dva',2,7],['Pomáhal jsem ___ babičkám.','dvěma','dva',2,3],
+ ['Je to dárek od ___ kamarádů.','dvou','dva',2,2],['Bez ___ koleček kolo nepojede.','dvou','dva',2,2],['Psali jsme o ___ zvířatech.','dvou','dva',2,6],
+ ['Stál mezi ___ stromy.','dvěma','dva',2,7],['Poslal pozdrav ___ kamarádkám.','dvěma','dva',2,3],['Celý den chodil se ___ psy.','dvěma','dva',2,7],
+ ['Vyprávěl o ___ hradech.','dvou','dva',2,6],['Za ___ hodiny začne film.','dvě','dva',2,4],['Před ___ dny pršelo.','dvěma','dva',3,7],
+ ['Na ___ místech jsme našli stopy.','dvou','dva',3,6],['Ke ___ stromům jsme přivázali houpačku.','dvěma','dva',3,3],['Z ___ stran se ozval křik.','dvou','dva',3,2],
+ ['___ psi štěkali.','Oba','oba',2,1],['___ auta byla červená.','Obě','oba',2,1],['Mám rád ___ babičky.','obě','oba',2,4],
+ ['Pozdravil ___ sousedy.','oba','oba',2,4],['Dal jsem bonbon ___ bratrům.','oběma','oba',2,3],['Tleskali jsme ___ týmům.','oběma','oba',2,3],
+ ['Držel volant ___ rukama.','oběma','oba',3,7],['Na ___ stranách silnice rostou stromy.','obou','oba',3,6],['U ___ domů stojí plot.','obou','oba',3,2],
+ ['Hrál si s ___ kočkami.','oběma','oba',3,7],['O ___ výletech psal do deníku.','obou','oba',3,6],
+ ['Do třídy přišli ___ noví žáci.','tři','tri',2,1],['Koupila ___ housky.','tři','tri',2,4],['Dal jsem pomeranč ___ kamarádům.','třem','tri',3,3],
+ ['Seděla mezi ___ kamarádkami.','třemi','tri',3,7],['Bez ___ klíčů dveře neotevřeš.','tří','tri',3,2],['Mluvili jsme o ___ medvědech.','třech','tri',3,6],
+ ['Napsal dopis ___ babičkám.','třem','tri',3,3],['Před ___ lety jsme byli u moře.','třemi','tri',3,7],
+ ['Na stole leží ___ tužky.','čtyři','ctyri',2,1],['Auto má ___ kola.','čtyři','ctyri',2,4],['Rozdělil bonbony ___ dětem.','čtyřem','ctyri',3,3],
+ ['Jel na voze se ___ koňmi.','čtyřmi','ctyri',3,7],['Bez ___ nohou by stůl nestál.','čtyř','ctyri',3,2],['Poděkovali jsme ___ hasičům.','čtyřem','ctyri',3,3],
+ ['Psali o ___ ročních obdobích.','čtyřech','ctyri',3,6]
+];
+// Pátrání v textu: ‹slovo|druh› – v textu musí být označená VŠECHNA zájmena (proto se vyhýbáme se/si, jeho, ty, je, všichni)
+const FD_ZTEXTS = [
+ {t:'Ztracený míč', s:'‹Náš|pr› míč přeletěl plot. ‹Kdo|ta› ‹ho|os› přinese zpátky? ‹Já|os› nemůžu, plot je vysoký. Soused, ‹který|vz› bydlí vedle, ‹nám|os› ‹ho|os› hodil. ‹Takový|uk› soused je poklad.'},
+ {t:'U doktora', s:'Doktor ‹mi|os› řekl: ‹Co|ta› ‹tě|os› bolí? ‹Já|os› jsem ukázal na ‹svůj|pr› krk. ‹Ten|uk› krk byl celý červený. Doktor ‹mi|os› dal sirup, ‹který|vz› chutnal po jahodách. ‹Žádný|za› strach!'},
+ {t:'Kočka a myš', s:'‹Naše|pr› kočka chytila myš. ‹Ta|uk› myš byla velmi malá. ‹My|os› ‹ji|os› zachránili a pustili ‹ji|os› na louku. Kočka ‹nám|os› ‹to|uk› dlouho neodpustila.'},
+ {t:'Dědova zahrada', s:'‹Můj|pr› děda má zahradu. Pěstuje v ‹ní|os› mrkev a jahody. ‹Některé|ne› jahody jsou obrovské. ‹Kdo|ta› sní ‹tyto|uk› jahody? ‹My|os› dva! ‹Žádná|za› jahoda nezbude.'},
+ {t:'Nová spolužačka', s:'Do ‹naší|pr› třídy přišla nová holka. ‹Nikdo|za› ‹ji|os› neznal. ‹Já|os› jsem ‹jí|os› ukázal ‹svou|pr› lavici. Teď sedíme spolu a ‹ona|os› ‹mi|os› pomáhá s angličtinou. ‹Taková|uk› kamarádka je vzácná.'},
+ {t:'Výlet na hrad', s:'‹Náš|pr› výlet vedl na hrad. Průvodce ‹nám|os› vyprávěl o rytíři, ‹který|vz› tam kdysi žil. ‹Jaký|ta› byl? Statečný. ‹Některé|ne› komnaty byly zavřené. ‹Nic|za› ‹nás|os› ale nezklamalo.'},
+ {t:'Ztracená peněženka', s:'Maminka ztratila ‹svou|pr› peněženku. ‹Někdo|ne› ‹ji|os› našel na lavičce a přinesl ‹ji|os› na policii. ‹Ten|uk› člověk byl moc poctivý. Maminka ‹mu|os› poděkovala. ‹Nic|za› z ‹ní|os› nechybělo.'},
+ {t:'V pekárně', s:'Pekař ‹nám|os› dal ochutnat ‹svůj|pr› nový koláč. ‹Jaký|ta› koláč ‹to|uk› byl? Tvarohový. ‹Každý|ne› ‹ho|os› chválil. ‹Já|os› bych ‹ho|os› snědl celý.'},
+ {t:'Klobouk u řeky', s:'Detektiv našel stopu, ‹která|vz› vedla k řece. ‹Kdo|ta› tam chodí v noci? ‹Někdo|ne› tam nechal ‹svůj|pr› klobouk. ‹Čí|ta› je? Detektiv ‹to|uk› brzy zjistí.'},
+ {t:'Těžká úloha', s:'Kamarád ‹mi|os› zavolal, že ‹mu|os› nejde úloha. ‹Já|os› jsem ‹mu|os› ‹ji|os› vysvětlil. ‹Ta|uk› úloha byla těžká. Teď ‹ji|os› umíme ‹my|os› dva.'},
+ {t:'Na horách', s:'‹My|os› jsme byli na horách. ‹Naše|pr› chata stála u lesa. ‹Každý|ne› večer ‹nás|os› navštívila liška. ‹Nikdo|za› ‹ji|os› nekrmil, ale ‹ona|os› přesto chodila. ‹Kdo|ta› ‹ji|os› poslal?'},
+ {t:'Dárek pro tátu', s:'‹Já|os› a ‹moje|pr› sestra jsme koupili tátovi dárek. ‹Jaký|ta›? Kravatu s kočkami. ‹Ta|uk› kravata je ‹nějaká|ne› divná, ale táta ‹ji|os› nosí rád. ‹Nikdo|za› ‹takovou|uk› nemá.'},
+ {t:'Ve vlaku', s:'‹Ten|uk› vlak jel pomalu. Naproti ‹mně|os› seděl pán, ‹který|vz› četl noviny. Pán ‹mi|os› nabídl bonbon. Byl ‹to|uk› ‹nějaký|ne› zvláštní bonbon s mátou.'},
+ {t:'Sněhulák', s:'‹My|os› jsme postavili sněhuláka. ‹Čí|ta› je ‹ta|uk› mrkev na nose? ‹Moje|pr›! Sněhulák, ‹kterého|vz› jsme postavili, vydržel do jara. ‹Nikdo|za› ‹ho|os› nerozbil.'},
+ {t:'Do kina', s:'‹Vy|os› jdete do kina? ‹Já|os› půjdu s ‹vámi|os›. ‹Který|ta› film uvidíme? ‹Ten|uk› o drakovi. ‹Můj|pr› brácha ‹ho|os› už viděl.'},
+ {t:'Tajná zpráva', s:'‹Někdo|ne› ‹nám|os› poslal tajnou zprávu. ‹Co|ta› v ‹ní|os› stojí? ‹Nikdo|za› ‹ji|os› neumí přečíst. ‹Tvůj|pr› děda ‹ji|os› rozluštil: Poklad je pod ‹tím|uk› starým dubem.'},
+ {t:'Sousedův pes', s:'‹Náš|pr› soused má psa, ‹který|vz› umí podat pac. ‹Já|os› ‹ho|os› často venčím. ‹Ten|uk› pes ‹mě|os› má rád. ‹Kdo|ta› by ‹ho|os› neměl rád?'},
+ {t:'V zoo', s:'Paní učitelka ‹nás|os› vzala do zoo. ‹Každý|ne› žák dostal mapu. ‹Které|ta› zvíře chceš vidět první? ‹Já|os› chci vidět tučňáky. ‹Moje|pr› kamarádka chtěla vidět žirafu. ‹Ta|uk› byla obrovská.'},
+ {t:'Večerní pohádka', s:'Táta ‹nám|os› večer čte pohádku. ‹Ta|uk› dnešní byla o drakovi, ‹kterého|vz› ‹nikdo|za› neporazil. ‹Já|os› jsem usnul dřív, než ‹ji|os› dočetl.'},
+ {t:'Nový zvonek', s:'‹Moje|pr› kolo má nový zvonek. ‹Kdo|ta› ‹mi|os› ‹ho|os› namontoval? Táta. ‹Takový|uk› zvonek ‹nikdo|za› v ‹naší|pr› ulici nemá. ‹Někdo|ne› ‹mi|os› ‹ho|os› závidí.'},
+ {t:'Šifra', s:'‹Tato|uk› šifra je těžká. ‹Kdo|ta› ‹ji|os› vyluští? ‹Já|os› ne, ale ‹můj|pr› kamarád Petr, ‹jehož|vz› táta je detektiv, ‹ji|os› vyluští hned.'},
+ {t:'Bábovka', s:'Babička ‹mě|os› naučila péct bábovku. ‹Její|pr› recept je tajný. ‹Nikomu|za› ‹ho|os› neprozradím. ‹Vaše|pr› bábovka určitě není ‹taková|uk›.'},
+ {t:'Zápas', s:'‹Náš|pr› tým hrál s ‹jejich|pr› týmem. ‹Kdo|ta› vyhrál? ‹My|os›! ‹Nikdo|za› ‹nám|os› nevěřil. ‹Ten|uk› gól jsme dali v poslední minutě.'},
+ {t:'Návštěva tety', s:'K ‹nám|os› přijela teta, ‹která|vz› bydlí v Praze. Přivezla ‹mi|os› knížku a ‹mé|pr› sestře panenku. ‹Čí|ta› dárek byl hezčí? ‹Já|os› ‹ji|os› mám rád.'}
+];
+// Věty se slovními druhy: slovo|druh (* = neptat se)
+const FD_SDS = [
+ 'Hurá|10 , zítra|6 jedeme|5 k|7 babičce|1 !','Pst|10 , miminko|1 spí|5 v|7 postýlce|1 .','Kykyryký|10 , kokrhá|5 kohout|1 na|7 plotě|1 .',
+ 'Jé|10 , ty|3 máš|5 nové|2 kolo|1 !','Fuj|10 , ta|3 polévka|1 je|5 studená|2 .','Ťuk|10 , ťuk|10 , kdo|3 je|5 tam|6 ?',
+ 'Bác|10 , váza|1 spadla|5 ze|7 stolu|1 .','Au|10 , píchla|5 mě|3 včela|1 !','Hop|10 a|8 kůň|1 skočil|5 přes|7 překážku|1 .',
+ 'Cink|10 , ozval|5 se|5* zvonek|1 u|7 dveří|1 .','Ach|10 , zase|6 prší|5 .','Ahoj|10 , kamarádi|1 , pojďte|5 si|5* hrát|5 !',
+ 'Mňau|10 , mňouká|5 hladová|2 kočka|1 u|7 misky|1 .','Haf|10 , haf|10 , štěká|5 pes|1 na|7 pošťáka|1 .','Bum|10 , bouchl|5 balónek|1 nad|7 hlavou|1 .',
+ 'Kéž|9 by|5* byly|5 prázdniny|1 !','Prý|9 přijede|5 cirkus|1 .','Snad|9 to|3 stihneme|5 .',
+ 'Ano|9 , ten|3 obrázek|1 je|5 můj|3 .','Ne|9 , ta|3 kniha|1 není|5 moje|3 .','Copak|9 neslyšíš|5 ten|3 zvonek|1 ?',
+ 'Vždyť|9 jsme|5 to|3 říkali|5 !','Asi|9 bude|5 bouřka|1 .','Možná|9 pojedeme|5 k|7 moři|1 .',
+ 'Ať|9 se|5* ti|3 daří|5 !','Kéž|9 bych|5* uměl|5 létat|5 !','Prý|9 v|7 lese|1 žije|5 vlk|1 .',
+ 'Snad|9 zítra|6 nebude|5 pršet|5 .','Tatínek|1 jel|5 do|7 práce|1 autem|1 , ale|8 maminka|1 šla|5 pěšky|6 .','Petr|1 nešel|5 ven|6 , protože|8 byl|5 nemocný|2 .',
+ 'Když|8 zazvonil|5 zvonek|1 , děti|1 vyběhly|5 ze|7 třídy|1 .','Chceš|5 čaj|1 nebo|8 kakao|1 ?','Babička|1 vaří|5 a|8 dědeček|1 čte|5 noviny|1 .',
+ 'Nevím|5 , zda|8 přijde|5 .','Ani|8 Jana|1 , ani|8 Petr|1 nepřišli|5 .','Myslím|5 , že|8 vyhrajeme|5 .',
+ 'Pes|1 štěkal|5 , zatímco|8 kočka|1 spala|5 .','Zavolej|5 mi|3 , až|8 přijdeš|5 domů|6 .','Rychle|6 jsme|5 utíkali|5 domů|6 .',
+ 'Dnes|6 ráno|6 jsme|5 vstali|5 brzy|6 .','Kočka|1 tiše|6 sedí|5 venku|6 na|7 lavičce|1 .','Letos|6 pojedeme|5 na|7 hory|1 .',
+ 'Nahoře|6 na|7 kopci|1 stojí|5 rozhledna|1 .','Vlak|1 jel|5 velmi|6 rychle|6 .','Dědeček|1 chodí|5 pomalu|6 , ale|8 vytrvale|6 .',
+ 'Zítra|6 půjdeme|5 spolu|6 do|7 kina|1 .','Tady|6 bydlí|5 naše|3 paní|1 učitelka|1 .','Vlevo|6 je|5 škola|1 a|8 vpravo|6 pošta|1 .',
+ 'Všude|6 ležel|5 sníh|1 .','Pozdě|6 večer|6 jsme|5 dorazili|5 domů|6 .','Holky|1 zpívaly|5 krásně|6 a|8 nahlas|6 .',
+ 'Brzy|6 ráno|6 kokrhal|5 kohout|1 .','Pejsek|1 opatrně|6 vylezl|5 z|7 boudy|1 .','Dva|4 kluci|1 hráli|5 šachy|1 .',
+ 'Třetí|4 vagón|1 byl|5 prázdný|2 .','Na|7 stole|1 leží|5 pět|4 jablek|1 .','Dvakrát|4 jsme|5 vyhráli|5 zápas|1 .',
+ 'První|4 den|1 školy|1 byl|5 veselý|2 .','Deset|4 ptáků|1 sedělo|5 na|7 drátě|1 .','Zaklepal|5 jsem|5 třikrát|4 na|7 dveře|1 .',
+ 'Mám|5 dvoje|4 boty|1 .','Sto|4 lidí|1 čekalo|5 před|7 divadlem|1 .','Kolem|7 domu|1 roste|5 vysoká|2 tráva|1 .',
+ 'Bez|7 čepice|1 ven|6 nechoď|5 !','Mezi|7 stromy|1 běhala|5 veverka|1 .','Podle|7 mapy|1 jsme|5 našli|5 poklad|1 .',
+ 'Během|7 přestávky|1 jsme|5 svačili|5 .','Díky|7 kamarádovi|1 jsem|5 to|3 zvládl|5 .','Kvůli|7 dešti|1 zůstaneme|5 doma|6 .',
+ 'Proti|7 nám|3 hrál|5 silný|2 tým|1 .','Vedle|7 školy|1 je|5 park|1 .','Od|7 rána|1 do|7 večera|1 jsme|5 pracovali|5 .',
+ 'Za|7 domem|1 je|5 zahrada|1 s|7 jabloní|1 .','Nad|7 městem|1 létala|5 letadla|1 .','Pod|7 mostem|1 teče|5 řeka|1 .',
+ 'Před|7 kinem|1 stála|5 dlouhá|2 fronta|1 .','Ze|7 školy|1 jsme|5 šli|5 rovnou|6 domů|6 .','Okolo|7 rybníka|1 vede|5 cesta|1 .',
+ 'Moje|3 kamarádka|1 má|5 krásné|2 vlasy|1 .','Tvůj|3 pes|1 je|5 velmi|6 hodný|2 .','Někdo|3 zaklepal|5 na|7 okno|1 .',
+ 'Ten|3 obraz|1 namaloval|5 můj|3 děda|1 .','Čí|3 je|5 tahle|3 taška|1 ?','Kdo|3 snědl|5 můj|3 koláč|1 ?',
+ 'My|3 jsme|5 vyhráli|5 a|8 vy|3 jste|5 prohráli|5 .','Vlak|1 přijel|5 na|7 nádraží|1 přesně|6 .','Malá|2 holčička|1 nesla|5 velkou|2 kytici|1 .',
+ 'Zelený|2 papoušek|1 umí|5 mluvit|5 .','Starý|2 hrad|1 stojí|5 na|7 vysokém|2 kopci|1 .','Babiččin|2 koláč|1 voní|5 po|7 celém|2* domě|1 .',
+ 'Hurá|10 , sněží|5 !','Bú|10 , zabučela|5 kráva|1 na|7 louce|1 .','Šup|10 a|8 byl|5 venku|6 .',
+ 'Bzz|10 , bzučí|5 včela|1 v|7 květu|1 .','Hm|10 , to|3 je|5 zajímavé|2 .','Plesk|10 , kapka|1 spadla|5 na|7 nos|1 .',
+ 'Jen|9 chvilku|1 počkej|5 !','Kéž|9 by|5* sněžilo|5 !','Prý|9 je|5 nemocný|2 .',
+ 'Asi|9 jsem|5 zapomněl|5 klíče|1 .','Copak|9 jsi|5 to|3 neviděl|5 ?','Ano|9 , půjdu|5 s|7 tebou|3 .',
+ 'Snad|9 vyhrajeme|5 .','Tatínek|1 řídí|5 opatrně|6 , protože|8 silnice|1 klouže|5 .','Maminka|1 pekla|5 koláč|1 a|8 já|3 jsem|5 jí|3 pomáhal|5 .',
+ 'Když|8 svítí|5 slunce|1 , chodíme|5 ven|6 .','Pospíchej|5 , aby|8 ti|3 neujel|5 autobus|1 !','Je|5 zima|1 , ale|8 nemrzne|5 .',
+ 'Chtěl|5 bych|5* psa|1 nebo|8 kočku|1 .','Kluci|1 i|8 holky|1 tančili|5 .','Sestra|1 je|5 mladší|2 než|8 já|3 .',
+ 'Hrajeme|5 si|5* , dokud|8 nepřijde|5 tma|1 .'
+];
+// Kompas příslovcí – další slova
+const FD_PRISL = {misto:'vzadu vpředu uprostřed zdola shora odsud sem doleva doprava zevnitř zvenku napravo nalevo vysoko nízko hluboko',
+  cas:'včas pozítří dosud vždy občas nikdy ihned okamžitě dávno nedávno nejdřív nakonec dlouho stále pořád denně',
+  zpusob:'šikovně chytře hloupě zlostně radostně statečně pečlivě správně lehce mile laskavě přátelsky česky anglicky společně omylem',
+  mira:'trochu málo hodně dost mnohem nadmíru poměrně zhruba přibližně napůl dostatečně převelice'};
+// Trezor druhů číslovek: [slovo, druh, určitá?]
+const FD_CNUM = [
+ ...'čtyři šest sedm osm devět jedenáct dvanáct třicet padesát milion'.split(' ').map(w=>[w,'zaklad',1]),
+ ...'čtvrtý šestý sedmý osmý devátý jedenáctý třicátý tisící'.split(' ').map(w=>[w,'rad',1]), ['tolikátý','rad',0],
+ ...'paterý desaterý čtvery'.split(' ').map(w=>[w,'druh',1]),
+ ...'čtyřikrát desetkrát dvacetkrát čtyřnásobný pětinásobný stonásobný'.split(' ').map(w=>[w,'nas',1]), ...'tolikrát několikanásobný'.split(' ').map(w=>[w,'nas',0])
+];
+// Druhy zájmen: slova s jediným jednoznačným druhem a věty se vztažnými / tázacími zájmeny
+const FD_ZAJ = {os:['ony','něj','ní','nich','nimi','sebe','sobě','sebou'], pr:['tvá','má','svá','mému','našeho','vašeho','svého','jejího'],
+  uk:['tamto','tenhle','tahle','tohle','tentýž','takové'], ta:['kým','komu'], za:['nikoho','nikomu','ničím','žádné'], ne:['někoho','něčeho','nějaká','některá','leckdo','cokoli']};
+const FD_ZSENT = [['Holka, ‹která› zpívá, je moje sestra.','vz'],['Pes, ‹kterého› jsme našli, je hodný.','vz'],['Město, ve ‹kterém› žiju, je malé.','vz'],
+  ['To, ‹co› říkáš, je pravda.','vz'],['Dívka, ‹jejíž› pes štěká, stojí u plotu.','vz'],['Stůl, na ‹kterém› leží kniha, je dřevěný.','vz'],
+  ['‹Kdo› zvoní?','ta'],['‹Čí› jsou ty boty?','ta'],['‹Jaká› je tvoje oblíbená barva?','ta'],['‹Kterou› cestou půjdeme?','ta'],['‹Komu› patří ten míč?','ta'],['‹Co› budeme dělat?','ta']];

@@ -38,5 +38,8 @@ Didaktiku nikdy neobětovat kvůli efektu, rychlosti ani zjednodušení kódu.
   Demo = `<nazev>-demo.html` ve stejné složce.
 - FajnDetektiv (`slovni_detektiv.html`): demo je kopie plné verze (režim podle názvu souboru) –
   po každé změně přegenerovat `slovni_detektiv-demo.html`.
+  Data jsou ve složce `fajndetektiv/` (lexikon.js = slovník + tvarotvorba podle vzorů s výjimkami,
+  vety.js = rámce vět pro Výslech, pribehy.js, cviceni.js). Nová slova zapisovat se vzorem a výjimkami,
+  tvary vždy vypsat a zkontrolovat; jen nedokonavá slovesa (budu + neurčitek).
 - Soubory upravovat Pythonem, ne sedem. Šetřit tokeny.
 - Před pushem vyzkoušet v prohlížeči (Playwright), ideálně i šířku mobilu.
