@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="cs" data-theme="dark">
+<head>
+<script src="/fdc-plugin/fdc-guard.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FajnZahrada – Vyjmenovaná slova</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800;900&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Fotka pozadí: stačí nastavit např. url('img/detektiv-mesto.jpg') – kreslené město zůstane jako záloha */
+  --scene-photo: none;
+  --night:#101b33; --night2:#1b2c50; --glass:rgba(16,27,51,.78);
+  --paper:#fbf3e0; --paper2:#f3e6c6; --ink:#2a2118; --ink2:#6b5a45;
+  --lamp:#ffd166; --lamp2:#f4a63a; --cork:#c4925a;
+  --m:#3a86ff; --f:#e8457b; --n:#22b07d;
+  --ok:#22b07d; --bad:#e63946; --light:#f4f1ea;
+  --radius:18px;
+  /* ── TÉMA: tmavé (noční město) ── */
+  --sky1:#0b1428; --sky2:#1b2c50; --sky3:#3b3358; --scene-shade:rgba(8,12,24,.55); --scene-glow:rgba(255,209,102,.10);
+  --text:#f4f1ea; --heading:#ffd166; --bar:rgba(10,17,33,.82); --bar-line:rgba(255,255,255,.08);
+  --chip:rgba(255,255,255,.08); --chip-hover:rgba(255,255,255,.16); --hud-chip:rgba(10,17,33,.7); --track:rgba(255,255,255,.12);
+  --card1:rgba(255,255,255,.10); --card2:rgba(255,255,255,.03); --card-line:rgba(255,255,255,.12);
+  --open1:rgba(255,209,102,.28); --open2:rgba(244,166,58,.10); --open-line:rgba(255,209,102,.55); --tag:rgba(0,0,0,.35);
+  --wall1:#3c4a6b; --wall2:#2a3552; --wall-line:rgba(255,255,255,.22); --floor1:#1b2236; --floor2:#11172a;
+}
+[data-theme="light"]{
+  --sky1:#7cc8f5; --sky2:#bfe6fb; --sky3:#fff1d2; --scene-shade:rgba(255,255,255,.25); --scene-glow:rgba(255,255,255,.25);
+  --text:#1d2a44; --heading:#b8650a; --bar:rgba(255,255,255,.88); --bar-line:rgba(20,40,80,.10);
+  --chip:rgba(20,40,80,.08); --chip-hover:rgba(20,40,80,.15); --hud-chip:rgba(255,255,255,.85); --track:rgba(20,40,80,.14);
+  --card1:rgba(255,255,255,.88); --card2:rgba(255,255,255,.70); --card-line:rgba(20,40,80,.12);
+  --open1:#fff4d6; --open2:#ffe2a8; --open-line:#f4a63a; --tag:rgba(20,40,80,.12);
+  --wall1:#dfe5ee; --wall2:#c8d1de; --wall-line:rgba(40,60,100,.18); --floor1:#9aa7bb; --floor2:#7d8aa0;
+}
+[data-theme="girly"]{
+  --sky1:#f7a8d4; --sky2:#f8c9ee; --sky3:#ffe6f2; --scene-shade:rgba(255,230,242,.25); --scene-glow:rgba(255,255,255,.25);
+  --text:#4a1d3a; --heading:#c01880; --bar:rgba(255,240,248,.9); --bar-line:rgba(192,24,128,.12);
+  --chip:rgba(192,24,128,.08); --chip-hover:rgba(192,24,128,.16); --hud-chip:rgba(255,245,250,.88); --track:rgba(192,24,128,.15);
+  --card1:rgba(255,255,255,.88); --card2:rgba(255,236,246,.75); --card-line:rgba(192,24,128,.18);
+  --open1:#ffe3f1; --open2:#ffc6e2; --open-line:#e8457b; --tag:rgba(192,24,128,.12);
+  --wall1:#f6e3f0; --wall2:#ead0e4; --wall-line:rgba(150,40,110,.16); --floor1:#c99bbd; --floor2:#b086a6;
+  --lamp:#ff9ccf; --lamp2:#e8457b; --paper:#fff6fa; --paper2:#fde1ef; --m:#6a5cff;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--text);background:var(--sky2);overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+h1,h2,h3{font-family:'Baloo 2',sans-serif;line-height:1.1;margin:0}
+
+/* ── Scéna (pozadí) ── */
+#scene{position:fixed;inset:0;z-index:-2;background:linear-gradient(var(--sky1) 0%,var(--sky2) 55%,var(--sky3) 100%)}
+#scene svg{position:absolute;inset:0;width:100%;height:100%}
+#scene .photo{position:absolute;inset:0;background:var(--scene-photo) center/cover no-repeat}
+#scene::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,var(--scene-glow),transparent 60%),linear-gradient(transparent 40%,var(--scene-shade))}
+
+/* ── Horní lišta ── */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--bar);backdrop-filter:blur(8px);border-bottom:1px solid var(--bar-line)}
+.brand{display:flex;align-items:center;gap:8px;font-family:'Baloo 2';font-weight:800;font-size:1.25rem;letter-spacing:.2px}
+.brand b{color:var(--heading)}
+.brand svg{width:30px;height:30px}
+.topbar .sp{flex:1}
+.chip{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:var(--chip);font-weight:800;font-size:.85rem;white-space:nowrap}
+.chip.rank{color:var(--heading)}
+.iconbtn{width:38px;height:38px;border-radius:12px;background:var(--chip);display:grid;place-items:center;font-size:1.1rem}
+.iconbtn:hover{background:var(--chip-hover)}
+.demo-badge{background:var(--f);color:#fff;padding:3px 9px;border-radius:8px;font-size:.75rem;font-weight:900}
+
+main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
+.screen{animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ── Papír / spis ── */
+.paper{position:relative;background:var(--paper);color:var(--ink);border-radius:6px;padding:18px 18px;box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 0 0 1px rgba(0,0,0,.04);background-image:repeating-linear-gradient(transparent 0 27px,rgba(80,60,30,.07) 27px 28px)}
+.paper.tape::before{content:"";position:absolute;top:-10px;left:50%;width:90px;height:22px;transform:translateX(-50%) rotate(-3deg);background:rgba(255,236,170,.75);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.type{font-family:'Special Elite',monospace}
+.stamp{display:inline-block;font-family:'Special Elite',monospace;color:var(--bad);border:3px solid var(--bad);border-radius:8px;padding:4px 12px;transform:rotate(-8deg);font-size:1.3rem;letter-spacing:2px;opacity:.9}
+.stamp.ok{color:var(--ok);border-color:var(--ok)}
+
+/* ── Úvod / hrdina ── */
+.hero{display:flex;gap:14px;align-items:flex-end;margin:6px 0 22px}
+.hero .who{flex:0 0 auto;width:110px}
+.bubble{position:relative;background:var(--paper);color:var(--ink);border-radius:16px;padding:14px 16px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.bubble::after{content:"";position:absolute;left:-10px;bottom:22px;border:10px solid transparent;border-right-color:var(--paper);border-left:0}
+.bubble small{display:block;color:var(--ink2);font-weight:700;margin-top:6px}
+.section-title{display:flex;align-items:center;gap:10px;margin:8px 0 12px;font-size:1.35rem}
+.section-title::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--heading),transparent);opacity:.6}
+
+/* ── Mapa města ── */
+.districts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.district{position:relative;text-align:left;border-radius:var(--radius);padding:16px;min-height:150px;background:linear-gradient(160deg,var(--card1),var(--card2));border:1px solid var(--card-line);backdrop-filter:blur(3px);overflow:hidden;transition:transform .15s,box-shadow .15s}
+.district:not(.locked):hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.district .ico{font-size:2.2rem}
+.district h3{font-size:1.15rem;margin:6px 0 4px}
+.district p{margin:0;font-size:.88rem;opacity:.85}
+.district.open{background:linear-gradient(160deg,var(--open1),var(--open2));border-color:var(--open-line)}
+.district.locked{opacity:.55;cursor:default}
+.district .tag{position:absolute;top:12px;right:12px;font-size:.72rem;font-weight:900;padding:3px 8px;border-radius:999px;background:var(--tag)}
+.district .glow{position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(var(--lamp),transparent 70%);opacity:.25}
+
+/* ── Mise ── */
+.back{display:inline-flex;align-items:center;gap:6px;font-weight:800;opacity:.85;margin-bottom:12px}
+.back:hover{opacity:1}
+.missions{display:grid;gap:14px}
+.mission{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:start}
+.mission .mico{width:64px;height:64px;border-radius:16px;display:grid;place-items:center;font-size:2rem;background:var(--paper2)}
+.mission h3{font-size:1.25rem;color:var(--ink)}
+.mission p{margin:3px 0 10px;color:var(--ink2);font-weight:600}
+.levels{display:flex;flex-wrap:wrap;gap:8px}
+.lvbtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:9px 14px;border-radius:12px;background:var(--ink);color:var(--paper);font-weight:800;min-width:150px;text-align:left;transition:transform .12s}
+.lvbtn:hover:not([disabled]){transform:translateY(-2px)}
+.lvbtn small{font-weight:700;opacity:.75;font-size:.78rem}
+.lvbtn .stars{color:var(--lamp);letter-spacing:2px}
+.lvbtn[disabled]{background:#9b8d78;cursor:not-allowed}
+.mission.soon{opacity:.6}
+.diff-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.diff-lbl{font-weight:900;color:var(--ink2);font-size:.9rem}
+.diff{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:13px;background:var(--paper2)}
+.seg{display:flex;flex-direction:column;align-items:center;min-width:86px;padding:6px 12px;border-radius:10px;font-weight:900;color:var(--ink2);transition:background .15s}
+.seg:hover:not([disabled]):not(.on){background:rgba(0,0,0,.06)}
+.seg.on{background:var(--ink);color:var(--paper)}
+.seg .stars{font-size:.75rem;letter-spacing:1px;color:var(--lamp2)}
+.seg[disabled]{opacity:.5;cursor:not-allowed}
+.mission .lvdesc{margin:10px 0 12px;color:var(--ink)}
+.demo-note{display:block;margin-top:10px;color:var(--ink2);font-weight:700}
+.board{position:relative;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;padding:18px;border-radius:var(--radius);min-height:190px;
+  background:#c4925a radial-gradient(rgba(0,0,0,.10) 1px,transparent 1.6px) 0 0/9px 9px;
+  box-shadow:inset 0 0 0 9px #8a5a2e,inset 0 0 30px rgba(0,0,0,.35),0 10px 24px rgba(0,0,0,.3)}
+.polaroid{position:relative;flex:0 0 auto;background:#fff;padding:8px 8px 10px;transform:rotate(-3deg);box-shadow:0 6px 12px rgba(0,0,0,.35);text-align:center;color:var(--ink)}
+.polaroid svg{width:96px;height:118px;background:#dfe5ee;display:block}
+.polaroid b{display:block;margin-top:4px;font-family:'Special Elite',monospace;font-size:1.25rem}
+.pin{position:absolute;top:-7px;left:50%;width:14px;height:14px;border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 35%,#ff9a9a,#c1121f);box-shadow:0 2px 3px rgba(0,0,0,.4);z-index:2}
+.notes{flex:1;min-width:180px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.note{position:relative;background:#fff8c4;color:var(--ink);padding:10px 12px 8px;min-width:104px;font-weight:900;box-shadow:0 4px 8px rgba(0,0,0,.3);animation:noteIn .35s both}
+.note::before{content:"";position:absolute;top:-5px;left:50%;width:10px;height:10px;border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 35%,#9ad0ff,#1d63c9)}
+.note small{display:block;font-size:.7rem;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.4px}
+.note:nth-child(odd){rotate:2deg}.note:nth-child(even){rotate:-2deg}
+.note.bad{background:#ffd9d9}.note.gang{background:#2a2118;color:#ffd166}.note.gang small{color:#cdbb9a}
+.note.empty{opacity:.55;font-weight:700}
+@keyframes noteIn{from{opacity:0;transform:scale(1.5)}}
+.step{margin-top:14px}
+.step h3{color:var(--ink);font-size:1.3rem;margin:2px 0 4px}
+.stepnum{font-family:'Special Elite',monospace;color:var(--ink2);font-size:.85rem}
+.step .hint{margin:0;color:var(--ink2);font-weight:700}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px}
+.opt{position:relative;background:#fff;color:var(--ink);border:2px solid var(--paper2);border-radius:12px;padding:12px 8px;font-weight:900;font-size:1.1rem;box-shadow:0 4px 0 #cbb88f;transition:transform .1s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.opt:hover:not([disabled]){transform:translateY(-2px)}
+.opt small{font-size:.76rem;font-weight:700;color:var(--ink2)}
+.opt kbd{position:absolute;left:6px;top:4px;font-size:.65rem;opacity:.5;font-family:inherit}
+.opt.rod.M{border-top:6px solid var(--m)}.opt.rod.F{border-top:6px solid var(--f)}.opt.rod.N{border-top:6px solid var(--n)}
+.opt.right{border-color:var(--ok);background:#e6f8ef}.opt.wrong{border-color:var(--bad);background:#fde8ea}
+.opts.gangs{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+.opt.gangopt{padding:8px 4px 8px;font-size:1rem}
+.mini svg{width:52px;height:64px;display:block}
+.ghead{margin-top:12px;font-weight:900;color:var(--ink2);font-size:.85rem;text-transform:uppercase;letter-spacing:.4px}
+.reveal{display:flex;gap:12px;align-items:center;margin-top:8px}
+.reveal .mini svg{width:72px;height:90px}
+.reveal p{margin:8px 0 0}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:10px}
+.gang{background:#fff;border-radius:12px;padding:8px 6px;text-align:center;border-top:5px solid;color:var(--ink)}
+.gang svg{width:58px;height:72px}
+.gang b{display:block}
+.gang small{display:block;color:var(--ink2);font-weight:700;font-size:.75rem}
+.gang .words{display:block;font-size:.72rem;color:var(--ink2);margin-top:2px}
+.gang.off svg{filter:grayscale(1);opacity:.35}
+.qcard.big{padding:14px 8px}
+.tablo{border-radius:var(--radius);background:#0d0f14;border:4px solid #2a2f3a;box-shadow:inset 0 0 30px rgba(0,0,0,.8),0 10px 24px rgba(0,0,0,.3);padding:14px 18px;color:#ffc531}
+.tablo-h{display:flex;justify-content:space-between;font-family:'Special Elite',monospace;font-size:.9rem;opacity:.8;border-bottom:1px dashed #3a3f4a;padding-bottom:6px}
+.tablo-f{font-family:'Special Elite',monospace;font-size:2.4rem;text-align:center;padding:18px 0 10px;letter-spacing:2px;text-shadow:0 0 12px rgba(255,197,49,.6);animation:flip .5s}
+@keyframes flip{from{transform:rotateX(90deg);opacity:0}}
+.vnotes{margin-top:12px;min-height:56px}
+.tablo.raz .tablo-f{font-size:1.6rem;letter-spacing:0;line-height:1.5}
+.tablo.raz mark{background:#ffc531;color:#111;border-radius:4px;padding:0 4px}
+@media (max-width:560px){.tablo.raz .tablo-f{font-size:1.2rem}}
+.vnotes .note{background:#e9f3ff}
+.vnotes .note.bad{background:#ffd9d9}
+@media (max-width:560px){.tablo-f{font-size:1.7rem}}
+.adjbase{margin-left:6px;padding:2px 10px;border-radius:999px;background:var(--paper2);color:var(--ink);font-weight:800}
+.opt.drawer{background:linear-gradient(#b98a5a,#8e6236);border-color:#6f4a26;color:#fff8ec;box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 4px 0 #5a3b1c}
+.opt.drawer small{color:#f3dfc4}
+.opt.drawer::after{content:"";display:block;width:34px;height:6px;border-radius:4px;background:#e9c98e;margin:6px auto 0}
+.opt.drawer.right{background:linear-gradient(#3fbf8d,#22946a);border-color:var(--ok)}
+.opt.drawer.wrong{background:linear-gradient(#cf6b72,#a8434b);opacity:.6}
+.casefile{margin-top:4px}
+.cfhead{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.cfhead h3{color:var(--ink);font-size:1.4rem}
+.cfhead .stamp{font-size:.9rem}
+.cfinfo{font-weight:700;color:var(--ink2);margin:10px 0}
+.casetext{font-size:1.25rem;line-height:2;color:var(--ink)}
+.casetext .w{cursor:pointer;border-radius:4px;padding:0 1px;transition:background .15s}
+.casetext .w:hover{background:rgba(58,134,255,.15)}
+.casetext .cs.cand{border-bottom:2px dotted var(--ink2)}
+.casetext .sent.lit{background:rgba(255,209,102,.45);border-radius:4px;box-shadow:0 0 0 3px rgba(255,209,102,.45)}
+.casetext .found{background:rgba(230,57,70,.18);outline:2px solid var(--bad);border-radius:6px}
+.casetext .fixed{color:#137a52;font-weight:700;border-bottom:3px solid var(--ok);cursor:default}
+.casetext .fixedbad{color:#9b2626;font-weight:700;border-bottom:3px solid #e8a33a;cursor:default}
+.casetext .okword{animation:okw .9s}
+@keyframes okw{30%{background:rgba(34,176,125,.25)}}
+.fixbox{margin-top:14px;padding:12px 14px;border-radius:12px;background:#fff;border:2px solid var(--paper2)}
+.fixbox h3{color:var(--ink);font-size:1.15rem;margin:0}
+.fixbox s{color:var(--bad)}
+.casefile .opts{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+@media (max-width:560px){.casetext{font-size:1.08rem;line-height:1.9}}
+.forge{position:relative;height:210px;border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  background:radial-gradient(ellipse at 50% 110%,rgba(255,120,40,.6),transparent 60%),linear-gradient(#2d201c,#130c0b);border:1px solid rgba(255,255,255,.08)}
+.forge .glow{position:absolute;left:50%;bottom:-60px;width:420px;height:200px;transform:translateX(-50%);background:radial-gradient(rgba(255,150,60,.45),transparent 65%);animation:flick 1.6s ease-in-out infinite;pointer-events:none}
+@keyframes flick{50%{opacity:.6}}
+.anvil{width:min(320px,80%);display:block;margin-bottom:6px}
+.anvil-word{position:relative;z-index:2;display:flex;align-items:flex-end;gap:2px;margin-bottom:-8px;font-family:'Baloo 2';font-weight:800;font-size:2.4rem;line-height:1}
+.ingot{color:#ffdcb0;text-shadow:0 0 14px #ff7a1a,0 0 4px #ff9c40}
+.slot{min-width:56px;padding:0 8px;border-bottom:4px dashed #ffb36b;color:#ffb36b;text-align:center}
+.slot.whole{min-width:150px}
+.slot.hot{border-bottom-color:transparent;color:#fff3c4;text-shadow:0 0 16px #ffb300,0 0 6px #ff6a00;animation:pop .4s}
+.hammer{position:absolute;right:calc(50% - 150px);top:18px;font-size:3rem;transform-origin:80% 80%;transform:rotate(25deg);z-index:3}
+.hammer.strike{animation:strike .45s ease-in}
+@keyframes strike{40%{transform:rotate(-45deg) translate(-20px,30px)}100%{transform:rotate(25deg)}}
+.spark{position:absolute;left:50%;bottom:70px;width:5px;height:5px;border-radius:50%;background:#ffd36b;box-shadow:0 0 8px #ff9c40;animation:spark .8s ease-out forwards;z-index:4}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy));opacity:0}}
+.frame{font-family:'Special Elite',monospace;color:var(--ink);font-size:1.1rem}
+.blank{letter-spacing:2px}
+.vzchip{display:inline-flex;align-items:center;gap:8px;margin-top:8px;padding:4px 12px 4px 6px;border-radius:999px;background:var(--paper2);font-weight:800;color:var(--ink)}
+.opts.tiles{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+.opt.tile{background:linear-gradient(#e3e8ee,#aab4bf);border-color:#9aa4b0;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 4px 0 #66707c;font-family:'Baloo 2';font-size:1.45rem;color:#1d232b}
+.opt.tile small{font-family:'Nunito';font-size:.8rem;color:#3c444e}
+.opt.tile.right{background:linear-gradient(#d9f6e8,#9fdcbf);border-color:var(--ok)}
+.opt.tile.wrong{background:linear-gradient(#f6d9dc,#d9a3a9);border-color:var(--bad)}
+@media (max-width:560px){.anvil-word{font-size:1.9rem}.hammer{right:8px}}
+.tryagain{margin-top:12px;padding:11px 14px;border-radius:12px;background:#fff1f2;border:2px solid #f3b6bf;color:var(--ink);font-weight:800;animation:shake .35s}
+.tryagain.soft{background:#fff6dc;border-color:#f4cf7a;animation:none}
+.tryagain .actions{justify-content:flex-start;margin-top:10px}
+.tryagain .btn.ghost{background:var(--paper2);color:var(--ink)}
+.hintclue{border-left-color:var(--m);background:#eef4ff;margin-top:10px}
+.door.wrong{opacity:.35;filter:grayscale(.8)}
+.door.wrong::after{content:"✕";position:absolute;inset:0;display:grid;place-items:center;font-size:2.4rem;font-weight:900;color:#fff}
+.opt.wrong{opacity:.55}
+.qcard.big .n{font-size:2.2rem}
+.soonchip{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--paper2);color:var(--ink2);font-weight:800;font-size:.8rem}
+
+/* ── HUD ── */
+.hud{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px}
+.hud .chip{background:var(--hud-chip)}
+.hud .sp{flex:1}
+.lives{display:flex;gap:3px}
+.lives svg{width:22px;height:22px}
+.lives .lost{opacity:.2;filter:grayscale(1)}
+.combo{color:var(--heading);transition:transform .2s}
+.combo.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.35)}}
+.progress{height:6px;border-radius:6px;background:var(--track);overflow:hidden;margin-bottom:12px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--lamp),var(--lamp2));transition:width .3s}
+
+/* ── Třídírna: řada podezřelých ── */
+.lineup{position:relative;height:250px;border-radius:var(--radius);overflow:hidden;
+  background:
+    repeating-linear-gradient(transparent 0 29px,var(--wall-line) 29px 31px),
+    linear-gradient(var(--wall1),var(--wall2));border:1px solid var(--card-line)}
+.lineup .nums{position:absolute;left:8px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-around;font-family:'Special Elite';font-size:.75rem;opacity:.5}
+.lineup .floor{position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(var(--floor1),var(--floor2))}
+.lineup .spot{position:absolute;left:50%;top:-40px;width:340px;height:330px;transform:translateX(-50%);background:radial-gradient(ellipse at 50% 0,rgba(255,240,190,.32),transparent 65%);pointer-events:none}
+.suspect{position:absolute;left:50%;bottom:14px;width:150px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
+.suspect svg{width:120px;height:150px;filter:drop-shadow(0 8px 8px rgba(0,0,0,.35))}
+.placard{margin-top:-30px;position:relative;z-index:2;background:#151515;color:#fff;font-family:'Special Elite',monospace;font-size:1.55rem;padding:6px 16px;border-radius:6px;border:3px solid #444;box-shadow:0 6px 12px rgba(0,0,0,.4);white-space:nowrap}
+.suspect.enter{animation:walkIn .55s cubic-bezier(.2,.8,.3,1.2) both}
+@keyframes walkIn{from{transform:translateX(160%) rotate(8deg)}to{transform:translateX(-50%)}}
+.suspect.exit-l{animation:exitL .5s ease-in both}.suspect.exit-c{animation:exitC .5s ease-in both}.suspect.exit-r{animation:exitR .5s ease-in both}
+@keyframes exitL{to{transform:translateX(-260%) scale(.6);opacity:0}}
+@keyframes exitC{to{transform:translateX(-50%) translateY(120px) scale(.6);opacity:0}}
+@keyframes exitR{to{transform:translateX(160%) scale(.6);opacity:0}}
+.suspect.laugh svg{animation:laugh .5s ease 2}
+@keyframes laugh{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.suspect .eye-p{transition:transform .2s}
+.bob svg{animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.fx{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);pointer-events:none;z-index:5}
+.fx .stamp{font-size:1.6rem;background:rgba(251,243,224,.92);animation:stampIn .35s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes stampIn{from{transform:scale(2.4) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(-8deg);opacity:1}}
+.timer{height:8px;border-radius:8px;background:var(--track);overflow:hidden;margin:10px 0 14px}
+.timer i{display:block;height:100%;width:100%;background:var(--lamp);transform-origin:left}
+.timer.low i{background:var(--bad)}
+
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.door{position:relative;border-radius:14px 14px 8px 8px;padding:14px 8px 12px;min-height:96px;color:#fff;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:inset 0 -6px 0 rgba(0,0,0,.2),0 6px 14px rgba(0,0,0,.3);transition:transform .1s,filter .1s}
+.door:active{transform:translateY(3px)}
+.door:hover{filter:brightness(1.1)}
+.door b{font-family:'Baloo 2';font-size:1.9rem;line-height:1}
+.door small{font-size:.8rem;opacity:.9}
+.door .knob{position:absolute;right:12px;top:50%;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.7)}
+.door.M{background:linear-gradient(var(--m),#2667d6)}.door.F{background:linear-gradient(var(--f),#c42e62)}.door.N{background:linear-gradient(var(--n),#178a61)}
+.door.hit{outline:4px solid #fff}
+.door kbd{position:absolute;left:8px;top:6px;font-size:.7rem;opacity:.6;font-family:inherit}
+.grid2{display:grid;grid-template-columns:auto repeat(3,1fr);gap:8px;align-items:stretch}
+.grid2 .rowh{display:flex;flex-direction:column;justify-content:center;align-items:center;font-weight:800;font-size:.8rem;text-align:center;padding:0 4px;opacity:.9}
+.grid2 .rowh span{font-size:1.2rem}
+.grid2 .colh{text-align:center;font-weight:800;font-size:.8rem;opacity:.85}
+.grid2 .door{min-height:70px}
+.grid2 .door b{font-size:1.35rem}
+
+/* ── Vysvětlení chyby ── */
+.explain{margin-top:14px}
+.explain h3{color:var(--bad);font-size:1.15rem;margin-bottom:6px}
+.explain.good h3{color:var(--ok)}
+.explain p{margin:6px 0;font-weight:700;font-size:1.05rem}
+.explain .steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
+.explain .step{background:#fff;border:2px solid var(--paper2);border-radius:10px;padding:5px 10px;font-weight:800}
+.explain .arrow{opacity:.5;font-weight:900}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:14px;font-weight:900;font-size:1.05rem;background:linear-gradient(var(--lamp),var(--lamp2));color:#3a2600;box-shadow:0 5px 0 #b97614,0 10px 18px rgba(0,0,0,.3);transition:transform .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #b97614}
+.btn.ghost{background:var(--chip);color:var(--text);box-shadow:none}
+.btn.dark{background:var(--ink);color:var(--paper);box-shadow:0 5px 0 #000}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* ── Výslech ── */
+.interro{position:relative;border-radius:var(--radius);overflow:hidden;min-height:210px;background:radial-gradient(ellipse at 50% 0%,rgba(255,226,150,.35),transparent 60%),linear-gradient(#2d2a3a,#1a1824);border:1px solid rgba(255,255,255,.1);display:flex;align-items:flex-end;justify-content:center;padding-top:40px}
+.interro .lamp{position:absolute;top:0;left:50%;width:2px;height:34px;background:#555;transform-origin:top;animation:swing 4s ease-in-out infinite}
+.interro .lamp::after{content:"";position:absolute;left:-22px;top:30px;width:46px;height:22px;border-radius:46px 46px 4px 4px;background:#3b3b3b;box-shadow:0 14px 30px 10px rgba(255,220,130,.25)}
+@keyframes swing{50%{transform:rotate(7deg)}0%,100%{transform:rotate(-7deg)}}
+.interro .table{position:absolute;left:0;right:0;bottom:0;height:42px;background:linear-gradient(#6b4a2f,#4a311d);box-shadow:0 -4px 0 #7d5937}
+.interro .suspect{position:relative;left:auto;bottom:22px;transform:none;width:auto}
+.interro .suspect svg{width:110px;height:138px}
+.interro .say{position:absolute;right:12px;top:14px;max-width:46%;background:var(--paper);color:var(--ink);border-radius:14px;padding:9px 12px;font-weight:800;font-size:.9rem;box-shadow:0 6px 16px rgba(0,0,0,.35);animation:fadeUp .3s both}
+.case-line{margin-top:-14px;position:relative;z-index:2}
+.sentence{font-family:'Special Elite',monospace;font-size:1.45rem;line-height:1.55;color:var(--ink)}
+.sentence mark{background:none;color:var(--ink);border-bottom:4px solid var(--f);padding:0 2px;font-weight:700;background:linear-gradient(transparent 60%,rgba(232,69,123,.25) 60%)}
+.sentence .prep.lit{background:rgba(255,209,102,.6);border-radius:4px;padding:0 3px;box-shadow:0 0 0 2px var(--lamp2)}
+.sentence .q{color:var(--m);font-weight:700;border-bottom:3px dashed var(--m)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.tool{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;background:var(--paper2);color:var(--ink);font-weight:800;font-size:.9rem}
+.tool[disabled]{opacity:.45}
+.clue{margin-top:10px;padding:10px 12px;border-left:5px solid var(--lamp2);background:#fff6dc;border-radius:6px;font-weight:700;color:var(--ink)}
+.preview{margin-top:12px;padding:10px 12px;border-radius:10px;background:#eef4ff;border:2px dashed var(--m);color:var(--ink);font-weight:700;min-height:48px}
+.preview .lbl{display:block;font-size:.78rem;color:var(--ink2);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.preview .sentence{font-size:1.15rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-top:14px}
+.qcard{position:relative;background:var(--paper);color:var(--ink);border-radius:10px;padding:10px 8px 9px;text-align:center;font-weight:800;box-shadow:0 4px 0 #cbb88f,0 6px 12px rgba(0,0,0,.25);transition:transform .12s}
+.qcard:hover{transform:translateY(-2px)}
+.qcard .n{display:block;font-family:'Baloo 2';font-size:1.45rem;color:var(--m);line-height:1}
+.qcard .qq{font-size:.86rem}
+.qcard.sel{background:#fff;outline:3px solid var(--m);transform:translateY(-3px)}
+.qcard.right{outline:3px solid var(--ok)}
+.qcard.wrong{outline:3px solid var(--bad);opacity:.7}
+.qcard kbd{position:absolute;left:6px;top:4px;font-size:.65rem;opacity:.5;font-family:inherit}
+.accuse{margin-top:14px;display:flex;justify-content:center}
+
+/* ── Výsledky / spis ── */
+.result{text-align:center;max-width:520px;margin:10px auto}
+.result .bigstars{font-size:2.8rem;letter-spacing:6px;color:var(--lamp);text-shadow:0 2px 0 #b97614;margin:8px 0}
+.result .bigstars .off{color:#d6c8a8;text-shadow:none}
+.result .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.result .stat{background:#fff;border-radius:10px;padding:8px}
+.result .stat b{display:block;font-size:1.4rem;font-family:'Baloo 2'}
+.result .stat small{color:var(--ink2);font-weight:800}
+.newbadge{display:inline-flex;align-items:center;gap:8px;background:#fff3c4;border:2px solid var(--lamp2);border-radius:12px;padding:6px 12px;margin:4px;font-weight:800;animation:pop .5s}
+.rankup{margin:10px 0;font-weight:900;color:var(--f);font-size:1.1rem}
+.mistakes{text-align:left;margin-top:10px}
+.mistakes li{margin:3px 0;font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:16px}
+
+.profile .head{display:flex;gap:14px;align-items:center}
+.profile .head svg{width:84px;height:100px}
+.rewards{margin:16px 0 4px;padding:14px;border-radius:14px;background:var(--paper2);text-align:left}
+.rewards h3{margin:0 0 10px;font-size:1.15rem;text-align:center}
+.rw-xp>b{font-size:1.4rem;color:var(--f)}
+.rw-xp .xpbar{height:16px}.rw-xp .xpbar i{transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.rw-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:12px 0}
+.evcard{position:relative;width:150px;padding:12px 8px 10px;border-radius:14px;text-align:center;background:#fff;border:3px solid #cfc6b5;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.evcard .evico{font-size:2.6rem;display:block}.evcard b{display:block;font-size:.9rem;margin-top:4px}.evcard small{display:block;font-weight:800;font-size:.75rem;color:var(--ink2)}
+.evcard.t1{border-color:#cd7f32;background:linear-gradient(160deg,#fff,#f6e3cf)}.evcard.t2{border-color:#a9b4c2;background:linear-gradient(160deg,#fff,#e6ebf2)}
+.evcard.t3{border-color:#e4b33a;background:linear-gradient(160deg,#fffbe8,#f7dc86);box-shadow:0 0 0 3px rgba(228,179,58,.35),0 6px 16px rgba(0,0,0,.2)}
+.evcard.t0{opacity:.4;filter:grayscale(1)}.evcard.t0 .evico{filter:blur(1px)}
+.evcard.new{animation:evpop .9s cubic-bezier(.2,1.4,.4,1)}
+.evlbl{position:absolute;top:-11px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--f);color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;border-radius:999px}
+@keyframes evpop{0%{transform:scale(.3) rotate(-12deg);opacity:0}60%{transform:scale(1.12) rotate(3deg);opacity:1}100%{transform:none}}
+.bigbadge{width:150px;padding:10px 8px;border-radius:14px;background:#fff3c4;border:3px solid var(--lamp2);text-align:center;font-weight:800;animation:evpop .9s}
+.bigbadge .bi{font-size:2.4rem;display:block}.bigbadge small{display:block;font-weight:700;font-size:.75rem;color:var(--ink2)}
+.clue{margin:12px 0;padding:12px 14px;border-radius:12px;background:#fff;border-left:6px solid var(--f);font-weight:700}
+.clue.final{border-left-color:var(--lamp2);background:#fff7d6}
+.goals{margin:10px 0 0;padding-left:20px;font-weight:700}.goals li{margin:4px 0}
+.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:0 0 18px;width:100%;text-align:left;cursor:pointer;font:inherit}
+.status .st{background:var(--paper);color:var(--ink);border-radius:12px;padding:10px 12px;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.status .st b{display:block;font-size:1.25rem}.status .st small{font-weight:800;color:var(--ink2)}
+.status .st.wide{grid-column:span 2}.status .xpbar{margin-top:6px}
+.mystery{margin:22px 0}
+.scenebanner{position:relative;height:clamp(190px,28vw,330px);border-radius:var(--radius);overflow:hidden;margin:0 0 18px;box-shadow:0 10px 30px rgba(0,0,0,.35);background:linear-gradient(var(--sky1),var(--sky2) 60%,var(--sky3))}
+.scenebanner svg{position:absolute;inset:0;width:100%;height:100%}
+@media (max-width:520px){.scenebanner .cap{font-size:.72rem;padding:4px 8px}}
+.scenebanner .cap{position:absolute;left:10px;top:10px;max-width:calc(100% - 20px);background:rgba(10,17,33,.72);color:#fff;font-weight:800;font-size:.82rem;padding:5px 10px;border-radius:999px}.mystery .clues{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.mystery .cl{background:var(--paper);color:var(--ink);border-radius:12px;padding:10px;font-weight:700;font-size:.85rem}
+.mystery .cl.off{background:var(--paper2);color:var(--ink2)}.mystery .cl .ci{font-size:1.4rem}
+.dprog{display:block;margin-top:8px;font-size:.8rem;font-weight:900;opacity:.95}
+.dstamp{position:absolute;top:10px;right:10px;font-size:.68rem;font-weight:900;padding:3px 8px;border-radius:6px;border:2px solid currentColor;transform:rotate(6deg);color:var(--lamp)}
+.evgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:10px;justify-items:center}
+.evgrid .evcard{width:100%}
+.mico .evmini{display:block;font-size:.95rem;margin-top:4px}
+.xpbar{height:12px;border-radius:12px;background:#e6d8b8;overflow:hidden;margin:8px 0 2px}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--lamp),var(--lamp2))}
+.bars{display:grid;gap:7px;margin:10px 0 4px}
+.bar{display:grid;grid-template-columns:130px 1fr 52px;gap:8px;align-items:center;font-weight:800;font-size:.9rem}
+.bar .track{height:12px;background:#e6d8b8;border-radius:12px;overflow:hidden}
+.bar .track i{display:block;height:100%;border-radius:12px}
+.bar .pct{text-align:right;color:var(--ink2)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:10px}
+.badge{text-align:center;padding:10px 6px;border-radius:12px;background:#fff;border:2px solid var(--paper2);font-weight:800;font-size:.85rem}
+.badge .bi{font-size:1.8rem;display:block}
+.badge.off{opacity:.35;filter:grayscale(1)}
+.profile h3{color:var(--ink);margin-top:18px;font-size:1.15rem}
+
+/* ── Modal ── */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(5,9,20,.7);display:grid;place-items:center;padding:16px;animation:fadeUp .25s both}
+.modal .paper{max-width:480px;width:100%}
+.modal h2{color:var(--ink);font-size:1.5rem;margin-bottom:8px}
+.modal p{font-weight:700;line-height:1.45}
+
+.demo-cta{margin-top:24px;text-align:center}
+.demo-cta a{color:var(--heading);font-weight:900}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:60;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg)}}
+
+/* ── Pro rodiče ── */
+.parent-btn{border:1.5px solid var(--bar-line);color:var(--text)}
+.parent-btn .pb-short{display:none}
+.pmodal{position:fixed;inset:0;z-index:60;background:rgba(5,9,20,.72);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto;animation:fadeUp .2s both}
+.pbox{width:min(860px,100%);margin:auto;color:var(--ink);background-image:none;padding:20px}
+.phead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
+.phead h2{font-size:1.6rem;color:var(--ink)}
+.phead .noprint{display:flex;gap:6px;flex-shrink:0}
+.pkicker{font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink2);font-weight:800}
+.pbox h3{font-size:1.15rem;margin:22px 0 8px;color:var(--ink)}
+.pgate{max-width:380px;margin:10px auto;display:flex;flex-direction:column;gap:8px}
+.pgate p{margin:0 0 6px;font-weight:700;line-height:1.45}
+.pgate label{font-weight:900;font-size:.9rem}
+.pgate input{font:inherit;padding:11px 12px;border-radius:10px;border:2px solid var(--paper2);background:#fff;color:var(--ink)}
+.perr{min-height:20px;color:var(--bad);font-weight:800;font-size:.9rem}
+.plink{text-decoration:underline;color:var(--ink2);font-weight:700;margin-top:4px}
+.pnote{color:var(--ink2);font-weight:600;font-size:.85rem;line-height:1.45}
+.ptiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.ptile{background:#fff;border:2px solid var(--paper2);border-radius:12px;padding:10px;text-align:center}
+.ptile b{display:block;font-family:'Baloo 2';font-size:1.6rem;line-height:1.1}
+.ptile span{font-size:.78rem;font-weight:800;color:var(--ink2)}
+.prec{margin-top:14px;padding:12px 14px;border-radius:12px;background:#eef4ff;border-left:5px solid #3a6fd8;font-weight:700;line-height:1.45}
+.plegend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-size:.82rem;font-weight:800;color:var(--ink2)}
+.plegend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.s1{background:#1f9e6e}.s2{background:#e8a33a}.s3{background:#d64545}.s0{background:#e6dcc4}
+.pchart{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;align-items:end;height:150px;padding:6px 4px 0;border-bottom:1px solid #d9ccb0}
+.pday{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:default}
+.pcol{width:70%;max-width:26px;height:110px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px}
+.pcol i{display:block;width:100%;border-radius:2px}
+.pcol i:first-child{border-radius:4px 4px 2px 2px}
+.pday:hover .pcol i{filter:brightness(1.1)}
+.pv{font-size:.7rem;font-weight:800;color:var(--ink2);min-height:14px}
+.pd{font-size:.68rem;font-weight:700;color:var(--ink2);margin-top:3px}
+.pgroup{margin-top:10px;background:#fff;border-radius:12px;padding:10px 12px;border:2px solid var(--paper2)}
+.pgroup h4{margin:0 0 6px;font-size:1rem}.pgroup h4 small{color:var(--ink2);font-weight:700}
+.prow{display:grid;grid-template-columns:minmax(120px,190px) 1fr 56px 158px;gap:10px;align-items:center;padding:4px 0;font-size:.88rem;font-weight:700}
+.pbar{display:flex;gap:2px;height:12px}
+.pbar i{display:block;height:100%}
+.pbar i:first-child{border-radius:4px 0 0 4px}.pbar i:last-child{border-radius:0 4px 4px 0}.pbar i:only-child{border-radius:4px}
+.pn{text-align:right;font-weight:900}.pn small{display:block;font-size:.68rem;color:var(--ink2);font-weight:700}
+.pm{font-size:.8rem;font-weight:800;padding:3px 8px;border-radius:999px;text-align:center;white-space:nowrap}
+.pm.ok{background:#e3f5ec;color:#156b4b}.pm.mid{background:#fdf0d8;color:#8a5a0b}.pm.low{background:#fbe1e1;color:#9b2626}.pm.na{background:#f1ece0;color:#7a6c55}
+.pconf{display:grid;gap:8px}
+.pci{background:#fff;border-radius:12px;padding:10px 12px;border-left:5px solid #e8a33a}
+.pci p{margin:6px 0 0;font-weight:600;color:var(--ink2);line-height:1.45}
+.pcount{display:inline-block;padding:1px 8px;border-radius:999px;background:#fdf0d8;font-size:.78rem;font-weight:900}
+.pchips{display:flex;flex-wrap:wrap;gap:6px}
+.pchip{background:#fff;border:2px solid var(--paper2);border-radius:999px;padding:4px 10px;font-weight:700;font-size:.85rem}
+.ptable{overflow-x:auto}
+.ptable table{width:100%;border-collapse:collapse;font-size:.88rem}
+.ptable th,.ptable td{text-align:left;padding:6px 8px;border-bottom:1px solid #e6dcc4}
+.ptable th{color:var(--ink2);font-size:.78rem;text-transform:uppercase}
+.pst{color:#c98a17;letter-spacing:1px}
+.pdid{background:#fff;border-radius:12px;padding:6px 14px;font-weight:600;line-height:1.5}
+.pbox .btn.ghost{background:var(--paper2);color:var(--ink)}
+@media print{
+  body>*:not(.pmodal){display:none!important}
+  .pmodal{position:static;background:none;padding:0;overflow:visible}
+  .pbox{box-shadow:none;width:100%}
+  .noprint{display:none!important}
+}
+@media (max-width:560px){
+  .parent-btn .pb-full{display:none}.parent-btn .pb-short{display:inline}
+  .brand>span{display:none}
+  .iconbtn{width:34px;height:34px}
+  .chip{padding:5px 9px}
+  .prow{grid-template-columns:1fr 50px;row-gap:4px}
+  .prow .pbar{grid-column:1/-1;order:3}
+  .prow .pm{grid-column:1/-1;order:4;justify-self:start}
+  .pbox{padding:14px}
+  .rk-name{display:none}
+  .topbar{gap:6px;padding:8px 12px}
+  .brand{font-size:1.1rem}
+  .lineup{height:220px}
+  .placard{font-size:1.3rem}
+  .sentence{font-size:1.2rem}
+  .door{min-height:84px}
+  .door b{font-size:1.5rem}
+  .grid2 .door b{font-size:1.1rem}
+  .grid2 .door small{font-size:.7rem}
+  .bar{grid-template-columns:96px 1fr 44px}
+  .hero .who{width:84px}
+  .interro .say{max-width:52%;font-size:.8rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* ══ FajnZahrada ══ */
+.garden-stage{position:relative;height:190px;display:flex;align-items:flex-end;justify-content:center;gap:40px;margin:6px 0 10px}
+.garden-stage .pot{width:130px}.garden-stage .gardener{width:110px}
+.pot.grow{animation:grow .6s cubic-bezier(.2,1.4,.4,1)}.pot.wilt{animation:wilt .5s}
+@keyframes grow{0%{transform:scale(.85)}60%{transform:scale(1.12)}100%{transform:none}}
+@keyframes wilt{0%,100%{transform:none}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.word.big{font-family:'Baloo 2',sans-serif;font-size:2.4rem;font-weight:800;letter-spacing:1px;color:var(--ink)}
+.gapl{display:inline-block;min-width:.8em;border-bottom:4px solid var(--f);color:var(--f);text-align:center}
+.gapl.filled{color:var(--ok);border-color:var(--ok)}
+b.big{font-size:1.6rem}.crit{color:var(--ok);text-decoration:underline}
+.bedletter{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:12px;background:#f3e6c6;color:#4f3322;font-family:Georgia,serif;font-weight:900;font-size:2rem;border:3px solid #6b4a2e}
+.vsbox{margin:0 0 16px;font-weight:700;line-height:1.6}
+.casetext .w{cursor:pointer;border-radius:4px;padding:0 1px}.casetext .w:hover{background:rgba(255,209,102,.35)}
+.casetext .w.cand{border-bottom:2px dashed var(--f)}
+.casetext .w.found{background:#ffe3ea;outline:2px solid var(--f)}.casetext .w.fixed{background:#d9f5e8;color:#11734d;font-weight:800}
+.casetext .w.okword{animation:okw .5s}@keyframes okw{50%{background:#e6f7ee}}
+.casetext{font-size:1.25rem;line-height:2;font-weight:600}
+.fix{margin:12px 0;padding:12px;border-radius:12px;background:#fff;border:2px solid var(--f)}
+.row{line-height:1.6}
+.opt.stepopt{font-size:.92rem;font-weight:800;line-height:1.3;padding:10px 12px;text-align:left}
+</style>
+</head>
+<body>
+<div id="scene"><svg id="city" preserveAspectRatio="xMidYMax slice" viewBox="0 0 1200 700" aria-hidden="true"></svg><div class="photo"></div></div>
+<header class="topbar">
+  <button class="brand" data-act="home" aria-label="Domů"><span style="font-size:1.6rem">🌻</span><span>Fajn<b>Zahrada</b></span></button>
+  <span id="demoBadge" class="demo-badge" hidden>DEMO</span>
+  <span class="sp"></span>
+  <span class="chip rank" id="rankChip"></span>
+  <button class="chip parent-btn" data-act="parent" title="Přehled pro rodiče"><span class="pb-full">Pro rodiče</span><span class="pb-short">👪</span></button>
+  <button class="chip parent-btn" data-act="profile" title="Zahradnický deník – úroda a odznaky"><span class="pb-full">📖 Deník</span><span class="pb-short">📖</span></button>
+  <button class="iconbtn theme-btn" data-act="theme" title="Přepnout téma" aria-label="Přepnout téma">🌙</button>
+  <button class="iconbtn" data-act="sound" id="soundBtn" title="Zvuk" aria-label="Zvuk">🔊</button>
+</header>
+<main id="app"></main>
+<script src="zahrada/slova.js"></script>
+<script src="zahrada/scena.js"></script>
+<script>
+'use strict';
+const DEMO = /-demo(\.html?)?$/i.test(location.pathname);
+const FULL_URL = 'https://fajndoucko.cz';
+/* ══════════════ TÉMA ══════════════ */
+const THEMES=['light','dark','girly'], THEME_ICONS={light:'☀️',dark:'🌙',girly:'🌸'}, THEME_KEY='fajnzahrada_theme';
+function setTheme(t){
+  if(!THEMES.includes(t)) t='dark';
+  document.documentElement.setAttribute('data-theme',t);
+  document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=THEME_ICONS[t]);
+  try{ localStorage.setItem(THEME_KEY,t); }catch(e){}
+  if(typeof drawCity==='function') drawCity();
+}
+function cycleTheme(){ const c=document.documentElement.dataset.theme; setTheme(THEMES[(THEMES.indexOf(c)+1)%THEMES.length]); }
+function initTheme(){ let t='dark'; try{ t=localStorage.getItem(THEME_KEY)||'dark'; }catch(e){} setTheme(t); }
+
+/* ══════════════ STAV ══════════════ */
+const KEY = 'fdc-zahrada-v1';
+const S = Object.assign({xp:0, stars:{}, stats:{}, weak:{}, sel:{}, conf:{}, days:{}, hist:[], parent:{salt:'',hash:''}, badges:[], sound:true, intro:false}, load());
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+// a = [vyřešeno (i s pomocí), celkem, napoprvé]
+function stat(cat,k,ok,first){ S.stats[cat]=S.stats[cat]||{}; const a=S.stats[cat][k]||(S.stats[cat][k]=[0,0,0]); a[1]++; if(ok)a[0]++; if(a[2]===undefined)a[2]=0; if(ok&&first)a[2]++; }
+function dayKey(t=new Date()){ return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0'); }
+function dayLog(){ S.days=S.days||{}; return S.days[dayKey()]||(S.days[dayKey()]={first:0,help:0,fail:0,min:0}); }
+function confuse(key){ S.conf=S.conf||{}; S.conf[key]=(S.conf[key]||0)+1; }
+function errRate(cat,k){ const a=(S.stats[cat]||{})[k]; return a&&a[1] ? 1-(a[2]!==undefined?a[2]:a[0])/a[1] : .35; }
+/* ══════════════ POMOCNÉ ══════════════ */
+const $ = (s,el=document)=>el.querySelector(s);
+const app = $('#app');
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap = s=>s.charAt(0).toUpperCase()+s.slice(1);
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
+function weightedPick(items, wf, n){
+  const pool=items.map(it=>({it,w:Math.max(.05,wf(it))})), out=[];
+  while(out.length<n && pool.length){
+    let tot=pool.reduce((s,x)=>s+x.w,0), r=Math.random()*tot, i=0;
+    for(;i<pool.length-1;i++){ r-=pool[i].w; if(r<=0)break; }
+    out.push(pool.splice(i,1)[0].it);
+  }
+  return out;
+}
+function hash(s){ let h=2166136261; for(const c of s){ h^=c.codePointAt(0); h=Math.imul(h,16777619); } return h>>>0; }
+function rng(seed){ return ()=>{ seed=(seed+0x6D2B79F5)|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+const starsTxt = n=>'★'.repeat(n)+'☆'.repeat(3-n);
+
+/* ── zvuk a řeč ── */
+/* Měkké tóny (zvonkohra/marimba) – pentatonika, takže cokoli zazní spolu, ladí. */
+let AC, MASTER;
+function audio(){
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    MASTER=AC.createGain(); MASTER.gain.value=.55;
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2800;
+    const comp=AC.createDynamicsCompressor();
+    MASTER.connect(lp).connect(comp).connect(AC.destination);
+  }
+  if(AC.state==='suspended') AC.resume();
+  return AC;
+}
+const PENTA=[0,2,4,7,9,12,14,16,19,21,24,26,28];
+const hz=semi=>523.25*Math.pow(2,semi/12);           // C5 = 0
+function note(semi,{d=.45,vol=.11,delay=0,bell=true,glide=0}={}){
+  if(!S.sound) return;
+  try{
+    const c=audio(), t=c.currentTime+delay, f=hz(semi);
+    const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.0005,t+d); g.connect(MASTER);
+    const o=c.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(f,t);
+    if(glide) o.frequency.exponentialRampToValueAtTime(f*Math.pow(2,glide/12),t+d);
+    o.connect(g); o.start(t); o.stop(t+d+.05);
+    if(bell){ // jemný „cink“ – vyšší harmonická, která rychle odezní
+      const o2=c.createOscillator(), g2=c.createGain();
+      o2.type='sine'; o2.frequency.setValueAtTime(f*3.01,t);
+      g2.gain.setValueAtTime(vol*.22,t); g2.gain.exponentialRampToValueAtTime(.0003,t+d*.35);
+      o2.connect(g2).connect(MASTER); o2.start(t); o2.stop(t+d*.35+.05);
+    }
+  }catch(e){}
+}
+const OK_MOTIFS=[[0,2],[0,4],[1,3],[2,4],[0,3],[1,4],[2,5],[0,2,4],[1,2],[3,5]];
+const BAD_MOTIFS=[[-5,-8],[-3,-7],[-7,-10],[-8,-12]];
+let lastOk=-1, lastBad=-1;
+function varied(list,last){ let i; do{ i=Math.random()*list.length|0; }while(list.length>1&&i===last); return i; }
+const sfx = {
+  ok(streak=0){
+    const i=varied(OK_MOTIFS,lastOk); lastOk=i;
+    const lift=Math.min(streak,6);                   // série = motivy stoupají
+    OK_MOTIFS[i].forEach((step,k)=>note(PENTA[step+lift],{d:.5,vol:.1,delay:k*.09}));
+  },
+  bad(){
+    const i=varied(BAD_MOTIFS,lastBad); lastBad=i;
+    BAD_MOTIFS[i].forEach((s,k)=>note(s-12,{d:.35,vol:.08,delay:k*.16,bell:false,glide:-1}));
+  },
+  stamp(){ note(-24,{d:.18,vol:.07,bell:false,glide:-5}); },
+  pick(p=1){ note(PENTA[p-1]-12,{d:.18,vol:.05,bell:false}); },
+  win(){ [0,2,3,4,5,7].forEach((s,k)=>note(PENTA[s],{d:.9,vol:.09,delay:k*.11})); },
+  combo(n){ [7,8,9].forEach((s,k)=>note(PENTA[Math.min(s+(n>=8?2:0),12)],{d:.3,vol:.05,delay:.25+k*.06})); }
+};
+
+function say(text){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    const u=new SpeechSynthesisUtterance(text); u.lang='cs-CZ'; u.rate=.92;
+    const v=speechSynthesis.getVoices().find(v=>/^cs/i.test(v.lang)); if(v) u.voice=v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ── Pokusy: 1. chyba = zkus znovu, 2. = znovu, nebo nápověda?, 3. = nápověda, 4. = řešení ── */
+const MSG1=['To není ono.','Tohle nesedí.','Vedle!','Hmm, to ne.','Tudy cesta nevede.','Skoro, ale ne.'];
+const MSG2=['Ani tohle není dobře.','Pořád to nesedí.','Ještě to není ono.','Tohle taky ne.'];
+const pickMsg=a=>a[Math.random()*a.length|0];
+function newItem(){ const g=game; g.itemWrongs=0; g.itemHint=false; }
+function newQuestion(hintFn){ const g=game; g.tries=0; g.hinted=false; g.hintFn=hintFn; }
+function wrongAttempt(){            // vrací true, když je čas ukázat řešení
+  const g=game; g.tries++; g.itemWrongs++; sfx.bad();
+  const box=$('#tryfb'); if(!box) return g.tries>=4;
+  if(g.tries===1) box.innerHTML=`<div class="tryagain">❌ ${pickMsg(MSG1)} <b>Zkus to znovu.</b></div>`;
+  else if(g.tries===2) box.innerHTML = g.hinted
+    ? `<div class="tryagain">❌ ${pickMsg(MSG2)} Podívej se ještě jednou na nápovědu a zkus to.</div>`
+    : `<div class="tryagain">❌ ${pickMsg(MSG2)} Zkusíš to znovu, nebo chceš nápovědu?
+        <div class="actions"><button class="btn ghost" data-act="tryagain">↻ Zkusím to znovu</button><button class="btn" data-act="wanthint">💡 Chci nápovědu</button></div></div>`;
+  else if(g.tries===3){ showHint(); box.innerHTML=`<div class="tryagain">❌ Ještě ne. Mrkni na nápovědu a zkus to znovu.</div>`; }
+  else { box.innerHTML=''; return true; }
+  return false;
+}
+function showHint(){
+  const g=game; if(!g||g.hinted||!g.hintFn) return;
+  g.hinted=true; g.itemHint=true;
+  const hb=$('#hintbox'); if(hb) hb.innerHTML=`<div class="clue hintclue">💡 <b>Nápověda:</b> ${g.hintFn()}</div>`;
+}
+function scoreSolved(base){
+  const g=game, first=!g.itemWrongs, c=first?1:(g.itemHint?.35:.6);
+  if(first){ g.streak++; g.best=Math.max(g.best,g.streak); } else g.streak=0;
+  dayLog()[first?'first':'help']++;
+  const pts=Math.max(1,Math.round(base*c*(first?mult():1)));
+  g.score+=pts; g.ok+=c; g.tot++;
+  if(first && (g.streak===3||g.streak===8)){ sfx.combo(g.streak); const cb=$('#combo'); if(cb) cb.classList.add('pop'); }
+  if(g.itemWrongs>=2) remember(g.items[g.i]);
+  return pts;
+}
+function scoreFailed(item){ const g=game; g.streak=0; g.tot++; dayLog().fail++; remember(item); }
+function remember(item){
+  const g=game;
+  if(!g.mist.includes(item)) g.mist.push(item);
+  // slovo se ještě jednou vrátí (opakování chyb)
+  if(!item.retry && g.items.length < g.L.count+4){
+    const copy={...item,retry:true}; g.items.splice(Math.min(g.i+3,g.items.length),0,copy);
+  }
+}
+
+
+/* ══════════════ PŘEHLED PRO RODIČE ══════════════ */
+let parentUnlocked=false, adultQ=null;
+async function phash(t){
+  try{ if(window.crypto&&crypto.subtle){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); } }catch(e){}
+  return 'f'+hash(t).toString(16)+hash('#'+t).toString(16);   // záloha, když prohlížeč nemá crypto.subtle
+}
+function psalt(){ try{ const a=new Uint32Array(4); crypto.getRandomValues(a); return [...a].map(n=>n.toString(16)).join(''); }catch(e){ return Math.random().toString(16).slice(2)+Date.now().toString(16); } }
+function pModal(inner){
+  let m=$('#pmodal');
+  if(!m){ m=document.createElement('div'); m.id='pmodal'; m.className='pmodal'; document.body.appendChild(m);
+    m.addEventListener('click',e=>{ if(e.target===m) closeParent(); }); }
+  m.innerHTML=`<div class="paper pbox" role="dialog" aria-modal="true" aria-label="Přehled pro rodiče">
+    <div class="phead"><div><div class="pkicker">FajnZahrada · vyjmenovaná slova</div><h2>Přehled pro rodiče</h2></div>
+    <div class="noprint">${parentUnlocked?'<button class="tool" data-act="p-print">🖨 Tisk</button> ':''}<button class="tool" data-act="p-close" aria-label="Zavřít">✕</button></div></div>${inner}</div>`;
+}
+function closeParent(){ const m=$('#pmodal'); if(m) m.remove(); }
+function openParent(){ if(parentUnlocked) return parentDash(); parentGate(); }
+function parentGate(mode){
+  const first=!S.parent||!S.parent.hash;
+  if(mode==='forgot'){
+    const a=12+Math.floor(Math.random()*8), b=13+Math.floor(Math.random()*7); adultQ=a*b;
+    return pModal(`<div class="pgate"><p>Pro ověření, že jste dospělý, vypočítejte: <b>${a} × ${b}</b> = ?</p>
+      <input id="pp-adult" inputmode="numeric" autocomplete="off" placeholder="výsledek">
+      <div class="perr" id="pp-err"></div>
+      <button class="btn" data-act="p-forgot-ok">Ověřit a nastavit nové heslo</button>
+      <p class="pnote">Obnovení hesla nesmaže statistiky ani pokrok dítěte.</p>
+      <button class="plink" data-act="p-back">Zpět</button></div>`);
+  }
+  pModal(first
+    ? `<div class="pgate"><p>Přehled je chráněný heslem, aby do něj dítě nechodilo. Stačí jednoduché heslo alespoň o 4 znacích.</p>
+        <label>Nastavit rodičovské heslo</label><input id="pp-1" type="password" autocomplete="new-password" placeholder="alespoň 4 znaky">
+        <input id="pp-2" type="password" autocomplete="new-password" placeholder="heslo znovu">
+        <div class="perr" id="pp-err"></div><button class="btn" data-act="p-setup">Nastavit a otevřít</button>
+        <p class="pnote">Heslo i statistiky zůstávají jen v tomto zařízení.</p></div>`
+    : `<div class="pgate"><label>Rodičovské heslo</label><input id="pp-1" type="password" autocomplete="current-password">
+        <div class="perr" id="pp-err"></div><button class="btn" data-act="p-login">Otevřít přehled</button>
+        <button class="plink" data-act="p-forgot">Zapomněl(a) jsem heslo</button></div>`);
+  setTimeout(()=>{ const i=$('#pp-1'); if(i) i.focus(); },50);
+}
+async function parentAction(a){
+  const err=t=>{ const e=$('#pp-err'); if(e) e.textContent=t; };
+  if(a==='p-close') return closeParent();
+  if(a==='p-print') return window.print();
+  if(a==='p-back') return parentGate();
+  if(a==='p-forgot') return parentGate('forgot');
+  if(a==='p-forgot-ok'){ if(+$('#pp-adult').value.trim()!==adultQ) return err('To není správně.'); S.parent={salt:'',hash:''}; save(); return parentGate(); }
+  if(a==='p-setup'){
+    const p1=$('#pp-1').value, p2=$('#pp-2').value;
+    if(p1.length<4) return err('Heslo musí mít alespoň 4 znaky.');
+    if(p1!==p2) return err('Hesla se neshodují.');
+    const salt=psalt(); S.parent={salt, hash:await phash(salt+'|'+p1)}; save(); parentUnlocked=true; return parentDash();
+  }
+  if(a==='p-login'){
+    const p1=$('#pp-1').value;
+    if(await phash(S.parent.salt+'|'+p1)!==S.parent.hash) return err('Heslo nesouhlasí.');
+    parentUnlocked=true; return parentDash();
+  }
+  if(a==='p-pass'){ S.parent={salt:'',hash:''}; parentUnlocked=false; save(); return parentGate(); }
+  if(a==='p-reset'){
+    if(!confirm('Opravdu vynulovat všechny výsledky, body, hvězdy, úrodu a statistiky? Rodičovské heslo zůstane zachované.')) return;
+    const keep={parent:S.parent, sound:S.sound, intro:true, sel:S.sel};
+    Object.keys(S).forEach(k=>delete S[k]);
+    Object.assign(S,{xp:0,stars:{},stats:{},weak:{},badges:[],conf:{},days:{},hist:[]},keep);
+    save(); updateTop(); return parentDash();
+  }
+}
+const plural=(n,a,b,c)=> n===1?a : (n>=2&&n<=4)?b : c;
+const pc = a=> a ? {tot:a[1]||0, ok:a[0]||0, first:a[2]!==undefined?a[2]:(a[0]||0)} : {tot:0,ok:0,first:0};
+function mastery(c){
+  if(c.tot<3) return {i:'·', t:'málo dat', k:'na'};
+  const r=c.first/c.tot;
+  return r>=.85 ? {i:'✓', t:'zvládá', k:'ok'} : r>=.6 ? {i:'~', t:'procvičuje', k:'mid'} : {i:'!', t:'potřebuje pomoc', k:'low'};
+}
+function skillRow(label,a){
+  const c=pc(a), help=c.ok-c.first, fail=c.tot-c.ok, m=mastery(c);
+  const seg=(n,cls,t)=> n ? `<i class="${cls}" style="flex:${n}" title="${label} – ${t}: ${n}×"></i>` : '';
+  return `<div class="prow"><span class="pl">${label}</span>
+    <span class="pbar">${c.tot ? seg(c.first,'s1','napoprvé')+seg(help,'s2','s pomocí')+seg(fail,'s3','neúspěšně') : '<i class="s0" style="flex:1"></i>'}</span>
+    <span class="pn">${c.tot?Math.round(c.first/c.tot*100)+' %':'–'}<small>${c.tot}×</small></span>
+    <span class="pm ${m.k}"><b>${m.i}</b> ${m.t}</span></div>`;
+}
+</script>
+<script src="zahrada/hra.js"></script>
+<script>initTheme(); updateTop(); home();</script>
+</body>
+</html>

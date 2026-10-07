@@ -41,5 +41,10 @@ Didaktiku nikdy neobětovat kvůli efektu, rychlosti ani zjednodušení kódu.
   Data jsou ve složce `fajndetektiv/` (lexikon.js = slovník + tvarotvorba podle vzorů s výjimkami,
   vety.js = rámce vět pro Výslech, pribehy.js, cviceni.js). Nová slova zapisovat se vzorem a výjimkami,
   tvary vždy vypsat a zkontrolovat; jen nedokonavá slovesa (budu + neurčitek).
+- FajnZahrada (`vyjmenovana_slova.html`): vyjmenovaná slova; stejné jádro jako FajnDetektiv (pokusy, rodiče, odměny).
+  Data `zahrada/slova.js` (vyjmenovaná / příbuzná / slova s i, texty s rozhodujícím písmenem v závorce, např. b(y)t,
+  sporný základ slova zapsat jako m(y:mýt)jeme), logika `zahrada/hra.js`, scéna `zahrada/scena.js`.
+  U volby ze dvou možností (i/y) nesmí jít uhodnout napodruhé – po chybě následuje krok postupu.
+  Demo = kopie s titulkem „FajnZahrada – demo“, přegenerovat po každé změně.
 - Soubory upravovat Pythonem, ne sedem. Šetřit tokeny.
 - Před pushem vyzkoušet v prohlížeči (Playwright), ideálně i šířku mobilu.
