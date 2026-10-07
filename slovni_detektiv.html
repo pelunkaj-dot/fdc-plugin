@@ -379,7 +379,11 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 .status .st{background:var(--paper);color:var(--ink);border-radius:12px;padding:10px 12px;box-shadow:0 6px 16px rgba(0,0,0,.25)}
 .status .st b{display:block;font-size:1.25rem}.status .st small{font-weight:800;color:var(--ink2)}
 .status .st.wide{grid-column:span 2}.status .xpbar{margin-top:6px}
-.mystery{margin:22px 0}.mystery .clues{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.mystery{margin:22px 0}
+.scenebanner{position:relative;height:clamp(190px,28vw,330px);border-radius:var(--radius);overflow:hidden;margin:0 0 18px;box-shadow:0 10px 30px rgba(0,0,0,.35);background:linear-gradient(var(--sky1),var(--sky2) 60%,var(--sky3))}
+.scenebanner svg{position:absolute;inset:0;width:100%;height:100%}
+@media (max-width:520px){.scenebanner .cap{font-size:.72rem;padding:4px 8px}}
+.scenebanner .cap{position:absolute;left:10px;top:10px;max-width:calc(100% - 20px);background:rgba(10,17,33,.72);color:#fff;font-weight:800;font-size:.82rem;padding:5px 10px;border-radius:999px}.mystery .clues{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .mystery .cl{background:var(--paper);color:var(--ink);border-radius:12px;padding:10px;font-weight:700;font-size:.85rem}
 .mystery .cl.off{background:var(--paper2);color:var(--ink2)}.mystery .cl .ci{font-size:1.4rem}
 .dprog{display:block;margin-top:8px;font-size:.8rem;font-weight:900;opacity:.95}
@@ -523,6 +527,7 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 <script src="fajndetektiv/vety.js"></script>
 <script src="fajndetektiv/pribehy.js"></script>
 <script src="fajndetektiv/cviceni.js"></script>
+<script src="fajndetektiv/scena.js"></script>
 <script>
 'use strict';
 const DEMO = /-demo(\.html?)?$/i.test(location.pathname);
@@ -830,35 +835,20 @@ function say(text){
 }
 
 /* ══════════════ GRAFIKA ══════════════ */
-const CITY = {
-  dark:{far:'#1a2746',near:'#121c33',street:'#0c1324',win:['#ffd479','#9fd3ff'],winOp:[.45,.9],stars:70,orb:'moon',lamps:'rgba(255,214,120,.55)',bulb:'#ffe08a',post:'#0a0f1d'},
-  light:{far:'#a9bfdc',near:'#8aa2c4',street:'#71829e',win:['#eaf6ff','#cfe9ff'],winOp:[.55,.75],stars:0,orb:'sun',lamps:null,bulb:'#e9eef5',post:'#56647d',clouds:true},
-  girly:{far:'#e9a9d2',near:'#cf86ba',street:'#ad6a9f',win:['#fff3b8','#ffe0f4'],winOp:[.6,.85],stars:25,orb:'moon',lamps:'rgba(255,170,215,.6)',bulb:'#fff0f8',post:'#7d3e6d',hearts:true}
-};
-function drawCity(){
-  const svg=$('#city'), r=rng(7), C=CITY[document.documentElement.dataset.theme]||CITY.dark; let h='';
-  h+=`<defs><radialGradient id="moon"><stop offset="0" stop-color="#fff8dc"/><stop offset="1" stop-color="#ffe9a8"/></radialGradient><radialGradient id="lampg"><stop offset="0" stop-color="${C.lamps||'transparent'}"/><stop offset="1" stop-color="rgba(255,255,255,0)"/></radialGradient></defs>`;
-  for(let i=0;i<C.stars;i++) h+=`<circle cx="${r()*1200}" cy="${r()*330}" r="${r()*1.6+.3}" fill="#fff" opacity="${(r()*.6+.2).toFixed(2)}"/>`;
-  if(C.orb==='moon') h+='<circle cx="960" cy="110" r="70" fill="rgba(255,240,190,.10)"/><circle cx="960" cy="110" r="44" fill="url(#moon)"/><circle cx="975" cy="100" r="8" fill="rgba(0,0,0,.06)"/><circle cx="948" cy="124" r="5" fill="rgba(0,0,0,.05)"/>';
-  else h+='<circle cx="960" cy="110" r="90" fill="rgba(255,240,150,.35)"/><circle cx="960" cy="110" r="50" fill="#ffe066"/>';
-  if(C.clouds) [[180,120,1],[520,80,.8],[760,190,.7],[1100,240,.9]].forEach(([x,y,k])=>{ h+=`<g fill="#fff" opacity=".9" transform="translate(${x} ${y}) scale(${k})"><ellipse cx="0" cy="0" rx="60" ry="22"/><ellipse cx="-30" cy="-12" rx="30" ry="22"/><ellipse cx="22" cy="-18" rx="34" ry="26"/></g>`; });
-  if(C.hearts) for(let i=0;i<9;i++){ const x=r()*1150+20, y=r()*300+20, k=.5+r()*.8; h+=`<path transform="translate(${x} ${y}) scale(${k})" d="M0 6C-10-6-22 4-12 14L0 24L12 14C22 4 10-6 0 6Z" fill="#fff" opacity="${(.35+r()*.35).toFixed(2)}"/>`; }
-  const layer=(y0,hmin,hmax,col,win,op)=>{
-    let x=-20;
-    while(x<1220){
-      const w=60+r()*90, hh=hmin+r()*(hmax-hmin), y=y0-hh;
-      h+=`<rect x="${x}" y="${y}" width="${w}" height="${hh+40}" fill="${col}"/>`;
-      if(r()<.35) h+=`<polygon points="${x+w*.15},${y} ${x+w/2},${y-25-r()*30} ${x+w*.85},${y}" fill="${col}"/>`;
-      if(win) for(let wy=y+14; wy<y0-10; wy+=22) for(let wx=x+10; wx<x+w-14; wx+=18)
-        if(r()<.42) h+=`<rect x="${wx}" y="${wy}" width="9" height="12" rx="1" fill="${r()<.8?C.win[0]:C.win[1]}" opacity="${op*(.5+r()*.5)}"/>`;
-      x+=w+r()*6;
-    }
-  };
-  layer(560,120,300,C.far,true,C.winOp[0]);
-  layer(640,80,220,C.near,true,C.winOp[1]);
-  h+=`<rect x="0" y="640" width="1200" height="60" fill="${C.street}"/>`;
-  [150,520,880].forEach(x=>{ h+=`${C.lamps?`<circle cx="${x}" cy="540" r="90" fill="url(#lampg)"/>`:''}<rect x="${x-3}" y="540" width="6" height="100" fill="${C.post}"/><rect x="${x-14}" y="532" width="28" height="12" rx="4" fill="${C.post}"/><circle cx="${x}" cy="546" r="6" fill="${C.bulb}"/>`; });
-  svg.innerHTML=h;
+// Pozadí: scéna podle místa (mapa města / čtvrť) – vybarvuje se a rozsvěcí podle pokroku (fajndetektiv/scena.js)
+let sceneView='home';
+function sceneData(){ const tier={}, prog={};
+  try{ DISTRICTS.forEach(d=>{ d.missions.forEach(m=>tier[m.id]=evTier(m.id)); prog[d.id]=d.missions.filter(m=>tier[m.id]>0).length/d.missions.length; }); }catch(e){}
+  return {tier, prog, solved:Object.values(prog).length>0&&Object.values(prog).every(x=>x>=1)}; }
+// obrázek scény do stránky (nic ho nezakrývá) – výřez bez horní části oblohy
+function sceneBanner(view, cap){ const o=sceneData();
+  return `<div class="scenebanner" data-view="${view}"><svg viewBox="0 140 1200 540" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${FDScene.render({...o, view, theme:document.documentElement.dataset.theme})}</svg>${cap?`<span class="cap">${cap}</span>`:''}</div>`; }
+function drawCity(view){
+  if(view!==undefined) sceneView=view;
+  const tier={}, prog={};
+  try{ DISTRICTS.forEach(d=>{ d.missions.forEach(m=>tier[m.id]=evTier(m.id)); prog[d.id]=d.missions.filter(m=>tier[m.id]>0).length/d.missions.length; }); }catch(e){}
+  document.querySelectorAll('.scenebanner').forEach(b=>b.querySelector('svg').innerHTML=FDScene.render({...sceneData(), view:b.dataset.view, theme:document.documentElement.dataset.theme}));
+  $('#city').innerHTML=FDScene.render({view:sceneView, theme:document.documentElement.dataset.theme, tier, prog, solved:Object.values(prog).length>0&&Object.values(prog).every(x=>x>=1)});
 }
 const PALETTE=['#f28b54','#7bc96f','#6fa8ff','#c084fc','#f6c445','#ff7aa8','#4fd1c5','#e07a5f','#a3b18a','#9b8cff'];
 function suspectSVG(seed, opts={}){
@@ -917,7 +907,7 @@ function locked(district, mission, L){
 }
 
 function home(){
-  game=null;
+  game=null; drawCity('home');
   const r=rankOf(S.xp);
   show(`
     <div class="hero">
@@ -932,6 +922,7 @@ function home(){
       <div class="st"><small>🔍 Stopy</small><b>${clueCount()} / ${DISTRICTS.length}</b></div>
     </button>
     <h2 class="section-title">Mapa města</h2>
+    ${sceneBanner('home', clueCount()===DISTRICTS.length?'🎆 Město zachráněno!':'Čtvrti se rozsvítí, až v nich budeš řešit případy')}
     <div class="districts">
       ${DISTRICTS.map(d=>{ const n=d.missions.length, dn=d.missions.filter(m=>evTier(m.id)).length, st=d.missions.reduce((a,m)=>a+m.levels.reduce((b,L)=>b+(S.stars[m.id+L.lv]||0),0),0), mx=d.missions.reduce((a,m)=>a+m.levels.length*3,0);
         return `<button class="district ${d.soon?'locked':'open'}" ${d.soon?'disabled':`data-act="district" data-id="${d.id}"`}>
@@ -969,10 +960,11 @@ function levelPicker(d,m){
     ${DEMO&&m.levels.some(L=>locked(d,m,L))?'<small class="demo-note">Střední a těžká náročnost jsou v plné verzi.</small>':''}`;
 }
 function district(id){
-  const d=DISTRICTS.find(x=>x.id===id);
+  const d=DISTRICTS.find(x=>x.id===id); drawCity(id);
   show(`
     <button class="back" data-act="home">← Mapa města</button>
     <h2 class="section-title">${d.ico} ${d.name}</h2>
+    ${sceneBanner(d.id, distDone(d)?'✓ Čtvrť vyřešena – stopa získána':'Vyřešená mise tu rozsvítí jednu věc ❔')}
     <div class="missions">
       ${d.missions.map(m=>`<div class="paper mission ${m.soon?'soon':''}">
         <div class="mico">${m.ico}${EVID[m.id]?`<span class="evmini" title="${EVID[m.id][1]}${evTier(m.id)?' – '+TIER_N[evTier(m.id)]:''}" style="${evTier(m.id)?'':'opacity:.3;filter:grayscale(1)'}">${EVID[m.id][0]}</span>`:''}</div>
@@ -985,6 +977,7 @@ function district(id){
 /* ══════════════ HERNÍ JÁDRO ══════════════ */
 function startGame(dId,mId,lv){
   const d=DISTRICTS.find(x=>x.id===dId), m=d.missions.find(x=>x.id===mId), L=m.levels.find(x=>x.lv==lv);
+  drawCity(dId);
   game={d,m,L,i:0,score:0,streak:0,best:0,ok:0,tot:0,lives:L.lives||3,mist:[],done:false,start:Date.now()};
   game.items = BUILD[m.type](L);
   ROUND[m.type]();
@@ -2453,7 +2446,7 @@ function finish(){
   if(['tridirna','vyslech','usvedceni','kovarna','pripad','druhy','shoda','hlidka','jizdni','vyhybka','hlaseni','zdruhy','pasti','patrani','trezor','pokladna','seky','celnice','kompas','razie'].every(id=>DISTRICTS.flatMap(d=>d.missions||[]).find(m=>m.id===id).levels.some(L=>S.stars[id+L.lv]))) give('mesto');
   if(Object.keys(VZORY).every(v=>(S.album[v]||[]).length)) give('album');
   if(S.xp>=1000) give('veteran');
-  save(); updateTop();
+  save(); updateTop(); drawCity();
   const rk=rankOf(S.xp), up=rk.i>prevRank;
   const word=it=>it.noun?it.form:it.w;
   const tier=evTier(g.m.id), newEv=tier>prevTier, nowDist=distDone(g.d), nowAll=clueCount()===DISTRICTS.length;
