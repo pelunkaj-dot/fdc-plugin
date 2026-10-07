@@ -74,10 +74,12 @@ const BADGES = [
 const WORDS = FDZ.WORDS.filter(x=>x.pos>=0);
 const showW = w=>FDZ.SE.has(w)?w+' se':w;
 const isLong = ch=>/[íý]/.test(ch);
+const ctxHTML = x=>{ const c=FDZ.KONTEXT[x.w]; return c ? `<span class="frame ctx">${esc(c).replace('_','<span class="blank gapl">_</span>')}</span><br><small>Pozor, podle smyslu věty: stejně znějící slovo se může psát jinak.</small>` : null; };
 const gapHTML = x=>`${esc(x.w.slice(0,x.pos))}<span class="blank gapl">_</span>${esc(x.w.slice(x.pos+1))}`;
 const fullHTML = (x,cls='')=>`${esc(x.w.slice(0,x.pos))}<b class="crit ${cls}">${esc(x.w[x.pos])}</b>${esc(x.w.slice(x.pos+1))}`;
 const KTYP = {vs:'vyjmenované slovo', pr:'příbuzné slovo', i:'slovo s i (není vyjmenované ani příbuzné)', pre:'předpona vy- / vý-'};
-function whyWord(x){
+function whyWord(x){ return whyWord0(x)+(FDZ.ROZDILMAP[x.w]?`<p class="row">⚠️ Stejně znějící slova: ${FDZ.ROZDILMAP[x.w]}.</p>`:''); }
+function whyWord0(x){
   const P=x.p, c=x.w[x.pos];
   if(x.k==='pre') return `<div class="steps"><span class="step">${fullHTML(x)}</span><span class="arrow">→</span><span class="step">začíná předponou <b>${x.w.slice(0,2)}-</b></span><span class="arrow">→</span><span class="step" style="color:var(--ok)">předpona vy- / vý- se píše vždy s <b>y</b></span></div>`;
   const s1=`<span class="step"><b>${P}</b> je obojetná souhláska</span><span class="arrow">→</span>`;
@@ -131,7 +133,7 @@ function genSazeni(L){
     let pool=WORDS.filter(x=>okw(x) && !out.some(o=>o.x===x)); if(!pool.length) pool=WORDS.filter(x=>okw(x)&&(!out.length||out[out.length-1].x!==x));
     const [x]=weightedPick(pool, w=>1+3*(S.weak['w|'+w.w]||0)+1.5*errRate('pis',w.p), 1); if(!x) continue;
     const c=x.w[x.pos], opts=isLong(c)?['í','ý']:['i','y'];
-    out.push({x, sign:x.w, w:x.w, gap:true, q:'Doplň i, nebo y', sub:`<span class="word big">${gapHTML(x)}</span>`,
+    out.push({x, sign:x.w, w:x.w, gap:true, q:'Doplň i, nebo y', sub:ctxHTML(x)||`<span class="word big">${gapHTML(x)}</span>`,
       opts:opts.map(v=>({v, html:`<b class="big">${v}</b>`})), ok:[c], hint:hintWord(x), why:whyWord(x),
       stats:[['pis',x.p],['typ',x.k]], conf:v=>(/[iyíý]/.test(v)&&/[yý]/.test(c)?'zi|':'zy|')+x.p+(x.k==='pre'?'|pre':''), weak:'w|'+x.w, base:L.lv===1?10:L.lv===2?12:14});
   }
@@ -148,7 +150,7 @@ function genKoreny(L){
     const nOpt=(L.opts||4)-(L.lv>=2?1:0), ok=x.k==='pr'?x.base:NONE;
     let opts=pickN(vsN.filter(v=>v!==ok),nOpt-(x.k==='pr'?1:0)); if(x.k==='pr') opts.push(ok); opts=shuffle(opts).map(v=>({v, html:esc(showW(v))}));
     if(L.lv>=2) opts.push({v:NONE, html:'<b>k žádnému</b><small>píšeme i</small>', cls:'drawer'});
-    out.push({x, sign:x.w, w:x.w, gap:true, q:'Ke kterému vyjmenovanému slovu patří?', sub:`<span class="word big">${gapHTML(x)}</span><br><small>Hledej slovo se stejným kořenem a podobným významem.</small>`,
+    out.push({x, sign:x.w, w:x.w, gap:true, q:'Ke kterému vyjmenovanému slovu patří?', sub:(ctxHTML(x)||`<span class="word big">${gapHTML(x)}</span>`)+`<br><small>Hledej slovo se stejným kořenem a podobným významem.</small>`,
       opts, ok:[ok], hint:`Co slovo <b>${gapHTML(x)}</b> znamená? Zkus postupně slova z řady po ${p} a ptej se: souvisí spolu významem? ${L.lv>=2?'Když nesouvisí s žádným, patří k žádnému.':''}`,
       why: (x.k==='pr' ? `<p><b>${esc(x.w)}</b> je příbuzné s vyjmenovaným slovem <b>${esc(showW(x.base))}</b> (stejný kořen).</p>` : `<p><b>${esc(x.w)}</b> nepatří k žádnému vyjmenovanému slovu po ${p}.</p>`)+whyWord(x),
       stats:[['koren',p],['typ',x.k]], conf:()=>'kor|'+p+(x.k==='i'?'|i':''), weak:'k|'+x.w, base:L.lv===1?12:14});

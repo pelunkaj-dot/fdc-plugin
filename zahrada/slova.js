@@ -92,6 +92,22 @@ const TEXTY = [
  {p:'*', t:'Kocour a myš', s:'Kocour se ob(y)čejně prochází po dvoře. Dnes ale uv(i)děl m(y)š a s(y:syčet)čel na ni. M(y)š se schovala do p(y)tle s ob(i)lím.'}
 ];
 
+// slova, jejichž podoba s opačným i/y je také skutečné slovo (výr × vír…) – zadáváme je jen ve větě, jinak by zadání nebylo jednoznačné
+const KONTEXT = {
+ 'být':'Chci b_t zahradníkem.', 'bít':'Nesmíš b_t psa.', 'byt':'Máme nový b_t ve třetím patře.', 'byl':'Včera b_l krásný den.',
+ 'pobyt':'Pob_t u moře se nám líbil.', 'nabýt':'Musíš nab_t odvahy.', 'odbýt':'Úkol nesmíš jen tak odb_t.', 'lyže':'Do auta jsme naložili l_že.',
+ 'my':'M_ jsme vyhráli!', 'mýt':'Musím si m_t ruce.', 'mít':'Chtěl bych m_t psa.', 'pyl':'Včely sbírají p_l.', 'sít':'Na jaře budeme s_t mrkev.',
+ 'výt':'Vlk začal v_t na měsíc.', 'výr':'V lese houká v_r.', 'vír':'Na řece se točil v_r.', 'vila':'U moře stojí bílá v_la.',
+ 'vytí':'Z lesa se ozývalo vlčí v_tí.', 'zavýt':'Pes začal zav_t.'
+};
+// rozdíl významů u stejně znějících slov (zobrazí se ve vysvětlení)
+const ROZDIL = [['být','existovat, stát se něčím (vyjmenované slovo)','bít','tlouct, uhodit'],['byt','místo, kde bydlíme (vyjmenované slovo)','bit','od slova bít (byl bit)'],
+ ['byl','od slova být','bil','od slova bít (tloukl)'],['pobyt','to, že někde pobýváme (od být)','pobit','od slova pobít (porazit)'],['nabýt','získat (od být)','nabít','doplnit energii (od bít)'],
+ ['odbýt','udělat něco ledabyle (od být)','odbít','odrazit, odbít úder (od bít)'],['lyže','na sníh (vyjmenované slovo)','liže','od slova lízat'],['my','já a ostatní (vyjmenované slovo)','mi','komu? mně'],
+ ['mýt','umývat (vyjmenované slovo)','mít','vlastnit'],['pyl','prášek z květů (vyjmenované slovo)','pil','od slova pít'],['sýt','najedený (od sytý)','sít','sázet semínka'],
+ ['výt','naříkat jako vlk (vyjmenované slovo)','vít','splétat (věnec)'],['výr','sova (vyjmenované slovo)','vír','točící se voda nebo vzduch'],['vyla','od slova výt (vlčice vyla)','vila','velký dům'],
+ ['vytí','od slova výt','vití','od slova vít (vití věnců)'],['zavýt','od slova výt','zavít','zabalit, zavinout']];
+const ROZDILMAP = {}; ROZDIL.forEach(([a,am,b,bm])=>{ const t=`<b>${a}</b> = ${am} × <b>${b}</b> = ${bm}`; ROZDILMAP[a]=t; ROZDILMAP[b]=t; });
 // ── odvozená data ──
 const WORDS = [];   // {w, p:souhláska, k:'vs'|'pr'|'i'|'pre', base, pos:index rozhodujícího písmene}
 const VOWEL = /[iíyý]/;
@@ -113,6 +129,6 @@ const swapIY = ch=>({i:'y',y:'i','í':'ý','ý':'í',I:'Y',Y:'I','Í':'Ý','Ý':
 
 // zvratné „se“ u vyjmenovaných sloves (pro zobrazení řady)
 const SE = new Set('blýskat mýlit nachomýtnout třpytit pýřit čepýřit nazývat'.split(' '));
-const API={SE, ZS, WORDS, VSORDER, DVOJICE, TEXTS, PREDPONA, critPos, swapIY};
+const API={ROZDILMAP, KONTEXT, SE, ZS, WORDS, VSORDER, DVOJICE, TEXTS, PREDPONA, critPos, swapIY};
 if(typeof module!=='undefined'&&module.exports) module.exports=API; else root.FDZ=API;
 })(typeof window!=='undefined'?window:this);

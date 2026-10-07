@@ -45,6 +45,7 @@ Didaktiku nikdy neobětovat kvůli efektu, rychlosti ani zjednodušení kódu.
   Data `zahrada/slova.js` (vyjmenovaná / příbuzná / slova s i, texty s rozhodujícím písmenem v závorce, např. b(y)t,
   sporný základ slova zapsat jako m(y:mýt)jeme), logika `zahrada/hra.js`, scéna `zahrada/scena.js`.
   U volby ze dvou možností (i/y) nesmí jít uhodnout napodruhé – po chybě následuje krok postupu.
+  Slova, jejichž podoba s opačným i/y je také slovo (výr × vír, být × bít, my × mi…), zadávat jen ve větě (KONTEXT).
   Demo = kopie s titulkem „FajnZahrada – demo“, přegenerovat po každé změně.
 - Soubory upravovat Pythonem, ne sedem. Šetřit tokeny.
 - Před pushem vyzkoušet v prohlížeči (Playwright), ideálně i šířku mobilu.
