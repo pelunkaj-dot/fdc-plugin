@@ -357,6 +357,36 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
 
 .profile .head{display:flex;gap:14px;align-items:center}
 .profile .head svg{width:84px;height:100px}
+.rewards{margin:16px 0 4px;padding:14px;border-radius:14px;background:var(--paper2);text-align:left}
+.rewards h3{margin:0 0 10px;font-size:1.15rem;text-align:center}
+.rw-xp>b{font-size:1.4rem;color:var(--f)}
+.rw-xp .xpbar{height:16px}.rw-xp .xpbar i{transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.rw-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:12px 0}
+.evcard{position:relative;width:150px;padding:12px 8px 10px;border-radius:14px;text-align:center;background:#fff;border:3px solid #cfc6b5;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.evcard .evico{font-size:2.6rem;display:block}.evcard b{display:block;font-size:.9rem;margin-top:4px}.evcard small{display:block;font-weight:800;font-size:.75rem;color:var(--ink2)}
+.evcard.t1{border-color:#cd7f32;background:linear-gradient(160deg,#fff,#f6e3cf)}.evcard.t2{border-color:#a9b4c2;background:linear-gradient(160deg,#fff,#e6ebf2)}
+.evcard.t3{border-color:#e4b33a;background:linear-gradient(160deg,#fffbe8,#f7dc86);box-shadow:0 0 0 3px rgba(228,179,58,.35),0 6px 16px rgba(0,0,0,.2)}
+.evcard.t0{opacity:.4;filter:grayscale(1)}.evcard.t0 .evico{filter:blur(1px)}
+.evcard.new{animation:evpop .9s cubic-bezier(.2,1.4,.4,1)}
+.evlbl{position:absolute;top:-11px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--f);color:#fff;font-size:.7rem;font-weight:900;padding:2px 8px;border-radius:999px}
+@keyframes evpop{0%{transform:scale(.3) rotate(-12deg);opacity:0}60%{transform:scale(1.12) rotate(3deg);opacity:1}100%{transform:none}}
+.bigbadge{width:150px;padding:10px 8px;border-radius:14px;background:#fff3c4;border:3px solid var(--lamp2);text-align:center;font-weight:800;animation:evpop .9s}
+.bigbadge .bi{font-size:2.4rem;display:block}.bigbadge small{display:block;font-weight:700;font-size:.75rem;color:var(--ink2)}
+.clue{margin:12px 0;padding:12px 14px;border-radius:12px;background:#fff;border-left:6px solid var(--f);font-weight:700}
+.clue.final{border-left-color:var(--lamp2);background:#fff7d6}
+.goals{margin:10px 0 0;padding-left:20px;font-weight:700}.goals li{margin:4px 0}
+.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:0 0 18px;width:100%;text-align:left;cursor:pointer;font:inherit}
+.status .st{background:var(--paper);color:var(--ink);border-radius:12px;padding:10px 12px;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.status .st b{display:block;font-size:1.25rem}.status .st small{font-weight:800;color:var(--ink2)}
+.status .st.wide{grid-column:span 2}.status .xpbar{margin-top:6px}
+.mystery{margin:22px 0}.mystery .clues{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.mystery .cl{background:var(--paper);color:var(--ink);border-radius:12px;padding:10px;font-weight:700;font-size:.85rem}
+.mystery .cl.off{background:var(--paper2);color:var(--ink2)}.mystery .cl .ci{font-size:1.4rem}
+.dprog{display:block;margin-top:8px;font-size:.8rem;font-weight:900;opacity:.95}
+.dstamp{position:absolute;top:10px;right:10px;font-size:.68rem;font-weight:900;padding:3px 8px;border-radius:6px;border:2px solid currentColor;transform:rotate(6deg);color:var(--lamp)}
+.evgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:10px;justify-items:center}
+.evgrid .evcard{width:100%}
+.mico .evmini{display:block;font-size:.95rem;margin-top:4px}
 .xpbar{height:12px;border-radius:12px;background:#e6d8b8;overflow:hidden;margin:8px 0 2px}
 .xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--lamp),var(--lamp2))}
 .bars{display:grid;gap:7px;margin:10px 0 4px}
@@ -482,7 +512,7 @@ main{max-width:920px;margin:0 auto;padding:18px 16px 60px}
   <span class="sp"></span>
   <span class="chip rank" id="rankChip"></span>
   <button class="chip parent-btn" data-act="parent" title="Přehled pro rodiče"><span class="pb-full">Pro rodiče</span><span class="pb-short">👪</span></button>
-  <button class="iconbtn" data-act="profile" title="Spis detektiva" aria-label="Spis detektiva">📁</button>
+  <button class="chip parent-btn" data-act="profile" title="Spis detektiva – odměny a sbírka"><span class="pb-full">📁 Spis</span><span class="pb-short">📁</span></button>
   <button class="iconbtn theme-btn" data-act="theme" title="Přepnout téma" aria-label="Přepnout téma">🌙</button>
   <button class="iconbtn" data-act="sound" id="soundBtn" title="Zvuk" aria-label="Zvuk">🔊</button>
 </header>
@@ -892,15 +922,26 @@ function home(){
   show(`
     <div class="hero">
       <div class="who bob">${detectiveSVG()}</div>
-      <div class="bubble">Ahoj, já jsem <b>detektiv Tečka</b>! Městem se toulají slova bez papírů. Pomoz mi je vyšetřit – zjistíme o nich všechno.
-        <small>Hodnost: ${r.name}${r.next?` · do další hodnosti chybí ${r.next[0]-S.xp} bodů`:''}</small></div>
+      <div class="bubble">Ahoj, já jsem <b>detektiv Tečka</b>! Městem se toulají slova bez papírů. Pomoz mi je vyšetřit – zjistíme o nich všechno.</div>
     </div>
+    <button class="status" data-act="profile" title="Otevřít spis detektiva">
+      <div class="st wide"><small>🎖️ Hodnost</small><b>${r.name}</b><div class="xpbar"><i style="width:${xpPct(S.xp)}%"></i></div><small>${S.xp} bodů${r.next?` · do hodnosti ${r.next[1]} chybí ${r.next[0]-S.xp}`:''}</small></div>
+      <div class="st"><small>⭐ Hvězdy</small><b>${starsTotal()} / ${starsMax()}</b></div>
+      <div class="st"><small>🗃️ Důkazy</small><b>${evCount()} / ${allMissions().length}</b></div>
+      <div class="st"><small>🏅 Odznaky</small><b>${S.badges.length} / ${BADGES.length}</b></div>
+      <div class="st"><small>🔍 Stopy</small><b>${clueCount()} / ${DISTRICTS.length}</b></div>
+    </button>
     <h2 class="section-title">Mapa města</h2>
     <div class="districts">
-      ${DISTRICTS.map(d=>`<button class="district ${d.soon?'locked':'open'}" ${d.soon?'disabled':`data-act="district" data-id="${d.id}"`}>
-          <span class="glow"></span>${d.soon?'<span class="tag">připravujeme</span>':''}
-          <div class="ico">${d.ico}</div><h3>${d.name}</h3><p>${d.desc}</p></button>`).join('')}
+      ${DISTRICTS.map(d=>{ const n=d.missions.length, dn=d.missions.filter(m=>evTier(m.id)).length, st=d.missions.reduce((a,m)=>a+m.levels.reduce((b,L)=>b+(S.stars[m.id+L.lv]||0),0),0), mx=d.missions.reduce((a,m)=>a+m.levels.length*3,0);
+        return `<button class="district ${d.soon?'locked':'open'}" ${d.soon?'disabled':`data-act="district" data-id="${d.id}"`}>
+          <span class="glow"></span>${d.soon?'<span class="tag">připravujeme</span>':distDone(d)?'<span class="dstamp">STOPA ✓</span>':''}
+          <div class="ico">${d.ico}</div><h3>${d.name}</h3><p>${d.desc}</p>
+          <span class="dprog">⭐ ${st}/${mx} · 🗃️ ${dn}/${n} důkazů</span></button>`; }).join('')}
     </div>
+    <div class="mystery"><h2 class="section-title">🕵️ Hlavní záhada: Kdo krade slovům koncovky?</h2>
+      <div class="clues">${DISTRICTS.map(d=>distDone(d)?`<div class="cl"><span class="ci">${d.ico}</span> ${CLUES[d.id]}</div>`:`<div class="cl off"><span class="ci">❔</span> Stopa z čtvrti <b>${d.name}</b> – vyřeš v ní všechny mise aspoň na 1 ★.</div>`).join('')}</div>
+      ${clueCount()===DISTRICTS.length?`<div class="clue final">🏆 ${FINAL_CLUE}</div>`:''}</div>
     ${DEMO?`<p class="demo-cta">Hraješ ukázku. Všechny úrovně najdeš v plné verzi na <a href="${FULL_URL}" target="_top">fajndoucko.cz</a>.</p>`:''}
   `);
   if(!S.intro) intro();
@@ -910,7 +951,8 @@ function intro(){
   m.innerHTML=`<div class="paper tape"><h2 class="type">Přísně tajné</h2>
     <p>Detektive, potřebujeme tě! Ve městě se objevila slova, o kterých nic nevíme.</p>
     <p>Každé slovo má své <b>mluvnické kategorie</b> – jako otisky prstů. Zjistíš jeho <b>rod</b>, <b>číslo</b> a <b>pád</b> a slovo tím usvědčíš.</p>
-    <p>Za každý vyřešený případ dostaneš body a povýšení. Hodně štěstí!</p>
+    <p>Za každý vyřešený případ dostaneš <b>body</b> a postupně <b>povýšení</b>. Z každé mise si odneseš <b>důkaz do sbírky</b> (bronzový, stříbrný, zlatý) a za vyřešené čtvrti <b>stopy k pachateli</b>, který krade slovům koncovky. Sbírej i <b>odznaky</b>!</p>
+    <p>Všechno najdeš ve <b>Spisu detektiva</b> (tlačítko 📁 nahoře). Hodně štěstí!</p>
     <div class="actions"><button class="btn" data-act="closeintro">Jdu na to!</button></div></div>`;
   document.body.appendChild(m);
 }
@@ -933,7 +975,7 @@ function district(id){
     <h2 class="section-title">${d.ico} ${d.name}</h2>
     <div class="missions">
       ${d.missions.map(m=>`<div class="paper mission ${m.soon?'soon':''}">
-        <div class="mico">${m.ico}</div>
+        <div class="mico">${m.ico}${EVID[m.id]?`<span class="evmini" title="${EVID[m.id][1]}${evTier(m.id)?' – '+TIER_N[evTier(m.id)]:''}" style="${evTier(m.id)?'':'opacity:.3;filter:grayscale(1)'}">${EVID[m.id][0]}</span>`:''}</div>
         <div><h3>${m.name}</h3><p>${m.desc}</p>
         ${m.soon?'<span class="soonchip">připravujeme</span>':levelPicker(d,m)}
         </div></div>`).join('')}
@@ -2356,11 +2398,39 @@ function buildRazie(L){
 }
 
 /* ── Konec případu ── */
+/* ══════════════ HERNÍ VRSTVA: sbírka důkazů, stopy k pachateli, cíle ══════════════ */
+const EVID = {tridirna:['🗝️','Klíč od tří dveří'], vyslech:['💡','Výslechová lampa'], usvedceni:['🖐️','Otisk prstu'], kovarna:['🔨','Kovářské kladivo'], pripad:['📜','Zapečetěný spis'],
+  druhy:['🗂️','Kartotéka'], shoda:['🎨','Paleta barev'], hlidka:['🧐','Lupa hlídky'], jizdni:['🎫','Jízdenka'], vyhybka:['🔀','Klíč od výhybky'], hlaseni:['📢','Megafon'],
+  zdruhy:['🍂','Podepsaný list'], pasti:['🪤','Past na slova'], patrani:['🔦','Baterka'], trezor:['🔐','Kód od trezoru'], pokladna:['💰','Měšec mincí'], seky:['🧾','Podezřelý šek'],
+  celnice:['🛃','Razítko celnice'], kompas:['🧭','Kompas'], razie:['🚨','Policejní maják']};
+const TIER_N = ['', 'bronzový', 'stříbrný', 'zlatý'];
+// stopy k hlavní záhadě – za každou čtvrť, ve které je každá mise vyřešená aspoň na 1 hvězdu
+const CLUES = {pods:'Na Ulici podstatných jmen jsme našli otisk velké boty a fialové pírko z klobouku.',
+  prid:'Svědek na náměstí popsal muže ve fialovém klobouku a dlouhém plášti, který přeházel koncovky přídavných jmen.',
+  slov:'Výpravčí viděl muže ve fialovém klobouku nastupovat do vlaku směrem k přístavu.',
+  zajm:'V parku zůstal dopis podepsaný: „Ten, kdo zamotává slova“.',
+  cisl:'Z banky zmizel klíč od trezoru číslo sedm – a na pultu ležel fialový knoflík.',
+  pristav:'V přístavu někdo viděl fialový plášť mizet v lodi jménem Zmatek.'};
+const FINAL_CLUE = 'Záhada vyřešena! Pachatelem je <b>Pan Zmatek</b> – kouzelník, který zamotával slovům koncovky a pády. Díky tobě vrátil všechna ukradená slova a město zase mluví správně česky. Gratulujeme, šéfe!';
+const allMissions = ()=>DISTRICTS.flatMap(d=>d.missions||[]);
+function evTier(mid){ const m=allMissions().find(x=>x.id===mid); if(!m||!m.levels) return 0;
+  const st=m.levels.map(L=>S.stars[mid+L.lv]||0), hard=m.levels[m.levels.length-1];
+  return S.stars[mid+hard.lv]===3 ? 3 : st.includes(3) ? 2 : st.some(x=>x>0) ? 1 : 0; }
+const distDone = d=>d.missions.every(m=>evTier(m.id)>0);
+const starsTotal = ()=>allMissions().reduce((a,m)=>a+m.levels.reduce((b,L)=>b+(S.stars[m.id+L.lv]||0),0),0);
+const starsMax = ()=>allMissions().reduce((a,m)=>a+m.levels.length*3,0);
+const evCount = ()=>allMissions().filter(m=>evTier(m.id)>0).length;
+const clueCount = ()=>DISTRICTS.filter(distDone).length;
+function evCard(mid,label,isNew){ const [ico,name]=EVID[mid]||['❔','Důkaz'], t=evTier(mid);
+  return `<div class="evcard t${t} ${isNew?'new':''}">${label?`<span class="evlbl">${label}</span>`:''}<span class="evico">${ico}</span><b>${name}</b><small>${t?TIER_N[t]+' důkaz':'zatím nenalezeno'}</small></div>`; }
+function evHow(t){ return t>=3 ? 'Důkaz je zlatý – lepší už to nejde!' : t===2 ? 'Získej 3 ★ na Těžké a důkaz zezlátne.' : 'Získej 3 ★ a důkaz bude stříbrný.'; }
+function xpPct(xp){ const r=rankOf(xp), from=RANKS[r.i][0]; return r.next ? Math.round((xp-from)/(r.next[0]-from)*100) : 100; }
+
 function finish(){
   const g=game; if(g.done) return; g.done=true;
   const acc=g.tot?g.ok/g.tot:0, failed=g.lives<=0;
   const stars=failed?0: acc>=.9?3 : acc>=.75?2 : acc>=.5?1 : 0;
-  const key=g.m.id+g.L.lv, prevRank=rankOf(S.xp).i;
+  const key=g.m.id+g.L.lv, prevRank=rankOf(S.xp).i, prevPct=xpPct(S.xp), prevTier=evTier(g.m.id), prevDist=distDone(g.d), prevAll=clueCount()===DISTRICTS.length;
   S.stars[key]=Math.max(S.stars[key]||0,stars);
   S.xp+=g.score; logTime();
   S.hist=S.hist||[]; S.hist.unshift({t:Date.now(), m:g.m.name, lv:g.L.lv, st:stars, acc:Math.round(acc*100), n:g.tot}); S.hist.length=Math.min(S.hist.length,40);
@@ -2386,6 +2456,24 @@ function finish(){
   save(); updateTop();
   const rk=rankOf(S.xp), up=rk.i>prevRank;
   const word=it=>it.noun?it.form:it.w;
+  const tier=evTier(g.m.id), newEv=tier>prevTier, nowDist=distDone(g.d), nowAll=clueCount()===DISTRICTS.length;
+  const left=g.d.missions.filter(m=>!evTier(m.id)).length;
+  const goals=[];
+  if(tier<3) goals.push(evHow(tier));
+  if(!nowDist) goals.push(`Vyřeš ještě ${left} ${left===1?'misi':left<5?'mise':'misí'} v této čtvrti a získáš stopu k pachateli.`);
+  if(rk.next) goals.push(`Do hodnosti <b>${rk.next[1]}</b> ti chybí ${rk.next[0]-S.xp} bodů.`);
+  const rewards=`<div class="rewards"><h3>🎁 Tvoje odměny</h3>
+    <div class="rw-xp"><b>+${g.score} bodů</b> <small>(celkem ${S.xp})</small>
+      <div class="xpbar"><i id="rwxp" style="width:${up?0:prevPct}%" data-to="${xpPct(S.xp)}"></i></div>
+      <small><b>${rk.name}</b>${rk.next?` → ${rk.next[1]}`:' – nejvyšší hodnost'}</small></div>
+    ${up?`<div class="rankup">🎉 Povýšení! Nová hodnost: ${rk.name}</div>`:''}
+    <div class="rw-row">${evCard(g.m.id, newEv ? (prevTier ? 'DŮKAZ VYLEPŠEN!' : 'NOVÝ DŮKAZ!') : (tier?'tvůj důkaz':''), newEv)}
+      ${earned.map(b=>`<div class="bigbadge"><span class="bi">${b.ico}</span>${b.name}<small>Nový odznak! ${b.d}</small></div>`).join('')}</div>
+    ${!failed&&!tier?'<p style="text-align:center;font-weight:700">Důkaz z této mise získáš, až případ vyřešíš aspoň na 1 ★.</p>':''}
+    ${nowDist&&!prevDist?`<div class="clue">🔍 <b>Nová stopa k pachateli!</b><br>${CLUES[g.d.id]}</div>`:''}
+    ${nowAll&&!prevAll?`<div class="clue final">🏆 ${FINAL_CLUE}</div>`:''}
+    ${goals.length?`<b>Další cíle:</b><ul class="goals">${goals.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}
+  </div>`;
   show(`<div class="paper tape result">
     <h2 class="type" style="color:var(--ink)">${failed?'Podezřelí utekli…':'Případ uzavřen'}</h2>
     <div style="margin:10px 0"><span class="stamp ${failed?'':'ok'}">${failed?'NEDOŘEŠENO':'VYŘEŠENO'}</span></div>
@@ -2395,15 +2483,15 @@ function finish(){
       <div class="stat"><b>${Math.round(acc*100)} %</b><small>úspěšnost</small></div>
       <div class="stat"><b>${g.best}</b><small>nejdelší série</small></div>
     </div>
-    ${up?`<div class="rankup">🎉 Povýšení! Nová hodnost: ${rk.name}</div>`:''}
-    ${earned.map(b=>`<span class="newbadge">${b.ico} ${b.name}</span>`).join('')}
+    ${rewards}
     ${g.mist.length?`<div class="mistakes"><b>Na tyhle si posvítíme příště:</b><ul>${g.mist.map(it=>`<li>${esc(word(it))}${it.presteps?` – ${it.summary}`:it.vs?` – ${catsTxt(it.kind,it.key)}`:it.a?` – ${DRUH[it.a.druh]} (vzor ${it.a.vzor})`:it.sub&&it.ok?` – ${esc(it.ok[0])} ${esc(it.sign)}`:it.story?` – spis „${esc(it.story.t)}“`:it.forge?` – ${it.p}. pád, ${CIS[it.c]}: ${esc(forgeTargets(it)[0])}`:it.vz?` – vzor ${esc(it.noun.vzor)} (bez ${esc(it.noun.gen)})`:it.noun?` – ${ROD[it.noun.rod].ukaz} ${esc(it.noun.sg)}, ${ROD[it.noun.rod].name} rod`:` – ${it.p}. pád`}</li>`).join('')}</ul></div>`:''}
     <div class="actions">
       <button class="btn" data-act="play" data-d="${g.d.id}" data-m="${g.m.id}" data-lv="${g.L.lv}">↻ Znovu</button>
       <button class="btn dark" data-act="district" data-id="${g.d.id}">Zpět na ulici</button>
     </div></div>
     ${DEMO?`<p class="demo-cta">Další úrovně čekají v plné verzi na <a href="${FULL_URL}" target="_top">fajndoucko.cz</a>.</p>`:''}`);
-  if(stars>=2){ sfx.win(); confetti(); }
+  setTimeout(()=>{ const x=$('#rwxp'); if(x) x.style.width=x.dataset.to+'%'; },350);
+  if(stars>=2||newEv||earned.length){ sfx.win(); confetti(); }
 }
 
 /* ── Spis detektiva ── */
@@ -2418,13 +2506,19 @@ function profile(){
         <b style="color:var(--f)">${r.name}</b> · ${S.xp} bodů
         <div class="xpbar"><i style="width:${pct}%"></i></div>
         <small style="color:var(--ink2);font-weight:800">${r.next?`Do hodnosti ${r.next[1]}: ${to-S.xp} bodů`:'Nejvyšší hodnost!'}</small></div></div>
+      <h3>🗃️ Sbírka důkazů (${evCount()} / ${allMissions().length})</h3>
+      <p style="margin:4px 0 0;color:var(--ink2);font-weight:700">Za každou vyřešenou misi získáš důkaz: bronzový za vyřešení, stříbrný za 3 ★, zlatý za 3 ★ na Těžké.</p>
+      <div class="evgrid">${allMissions().map(m=>evCard(m.id)).join('')}</div>
+      <h3>🔍 Stopy k pachateli (${clueCount()} / ${DISTRICTS.length})</h3>
+      ${DISTRICTS.map(d=>`<div class="clue" style="${distDone(d)?'':'opacity:.55'}">${d.ico} ${distDone(d)?CLUES[d.id]:`Zatím neznámá – vyřeš všechny mise ve čtvrti ${d.name}.`}</div>`).join('')}
+      ${clueCount()===DISTRICTS.length?`<div class="clue final">🏆 ${FINAL_CLUE}</div>`:''}
       <h3>Rod</h3><div class="bars">${['M','F','N'].map(k=>bar(ROD[k].name,S.stats.rod[k],ROD[k].color)).join('')}</div>
       <h3>Číslo</h3><div class="bars">${bar('jednotné',S.stats.cislo.sg,'var(--lamp2)')}${bar('množné',S.stats.cislo.pl,'var(--lamp2)')}</div>
       <h3>Životnost (mužský rod)</h3><div class="bars">${bar('životný',(S.stats.ziv||{}).a,'var(--m)')}${bar('neživotný',(S.stats.ziv||{}).i,'var(--m)')}</div>
       <h3>Pády</h3><div class="bars">${[1,2,3,4,5,6,7].map(p=>bar(`${p}. ${PAD[p].q}`,S.stats.pad[p],'var(--m)')).join('')}</div>
       <h3>Album gangů</h3><div class="album">${Object.keys(VZORY).map(v=>{ const w=S.album[v]||[], a=(S.stats.vzor||{})[v];
         return `<div class="gang ${w.length?'':'off'}" style="border-top-color:${ROD4[VZORY[v].rod].col}">${gangSVG(v)}<b>${v}</b><small>${w.length?`${w.length} ${w.length===1?'slovo':w.length<5?'slova':'slov'}${a&&a[1]?` · ${Math.round(a[0]/a[1]*100)} %`:''}`:'zatím nikdo'}</small>${w.length?`<span class="words">${w.slice(-4).map(esc).join(', ')}</span>`:''}</div>`; }).join('')}</div>
-      <h3>Odznaky</h3><div class="badges">${BADGES.map(b=>`<div class="badge ${S.badges.includes(b.id)?'':'off'}"><span class="bi">${b.ico}</span>${b.name}<br><small style="color:var(--ink2)">${b.d}</small></div>`).join('')}</div>
+      <h3>🏅 Odznaky (${S.badges.length} / ${BADGES.length})</h3><div class="badges">${BADGES.map(b=>`<div class="badge ${S.badges.includes(b.id)?'':'off'}"><span class="bi">${b.ico}</span>${b.name}<br><small style="color:var(--ink2)">${b.d}</small></div>`).join('')}</div>
       <p style="color:var(--ink2);font-weight:700;margin-top:16px">Výsledky může vynulovat jen rodič v sekci <b>Pro rodiče</b>.</p>
     </div>`);
 }
