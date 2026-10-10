@@ -1,39 +1,20 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
-const base='http://127.0.0.1:8123/';
-const demo=await browser.newPage({viewport:{width:390,height:800}});
-try {
- await demo.goto(base+'vyrazy-demo.html',{waitUntil:'load'});
- await demo.locator('#expression').waitFor();
- assert.ok((await demo.locator('#expression').textContent()).length>1);
- const width=await demo.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
- assert.ok(width<=1,'mobile horizontal overflow '+width);
- await demo.locator('#parentButton').click();
- assert.match(await demo.locator('#parentData').textContent(),/V plné verzi rodiče/);
- await demo.locator('#parentClose').click();
- for(let i=0;i<12;i++){
-  const correct=await demo.evaluate(()=>window.VyrazyTest.getState().problem.answer);
-  await demo.locator('#answer').fill(String(correct));
-  await demo.locator('#answer').press('Enter');
-  assert.equal(await demo.locator('#next').isVisible(),true,'next button missing after correct result');
-  await demo.keyboard.press('Enter');
- }
- assert.equal(await demo.locator('#demoEnd').isVisible(),true,'demo limit not enforced');
- await demo.reload();
- assert.equal(await demo.locator('#demoEnd').isVisible(),true,'demo limit reset by reload');
- const full=await browser.newContext();
- await full.addInitScript(()=>sessionStorage.setItem('fdc-guard-ok','1'));
- const page=await full.newPage();
- await page.goto(base+'vyrazy.html',{waitUntil:'load'});
- await page.locator('#parentButton').click();
- await page.locator('#parentPassword').fill('test1234');
- await page.locator('#parentUnlock').click();
- assert.equal(await page.locator('#parentActions').isVisible(),true,'parent password setup failed');
- assert.match(await page.locator('#parentData').textContent(),/Vyřešeno/);
- await page.locator('#parentClose').click();
- await page.locator('#topic').selectOption('2');
- assert.ok((await page.locator('#expression').textContent()).length>0);
- await full.close();
- console.log('PASS: mobile layout, Enter, demo limit/persistence, parent controls and topic selection');
-} finally {await demo.close();await browser.close()}
+import fs from 'node:fs';
+const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{}),args:['--no-sandbox','--no-zygote','--disable-dev-shm-usage']});
+const base=process.env.BASE_URL||'http://127.0.0.1:8123/';const names=['vyrazy','vyrazy-promenne','mnohocleny'];fs.mkdirSync('test-results',{recursive:true});let solved=0;const errors=[];
+async function solve(page){const answer=await page.evaluate(()=>ExpressionApp.getState().task.answer);await page.locator('#answer').fill(answer);await page.locator('#answer').press('Enter');assert(await page.locator('#next').isVisible());solved++;}
+try{
+for(const name of names){const ctx=await browser.newContext({viewport:{width:390,height:844}}),page=await ctx.newPage();page.on('pageerror',e=>errors.push(name+': '+e.message));await page.goto(base+name+'-demo.html');await page.locator('#answer').waitFor();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'mobile overflow '+name);await page.screenshot({path:'test-results/'+name+'-mobile.png',fullPage:true});assert(await page.locator('#lesson').isVisible());assert.match(await page.locator('#sample').textContent(),/Vyřešený vzor/);await page.locator('#practice').click();assert.equal(await page.locator('#lesson').isVisible(),false);await page.locator('#answer').fill('123');await page.reload();assert.equal(await page.locator('#answer').inputValue(),'123');await page.locator('#parentButton').click();assert.match(await page.locator('#parentInfo').textContent(),/V plné verzi/);assert.equal(await page.locator('#parentLogin').isVisible(),false);await page.locator('#parentClose').click();
+for(let i=0;i<18;i++){await solve(page);await page.keyboard.press('Enter')};assert(await page.locator('#demoEnd').isVisible());await page.reload();assert(await page.locator('#demoEnd').isVisible());await page.locator('#parentButton').click();await page.locator('#parentClose').click();assert(await page.locator('#demoEnd').isVisible());await ctx.close();}
+// Direct entry must redirect to each public demo; no authorized session is supplied.
+for(const name of [...names,'vyrazy-rozcestnik']){const ctx=await browser.newContext(),p=await ctx.newPage();await p.goto(base+name+'.html');await p.waitForURL('**/'+name+'-demo.html');assert.equal(await p.evaluate(()=>getComputedStyle(document.documentElement).visibility),'visible');await ctx.close()}
+const ctx=await browser.newContext({viewport:{width:1440,height:1000}});await ctx.addInitScript(()=>sessionStorage.setItem('fdc-guard-ok','1'));const page=await ctx.newPage();page.on('pageerror',e=>errors.push(e.message));
+for(const name of names){await page.goto(base+name+'.html');await page.locator('#practice').click();const topicCount=await page.locator('#topic option').count();for(let t=0;t<topicCount;t++)for(let l=0;l<3;l++){await page.locator('#topic').selectOption(String(t));await page.locator('#level').selectOption(String(l));await solve(page);await page.locator('#next').click();}await page.screenshot({path:'test-results/'+name+'-desktop.png',fullPage:true});await page.locator('#parentButton').click();await page.locator('#parentPassword').fill('matematika123');await page.locator('#parentUnlock').click();await page.locator('#parentActions').waitFor();assert.match(await page.locator('#parentData').textContent(),/Chybné pokusy/);await page.locator('#parentClose').click();await page.locator('#parentButton').click();await page.locator('#parentPassword').fill('spatneHeslo');await page.locator('#parentUnlock').click();await page.waitForFunction(()=>document.querySelector('#parentInfo').textContent.includes('Nesprávné'));assert.equal(await page.locator('#parentActions').isVisible(),false);await page.locator('#parentClose').click();}
+// Retrying, hints, skip accounting, next on Enter and teaching progression.
+await page.goto(base+'vyrazy.html');await page.locator('#topic').selectOption('0');await page.locator('#level').selectOption('0');await page.locator('#teach').click();for(let i=0;i<3;i++){await solve(page);await page.keyboard.press('Enter')}assert.match(await page.locator('#phase').textContent(),/Princip ověřen/);await page.locator('#practice').click();for(let i=0;i<2;i++){await page.locator('#answer').fill('999999999');await page.locator('#check').click()}assert.match(await page.locator('#feedback').textContent(),/nápovědu/);await page.locator('#hint').click();await page.locator('#answer').fill('999999999');await page.locator('#check').click();assert(await page.locator('#explain').isVisible());await page.keyboard.press('Enter');const before=await page.evaluate(()=>ExpressionApp.getState().stats.skips);await page.locator('#skip').click();assert.equal(await page.evaluate(()=>ExpressionApp.getState().stats.skips),before+1);
+await page.keyboard.press('Enter');await page.locator('#answer').fill('x');await page.locator('#power').click();assert.equal(await page.locator('#answer').inputValue(),'x^2');await page.locator('#theme').click();assert.equal(await page.locator('body').getAttribute('data-theme'),'dark');await page.screenshot({path:'test-results/dark.png',fullPage:true});await page.locator('#sound').click();assert.match(await page.locator('#sound').textContent(),/vypnutý/);await page.locator('#game').click();assert.equal(await page.locator('#world').isVisible(),false);await page.locator('#game').click();
+await page.locator('#parentButton').click();await page.locator('#parentPassword').fill('matematika123');await page.locator('#parentUnlock').click();await page.locator('#parentActions').waitFor();await page.locator('[data-target]').first().click();assert(await page.locator('#exercise').isVisible());assert.equal(await page.evaluate(()=>ExpressionApp.getState().sel.mode),'practice');await page.locator('#parentButton').click();await page.locator('#parentPassword').fill('matematika123');await page.locator('#parentUnlock').click();await page.locator('#parentActions').waitFor();page.once('dialog',d=>d.accept());await page.locator('#parentReset').click();await page.locator('#parentClose').click();assert.equal(await page.evaluate(()=>ExpressionApp.getState().stats.done),0);
+const stored=await page.evaluate(()=>JSON.stringify(localStorage));assert(!stored.includes('matematika123'),'plaintext password');
+assert.equal(errors.length,0,errors.join('\n'));console.log(`PASS: ${solved} UI solutions, every topic/difficulty, three demo limits/reloads, guard redirects, parent setup/denial/reset/target practice, teaching progression, retries/hints/skips, powers, themes, sound/game toggle, mobile layout. No page errors.`);await ctx.close();
+}finally{await browser.close()}

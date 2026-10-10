@@ -2,7 +2,7 @@ name: Test Vyrazy
 on:
   push:
     paths:
-      - 'vyrazy-core.js'
+      - 'vyrazy*.js'
       - 'vyrazy.html'
       - 'vyrazy-demo.html'
       - 'tests/vyrazy.test.cjs'

@@ -1,14 +1,9 @@
 name: Test algebra
 on:
   push:
-    paths:
-      - 'algebra-core.js'
-      - 'tests/algebra.test.cjs'
-      - '.github/workflows/test-algebra.yml'
+    paths: ['algebra-core.js', 'vyrazy*.js', 'tests/algebra.test.cjs', 'tests/vyrazy.state.test.cjs', '.github/workflows/test-algebra.yml']
   pull_request:
-    paths:
-      - 'algebra-core.js'
-      - 'tests/algebra.test.cjs'
+    paths: ['algebra-core.js', 'vyrazy*.js', 'tests/algebra.test.cjs']
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,5 +12,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --check algebra-core.js
+      - run: node --check algebra-core.js && node --check vyrazy-app.js
       - run: node tests/algebra.test.cjs
+      - run: node tests/vyrazy.state.test.cjs
