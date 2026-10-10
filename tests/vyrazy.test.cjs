@@ -22,3 +22,28 @@ seen.add(t+'/'+l+'/'+p.text)
 }
 assert.ok(seen.size>500,'Insufficient exercise variety: '+seen.size);
 console.log('PASS: 6 topics, 3 difficulties, 6300 generated exercises, independent AST calculation and variation ('+seen.size+' unique)');
+
+const first=api.getState().problem;
+assert.ok(first.text.length>0);
+assert.equal(api.getState().mode,'teach');
+el('answer').value=String(first.answer);
+api.check();
+assert.equal(api.getState().stage,'finished','final answer accepted in guided mode');
+assert.equal(api.getState().stats.done,1);
+assert.equal(api.getState().stats.right,1);
+api.next();
+const second=api.getState().problem;
+el('answer').value='9999999';api.check();
+assert.equal(api.getState().attempt,1);
+el('answer').value='9999999';api.check();
+assert.equal(api.getState().attempt,2);
+api.hint();
+assert.equal(api.getState().stats.hints,1);
+el('answer').value=String(second.answer);api.check();
+assert.equal(api.getState().stats.done,2);
+assert.equal(api.getState().stats.incorrectAttempts,2);
+assert.ok(store.has('fdc-vyrazy-v3'),'Progress persisted locally');
+api.next();
+api.finish(false,true);
+assert.equal(api.getState().stats.skips,1);
+console.log('PASS: guided final answer, retries, hints, skip and persisted progress');
