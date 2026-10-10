@@ -80,14 +80,14 @@ function draw(){
  renderWorld();renderOptions();
  $('teach').classList.toggle('chosen',mode==='teach');$('practice').classList.toggle('chosen',mode==='practice');
  $('expression').textContent=problem.text;
- $('rule').textContent=mode==='teach'?'Pravidlo: '+problem.rule:'Urči hodnotu výrazu. Můžeš zadat i správný mezivýsledek.';
+ $('rule').textContent=mode==='teach'?'Nauč mě to — '+problem.rule+' Nejprve si rozmysli první operaci. Můžeš napsat její výsledek a pak pokračovat k celému výrazu.':'Procvičování — urči hodnotu výrazu. Můžeš zadat i správný mezivýsledek.';
  $('answer').value='';$('answer').disabled=false;
  $('answer').placeholder='Tvoje odpověď';
  $('check').hidden=false;$('next').hidden=true;$('hint').hidden=false;$('skip').hidden=false;
  $('explain').hidden=true;$('explain').textContent='';
  $('feedback').textContent='';$('feedback').className='feedback';
  attempt=0;hinted=false;stage='answer';pendingStep=null;
- if(DEMO){$('demoCounter').textContent='Ukázka: '+stats.done+' / '+LIMIT+' úloh';}
+ if(DEMO){$('demoCounter').textContent='Ukázka: '+stats.done+' / '+LIMIT+' úloh';$('level').disabled=true;}
  $('answer').focus();
 }
 function finish(ok,skipped){
@@ -111,7 +111,7 @@ function check(){
  if(Math.abs(val-problem.answer)<1e-8){finish(true,false);return}
  if(problem.intermediates.some(x=>Math.abs(x-val)<1e-8)&&val!==pendingStep){
  pendingStep=val;setMessage('Ano, '+fmt(val)+' je správný mezivýsledek. Teď dopočítej celý výraz.','good');$('answer').value='';return}
- attempt++;play(false);
+ attempt++;stats.incorrectAttempts=(stats.incorrectAttempts||0)+1;safeSave();play(false);
  if(attempt===1){setMessage('Zkus to znovu. Zaměř se na pořadí operací.','warn');$('answer').value='';return}
  if(attempt===2){setMessage('Druhý pokus nevyšel. Můžeš pokračovat, nebo otevřít nápovědu.','warn');$('answer').value='';return}
  if(!hinted){hint();setMessage('Použij pravidlo z nápovědy a zkus další pokus.','warn');$('answer').value='';return}
@@ -131,7 +131,7 @@ function showDemoEnd(){
 }
 function statsTable(){
  const rows=Object.entries(stats.cells).map(([key,v])=>{const [t,l]=key.split('-').map(Number);return '<tr><td>'+topics[t][1]+'</td><td>'+levels[l]+'</td><td>'+v.done+'</td><td>'+v.right+'</td><td>'+v.hints+'</td><td>'+v.skips+'</td></tr>'}).join('');
- $('parentData').innerHTML='<p>Vyřešeno: <b>'+stats.done+'</b> · Správně: <b>'+stats.right+'</b> · Chybně nebo s vysvětlením: <b>'+stats.wrong+'</b> · Napoprvé: <b>'+stats.first+'</b> · Nápovědy: <b>'+stats.hints+'</b> · Přeskočeno: <b>'+stats.skips+'</b></p><div class="tablewrap"><table><thead><tr><th>Téma</th><th>Obtížnost</th><th>Úloh</th><th>Správně</th><th>Nápověd</th><th>Přeskočeno</th></tr></thead><tbody>'+rows+'</tbody></table></div><p>Aktivita po dnech: '+Object.entries(stats.days).slice(-14).map(([d,n])=>d+': '+n).join(' · ')+'</p><p>Statistiky se ukládají pouze v tomto prohlížeči, nesynchronizují se mezi zařízeními.</p>';
+ $('parentData').innerHTML='<p>Vyřešeno: <b>'+stats.done+'</b> · Správně: <b>'+stats.right+'</b> · Chybně dokončeno: <b>'+stats.wrong+'</b> · Chybné pokusy: <b>'+(stats.incorrectAttempts||0)+'</b> · Napoprvé: <b>'+stats.first+'</b> · Nápovědy: <b>'+stats.hints+'</b> · Přeskočeno: <b>'+stats.skips+'</b></p><div class="tablewrap"><table><thead><tr><th>Téma</th><th>Obtížnost</th><th>Úloh</th><th>Správně</th><th>Nápověd</th><th>Přeskočeno</th></tr></thead><tbody>'+rows+'</tbody></table></div><p>Aktivita po dnech: '+Object.entries(stats.days).slice(-14).map(([d,n])=>d+': '+n).join(' · ')+'</p><p>Statistiky se ukládají pouze v tomto prohlížeči, nesynchronizují se mezi zařízeními.</p>';
 }
 function hash(p,salt){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+':'+p)).then(buf=>Array.from(new Uint8Array(buf),x=>x.toString(16).padStart(2,'0')).join(''))}
 function getAuth(){try{return JSON.parse(localStorage.getItem('fdc-vyrazy-parent-v3'))}catch(e){return null}}
@@ -157,7 +157,7 @@ function reset(){if(!confirm('Opravdu chceš smazat všechny výsledky dítěte?
 function init(){
  document.body.dataset.theme=localStorage.getItem('fdc-vyrazy-theme')||'light';
  $('topic').addEventListener('change',e=>{topic=Number(e.target.value);next()});
- $('level').addEventListener('change',e=>{level=Number(e.target.value);next()});
+ $('level').addEventListener('change',e=>{level=DEMO?0:Number(e.target.value);next()});
  $('teach').onclick=()=>{mode='teach';next()};
  $('practice').onclick=()=>{mode='practice';next()};
  $('check').onclick=check;$('next').onclick=next;$('hint').onclick=hint;$('skip').onclick=()=>finish(false,true);
