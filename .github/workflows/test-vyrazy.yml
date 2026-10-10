@@ -1,0 +1,19 @@
+name: Test Vyrazy
+on:
+  push:
+    paths:
+      - 'vyrazy-core.js'
+      - 'vyrazy.html'
+      - 'vyrazy-demo.html'
+      - 'tests/vyrazy.test.cjs'
+      - '.github/workflows/test-vyrazy.yml'
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tests/vyrazy.test.cjs
