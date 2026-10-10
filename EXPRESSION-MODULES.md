@@ -1,8 +1,10 @@
 # Rodina modulů Výrazy — stav připraveného vydání
 
-Tři moduly: číselné výrazy (8 oblastí), výrazy s proměnnými (8 oblastí), mnohočleny (9 oblastí). V každé oblasti jsou tři obtížnosti s rozdílnou strukturou úloh. Generátory, krátké lekce a vyřešené vzory jsou v `vyrazy-content.js`; uživatelský postup je v `vyrazy-app.js`.
+Tři moduly: číselné výrazy (8 oblastí), výrazy s proměnnými (7 oblastí), mnohočleny (9 oblastí). V každé oblasti jsou tři obtížnosti s rozdílnou strukturou úloh. Generátory, krátké lekce a vyřešené vzory jsou v `vyrazy-content.js`; uživatelský postup je v `vyrazy-app.js`.
 
 ## Výuka a odpovědi
+
+Výrazy s proměnnými a mnohočleny vyžadují symbolické úpravy, bez dosazování hodnot. Výuka začíná výrazem `3(x+2)+2y-5(x+y)-2x+6y` a vede přes roznásobení a sloučení členů k `-4x+3y+6`. Další oblasti zahrnují více závorek, mocniny, všechny tři základní vzorce, vytýkání a rozklad rozdílu čtverců. Správné mezikroky se zobrazují jako žákův postup. Staré rozpracované úlohy s dosazováním se neobnovují; plné statistiky zůstávají zachovány.
 
 Lekce postupuje od pravidla a vyřešeného vzoru přes vedený úkol a samostatný úkol k ověření principu. K postupu lekcí se počítají úlohy vyřešené bez chyby a nápovědy; jinak dostane žák další variantu pro upevnění. Procvičování je samostatný režim bez vedení. Téma i obtížnost jsou volně přístupné.
 
@@ -24,8 +26,8 @@ Všechny statistiky jsou místní; neprobíhá synchronizace mezi zařízeními.
 
 ## Ověření
 
-- `node tests/algebra.test.cjs`: 75 000 úloh, kontrola výsledků nezávislým interpretem stromu, kontroly koeficientů/stupně, nejméně 262 unikátních variant na oblast/obtížnost ve vzorku. Regresní kontroly přesné aritmetiky, mocnin, znamének, vstupů a požadovaného tvaru.
+- `node tests/algebra.test.cjs`: 72 000 úloh, kontrola výsledků nezávislým interpretem stromu, kontroly koeficientů/stupně, nejméně 262 unikátních variant na oblast/obtížnost ve vzorku. Regresní kontroly přesné aritmetiky, mocnin, znamének, vstupů a požadovaného tvaru.
 - `node tests/vyrazy.state.test.cjs`: výukový postup, obnovení vstupu/úlohy, chybové pokusy, nápovědy, přeskočení, heslo, zamítnutí přístupu, reset, limity dem a opětovné otevření.
-- `node tests/vyrazy.browser.mjs`: Chromium, 132 řešení, všechny oblasti a obtížnosti, mobil 390 × 844 a desktop 1440 × 1000, Enter, dema a obnovení, přesměrování guardu, rodiče, cílené procvičování, reset, výuka, nápověda, přeskočení, vložení mocniny, vzhled, zvuk, herní přepínač. Bez chyb JavaScriptu a bez vodorovného přetékání. Snímky se ukládají jen pro kontrolu a necommitují se.
+- `node tests/vyrazy.browser.mjs`: Chromium, 130 řešení, všechny oblasti a obtížnosti, mobil 390 × 844 a desktop 1440 × 1000, Enter, dema a obnovení, přesměrování guardu, rodiče, cílené procvičování, reset, výuka, nápověda, přeskočení, vložení mocniny, vzhled, zvuk, herní přepínač. Bez chyb JavaScriptu a bez vodorovného přetékání. Snímky se ukládají jen pro kontrolu a necommitují se.
 
-Lokální testy prošly. Připravené změny byly se souhlasem uživatele nahrány do main jako commit b868b8a3cfd982576add816e05cf06a306c36041 (obsah je totožný s lokálními commity 2d0716f a b08fa9b). V GitHub Actions prošly matematické testy, stavové testy, 132 prohlížečových řešení, vložení guardu i sestavení a nasazení Pages. Všech osm veřejných adres modulů, dem a rozcestníků vrací HTTP 200 s novým obsahem.
+Lokální matematické, stavové a prohlížečové testy prošly po přepracování algebraické výuky.
