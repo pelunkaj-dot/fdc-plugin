@@ -24,7 +24,17 @@ const N=n=>({t:'n',v:n});
 const O=(op,a,b)=>({t:'o',op,a,b});
 const NEG=a=>({t:'neg',a});
 function value(n){if(n.t==='n')return n.v;if(n.t==='neg')return -value(n.a);const a=value(n.a),b=value(n.b);return n.op==='+'?a+b:n.op==='−'?a-b:n.op==='×'?a*b:a/b;}
-function render(n){if(n.t==='n')return fmt(n.v);if(n.t==='neg')return '−('+render(n.a)+')';return '('+render(n.a)+' '+n.op+' '+render(n.b)+')';}
+function render(n,parentPrec=0,isRight=false,parentOp=''){
+ if(n.t==='n')return n.v<0?'('+fmt(n.v)+')':fmt(n.v);
+ if(n.t==='neg')return '−('+render(n.a)+')';
+ const prec=n.op==='+'||n.op==='−'?1:2;
+ const left=render(n.a,prec,false,n.op);
+ let right=render(n.b,prec,true,n.op);
+ if(n.b.t==='neg'){right='('+right+')'}
+ const joined=left+' '+n.op+' '+right;
+ const wrap=prec<parentPrec||(isRight&&prec===parentPrec&&(parentOp==='−'||parentOp==='÷'));
+ return wrap?'('+joined+')':joined;
+}
 function collect(n,arr){if(n.t==='n')return;n.t==='neg'?collect(n.a,arr):(collect(n.a,arr),collect(n.b,arr));arr.push(value(n));}
 function leaf(a,b,op){return O(op,N(a),N(b))}
 function workNodes(n){if(n.t==='n')return [];if(n.t==='neg')return [...workNodes(n.a),n];return [...workNodes(n.a),...workNodes(n.b),n]}
