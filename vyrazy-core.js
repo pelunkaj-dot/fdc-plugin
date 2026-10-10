@@ -9,13 +9,14 @@ const topics=[
  ['zavorky','Závorky','Nejdřív počítej uvnitř závorek.'],
  ['znamenka','Znaménko před závorkou','Minus před závorkou mění znaménka.'],
  ['zaporne','Záporná čísla','Záporná čísla patří do výpočtu stejně jako kladná.'],
- ['mix','Velké výrazy','Spoj všechna pravidla dohromady.']
+ ['mix','Velké výrazy','Spoj všechna pravidla dohromady.'],
+ ['desetiny','Desetinná čísla a zlomky','Zlomky s polovinou a čtvrtinou lze převést na desetinná čísla.']
 ];
 const levels=['Lehká','Střední','Těžká'];
 const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const choose=a=>a[rnd(0,a.length-1)];
 const $=id=>document.getElementById(id);
-const fmt=n=>String(n).replace('-', '−');
+const fmt=n=>String(n).replace('.',',').replace('-', '−');
 const defaultStats=()=>({done:0,right:0,wrong:0,hints:0,skips:0,first:0,days:{},cells:{},history:[],seen:[],unlocks:0});
 function load(){try{return JSON.parse(localStorage.getItem(KEY))||defaultStats()}catch(e){return defaultStats()}}
 let stats=Object.assign(defaultStats(),load()),topic=0,level=0,mode='teach',problem=null,attempt=0,hinted=false,stage='answer',sound=true,theme='light',pendingStep=null;
@@ -59,12 +60,15 @@ case 3:
 case 4:
  root=variant%3===0?O('+',N(-a),leaf(b,c,'×')):variant%3===1?O('−',N(-a),O('−',N(b),N(c))):O('×',N(-a),O('−',N(b),N(c)));
  rule='Mysli na znaménka i na pořadí operací.';break;
-default:{
+case 5:{
  const q=rnd(2,5+l),k=rnd(2,6+l*2);
  root=variant%3===0?O('−',O('×',O('+',N(a),N(b)),N(c)),O('÷',N(q*k),N(q))):variant%3===1?O('+',NEG(O('−',N(a),O('×',N(b),N(c)))),O('÷',N(q*k),N(q))):O('×',O('−',N(a),O('+',N(b),N(-c))),O('+',N(d),N(k)));
  rule='Vyřeš závorky, potom násobení a dělení, nakonec sčítání a odčítání.';break;}
+default:{
+ root=variant%3===0?O('+',O('×',N(0.5),N(2*a)),N(b)):variant%3===1?O('−',N(a+b),O('×',N(0.25),N(4*b))):O('×',O('+',N(0.5),N(a)),N(2));
+ rule='Polovina je 0,5 a čtvrtina je 0,25. Před sčítáním a odčítáním proveď násobení.';break;}
 }
-if(l===2&&t<3){root=O('+',root,leaf(d,rnd(2,8),'×'))}
+if(l===2&&(t<3||t===6)){root=O('+',root,leaf(d,rnd(2,8),'×'))}
 const intermediates=[];collect(root,intermediates);
 return {root,answer:value(root),text:render(root),rule,intermediates:intermediates.slice(0,-1),variant};
 }
