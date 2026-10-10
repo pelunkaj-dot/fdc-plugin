@@ -48,7 +48,7 @@ case 0:
  root=variant%3===0?O('+',N(a),leaf(b,c,'×')):variant%3===1?O('−',leaf(a,b,'×'),N(c)):O('+',leaf(a,b,'×'),N(c));rule='Násobení má přednost před sčítáním i odčítáním.';break;
 case 1:{
  const q=rnd(2,5+l*2),k=rnd(2,5+l*2),m=rnd(2,5+l*2);
- root=variant%3===0?O('+',N(a),leaf(q*k,q,'÷')):variant%3===1?O('−',leaf(q*k,q,'÷'),N(b)):O('+',leaf(a,b,'×'),leaf(q*m,q,'÷'));
+ root=variant%3===0?O('+',N(a),leaf(q*k,q,'÷')):variant%3===1?O('−',leaf(q*k,q,'÷'),N(b)):O('×',leaf(q*k,q,'÷'),N(m));
  rule='Násobení a dělení mají stejnou přednost; na stejné úrovni počítej zleva doprava.';break;}
 case 2:
  root=variant%3===0?O('×',O('+',N(a),N(b)),N(c)):variant%3===1?O('−',N(a),O('×',O('+',N(b),N(c)),N(d))):O('×',O('−',N(a+b),O('+',N(b),N(c))),N(d));
