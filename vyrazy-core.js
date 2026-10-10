@@ -41,6 +41,9 @@ function leaf(a,b,op){return O(op,N(a),N(b))}
 function workNodes(n){if(n.t==='n')return [];if(n.t==='neg')return [...workNodes(n.a),n];return [...workNodes(n.a),...workNodes(n.b),n]}
 function targetPrompt(){const nodes=workNodes(problem.root);const n=nodes[Math.min(teachIndex,nodes.length-1)];return 'Krok '+(teachIndex+1)+'/'+nodes.length+': vypočítej '+render(n)+'. (Můžeš také zadat konečný výsledek.)'}
 let teachIndex=0;
+const eq=(a,b)=>Math.abs(a-b)<1e-8;
+function guidance(n){if(!n)return problem.rule;if(n.t==='neg')return 'U minusu před závorkou změň znaménka všech členů uvnitř.';if(n.op==='×')return 'Nejdřív vypočítej násobení '+render(n.a)+' × '+render(n.b)+'.';if(n.op==='÷')return 'Vypočítej dělení '+render(n.a)+' ÷ '+render(n.b)+'.';if(n.op==='−')return 'Teď odečti '+render(n.b)+' od '+render(n.a)+'. Dej pozor na znaménka.';return 'Sečti '+render(n.a)+' a '+render(n.b)+'.';}
+function hintStep(){const nodes=workNodes(problem.root);return guidance(nodes[mode==='teach'?Math.min(teachIndex,nodes.length-1):0]);}
 function generator(t,l,variant){
 const a=rnd(2,8+l*5),b=rnd(2,7+l*4),c=rnd(2,6+l*3),d=rnd(2,5+l*3);
 let root,rule;
@@ -125,22 +128,31 @@ function check(){
  if(stage==='finished'){next();return}
  const raw=$('answer').value.trim().replace(',','.').replace('−','-');
  if(!/^-?\d+(?:\.\d+)?$/.test(raw)){setMessage('Zadej číslo. Může být i záporné.','warn');return}
- const val=Number(raw);
- if(mode==='teach'&&Math.abs(val-problem.answer)<1e-8){finish(true,false);return}
- if(mode==='teach'){const nodes=workNodes(problem.root);const target=nodes[teachIndex];if(target&&Math.abs(val-value(target))<1e-8){teachIndex++;if(teachIndex>=nodes.length){finish(true,false);return}setMessage('Správný krok: '+render(target)+' = '+fmt(val)+'. Pokračuj.','good');$('rule').textContent=targetPrompt();$('answer').value='';return}}
- if(mode!=='teach'&&Math.abs(val-problem.answer)<1e-8){finish(true,false);return}
- if(mode!=='teach'&&problem.intermediates.some(x=>Math.abs(x-val)<1e-8)&&val!==pendingStep){
- pendingStep=val;setMessage('Ano, '+fmt(val)+' je správný mezivýsledek. Teď dopočítej celý výraz.','good');$('answer').value='';return}
+ const val=Number(raw),nodes=workNodes(problem.root);
+ if(eq(val,problem.answer)){finish(true,false);return}
+ if(mode==='teach'){
+  const idx=nodes.findIndex((n,i)=>i>=teachIndex&&eq(val,value(n)));
+  if(idx>=0){
+   teachIndex=idx+1;attempt=0;
+   if(teachIndex>=nodes.length){finish(true,false);return}
+   $('rule').textContent=targetPrompt();
+   setMessage('Správný mezivýsledek '+fmt(val)+'. Řešení ještě není dokončené, pokračuj dalším krokem.','good');
+   $('answer').value='';return;
+  }
+ }else if(nodes.slice(0,-1).some(n=>eq(val,value(n)))){
+  pendingStep=val;setMessage('Ano, '+fmt(val)+' je správný mezivýsledek. Ještě pokračuj ke konečnému výsledku.','good');$('answer').value='';return;
+ }
  attempt++;stats.incorrectAttempts=(stats.incorrectAttempts||0)+1;safeSave();play(false);
- if(attempt===1){setMessage('Zkus to znovu. Zaměř se na pořadí operací.','warn');$('answer').value='';return}
- if(attempt===2){setMessage('Druhý pokus nevyšel. Můžeš pokračovat, nebo otevřít nápovědu.','warn');$('answer').value='';return}
- if(!hinted){hint();setMessage('Použij pravidlo z nápovědy a zkus další pokus.','warn');$('answer').value='';return}
+ $('answer').value='';$('answer').focus();
+ if(attempt===1){setMessage('To ještě nesedí. Zkus to opravit, máš další pokus.','warn');return}
+ if(attempt===2){setMessage('Podívej se na pořadí operací. Můžeš pokračovat nebo požádat o nápovědu.','warn');return}
+ if(!hinted){hint();return}
  finish(false,false);
 }
 function hint(){
  if(stage==='finished')return;
  if(!hinted){hinted=true;stats.hints++;cell().hints++;safeSave()}
- setMessage('Nápověda: '+problem.rule+(mode==='teach'?' Soustřeď se na právě vyznačený krok.':' Najdi část výrazu, kterou máš počítat jako první.')+' Výsledek ti neprozradím.','warn');
+ setMessage('Nápověda k postupu: '+hintStep()+' Výsledek si vypočítej sám.','warn');
 }
 function next(){
  if(DEMO&&stats.done>=LIMIT){showDemoEnd();return}
