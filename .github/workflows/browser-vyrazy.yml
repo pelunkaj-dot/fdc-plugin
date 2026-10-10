@@ -1,0 +1,26 @@
+name: Browser test Vyrazy
+on:
+  push:
+    paths:
+      - 'vyrazy-core.js'
+      - 'vyrazy.html'
+      - 'vyrazy-demo.html'
+      - 'tests/vyrazy.browser.mjs'
+      - '.github/workflows/browser-vyrazy.yml'
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install playwright@1.56.1 --no-save
+      - run: npx playwright install --with-deps chromium
+      - run: |
+          ln -s . fdc-plugin
+          python3 -m http.server 8123 >/tmp/vyrazy-server.log 2>&1 &
+          sleep 2
+          node tests/vyrazy.browser.mjs
