@@ -81,7 +81,7 @@ function getProblem(){
  stats.seen.push(topic+':'+level+':'+p.text);if(stats.seen.length>130)stats.seen.shift();
  safeSave();return p;
 }
-function play(ok){if(!sound)return;try{const ctx=new(window.AudioContext||window.webkitAudioContext)(),now=ctx.currentTime;const freq=ok?choose([[392,523],[440,587],[523,659]]):[[240,195]];freq.forEach((notes,j)=>notes.forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(ctx.destination);const tm=now+j*.12+i*.11;g.gain.setValueAtTime(.0001,tm);g.gain.exponentialRampToValueAtTime(.065,tm+.01);g.gain.exponentialRampToValueAtTime(.0001,tm+.16);o.start(tm);o.stop(tm+.17)}));setTimeout(()=>ctx.close(),550)}catch(e){}}
+function play(ok){if(!sound)return;try{const ctx=new(window.AudioContext||window.webkitAudioContext)(),now=ctx.currentTime;const freq=ok?[choose([[392,523],[440,587],[523,659]])]:[[240,195]];freq.forEach((notes,j)=>notes.forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(ctx.destination);const tm=now+j*.12+i*.11;g.gain.setValueAtTime(.0001,tm);g.gain.exponentialRampToValueAtTime(.065,tm+.01);g.gain.exponentialRampToValueAtTime(.0001,tm+.16);o.start(tm);o.stop(tm+.17)}));setTimeout(()=>ctx.close(),550)}catch(e){}}
 function cell(){const k=topic+'-'+level;return stats.cells[k]||(stats.cells[k]={done:0,right:0,first:0,hints:0,skips:0})}
 function setMessage(message,type){$('feedback').textContent=message;$('feedback').className='feedback '+(type||'');}
 function renderWorld(){
@@ -193,7 +193,7 @@ function init(){
  $('teach').onclick=()=>{mode='teach';next()};
  $('practice').onclick=()=>{mode='practice';next()};
  $('check').onclick=check;$('next').onclick=next;$('hint').onclick=hint;$('skip').onclick=()=>finish(false,true);
- document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('parent').hidden)return;if(e.key==='Enter'){e.preventDefault();stage==='finished'?next():check()}});
+ document.addEventListener('keydown',e=>{if(e.key!=='Enter'||!$('parent').hidden)return;const tag=e.target.tagName;if(tag==='SELECT'||tag==='BUTTON'||tag==='TEXTAREA')return;if(e.target!==$('answer')&&e.target!==document.body)return;e.preventDefault();stage==='finished'?next():check()});
  $('parentButton').onclick=openParent;$('parentClose').onclick=closeParent;$('parentUnlock').onclick=authorize;$('parentReset').onclick=reset;
  $('sound').onclick=()=>{sound=!sound;$('sound').textContent=sound?'🔊 Zvuk':'🔇 Zvuk'};
  $('theme').onclick=()=>{const t=document.body.dataset.theme==='dark'?'light':'dark';document.body.dataset.theme=t;localStorage.setItem('fdc-vyrazy-theme',t)};
