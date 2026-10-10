@@ -27,6 +27,9 @@ function value(n){if(n.t==='n')return n.v;if(n.t==='neg')return -value(n.a);cons
 function render(n){if(n.t==='n')return fmt(n.v);if(n.t==='neg')return '−('+render(n.a)+')';return '('+render(n.a)+' '+n.op+' '+render(n.b)+')';}
 function collect(n,arr){if(n.t==='n')return;n.t==='neg'?collect(n.a,arr):(collect(n.a,arr),collect(n.b,arr));arr.push(value(n));}
 function leaf(a,b,op){return O(op,N(a),N(b))}
+function workNodes(n){if(n.t==='n')return [];if(n.t==='neg')return [...workNodes(n.a),n];return [...workNodes(n.a),...workNodes(n.b),n]}
+function targetPrompt(){const nodes=workNodes(problem.root);const n=nodes[Math.min(teachIndex,nodes.length-1)];return 'Krok '+(teachIndex+1)+'/'+nodes.length+': vypočítej '+render(n)+'. (Můžeš také zadat konečný výsledek.)'}
+let teachIndex=0;
 function generator(t,l,variant){
 const a=rnd(2,8+l*5),b=rnd(2,7+l*4),c=rnd(2,6+l*3),d=rnd(2,5+l*3);
 let root,rule;
@@ -86,7 +89,8 @@ function draw(){
  $('check').hidden=false;$('next').hidden=true;$('hint').hidden=false;$('skip').hidden=false;
  $('explain').hidden=true;$('explain').textContent='';
  $('feedback').textContent='';$('feedback').className='feedback';
- attempt=0;hinted=false;stage='answer';pendingStep=null;
+ attempt=0;hinted=false;stage='answer';pendingStep=null;teachIndex=0;
+ if(mode==='teach')$('rule').textContent=targetPrompt();
  if(DEMO){$('demoCounter').textContent='Ukázka: '+stats.done+' / '+LIMIT+' úloh';$('level').disabled=true;}
  $('answer').focus();
 }
@@ -108,8 +112,10 @@ function check(){
  const raw=$('answer').value.trim().replace(',','.').replace('−','-');
  if(!/^-?\d+(?:\.\d+)?$/.test(raw)){setMessage('Zadej číslo. Může být i záporné.','warn');return}
  const val=Number(raw);
- if(Math.abs(val-problem.answer)<1e-8){finish(true,false);return}
- if(problem.intermediates.some(x=>Math.abs(x-val)<1e-8)&&val!==pendingStep){
+ if(mode==='teach'&&Math.abs(val-problem.answer)<1e-8){finish(true,false);return}
+ if(mode==='teach'){const nodes=workNodes(problem.root);const target=nodes[teachIndex];if(target&&Math.abs(val-value(target))<1e-8){teachIndex++;if(teachIndex>=nodes.length){finish(true,false);return}setMessage('Správný krok: '+render(target)+' = '+fmt(val)+'. Pokračuj.','good');$('rule').textContent=targetPrompt();$('answer').value='';return}}
+ if(mode!=='teach'&&Math.abs(val-problem.answer)<1e-8){finish(true,false);return}
+ if(mode!=='teach'&&problem.intermediates.some(x=>Math.abs(x-val)<1e-8)&&val!==pendingStep){
  pendingStep=val;setMessage('Ano, '+fmt(val)+' je správný mezivýsledek. Teď dopočítej celý výraz.','good');$('answer').value='';return}
  attempt++;stats.incorrectAttempts=(stats.incorrectAttempts||0)+1;safeSave();play(false);
  if(attempt===1){setMessage('Zkus to znovu. Zaměř se na pořadí operací.','warn');$('answer').value='';return}
@@ -120,7 +126,7 @@ function check(){
 function hint(){
  if(stage==='finished')return;
  if(!hinted){hinted=true;stats.hints++;cell().hints++;safeSave()}
- setMessage('Nápověda: '+problem.rule+' Najdi část výrazu, kterou máš počítat jako první. Výsledek ti neprozradím.','warn');
+ setMessage('Nápověda: '+problem.rule+(mode==='teach'?' Soustřeď se na právě vyznačený krok.':' Najdi část výrazu, kterou máš počítat jako první.')+' Výsledek ti neprozradím.','warn');
 }
 function next(){
  if(DEMO&&stats.done>=LIMIT){showDemoEnd();return}
@@ -168,6 +174,6 @@ function init(){
  if(DEMO){$('demoCounter').hidden=false;$('fullLink').hidden=false;if(stats.done>=LIMIT){showDemoEnd();renderWorld();return}}
  next();
 }
-window.VyrazyTest={generator,value,steps,topics,levels};
+window.VyrazyTest={generator,value,steps,topics,levels,workNodes,getState:()=>({stats,topic,level,mode,problem,stage,attempt,teachIndex}),check,next,hint,finish};
 init();
 })();
