@@ -4,7 +4,7 @@ Tři moduly: číselné výrazy (8 oblastí), výrazy s proměnnými (7 oblastí
 
 ## Výuka a odpovědi
 
-Výrazy s proměnnými a mnohočleny vyžadují symbolické úpravy, bez dosazování hodnot. Výuka začíná výrazem `3(x+2)+2y-5(x+y)-2x+6y` a vede přes roznásobení a sloučení členů k `-4x+3y+6`. Další oblasti zahrnují více závorek, mocniny, všechny tři základní vzorce, vytýkání a rozklad rozdílu čtverců. Správné mezikroky se zobrazují jako žákův postup. Staré rozpracované úlohy s dosazováním se neobnovují; plné statistiky zůstávají zachovány.
+Výrazy s proměnnými a mnohočleny vyžadují symbolické úpravy, bez dosazování hodnot. Výuka začíná výrazem `3(x+2)+2y-5(x+y)-2x+6y` a vede přes roznásobení a sloučení členů k `-4x+3y+6`. Další oblasti zahrnují více závorek, mocniny, všechny tři základní vzorce, vytýkání a rozklad rozdílu čtverců. Správné mezikroky se zobrazují jako žákův postup. Po přijetí mezikroku se vstup vyprázdní, zaměří a vyzve k dalšímu zápisu. Lze zadat i řetězec výrazů oddělených rovnítky; kontroluje se správnost každé části. Staré rozpracované úlohy s dosazováním se neobnovují; plné statistiky zůstávají zachovány.
 
 Lekce postupuje od pravidla a vyřešeného vzoru přes vedený úkol a samostatný úkol k ověření principu. K postupu lekcí se počítají úlohy vyřešené bez chyby a nápovědy; jinak dostane žák další variantu pro upevnění. Procvičování je samostatný režim bez vedení. Téma i obtížnost jsou volně přístupné.
 
