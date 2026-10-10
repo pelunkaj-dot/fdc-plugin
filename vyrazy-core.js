@@ -94,7 +94,7 @@ function finish(ok,skipped){
  stage='finished';$('answer').disabled=true;$('check').hidden=true;$('next').hidden=false;$('hint').hidden=true;$('skip').hidden=true;
  const c=cell();stats.done++;c.done++;
  if(skipped){stats.skips++;c.skips++}else if(ok){stats.right++;c.right++;if(attempt===0&&!hinted){stats.first++;c.first++}}else{stats.wrong++}
- const date=new Date().toISOString().slice(0,10);stats.days[date]=(stats.days[date]||0)+1;
+ const date=new Date().toLocaleDateString('sv-SE');stats.days[date]=(stats.days[date]||0)+1;
  stats.history.unshift({date,topic:topics[topic][1],level:levels[level],result:skipped?'Přeskočeno':ok?'Správně':'S pomocí / chybně',expression:problem.text});
  stats.history=stats.history.slice(0,80);safeSave();renderWorld();
  $('explain').hidden=false;
@@ -161,7 +161,7 @@ function init(){
  $('teach').onclick=()=>{mode='teach';next()};
  $('practice').onclick=()=>{mode='practice';next()};
  $('check').onclick=check;$('next').onclick=next;$('hint').onclick=hint;$('skip').onclick=()=>finish(false,true);
- $('answer').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();stage==='finished'?next():check()}});
+ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!$('parent').hidden)return;if(e.key==='Enter'){e.preventDefault();stage==='finished'?next():check()}});
  $('parentButton').onclick=openParent;$('parentClose').onclick=closeParent;$('parentUnlock').onclick=authorize;$('parentReset').onclick=reset;
  $('sound').onclick=()=>{sound=!sound;$('sound').textContent=sound?'🔊 Zvuk':'🔇 Zvuk'};
  $('theme').onclick=()=>{const t=document.body.dataset.theme==='dark'?'light':'dark';document.body.dataset.theme=t;localStorage.setItem('fdc-vyrazy-theme',t)};
