@@ -1249,8 +1249,8 @@ const TOPICS = [
 
 // ── STATE ─────────────────────────────────────────────────
 let ST = { xp:0, streak:0, progress:{} };
-function loadST() { try { const s=localStorage.getItem('fajnrovnice_v1'); if(s) ST={...ST,...JSON.parse(s)}; } catch(e){} }
-function saveST() { try { localStorage.setItem('fajnrovnice_v1',JSON.stringify(ST)); } catch(e){} }
+function loadST() { try { const s=localStorage.getItem('fajnrovnice-v2-demo'); if(s) ST={...ST,...JSON.parse(s)}; } catch(e){} }
+function saveST() { try { localStorage.setItem('fajnrovnice-v2-demo',JSON.stringify(ST)); } catch(e){} }
 const getStars = (idx) => ST.progress?.[idx]?.stars ?? 0;
 function setStars(idx, stars) {
   if(!ST.progress[idx]) ST.progress[idx]={};
@@ -1661,5 +1661,8 @@ renderHome();
 <script src="/fdc-plugin/rovnice-parent.js"></script>
 <script src="/fdc-plugin/rovnice-world.js"></script>
 <script src="/fdc-plugin/rovnice-demo.js"></script>
+<script src="/fdc-plugin/vyrazy-math.js"></script>
+<script src="/fdc-plugin/rovnice-engine.js"></script>
+<script src="/fdc-plugin/rovnice-teaching.js"></script>
 </body>
 </html>
