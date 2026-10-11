@@ -24,3 +24,5 @@ SVG scéna se zobrazuje i během řešení. Na desktopu využívá plochu vedle 
 ## Volba vzhledu
 
 Demo i plná verze nabízejí světlý, tmavý a fialový vzhled v horní liště na úvodní obrazovce, při řešení i ve výsledcích. Výchozí vzhled je světlý. Volba se ukládá společně pro obě verze; přepnutí zachová rozepsaný vstup i historii kroků. Paleta mění také stěny, podlahu a popisky SVG laboratoře. Prohlížečový test ověřuje všechny přepínače, zachování vstupu, obnovení volby a mobilní šířku.
+
+Nápověda k postupu se zobrazuje výhradně po stisknutí tlačítka v obou režimech. Nová rovnice má prázdnou skrytou zpětnou vazbu; chyba, opakovaný zápis ani správný mezikrok automaticky neodkrývají další operaci. Test pokrývá oba režimy, dvě chyby, opakovaný zápis, mezikrok, vyžádání nápovědy i další rovnici a demo.
