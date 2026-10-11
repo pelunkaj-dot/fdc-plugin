@@ -20,3 +20,7 @@ Demo má čtyři reprezentativní témata a trvalý limit 12 dokončených nebo 
 SVG scéna se zobrazuje i během řešení. Na desktopu využívá plochu vedle úlohy, na mobilu má kompaktní podobu. Správný mezikrok spustí energetický impuls bez zvýšení počtu vyřešených úloh. Zařízení se odemykají po 3, 8, 15, 25, 40, 60, 90 a 130 rovnicích; pak každých 20 rovnic roste stupeň výkonu. Pohybují se částice, energie v potrubí, turbína, robot a reaktor. Herní svět a animace lze vypnout; nastavení se ukládá a respektuje omezení pohybu v systému.
 
 `tests/rovnice.world.mjs` ověřuje reakci na mezikrok, odemknutí zařízení, pokračování po poslední stavbě, využití desktopové plochy, mobilní vstup bez oříznutého tlačítka, vypnutí hry/animací a obnovení nastavení. Matematické a výukové prohlížečové testy zůstávají zachované.
+
+## Volba vzhledu
+
+Demo i plná verze nabízejí světlý, tmavý a fialový vzhled v horní liště na úvodní obrazovce, při řešení i ve výsledcích. Výchozí vzhled je světlý. Volba se ukládá společně pro obě verze; přepnutí zachová rozepsaný vstup i historii kroků. Paleta mění také stěny, podlahu a popisky SVG laboratoře. Prohlížečový test ověřuje všechny přepínače, zachování vstupu, obnovení volby a mobilní šířku.
