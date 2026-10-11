@@ -1,89 +1,44 @@
-(() => {
-"use strict";
-
-const WORLD_STAGES = [
-  {n:"Prázdná dílna",icon:"◇",need:0},
-  {n:"Stůl badatele",icon:"▱",need:5},
-  {n:"Rozsvícená laboratoř",icon:"✦",need:15},
-  {n:"Stroj na rovnice",icon:"⚙",need:30},
-  {n:"Řídicí centrum",icon:"⌁",need:50},
-  {n:"Trezor neznámé X",icon:"✕",need:75},
-  {n:"Mistrovská laboratoř",icon:"★",need:110}
-];
-function solvedCount(){ return Number(ST?.stats?.solved)||0; }
-function stageIndex(){
-  const s=solvedCount(); let i=0;
-  WORLD_STAGES.forEach((x,n)=>{if(s>=x.need)i=n;}); return i;
-}
-function worldHtml(){
-  const solved=solvedCount(), idx=stageIndex(), cur=WORLD_STAGES[idx], next=WORLD_STAGES[idx+1];
-  const from=cur.need, to=next?next.need:cur.need;
-  const pct=next?Math.max(0,Math.min(100,(solved-from)/(to-from)*100)):100;
-  const nodes=WORLD_STAGES.map((s,i)=>{
-    const state=i<idx?"done":i===idx?"current":"locked";
-    return '<div class="rvw-node '+state+'"><span>'+s.icon+'</span><small>'+s.n+'</small></div>';
-  }).join("");
-  const sub=next
-    ? 'Ještě <strong>'+(next.need-solved)+'</strong> vyřešených rovnic a odemkneš: <strong>'+next.n+'</strong>.'
-    : 'Laboratoř je kompletní. Teď už jde o mistrovství.';
-  return '<section class="rv-world"><div class="rvw-head"><div><div class="rvw-kicker">Tvoje laboratoř neznámé X</div>'+
-    '<div class="rvw-title">'+cur.icon+' '+cur.n+'</div></div><div class="rvw-count">'+solved+' ✓</div></div>'+
-    '<div class="rvw-scene stage-'+idx+'">'+
-      '<div class="rvw-glow"></div><div class="rvw-floor"></div>'+
-      '<div class="rvw-table">▱</div><div class="rvw-lamp">✦</div><div class="rvw-gear">⚙</div>'+
-      '<div class="rvw-screen">x = ?</div><div class="rvw-safe">✕</div><div class="rvw-star">★</div>'+
-    '</div><div class="rvw-progress"><i style="width:'+pct+'%"></i></div>'+
-    '<div class="rvw-sub">'+sub+'</div><div class="rvw-nodes">'+nodes+'</div></section>';
-}
-function ensureWorld(){
-  let host=document.getElementById("rv-world-host");
-  if(!host){
-    host=document.createElement("div"); host.id="rv-world-host";
-    const hero=document.querySelector("#screen-home .home-hero");
-    if(hero) hero.insertAdjacentElement("afterend",host);
-  }
-  host.innerHTML=worldHtml();
-}
-function ensureResultWorld(){
-  const box=document.querySelector("#screen-result .result-body");
-  if(!box)return;
-  let r=document.getElementById("rv-result-world");
-  if(!r){
-    r=document.createElement("div"); r.id="rv-result-world"; r.className="rv-result-world";
-    const actions=box.querySelector(".res-actions"); box.insertBefore(r,actions);
-  }
-  const solved=solvedCount(), idx=stageIndex(), next=WORLD_STAGES[idx+1];
-  r.innerHTML='<strong>Laboratoř: '+WORLD_STAGES[idx].n+'</strong><span>'+
-    (next?'Další část za '+Math.max(0,next.need-solved)+' vyřešených rovnic.':'Mistrovská laboratoř je kompletní.')+'</span>';
-}
-const oldRenderHome=renderHome;
-renderHome=function(){ oldRenderHome(); ensureWorld(); };
-const oldFinish=finishSession;
-finishSession=function(){ oldFinish(); ensureResultWorld(); };
-
-const css=document.createElement("style");
-css.textContent=`
-#rv-world-host{max-width:500px;margin:12px auto 2px;padding:0 18px}
-.rv-world{background:linear-gradient(160deg,#161c35,#252d54);color:#fff;border-radius:18px;padding:14px;box-shadow:0 12px 30px rgba(20,27,58,.18);overflow:hidden}
-.rvw-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.rvw-kicker{font-size:.58rem;letter-spacing:1.8px;text-transform:uppercase;opacity:.65}
-.rvw-title{font-family:'Playfair Display',serif;font-weight:800;font-size:1.12rem;margin-top:2px}.rvw-count{font-family:'JetBrains Mono',monospace;font-size:.72rem;background:rgba(255,255,255,.1);padding:5px 8px;border-radius:12px}
-.rvw-scene{height:112px;position:relative;margin:10px -4px 8px;border-radius:12px;overflow:hidden;background:linear-gradient(#11172d,#20294c)}
-.rvw-floor{position:absolute;left:0;right:0;bottom:0;height:32%;background:linear-gradient(165deg,#303a62,#1b2342);clip-path:polygon(0 35%,100% 0,100% 100%,0 100%)}
-.rvw-glow{position:absolute;width:150px;height:150px;border-radius:50%;left:50%;top:-85px;transform:translateX(-50%);background:radial-gradient(circle,rgba(116,150,255,.28),transparent 68%);opacity:0}
-.rvw-table,.rvw-lamp,.rvw-gear,.rvw-screen,.rvw-safe,.rvw-star{position:absolute;opacity:.08;transition:.3s}.rvw-table{font-size:64px;left:13%;bottom:13px;transform:rotate(-4deg)}
-.rvw-lamp{font-size:30px;left:42%;top:13px}.rvw-gear{font-size:35px;right:30%;bottom:18px}.rvw-screen{right:8%;top:19px;border:2px solid currentColor;border-radius:7px;padding:7px;font:700 .8rem 'JetBrains Mono'}
-.rvw-safe{font-size:43px;right:9%;bottom:4px}.rvw-star{font-size:32px;left:50%;top:43%;transform:translate(-50%,-50%)}
-.stage-1 .rvw-table,.stage-2 .rvw-table,.stage-3 .rvw-table,.stage-4 .rvw-table,.stage-5 .rvw-table,.stage-6 .rvw-table{opacity:.85}
-.stage-2 .rvw-lamp,.stage-3 .rvw-lamp,.stage-4 .rvw-lamp,.stage-5 .rvw-lamp,.stage-6 .rvw-lamp{opacity:1;text-shadow:0 0 18px #ffe88a}.stage-2 .rvw-glow,.stage-3 .rvw-glow,.stage-4 .rvw-glow,.stage-5 .rvw-glow,.stage-6 .rvw-glow{opacity:1}
-.stage-3 .rvw-gear,.stage-4 .rvw-gear,.stage-5 .rvw-gear,.stage-6 .rvw-gear{opacity:.9}.stage-3 .rvw-gear{animation:rvspin 7s linear infinite}
-.stage-4 .rvw-screen,.stage-5 .rvw-screen,.stage-6 .rvw-screen{opacity:1;color:#9fffc6;box-shadow:0 0 14px rgba(100,255,180,.15)}
-.stage-5 .rvw-safe,.stage-6 .rvw-safe{opacity:1;color:#ffd86b}.stage-6 .rvw-star{opacity:1;color:#fff3a1;text-shadow:0 0 20px #ffd86b}
-@keyframes rvspin{to{transform:rotate(360deg)}}.rvw-progress{height:7px;background:rgba(255,255,255,.12);border-radius:8px;overflow:hidden}.rvw-progress i{display:block;height:100%;background:linear-gradient(90deg,#7ca0ff,#a8ffcb);border-radius:8px}
-.rvw-sub{font-size:.69rem;opacity:.82;margin:7px 0 10px;line-height:1.4}.rvw-nodes{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.rvw-node{text-align:center;opacity:.28}.rvw-node.done,.rvw-node.current{opacity:1}.rvw-node.current span{background:#fff;color:#1e2748}
-.rvw-node span{display:grid;place-items:center;width:25px;height:25px;margin:auto;border:1px solid rgba(255,255,255,.35);border-radius:50%;font-size:.7rem}.rvw-node small{display:none}
-.rv-result-world{width:100%;background:var(--paper);border:1.5px solid var(--border);border-radius:11px;padding:10px 12px;margin:0 0 14px;font-size:.76rem}.rv-result-world strong,.rv-result-world span{display:block}.rv-result-world span{color:var(--ink2);margin-top:2px}
-@media(min-width:520px){.rvw-node small{display:block;font-size:.48rem;line-height:1.1;margin-top:4px}}
-`;
-document.head.appendChild(css);
-ensureWorld();
+/* Animated SVG energy laboratory; rewards come only from completed equations. */
+(()=>{'use strict';
+const stages=[['Záložní zdroj',0],['Energetické vedení',3],['Chladicí okruh',8],['Turbína',15],['Robotická linka',25],['Řídicí centrum',40],['Plazmový reaktor',60],['Vysílací věž',90],['Celá laboratoř v provozu',130]];
+const prefsKey='fajnrovnice-visual-v1',reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;let prefs;try{prefs=JSON.parse(localStorage.getItem(prefsKey))||{game:true,motion:!reduced}}catch{prefs={game:true,motion:!reduced}}
+let timer;const $=id=>document.getElementById(id),count=()=>Number(ST.stats?.solved)||0;
+function progress(){const n=count();let i=0;stages.forEach((s,j)=>{if(n>=s[1])i=j});const cycle=n>=130?Math.floor((n-130)/20):0,next=i===8?['Výkon laboratoře · stupeň '+(cycle+2),130+(cycle+1)*20]:stages[i+1],from=i===8?130+cycle*20:stages[i][1];return{n,i,next,left:next[1]-n,percent:(n-from)/(next[1]-from)*100}}
+function gear(x,y,r,cls){return '<g transform="translate('+x+' '+y+')"><g class="rv-gear '+cls+'">'+Array.from({length:12},(_,i)=>'<rect x="-5" y="'+(-r-6)+'" width="10" height="16" rx="2" transform="rotate('+i*30+')"/>').join('')+'<circle r="'+r+'"/><circle r="'+r*.42+'" class="rv-gear-hole"/></g></g>'}
+function scene(id,i){return `<svg viewBox="0 0 720 460" role="img" aria-label="Energetická laboratoř: potrubí, turbína, robot, reaktor a vysílací věž" class="rv-lab-svg">
+<defs><linearGradient id="${id}-wall" x2="0" y2="1"><stop stop-color="#111e37"/><stop offset="1" stop-color="#233252"/></linearGradient><linearGradient id="${id}-steel"><stop stop-color="#3f5677"/><stop offset=".5" stop-color="#859bbb"/><stop offset="1" stop-color="#304665"/></linearGradient><radialGradient id="${id}-core"><stop stop-color="#fff6b6"/><stop offset=".35" stop-color="#6dfff2"/><stop offset="1" stop-color="#0bbda5" stop-opacity="0"/></radialGradient><pattern id="${id}-grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="#73a5cf" stroke-opacity=".12"/></pattern></defs>
+<rect width="720" height="460" fill="url(#${id}-wall)"/><rect width="720" height="330" fill="url(#${id}-grid)"/>
+<path d="M0 334L720 287V460H0Z" fill="#102238"/><path d="M0 398L720 348M0 440L720 393M100 326L10 460M235 317L200 460M370 308L405 460M505 299L610 460" stroke="#4e7da0" stroke-opacity=".2"/>
+<g class="rv-skylight"><path d="M74 0H112L240 334H20Z" fill="#7cbbff" opacity=".045"/><path d="M430 0H467L650 300H325Z" fill="#77fff1" opacity=".035"/></g>
+<g fill="#081326" stroke="#425b7b" stroke-width="3"><rect x="34" y="32" width="150" height="86" rx="9"/><rect x="205" y="32" width="150" height="86" rx="9"/><rect x="377" y="32" width="150" height="86" rx="9"/></g>
+<g class="rv-stars" fill="#9de7ff">${Array.from({length:21},(_,j)=>'<circle cx="'+(50+j*23)+'" cy="'+(42+j*17%66)+'" r="'+(j%3?1:2)+'" style="animation-delay:'+j*.19+'s"/>').join('')}</g>
+<g class="rv-equation-glyphs" fill="#9ac7ed" font-family="monospace" font-size="16"><text x="57" y="86">2x + 3 = 11</text><text x="234" y="86">x = ?</text><text x="398" y="86">L = P</text></g>
+<g class="rv-unit ${i>=1?'on':''}"><path class="rv-pipe-back" d="M70 270H205V187H359V260H512V197H639"/><path class="rv-pipe" d="M70 270H205V187H359V260H512V197H639"/><path class="rv-energy" d="M70 270H205V187H359V260H512V197H639"/></g>
+<g class="rv-unit on"><rect x="35" y="222" width="112" height="133" rx="10" fill="url(#${id}-steel)" stroke="#90a7bf"/><rect x="48" y="237" width="86" height="61" rx="6" fill="#0b1729"/><g class="rv-battery"><rect x="60" y="252" width="61" height="29" rx="3" fill="none" stroke="#53efd6" stroke-width="2"/>${Array.from({length:4},(_,j)=>'<rect x="'+(65+j*14)+'" y="257" width="9" height="19" rx="1" fill="#55f2cc" style="animation-delay:'+j*.3+'s"/>').join('')}</g><circle cx="64" cy="322" r="6" fill="#ffca68"/><path d="M88 322H124" stroke="#a7bad5" stroke-width="4"/><text x="52" y="374" fill="#a7c0d6" font-size="11" font-family="monospace">ZDROJ</text></g>
+<g class="rv-unit ${i>=2?'on':''}"><rect x="167" y="215" width="101" height="122" rx="13" fill="#243e55" stroke="#5f91ab" stroke-width="3"/><rect x="178" y="231" width="78" height="74" rx="7" fill="#0c263a"/><g class="rv-coolant" stroke="#56cfff" stroke-width="3"><path d="M180 248H254M180 266H254M180 284H254"/><path d="M191 232V306M216 232V306M243 232V306" stroke-opacity=".3"/></g><g class="rv-bubbles" fill="#77e4ff">${Array.from({length:6},(_,j)=>'<circle cx="'+(189+j*11)+'" cy="294" r="3" style="animation-delay:'+j*.5+'s"/>').join('')}</g><text x="174" y="362" fill="#a7c0d6" font-size="11" font-family="monospace">CHLAZENÍ</text></g>
+<g class="rv-unit ${i>=3?'on':''}"><rect x="287" y="238" width="113" height="100" rx="12" fill="#34465f" stroke="#708ca8"/>${gear(334,281,28,'')}${gear(374,304,16,'reverse')}<rect x="299" y="338" width="90" height="15" rx="3" fill="#627d98"/><text x="300" y="376" fill="#a7c0d6" font-size="11" font-family="monospace">TURBÍNA</text></g>
+<g class="rv-unit ${i>=4?'on':''}"><path d="M396 368H524" stroke="#8396b0" stroke-width="14"/><g class="rv-conveyor" stroke="#2ec5a0" stroke-width="3" stroke-dasharray="9 9"><path d="M401 368H519"/></g><g class="rv-arm"><path d="M427 358V320L449 287L479 310" fill="none" stroke="#d2a16b" stroke-width="12" stroke-linejoin="round"/><g fill="#e6c193" stroke="#5d4130" stroke-width="3"><circle cx="427" cy="320" r="9"/><circle cx="449" cy="287" r="9"/></g><path d="M477 308L490 317L481 329" fill="none" stroke="#c3d7e4" stroke-width="5"/></g><rect class="rv-cargo" x="470" y="341" width="22" height="19" rx="3" fill="#42bce6"/><text x="414" y="398" fill="#a7c0d6" font-size="11" font-family="monospace">ROBOTICKÁ LINKA</text></g>
+<g class="rv-unit ${i>=5?'on':''}"><rect x="287" y="131" width="137" height="77" rx="8" fill="#0a172b" stroke="#7292b1" stroke-width="3"/><g class="rv-monitor" fill="none" stroke="#76ffe0" stroke-width="2"><path class="rv-scan" d="M302 171H318L324 154L331 190L339 163L347 172H408"/><path d="M305 195H406" stroke-opacity=".3"/></g><text x="305" y="150" fill="#8cb1d0" font-size="10" font-family="monospace">ŘÍZENÍ / X</text></g>
+<g class="rv-unit ${i>=6?'on':''}"><rect x="536" y="208" width="111" height="131" rx="12" fill="url(#${id}-steel)" stroke="#a3b5c8"/><rect x="552" y="226" width="79" height="91" rx="35" fill="#0c2031"/><circle class="rv-reactor-glow" cx="591" cy="273" r="68" fill="url(#${id}-core)"/><g class="rv-reactor"><ellipse cx="591" cy="270" rx="33" ry="15" fill="none" stroke="#6dfff2" stroke-width="2"/><ellipse cx="591" cy="270" rx="15" ry="33" fill="none" stroke="#81bfff" stroke-width="2"/><circle cx="591" cy="270" r="12" fill="#b1ffeb"/></g><path d="M540 331H643" stroke="#94b4c8" stroke-width="7"/><text x="550" y="365" fill="#a7c0d6" font-size="11" font-family="monospace">REAKTOR</text></g>
+<g class="rv-unit ${i>=7?'on':''}"><path d="M643 197L666 80L689 197M650 166H682M657 132H676M665 80V49" fill="none" stroke="#a4b6d1" stroke-width="4"/><circle cx="666" cy="43" r="6" fill="#ffbb75"/><g class="rv-radio" fill="none" stroke="#7dbaff" stroke-width="2"><path d="M647 27Q624 43 647 59M685 27Q708 43 685 59"/><path d="M634 16Q595 43 634 70M698 16Q738 43 698 70"/></g></g>
+<g class="rv-floor-lights" fill="#3cffe3">${Array.from({length:12},(_,j)=>'<rect x="'+(36+j*56)+'" y="421" width="22" height="3" rx="2" style="animation-delay:'+j*.16+'s"/>').join('')}</g>
+<g class="rv-particles" fill="#a5fff1">${Array.from({length:12},(_,j)=>'<circle cx="'+(53+j*55)+'" cy="'+(160+j*23%150)+'" r="2" style="animation-delay:'+j*.24+'s"/>').join('')}</g>
+</svg>`}
+function html(id){const p=progress();return '<section class="rv-lab '+(prefs.motion?'':'still')+'" data-stage="'+p.i+'"><div class="rv-lab-head"><div><span class="rv-lab-kicker">LABORATOŘ NEZNÁMÉ X</span><h2>'+stages[p.i][0]+'</h2></div><span class="rv-lab-count">'+p.n+' rovnic</span></div><div class="rv-lab-scene">'+scene(id,p.i)+'<div class="rv-lab-event" role="status" aria-live="polite"></div></div><div class="rv-lab-meter"><i style="width:'+p.percent+'%"></i></div><div class="rv-lab-mission"><span>Další cíl <strong>'+p.next[0]+'</strong></span><b>Ještě '+p.left+'</b></div><div class="rv-lab-stages">'+stages.slice(1).map((s,j)=>'<span class="'+(p.i>j?'active':'')+'" title="'+s[0]+' · '+s[1]+' rovnic"><i></i></span>').join('')+'</div></section>'}
+function controls(){let nav=$('rv-visual-controls');if(!nav){nav=document.createElement('div');nav.id='rv-visual-controls';nav.className='rv-visual-controls';document.querySelector('#screen-home .home-hero').appendChild(nav)}nav.innerHTML='<button id="rv-game-toggle" aria-pressed="'+prefs.game+'">Herní svět: '+(prefs.game?'zapnutý':'vypnutý')+'</button><button id="rv-motion-toggle" aria-pressed="'+prefs.motion+'">Animace: '+(prefs.motion?'zapnuté':'vypnuté')+'</button>';nav.querySelector('#rv-game-toggle').onclick=()=>{prefs.game=!prefs.game;savePrefs();refresh()};nav.querySelector('#rv-motion-toggle').onclick=()=>{prefs.motion=!prefs.motion;savePrefs();refresh()}}
+function savePrefs(){try{localStorage.setItem(prefsKey,JSON.stringify(prefs))}catch{}}
+function host(id,parent){let h=$(id);if(!h){h=document.createElement('div');h.id=id;parent.appendChild(h)}h.hidden=!prefs.game;if(prefs.game)h.innerHTML=html(id);return h}
+function exercise(){let layout=$('rv-play-layout');if(!layout){layout=document.createElement('div');layout.id='rv-play-layout';$('ex-body').before(layout);layout.appendChild($('ex-body'))}host('rv-exercise-world',layout);document.body.classList.toggle('rv-no-game',!prefs.game)}
+function refresh(){controls();host('rv-world-host',$('screen-home'));exercise();if($('screen-result').classList.contains('active'))host('rv-result-world',document.querySelector('.result-body'))}
+function event(kind,label){const h=$('rv-exercise-world');if(!prefs.game||!h)return;const lab=h.querySelector('.rv-lab');lab.classList.remove('step-pulse','completion','unlock','warning');void lab.offsetWidth;lab.classList.add(kind);const note=lab.querySelector('.rv-lab-event');note.textContent=label;clearTimeout(timer);timer=setTimeout(()=>{lab.classList.remove(kind);note.textContent=''},2600)}
+const home=renderHome;renderHome=function(){home();refresh()};const equation=renderEquation;renderEquation=function(){equation();exercise()};
+const process=processStep;processStep=function(raw){const before=count(),stage=progress().i,steps=SES.steps.length,wrong=SES.wrongCount;process(raw);if(count()>before){exercise();const p=progress();event(p.i>stage?'unlock':'completion',p.i>stage?'Spuštěno: '+stages[p.i][0]:'Rovnice vyřešena · energie doplněna');$('ex-xp-badge').textContent=ST.xp}else if(SES.steps.length>steps)event('step-pulse','Správný krok · energetický impuls');else if(SES.wrongCount>wrong)event('warning','Zkontroluj postup. Laboratoř počká.')};
+const finish=finishSession;finishSession=function(){finish();host('rv-result-world',document.querySelector('.result-body'))};
+const css=document.createElement('style');css.textContent=`
+body{background:#0c1528;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}body::before{background:radial-gradient(ellipse at 8% 20%,#17445188,transparent 45%),radial-gradient(ellipse at 85% 65%,#223d7180,transparent 50%);background-size:auto}.app-header,.ex-topbar,.screen-hdr{background:#101c30;color:#e9f1ff;border-color:#293c56}.app-logo,.home-title,.rv-lab h2,.done-banner-title{font-family:inherit}.app-logo{color:#80e5db}.home-hero{background:none;border-color:#2a3b53;padding:28px 22px 18px}.home-title{color:#f0f5ff;font-size:clamp(2rem,4vw,3.6rem);letter-spacing:-1.5px}.home-sub{color:#b8c7dc;max-width:440px;font-size:.94rem}.home-eyebrow{color:#69d8d0}.home-eq{color:#86baff;opacity:1}.rv-level-title{color:#d7e4f3!important}.rv-level-desc{color:#c1cede!important}.cats-wrap>div:not(.topic-card){color:#a3b6d2!important}.topic-card{border-radius:12px;transition:transform .2s,box-shadow .2s}.topic-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px #34ccb72b}.rv-mode{margin:8px auto}.rv-visual-controls{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:15px}.rv-visual-controls button{border:1px solid #3a5877;background:#162840;color:#cbdcf1;padding:7px 12px;border-radius:30px;font:inherit;font-size:.74rem;cursor:pointer}.rv-lab{color:#d9e8f8;background:linear-gradient(140deg,#1b2c48,#101d32);border:1px solid #446078;border-radius:20px;overflow:hidden;box-shadow:0 24px 70px #0005}.rv-lab-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;gap:8px}.rv-lab-kicker{font:600 .58rem monospace;letter-spacing:2px;color:#7ea4c5}.rv-lab h2{font-size:1.15rem;font-weight:650;margin:4px 0 0}.rv-lab-count{font:500 .7rem monospace;padding:6px 9px;border:1px solid #47627b;border-radius:20px;white-space:nowrap;color:#aee9d9}.rv-lab-scene{position:relative;overflow:hidden;background:#17243c}.rv-lab-svg{display:block;width:100%;height:auto}.rv-unit{opacity:.28;filter:saturate(.2);transition:opacity 1s,filter 1s}.rv-unit.on{opacity:1;filter:saturate(1)}.rv-pipe-back{fill:none;stroke:#071522;stroke-width:18;stroke-linejoin:round}.rv-pipe{fill:none;stroke:#3b8499;stroke-width:10;stroke-linejoin:round}.rv-energy{fill:none;stroke:#7dfff0;stroke-width:3;stroke-dasharray:16 42;animation:rv-flow 2.4s linear infinite}.rv-gear{fill:#829bad;stroke:#364d69;stroke-width:3;transform-box:fill-box;transform-origin:center;animation:rv-spin 9s linear infinite}.rv-gear.reverse{animation-direction:reverse;animation-duration:5s}.rv-gear-hole{fill:#14273e;stroke:#b7cde0}.rv-unit:not(.on) *{animation-play-state:paused!important}.rv-battery rect:not(:first-child){animation:rv-blink 2.4s ease-in-out infinite}.rv-stars circle{animation:rv-blink 3s infinite}.rv-coolant{animation:rv-blink 3s ease-in-out infinite}.rv-bubbles circle{animation:rv-bubble 3s linear infinite}.rv-conveyor{animation:rv-flow 1.4s linear infinite}.rv-arm{transform-origin:427px 358px;animation:rv-arm 4s ease-in-out infinite}.rv-cargo{animation:rv-cargo 4s linear infinite}.rv-scan{stroke-dasharray:45 130;animation:rv-flow 3s linear infinite}.rv-reactor{transform-origin:591px 270px;animation:rv-spin 6s linear infinite}.rv-reactor-glow{animation:rv-glow 3s ease-in-out infinite}.rv-radio{animation:rv-blink 2s ease-in-out infinite}.rv-floor-lights rect{animation:rv-blink 4s infinite}.rv-particles circle{opacity:.25;animation:rv-drift 8s linear infinite}.rv-lab-meter{height:4px;background:#091421}.rv-lab-meter i{display:block;height:100%;background:linear-gradient(90deg,#63bfec,#5bf2b6);box-shadow:0 0 18px #5bf2b6;transition:width 1s}.rv-lab-mission{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;gap:12px;font-size:.75rem;color:#9eb9d1}.rv-lab-mission strong{display:block;font-size:.88rem;color:#e0edff;margin-top:3px}.rv-lab-mission b{color:#80ecd0;white-space:nowrap;font-size:.78rem}.rv-lab-stages{display:flex;gap:6px;padding:0 20px 18px}.rv-lab-stages span{flex:1;height:4px;background:#2c425c;border-radius:4px}.rv-lab-stages .active{background:#62d7b6}.rv-lab-event{position:absolute;bottom:14px;left:15px;right:15px;text-align:center;font-size:.8rem;font-weight:600;color:#d0fff0;opacity:0;transform:translateY(12px);transition:.3s;background:#09192bdf;border:1px solid #66cbb5;border-radius:9px;padding:10px}.step-pulse .rv-lab-event,.completion .rv-lab-event,.unlock .rv-lab-event,.warning .rv-lab-event{opacity:1;transform:translateY(0)}.step-pulse .rv-energy,.completion .rv-energy,.unlock .rv-energy{stroke:#fff4a3;stroke-width:7;animation-duration:.7s}.step-pulse .rv-unit:not(.on) .rv-energy,.completion .rv-unit:not(.on) .rv-energy{animation-play-state:running!important}.step-pulse .rv-particles circle,.completion .rv-particles circle,.unlock .rv-particles circle{opacity:1;animation-duration:1.2s}.completion .rv-lab-scene,.unlock .rv-lab-scene{animation:rv-energize 1.6s ease-out}.unlock .rv-unit.on{animation:rv-reveal 1.4s ease-out}.warning .rv-lab-event{color:#ffdda2;border-color:#d9a05b}.still *{animation:none!important;transition:none!important}.rv-no-game #rv-play-layout{grid-template-columns:minmax(0,680px);justify-content:center}#rv-world-host{max-width:760px;width:100%;margin:20px auto;padding:0 18px}#rv-play-layout{display:grid;gap:28px;padding:24px;max-width:1440px;width:100%;margin:0 auto;align-items:start;grid-template-columns:minmax(0,640px) minmax(0,1fr)}#ex-body{width:100%;max-width:none;margin:0;background:#f1f5fc;padding:22px;border:1px solid #cfdaea;border-radius:20px;box-shadow:0 20px 60px #0003}.eq-card{background:#fff;border-color:#d6e0ed;box-shadow:0 5px 18px #122b4910}.eq-card::before{display:none}.paper-note{background:#dfeafa;color:#345783;border:none;border-radius:8px;font:600 .8rem system-ui;padding:10px 12px}.input-area{margin:12px 0 0}.input-row{min-width:0}.eq-input{min-width:0;width:0;flex:1}.btn-check{flex:0 0 auto}#ex-body{overflow:visible}.rv-feedback{border:1px solid #e4dabb}.rv-feedback.good{border-color:#b4e0cc}.done-banner{border-radius:12px}.prog-bar{background:#2c405a}.prog-fill{background:linear-gradient(90deg,#73aaf3,#5ae7c5)}.ex-count{color:#d2e0f0}.back-btn,.help-btn{color:#9cc4ed}#rv-exercise-world{position:sticky;top:90px}#rv-result-world{width:100%;max-width:720px;margin:22px auto}.result-body{max-width:780px}.res-title,.res-score{color:#d6e4f6}.rv-unit.on .rv-monitor{filter:drop-shadow(0 0 4px #57ddc8)}
+@keyframes rv-flow{to{stroke-dashoffset:-116}}@keyframes rv-spin{to{transform:rotate(360deg)}}@keyframes rv-blink{50%{opacity:.3}}@keyframes rv-bubble{to{transform:translateY(-57px);opacity:0}}@keyframes rv-arm{50%{transform:rotate(-14deg)}}@keyframes rv-cargo{to{transform:translateX(-63px);opacity:0}}@keyframes rv-glow{50%{opacity:.45;transform:scale(.94);transform-origin:591px 273px}}@keyframes rv-drift{to{transform:translate(14px,-55px);opacity:0}}@keyframes rv-energize{20%{filter:brightness(1.6)}100%{filter:brightness(1)}}@keyframes rv-reveal{0%{opacity:.1;filter:saturate(0)}100%{opacity:1;filter:saturate(1)}}
+@media(min-width:1100px){#screen-home.active{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(420px,1fr);column-gap:30px;align-content:start;padding:0 max(24px,calc((100vw - 1420px)/2)) 30px}.app-header{grid-column:1/-1;margin:0 -24px}.home-hero{grid-column:1/-1}.cats-wrap{grid-column:2;grid-row:5;margin:0;padding-top:8px;max-width:none}#rovnice-controls{grid-column:2;grid-row:3;max-width:none;margin:20px 0 0;padding:0 18px}.rv-mode{grid-column:2;grid-row:4;max-width:none;margin:8px 0;padding:0 18px}#rv-world-host{grid-column:1;grid-row:3/6;position:sticky;top:90px;padding:0;margin:20px 0;align-self:start}}
+@media(max-width:1000px){#rv-play-layout{grid-template-columns:1fr;max-width:730px;padding:16px;gap:14px}#rv-exercise-world{position:static;grid-row:1}#rv-exercise-world .rv-lab-head{padding:9px 14px}#rv-exercise-world .rv-lab h2{font-size:.85rem}#rv-exercise-world .rv-lab-kicker,#rv-exercise-world .rv-lab-stages{display:none}#rv-exercise-world .rv-lab-scene{height:140px}#rv-exercise-world .rv-lab-svg{height:140px;width:100%;object-fit:contain}#rv-exercise-world .rv-lab-mission{padding:8px 14px}#rv-exercise-world .rv-lab-mission strong{font-size:.72rem;display:inline;margin-left:5px}#rv-exercise-world .rv-lab-mission b{font-size:.7rem}#ex-body{padding:16px;border-radius:14px}.rv-lab-event{bottom:5px;padding:6px;font-size:.72rem}}
+@media(prefers-reduced-motion:reduce){.rv-lab *{animation:none!important;transition:none!important}.topic-card{transition:none}}
+`;document.head.appendChild(css);refresh();window.EquationWorld={progress,refresh,event,getPrefs:()=>({...prefs})};
 })();

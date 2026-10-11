@@ -19,6 +19,7 @@ jobs:
           ln -s . fdc-plugin
           python3 -m http.server 8123 >/tmp/rovnice-server.log 2>&1 &
           node tests/rovnice.browser.mjs
+          node tests/rovnice.world.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
