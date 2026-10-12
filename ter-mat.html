@@ -2320,5 +2320,88 @@ if (IS_RESTRICTED_BROWSER || noSpeech) {
   if (btn)    btn.href = window.location.href;
 }
 </script>
+
+<!-- Rodičovský přehled: samostatný od dětského cvičení -->
+<style>
+#fdcParentBtn{position:fixed;right:12px;bottom:12px;z-index:800;border:2px solid #d8e4ef;background:#fff;color:#243752;border-radius:999px;padding:10px 15px;font:800 14px 'Nunito',sans-serif;box-shadow:0 4px 16px #142b4230;cursor:pointer}
+#fdcParentModal[hidden]{display:none}
+#fdcParentModal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;background:#101d32b8}
+.fdc-parent-panel{width:min(100%,520px);max-height:90vh;overflow:auto;border-radius:20px;background:#fff;color:#223349;padding:24px;box-shadow:0 20px 70px #0005;font-family:'Nunito',sans-serif}
+.fdc-parent-head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:12px}
+.fdc-parent-head h2{margin:0;font-size:24px}
+.fdc-parent-panel p{line-height:1.5;margin:10px 0}
+.fdc-parent-panel input{width:100%;max-width:230px;padding:11px;font-size:18px;border:2px solid #ccd9e8;border-radius:10px}
+.fdc-parent-panel button{padding:10px 15px;border:0;border-radius:10px;background:#287aca;color:#fff;font-weight:800;cursor:pointer}
+.fdc-parent-panel .fdc-parent-close{background:#e7edf4;color:#223349}
+.fdc-parent-row{padding:8px 0;border-bottom:1px solid #e5ebf1;display:flex;justify-content:space-between;gap:12px}
+#fdcParentError{color:#b3261e;font-weight:800}
+</style>
+<button id="fdcParentBtn" type="button" onclick="fdcOpenParent()">👨‍👩‍👧 Pro rodiče</button>
+<div id="fdcParentModal" hidden role="dialog" aria-modal="true" aria-labelledby="fdcParentTitle">
+  <div class="fdc-parent-panel">
+    <div class="fdc-parent-head"><h2 id="fdcParentTitle">Pro rodiče</h2><button class="fdc-parent-close" type="button" onclick="fdcCloseParent()" aria-label="Zavřít">✕</button></div>
+    <div id="fdcParentGate">
+      <p id="fdcParentPinIntro">Při prvním otevření si nastav vlastní čtyřmístný rodičovský PIN. Dítě se do rodičovské části dostane jen se znalostí PINu.</p>
+      <label for="fdcParentPin">Rodičovský PIN</label>
+      <p><input id="fdcParentPin" type="password" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="off"></p>
+      <p id="fdcParentError" role="alert"></p>
+      <button type="button" onclick="fdcUnlockParent()">Pokračovat</button>
+    </div>
+    <div id="fdcParentView" hidden>
+      <p>Pokrok se uchovává pouze v tomto prohlížeči a na tomto zařízení.</p>
+      <div id="fdcParentStats"></div>
+      <p><strong>Jak s modulem pracovat:</strong> Dítě může volit tři obtížnosti. Zkouší příběhy, poslech, spojování slov, kvízy, paměťové hry, říkanky a trenéra slovíček. Povzbuzuj je k opakování nahlas, nejen ke klikání na odpovědi.</p>
+      <p>Dokončení jednotlivých činností se v přehledu počítá za dané téma. Nejde o školní známky ani o nezávislé měření skutečné znalosti jazyka.</p>
+      <button type="button" onclick="fdcCloseParent()">Zpět ke cvičení</button>
+    </div>
+  </div>
+</div>
+<script>
+function fdcOpenParent(){
+  const modal=document.getElementById('fdcParentModal');
+  modal.hidden=false;
+  document.getElementById('fdcParentGate').hidden=false;
+  document.getElementById('fdcParentView').hidden=true;
+  document.getElementById('fdcParentError').textContent='';
+  const exists=!!localStorage.getItem('fdc_ter_mat_parent_pin');
+  document.getElementById('fdcParentPinIntro').textContent=exists?'Zadej svůj čtyřmístný rodičovský PIN.':'Při prvním otevření nastav čtyřmístný rodičovský PIN.';
+  document.getElementById('fdcParentPin').value='';
+  document.getElementById('fdcParentPin').focus();
+}
+function fdcCloseParent(){ document.getElementById('fdcParentModal').hidden=true; }
+function fdcUnlockParent(){
+  const input=document.getElementById('fdcParentPin').value;
+  const error=document.getElementById('fdcParentError');
+  if(!/^\d{4}$/.test(input)){error.textContent='PIN musí obsahovat přesně čtyři číslice.';return;}
+  const saved=localStorage.getItem('fdc_ter_mat_parent_pin');
+  if(saved&&saved!==input){error.textContent='Nesprávný PIN.';return;}
+  if(!saved)localStorage.setItem('fdc_ter_mat_parent_pin',input);
+  document.getElementById('fdcParentGate').hidden=true;
+  document.getElementById('fdcParentView').hidden=false;
+  fdcRenderParentStats();
+}
+function fdcRenderParentStats(){
+  let data={};try{data=JSON.parse(localStorage.getItem('matyter_v2')||'{}')||{}}catch(_){}
+  const names=['Kartičky','Užitečné fráze','Příběh','Poslech','Spojování','Kvíz','Paměť','Říkanka'];
+  const keys=['flash','phrases','story','listen','match','quiz','memory','rhyme'];
+  const topics=(typeof APP_DATA!=='undefined'&&APP_DATA.topics)||[];
+  let completed=0;
+  const rows=topics.map(t=>{
+    const p=(data.progress||{})[t.id]||{};
+    const n=keys.filter(k=>!!p[k]).length;completed+=n;
+    return '<div class="fdc-parent-row"><span>'+t.titleCz+'</span><strong>'+n+' / '+keys.length+'</strong></div>';
+  }).join('');
+  document.getElementById('fdcParentStats').innerHTML=
+    '<p><strong>Hvězdy:</strong> '+(Number(data.stars)||0)+'</p>'+
+    '<p><strong>Dokončené činnosti:</strong> '+completed+' z '+(topics.length*keys.length)+'</p>'+
+    '<p><strong>Aktuální série:</strong> '+(Number(data.streak)||0)+' dní (podle posledních návštěv)</p>'+
+    '<h3>Pokrok podle témat</h3>'+rows+
+    '<p style="font-size:13px;color:#61738b">Každé téma má '+names.length+' činností: '+names.join(', ')+'.</p>';
+}
+document.getElementById('fdcParentPin').addEventListener('keydown',e=>{if(e.key==='Enter')fdcUnlockParent();});
+document.getElementById('fdcParentModal').addEventListener('click',e=>{if(e.target.id==='fdcParentModal')fdcCloseParent();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fdcCloseParent();});
+</script>
+
 </body>
 </html>
