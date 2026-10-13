@@ -1,0 +1,26 @@
+name: Test pronouns and demo
+on:
+  push:
+    paths: ['zajmena*', 'tests/zajmena*', '.github/workflows/test-zajmena.yml']
+  workflow_dispatch:
+jobs:
+  pronouns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/zajmena.test.cjs
+      - run: npm install playwright@1.56.1 --no-save
+      - run: npx playwright install --with-deps chromium
+      - run: |
+          ln -s . fdc-plugin
+          python3 -m http.server 8123 >/tmp/pronouns-server.log 2>&1 &
+          node tests/zajmena.browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pronouns-evidence
+          path: test-results/zajmena-*.png
