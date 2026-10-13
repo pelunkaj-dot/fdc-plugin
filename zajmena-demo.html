@@ -336,7 +336,7 @@ function updateStatus(){
   el.reviewVal.textContent = reviewCount();
   el.levelText.textContent = levelName(state.xp);
   el.levelFill.style.width = levelPct(state.xp) + '%';
-  el.progressText.textContent = `${Math.min(state.idx+1, state.queue.length || 1)} / ${Math.max(state.queue.length,1)}`;
+  el.progressText.textContent = `${Math.min(Math.max(1,state.idx), state.queue.length || 1)} / ${Math.max(state.queue.length,1)}`;
   const desc = {
     learn:'Normální zadání. Tlačítko nápověda ukáže jinou větu.',
     drill:'Jasné zadání. Jedna správná odpověď.',
