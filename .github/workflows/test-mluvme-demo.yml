@@ -1,0 +1,26 @@
+name: Test Mluvme demo
+on:
+  push:
+    paths: ['mluvme_en-demo*', 'tests/mluvme-demo*', '.github/workflows/test-mluvme-demo.yml']
+  workflow_dispatch:
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/mluvme-demo.test.cjs
+      - run: npm install playwright@1.56.1 --no-save
+      - run: npx playwright install --with-deps chromium
+      - run: |
+          ln -s . fdc-plugin
+          python3 -m http.server 8123 >/tmp/mluvme-demo-server.log 2>&1 &
+          node tests/mluvme-demo.browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mluvme-demo-evidence
+          path: test-results/mluvme-demo-*.png
