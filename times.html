@@ -131,6 +131,7 @@ body.dark .theme, body.mid .theme{background:rgba(255,255,255,.04)}
 @media (max-width:720px){.status{grid-template-columns:1fr}.hero-big{font-size:3.1rem}}
 @media (max-width:520px){.grid-opts{grid-template-columns:1fr}.study-item{grid-template-columns:1fr;gap:8px}.hero-big{font-size:2.55rem}}
 </style>
+<link rel="stylesheet" href="times-parents.css">
 </head>
 <body>
 <div class="app">
@@ -140,6 +141,7 @@ body.dark .theme, body.mid .theme{background:rgba(255,255,255,.04)}
       <div class="sub">FajnCvičebna · návrat do reálné angličtiny bez omáčky</div>
     </div>
     <div class="topbar">
+      <button class="ghost-btn" id="parentsBtn">Pro rodiče</button>
       <div class="theme" aria-label="Volba vzhledu">
         <button class="tl on" data-theme="light" title="Světlé"></button>
         <button class="tm" data-theme="mid" title="Střední"></button>
@@ -373,5 +375,6 @@ function confettiBurst(n=12){const colors=['#23dac1','#64b0ff','#f0c04e','#ff7d7
 function bindGlobalEvents(){document.querySelectorAll('.theme button').forEach(btn=>btn.addEventListener('click',()=>setTheme(btn.dataset.theme)));el.tipToggle.onclick=()=>{const box=document.getElementById('tipBox');if(box)box.classList.toggle('hidden')};el.clearProgress.onclick=()=>{if(!confirm('Opravdu chceš vynulovat postup, XP i uložené chyby?'))return;localStorage.removeItem(SAVE_KEY);location.reload()};document.getElementById('closeLevel').onclick=()=>el.levelOverlay.classList.remove('show');document.addEventListener('keydown',e=>{if(e.key==='Escape')el.levelOverlay.classList.remove('show');if(e.key===' '&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){const btn=document.querySelector('.speak-btn');if(btn){e.preventDefault();btn.click()}}if(e.key==='Enter'&&state.answered&&state.mode!=='study'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();renderCard()}});document.addEventListener('pointerdown',()=>{if(actx&&actx.state==='suspended')actx.resume()},{passive:true})}
 function init(){loadState();loadTheme();loadVoices();bindGlobalEvents();renderBars();updateStatus();renderCard()}init();
 </script>
+<script src="times-parents.js"></script>
 </body>
 </html>
